@@ -5,7 +5,7 @@ title: "[Task] "
 labels: backend, high priority
 assignees:
   - KevinDMazali
-projects:
+Projects:
   - Clozet
-milestone: Basic Infrastructure and Core Functionality
+Milestone: Basic Infrastructure and Core Functionality
 ---
