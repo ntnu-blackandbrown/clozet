@@ -23,9 +23,11 @@ const submit = () => {
     if (isLogin.value){
     console.log('Login')
     //Call the login API
+    //push to logged in home page
   } else {
     console.log('Register')
     //Call the register API
+    //push to logged in home page
   }
   emit('close') // close the modal after submit
   } catch (error) {
@@ -46,11 +48,14 @@ const close = () => {
       <!-- FORM CONTENT-->
        <form @submit.prevent='submit'>
         <input v-if="isLogin" v-model="identificator" placeholder="Email or Username" />
-        <input v-if="!isLogin" v-model="userName" placeholder="Username" />
-        <input v-if="!isLogin" v-model="firstName" placeholder="First Name" />
-        <input v-if="!isLogin" v-model="lastName" placeholder="Last Name" />
-        <input v-if="!isLogin" v-model="email" placeholder="Email" />
-        <input v-if="!isLogin" v-model="phoneNumber" placeholder="Phone Number" />
+        <template v-if="!isLogin">
+          <input v-model="userName" placeholder="Username" />
+          <input v-model="firstName" placeholder="First Name" />
+          <input v-model="lastName" placeholder="Last Name" />
+          <input v-model="email" placeholder="Email" />
+          <input v-model="phoneNumber" placeholder="Phone Number" />
+        </template>
+
 
         <input v-model="password" placeholder="Password" />
         <button type="submit">{{ isLogin ? 'Login' : 'Register' }}</button>
