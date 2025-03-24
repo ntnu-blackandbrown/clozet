@@ -4,12 +4,12 @@ on:
   push:
     branches:
       - develop
-      - main
-      - 'feature/**'
+      - implement-ci-cd
   pull_request:
     branches:
       - develop
-      - main
+      - implement-ci-cd
+
 
 jobs:
   build-backend:
@@ -96,17 +96,17 @@ jobs:
         working-directory: backend
         run: mvn clean install -DskipTests
 
-      - name: Move built JAR to root for Heroku
+      - name: Prepare Heroku Git
         run: |
           mkdir deploy
           cp backend/target/*.jar deploy/app.jar
-          cp backend/Procfile deploy/Procfile
+          echo "web: java -Dserver.port=\$PORT -jar app.jar" > deploy/Procfile
+          cd deploy
+          git init
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
+          git add .
+          git commit -m "Deploy from GitHub Actions"
+          git push heroku master --force
 
-      - name: Deploy to Heroku via Git
-        uses: heroku/deploy-via-git@v1
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          branch: main
-          branch_force: true
-          dir: deploy
