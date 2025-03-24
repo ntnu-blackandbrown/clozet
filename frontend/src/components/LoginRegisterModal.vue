@@ -1,0 +1,84 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const emit = defineEmits(['close'])
+
+const isLogin = ref(true)
+const email = ref('')
+const password = ref('')
+
+const toggleForm = () => {
+  isLogin.value = !isLogin.value
+}
+
+const submit = () => {
+  if (isLogin.value){
+    console.log('Login')
+    //Call the login API
+  } else {
+    console.log('Register')
+    //Call the register API
+  }
+  emit('close') // close the modal after submit
+}
+
+const close = () => {
+  emit('close') //close when clicking outside the modal
+}
+</script>
+
+<template>
+  <div class = "backdrop" @click.self="close">
+    <div class="container">
+      <h2>{{ isLogin ? 'Login' : 'Register' }}</h2>
+
+      <!-- FORM CONTENT-->
+       <form @submit.prevent='submit'>
+        <input v-model="email" placeholder="Email" />
+        <input v-model="password" placeholder="Password" />
+        <button type="submit">{{ isLogin ? 'Login' : 'Register' }}</button>
+       </form>
+
+       <!-- FORM SWITCH -->
+        <p>
+          <button @click="toggleForm">{{ isLogin ? 'Need an account? Register' : 'Already have an account? Login'}}</button>
+        </p>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); /* dark overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.container {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+}
+
+input {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+</style>
