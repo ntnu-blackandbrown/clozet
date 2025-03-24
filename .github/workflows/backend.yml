@@ -91,29 +91,28 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
+  
       - name: Set up Java
         uses: actions/setup-java@v3.13.0
         with:
           java-version: '21'
           distribution: 'temurin'
-
+  
       - name: Build Backend
         working-directory: backend
         run: mvn clean install -DskipTests
-
+  
       - name: Prepare Heroku Deploy Folder
         run: |
           mkdir deploy
-          cp -r backend/* deploy/
-          cp -r backend/.* deploy/ || true  # copy hidden files like .mvn if needed
+          cp -a backend/. deploy/
           echo "web: java -Dserver.port=\$PORT -jar target/*.jar" > deploy/Procfile
-      
+          echo "java.runtime.version = 21" > deploy/system.properties
+  
       - name: Set up Git and Push to Heroku
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
           export PATH="$PATH:/app/.heroku/bin"
-          heroku auth:token
           heroku buildpacks:clear -a $HEROKU_APP_NAME
           heroku buildpacks:set heroku/java -a $HEROKU_APP_NAME
           cd deploy
@@ -124,3 +123,6 @@ jobs:
           git add .
           git commit -m "Deploy from GitHub Actions"
           git push heroku master --force
+  
+            git commit -m "Deploy from GitHub Actions"
+            git push heroku master --force
