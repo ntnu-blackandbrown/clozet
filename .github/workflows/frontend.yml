@@ -1,0 +1,117 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: 
+      - develop
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run: 
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4.3.0
+        with: 
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install deps
+        run: npm install
+      - name: Format code
+        run: npm run format
+      - name: Build frontend
+        run: npm run build
+      - name: Upload dist
+        uses: actions/upload-artifact@v4.6.2
+        with: 
+          name: vue-dist
+          path: frontend/dist/
+
+  test-frontend:
+    name: Test Frontend (Unit + E2E)
+    runs-on: ubuntu-latest
+    needs: build-frontend
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4.3.0
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install deps
+        run: npm install
+      - name: Build frontend
+        run: npm run build
+      - name: Run unit tests
+        run: npm run test:unit
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4.6.2
+        with: 
+          name: frontend-coverage
+          path: frontend/coverage/
+    # Add cypress testing
+
+  package-frontend:
+    name: Package Frontend
+    runs-on: ubuntu-latest
+    needs: test-frontend
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4.3.0
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install deps
+        run: npm install
+      - name: Build dist
+        run: npm run build
+      - name: Upload build
+        uses: actions/upload-artifact@v4.6.2
+        with: 
+          name: frontend-dist
+          path: frontend/dist/
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    needs: package-frontend
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Vue app
+        run: npm run build
+
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          npm install -g netlify-cli
+          netlify deploy --prod --dir=dist --site=$NETLIFY_SITE_ID
