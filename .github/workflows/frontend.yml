@@ -25,6 +25,7 @@ jobs:
         with: 
           node-version: '18'
           cache: 'npm'
+          catche-dependency-path: frontend/package-lock.json
       - name: Install deps
         run: npm install
       - name: Format code
