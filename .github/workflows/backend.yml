@@ -78,42 +78,48 @@ jobs:
         with:
           name: spring-boot-jar
           path: backend/target/*.jar
-
-  deploy-backend:
-    name: Deploy Backend to Heroku
-    runs-on: ubuntu-latest
-    needs: package-backend
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Java
-        uses: actions/setup-java@v3.13.0
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Build Backend
-        working-directory: backend
-        run: mvn clean install -DskipTests
-
-      - name: Prepare Heroku Deploy Folder
-        run: |
-          mkdir deploy
-          cp backend/target/*.jar deploy/app.jar
-          echo "web: java -Dserver.port=\$PORT -jar app.jar" > deploy/Procfile
-
-      - name: Set up Git and Push to Heroku
-        run: |
-          curl https://cli-assets.heroku.com/install.sh | sh
-          export PATH="$PATH:/app/.heroku/bin"
-          heroku auth:token
-          heroku buildpacks:clear -a ${{ secrets.HEROKU_APP_NAME }}
-          heroku buildpacks:set heroku/java -a ${{ secrets.HEROKU_APP_NAME }}
-          cd deploy
-          git init
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git remote add heroku https://heroku:${{ secrets.HEROKU
+  
+    deploy-backend:
+      name: Deploy Backend to Heroku
+      runs-on: ubuntu-latest
+      needs: package-backend
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+      steps:
+        - name: Checkout repo
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+  
+        - name: Set up Java
+          uses: actions/setup-java@v3.13.0
+          with:
+            java-version: '21'
+            distribution: 'temurin'
+  
+        - name: Build Backend
+          working-directory: backend
+          run: mvn clean install -DskipTests
+  
+        - name: Prepare Heroku Deploy Folder
+          run: |
+            mkdir deploy
+            cp backend/target/*.jar deploy/app.jar
+            echo "web: java -Dserver.port=\$PORT -jar app.jar" > deploy/Procfile
+  
+        - name: Set up Git and Push to Heroku
+          run: |
+            curl https://cli-assets.heroku.com/install.sh | sh
+            export PATH="$PATH:/app/.heroku/bin"
+            heroku auth:token
+            heroku buildpacks:clear -a $HEROKU_APP_NAME
+            heroku buildpacks:set heroku/java -a $HEROKU_APP_NAME
+            cd deploy
+            git init
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+            git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git
+            git add .
+            git commit -m "Deploy from GitHub Actions"
+            git push heroku master --force
