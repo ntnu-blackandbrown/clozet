@@ -4,7 +4,7 @@ import { ref } from 'vue'
 const emit = defineEmits(['close'])
 
 const isLogin = ref(true)
-const email = ref('')
+const identificator = ref('')
 const password = ref('')
 
 const toggleForm = () => {
@@ -34,14 +34,14 @@ const close = () => {
 
       <!-- FORM CONTENT-->
        <form @submit.prevent='submit'>
-        <input v-model="email" placeholder="Email" />
+        <input v-model="identificator" placeholder="Email or Username" />
         <input v-model="password" placeholder="Password" />
         <button type="submit">{{ isLogin ? 'Login' : 'Register' }}</button>
        </form>
 
        <!-- FORM SWITCH -->
         <p>
-          <button @click="toggleForm">{{ isLogin ? 'Need an account? Register' : 'Already have an account? Login'}}</button>
+          <button class="toggle-form" @click="toggleForm">{{ isLogin ? 'Need an account? Register' : 'Already have an account? Login'}}</button>
         </p>
     </div>
   </div>
@@ -80,5 +80,16 @@ button {
   padding: 0.6rem 1.2rem;
   font-size: 1rem;
   margin-top: 0.5rem;
+}
+
+.toggle-form {
+  background: none;
+  border: none;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.8rem;
+  display: block;
+  margin: 0 auto;
 }
 </style>
