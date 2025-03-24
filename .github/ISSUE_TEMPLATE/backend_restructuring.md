@@ -7,5 +7,5 @@ assignees:
   - KevinDMazali
 Projects:
   - Clozet
-Milestone: Basic Infrastructure and Core Functionality
+Milestone: Basic Infrastructure and Core Functionalities
 ---
