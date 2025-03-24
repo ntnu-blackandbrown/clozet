@@ -36,7 +36,10 @@ public class Item {
   private String title;
 
   @Column(nullable = false)
-  private String description;
+  private String shortDescription;
+
+  @Column(nullable = false)
+  private String longDescription;
 
   @Column(nullable = false)
   private double price;
@@ -63,7 +66,7 @@ public class Item {
   private boolean isAvailable;
 
   @Column(nullable = false)
-  private boolean isVipPaymentEnabled;
+  private boolean isVippsPaymentEnabled;
 
   @Column(nullable = false)
   private LocalDateTime createdAt;
@@ -84,4 +87,188 @@ public class Item {
   private List<Message> messages;
 
   // Getters and setters
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public User getSeller() {
+    return seller;
+  }
+
+  public void setSeller(User seller) {
+    this.seller = seller;
+  }
+
+  public Category getCategory() {
+    return category;
+  }
+
+  public void setCategory(Category category) {
+    this.category = category;
+  }
+
+  public Location getLocation() {
+    return location;
+  }
+
+  public void setLocation(Location location) {
+    this.location = location;
+  }
+
+  public ShippingOption getShippingOption() {
+    return shippingOption;
+  }
+
+  public void setShippingOption(ShippingOption shippingOption) {
+    this.shippingOption = shippingOption;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public String getShortDescription() {
+    return shortDescription;
+  }
+
+  public void setShortDescription(String shortDescription) {
+    this.shortDescription = shortDescription;
+  }
+
+  public String getLongDescription() {
+    return longDescription;
+  }
+
+  public void setLongDescription(String longDescription) {
+    this.longDescription = longDescription;
+  }
+
+  public double getPrice() {
+    return price;
+  }
+
+  public void setPrice(double price) {
+    this.price = price;
+  }
+
+  public double getLatitude() {
+    return latitude;
+  }
+
+  public void setLatitude(double latitude) {
+    this.latitude = latitude;
+  }
+
+  public double getLongitude() {
+    return longitude;
+  }
+
+  public void setLongitude(double longitude) {
+    this.longitude = longitude;
+  }
+
+  public String getCondition() {
+    return condition;
+  }
+
+  public void setCondition(String condition) {
+    this.condition = condition;
+  }
+
+  public String getSize() {
+    return size;
+  }
+
+  public void setSize(String size) {
+    this.size = size;
+  }
+
+  public String getBrand() {
+    return brand;
+  }
+
+  public void setBrand(String brand) {
+    this.brand = brand;
+  }
+
+  public String getColor() {
+    return color;
+  }
+
+  public void setColor(String color) {
+    this.color = color;
+  }
+
+  public boolean isAvailable() {
+    return isAvailable;
+  }
+
+  public void setAvailable(boolean available) {
+    isAvailable = available;
+  }
+
+  public boolean isVippsPaymentEnabled() {
+    return isVippsPaymentEnabled;
+  }
+
+  public void setVippsPaymentEnabled(boolean vippsPaymentEnabled) {
+    isVippsPaymentEnabled = vippsPaymentEnabled;
+  }
+
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public LocalDateTime getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(LocalDateTime updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public List<Favorite> getFavorites() {
+    return favorites;
+  }
+
+  public void setFavorites(List<Favorite> favorites) {
+    this.favorites = favorites;
+  }
+
+  public List<ItemImage> getImages() {
+    return images;
+  }
+
+  public void setImages(List<ItemImage> images) {
+    this.images = images;
+  }
+
+  public List<Transaction> getTransactions() {
+    return transactions;
+  }
+
+  public void setTransactions(List<Transaction> transactions) {
+    this.transactions = transactions;
+  }
+
+  public List<Message> getMessages() {
+    return messages;
+  }
+
+  public void setMessages(List<Message> messages) {
+    this.messages = messages;
+  }
 }
