@@ -4,11 +4,12 @@ on:
   push:
     branches:
       - develop
-      - implement-ci-cd
+      - main
+      - 'feature/**'
   pull_request:
     branches:
       - develop
-      - implement-ci-cd
+      - main
 
 
 jobs:
