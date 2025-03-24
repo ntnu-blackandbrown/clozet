@@ -53,3 +53,27 @@ jobs:
         with:
           name: surefire-reports
           path: backend/target/surefire-reports/
+  
+  package-backend:
+    name: Package Backend
+    runs-on: ubuntu-latest
+    needs: test-backend
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Java
+        uses: actions/setup-java@v3.13.0
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Package JAR
+        run: mvn package -DskipTests
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: spring-boot-jar
+          path: backend/target/*.jar
