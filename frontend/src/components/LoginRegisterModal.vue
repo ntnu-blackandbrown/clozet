@@ -19,7 +19,8 @@ const toggleForm = () => {
 }
 
 const submit = () => {
-  if (isLogin.value){
+  try{
+    if (isLogin.value){
     console.log('Login')
     //Call the login API
   } else {
@@ -27,6 +28,9 @@ const submit = () => {
     //Call the register API
   }
   emit('close') // close the modal after submit
+  } catch (error) {
+    console.error('Error while submitting form:', error)
+  }
 }
 
 const close = () => {
