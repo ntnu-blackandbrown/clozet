@@ -82,8 +82,9 @@ jobs:
     name: Deploy Backend to Heroku
     runs-on: ubuntu-latest
     needs: package-backend
-    steps: 
-      - uses: actions/checkout@v4
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Set up Java
         uses: actions/setup-java@v3.13.0
@@ -91,15 +92,21 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Build backend
+      - name: Build Backend
         working-directory: backend
         run: mvn clean install -DskipTests
 
-      - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
-        with: 
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+      - name: Move built JAR to root for Heroku
+        run: |
+          mkdir deploy
+          cp backend/target/*.jar deploy/app.jar
+          cp backend/Procfile deploy/Procfile
+
+      - name: Deploy to Heroku via Git
+        uses: heroku/deploy-via-git@v1
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU.EMAIL }}
-          appdir: backend
-          usedocker: true
+          branch: main
+          branch_force: true
+          dir: deploy
