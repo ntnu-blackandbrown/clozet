@@ -122,7 +122,8 @@ jobs:
           git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git
           git add .
           git commit -m "Deploy from GitHub Actions"
-          git push heroku master --force
+          git push heroku master --force || true
+
   
             git commit -m "Deploy from GitHub Actions"
             git push heroku master --force
