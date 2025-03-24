@@ -1,0 +1,38 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: 
+      - develop
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run: 
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4.3.0
+        with: 
+          node-version: '18'
+          cache: 'npm'
+      - name: Install deps
+        run: npm install
+      - name: Format code
+        run: npm run format
+      - name: Build frontend
+        run: npm run build
+      - name: Upload dist
+        uses: actions/upload-artifact@v4.6.2
+        with: 
+          name: vue-dist
+          path: frontend/dist/
