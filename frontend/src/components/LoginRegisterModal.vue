@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const emit = defineEmits(['close'])
 
@@ -11,6 +11,9 @@ const lastName = ref('')
 const email = ref('')
 const phoneNumber = ref('')
 const userName = ref('')
+const formTitle = computed(() => isLogin.value ? 'Login' : 'Register')
+const toggleText = computed(() => isLogin.value ? 'Need an account? Register' : 'Already have an account? Login')
+
 const toggleForm = () => {
   isLogin.value = !isLogin.value
 }
@@ -34,7 +37,7 @@ const close = () => {
 <template>
   <div class = "backdrop" @click.self="close">
     <div class="container">
-      <h2>{{ isLogin ? 'Login' : 'Register' }}</h2>
+      <h2>{{ formTitle }}</h2>
 
       <!-- FORM CONTENT-->
        <form @submit.prevent='submit'>
@@ -51,7 +54,7 @@ const close = () => {
 
        <!-- FORM SWITCH -->
         <p>
-          <button class="toggle-form" @click="toggleForm">{{ isLogin ? 'Need an account? Register' : 'Already have an account? Login'}}</button>
+          <button class="toggle-form" @click="toggleForm">{{ toggleText }}</button>
         </p>
     </div>
   </div>
