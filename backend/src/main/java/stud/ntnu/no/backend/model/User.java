@@ -25,6 +25,8 @@ public class User {
   private String phoneNumber;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
+
+  @Column(nullable = false)
   private boolean isActive;
 
   // Getters and setters

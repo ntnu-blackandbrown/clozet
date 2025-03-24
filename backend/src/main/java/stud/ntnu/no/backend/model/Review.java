@@ -11,23 +11,27 @@ public class Review {
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "reviewer_id")
+  @JoinColumn(name = "reviewer_id", nullable = false)
   private User reviewer;
 
   @ManyToOne
-  @JoinColumn(name = "reviewee_id")
+  @JoinColumn(name = "reviewee_id", nullable = false)
   private User reviewee;
 
   @ManyToOne
-  @JoinColumn(name = "transaction_id")
+  @JoinColumn(name = "transaction_id", nullable = false)
   private Transaction transaction;
 
+  @Column(nullable = false)
   private int rating;
+
+  @Column(nullable = false)
   private String comment;
+
+  @Column(nullable = false)
   private LocalDateTime createdAt;
 
   // Getters and setters
-
 
   public Long getId() {
     return id;

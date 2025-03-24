@@ -12,28 +12,37 @@ public class Transaction {
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "buyer_id")
+  @JoinColumn(name = "buyer_id", nullable = false)
   private User buyer;
 
   @ManyToOne
-  @JoinColumn(name = "seller_id")
+  @JoinColumn(name = "seller_id", nullable = false)
   private User seller;
 
   @ManyToOne
-  @JoinColumn(name = "item_id")
+  @JoinColumn(name = "item_id", nullable = false)
   private Item item;
 
+  @Column(nullable = false)
   private double amount;
-  private String status;
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private TransactionStatus status;
+
+  @Column(nullable = false)
   private String paymentMethod;
+
+  @Column(nullable = false)
   private LocalDateTime createdAt;
+
+  @Column(nullable = false)
   private LocalDateTime updatedAt;
 
   @OneToMany(mappedBy = "transaction")
   private List<Review> reviews;
 
   // Getters and setters
-
 
   public Long getId() {
     return id;
@@ -75,11 +84,11 @@ public class Transaction {
     this.amount = amount;
   }
 
-  public String getStatus() {
+  public TransactionStatus getStatus() {
     return status;
   }
 
-  public void setStatus(String status) {
+  public void setStatus(TransactionStatus status) {
     this.status = status;
   }
 

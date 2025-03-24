@@ -9,12 +9,17 @@ public class Location {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(nullable = false)
   private String city;
+
   private double latitude;
+
   private double longitude;
 
-  // Getters and setters
+  @Column(nullable = false)
+  private String region;
 
+  // Getters and setters
 
   public double getLongitude() {
     return longitude;
@@ -38,6 +43,14 @@ public class Location {
 
   public void setCity(String city) {
     this.city = city;
+  }
+
+  public String getRegion() {
+    return region;
+  }
+
+  public void setRegion(String region) {
+    this.region = region;
   }
 
   public Long getId() {
