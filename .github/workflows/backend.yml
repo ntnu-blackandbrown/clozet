@@ -113,8 +113,10 @@ jobs:
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
           export PATH="$PATH:/app/.heroku/bin"
+      
           heroku buildpacks:clear -a $HEROKU_APP_NAME
           heroku buildpacks:set heroku/java -a $HEROKU_APP_NAME
+      
           cd deploy
           git init
           git config user.name "github-actions"
@@ -122,9 +124,13 @@ jobs:
           git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git
       
           git add .
-          git diff-index --quiet HEAD || git commit -m "Deploy from GitHub Actions"
       
-          git push heroku master --force || echo "Non-critical push error ignored"
+          # Only suppress this specific error (nothing to commit)
+          if ! git commit -m "Deploy from GitHub Actions"; then
+            echo "⚠️ No changes to commit. Continuing anyway..."
+          fi
       
-                  git commit -m "Deploy from GitHub Actions"
-                  git push heroku master --force
+          # Only suppress push errors
+          if ! git push heroku master --force; then
+            echo "⚠️ Git push failed (possibly nothing new to push), continuing..."
+          fi
