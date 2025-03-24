@@ -105,9 +105,10 @@ jobs:
       - name: Prepare Heroku Deploy Folder
         run: |
           mkdir deploy
-          cp backend/target/*.jar deploy/app.jar
-          echo "web: java -Dserver.port=\$PORT -jar app.jar" > deploy/Procfile
-
+          cp -r backend/* deploy/
+          cp -r backend/.* deploy/ || true  # copy hidden files like .mvn if needed
+          echo "web: java -Dserver.port=\$PORT -jar target/*.jar" > deploy/Procfile
+      
       - name: Set up Git and Push to Heroku
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
