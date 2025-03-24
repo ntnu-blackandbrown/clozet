@@ -11,7 +11,10 @@ public class Category {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(unique = true, nullable = false)
   private String name;
+
+  @Column(unique = true, nullable = false)
   private String description;
 
   @ManyToOne
@@ -28,7 +31,6 @@ public class Category {
   private List<Category> subcategories;
 
   // Getters and setters
-
 
   public Long getId() {
     return id;
