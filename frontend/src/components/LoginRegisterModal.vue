@@ -6,7 +6,11 @@ const emit = defineEmits(['close'])
 const isLogin = ref(true)
 const identificator = ref('')
 const password = ref('')
-
+const firstName = ref('')
+const lastName = ref('')
+const email = ref('')
+const phoneNumber = ref('')
+const userName = ref('')
 const toggleForm = () => {
   isLogin.value = !isLogin.value
 }
@@ -34,7 +38,13 @@ const close = () => {
 
       <!-- FORM CONTENT-->
        <form @submit.prevent='submit'>
-        <input v-model="identificator" placeholder="Email or Username" />
+        <input v-if="isLogin" v-model="identificator" placeholder="Email or Username" />
+        <input v-if="!isLogin" v-model="userName" placeholder="Username" />
+        <input v-if="!isLogin" v-model="firstName" placeholder="First Name" />
+        <input v-if="!isLogin" v-model="lastName" placeholder="Last Name" />
+        <input v-if="!isLogin" v-model="email" placeholder="Email" />
+        <input v-if="!isLogin" v-model="phoneNumber" placeholder="Phone Number" />
+
         <input v-model="password" placeholder="Password" />
         <button type="submit">{{ isLogin ? 'Login' : 'Register' }}</button>
        </form>
