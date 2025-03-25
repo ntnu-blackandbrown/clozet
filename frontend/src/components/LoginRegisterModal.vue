@@ -28,7 +28,10 @@ const registerSchema = yup.object({
     .min(8, 'Password must be at least 8 characters')
     .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .matches(/[0-9]/, 'Password must contain at least one number')
+    .matches(/[0-9]/, 'Password must contain at least one number'),
+  confirmPassword: yup.string()
+    .required('Please confirm your password')
+    .oneOf([yup.ref('password')], 'Passwords must match')
 })
 
 // Use computed to switch between schemas
@@ -40,6 +43,7 @@ const { handleSubmit, errors } = useForm({
 
 const { value: identificator, errorMessage: identificatorError } = useField('identificator')
 const { value: password, errorMessage: passwordError } = useField('password')
+const { value: confirmPassword, errorMessage: confirmPasswordError } = useField('confirmPassword')
 
 const { value: userName, errorMessage: userNameError } = useField('userName')
 const { value: firstName, errorMessage: firstNameError } = useField('firstName')
@@ -98,6 +102,8 @@ const close = () => {
 
         <input v-model="password" type="password" placeholder="Password" />
         <span class="error" id="passwordErrSpan">{{ passwordError }}</span>
+        <input v-if="!isLogin" v-model="confirmPassword" type="password" placeholder="Confirm Password" />
+        <span v-if="!isLogin" class="error" id="confirmPasswordErrSpan">{{ confirmPasswordError }}</span>
         <button type="submit">{{ isLogin ? 'Login' : 'Register' }}</button>
        </form>
 
