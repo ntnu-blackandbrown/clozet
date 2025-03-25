@@ -37,8 +37,21 @@ const registerSchema = yup.object({
 // Use computed to switch between schemas
 const currentSchema = computed(() => isLogin.value ? loginSchema : registerSchema)
 
-const { handleSubmit, errors } = useForm({
+const { handleSubmit, errors, meta } = useForm({
   validationSchema: currentSchema
+})
+
+// Add computed property for form validity
+const isFormValid = computed(() => {
+  if (isLogin.value) {
+    return !errors.value.identificator && !errors.value.password &&
+           identificator.value && password.value
+  } else {
+    return !errors.value.userName && !errors.value.firstName && !errors.value.lastName &&
+           !errors.value.email && !errors.value.password && !errors.value.confirmPassword &&
+           userName.value && firstName.value && lastName.value && email.value &&
+           password.value && confirmPassword.value
+  }
 })
 
 const { value: identificator, errorMessage: identificatorError } = useField('identificator')
@@ -86,6 +99,7 @@ const close = () => {
       <!-- FORM CONTENT-->
        <form @submit.prevent='submit'>
         <input v-if="isLogin" type="text" v-model="identificator" placeholder="Email or Username" />
+        <span class="error" id="identificatorErrSpan">{{ identificatorError }}</span>
         <template v-if="!isLogin">
           <input v-model="userName" type="text" placeholder="Username" />
           <span class="error" id="userNameErrSpan">{{ userNameError }}</span>
@@ -104,12 +118,12 @@ const close = () => {
         <span class="error" id="passwordErrSpan">{{ passwordError }}</span>
         <input v-if="!isLogin" v-model="confirmPassword" type="password" placeholder="Confirm Password" />
         <span v-if="!isLogin" class="error" id="confirmPasswordErrSpan">{{ confirmPasswordError }}</span>
-        <button type="submit">{{ isLogin ? 'Login' : 'Register' }}</button>
+        <button type="submit" :disabled="!isFormValid">{{ isLogin ? 'Login' : 'Register' }}</button>
        </form>
 
        <!-- FORM SWITCH -->
         <p>
-          <button class="toggle-form" @click="toggleForm">{{ toggleText }}</button>
+          <button id="toggle-form-btn" data-testid="toggle-form-btn" class="toggle-form" @click="toggleForm">{{ toggleText }}</button>
         </p>
     </div>
   </div>
@@ -195,10 +209,15 @@ button[type="submit"] {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-button[type="submit"]:hover {
+button[type="submit"]:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+button[type="submit"]:hover:not(:disabled) {
   background-color: #444;
 }
 
