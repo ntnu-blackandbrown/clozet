@@ -18,7 +18,8 @@ public class SecurityConfig {
     http
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/users/**").permitAll() // Allow access to /api/users endpoints
+            .requestMatchers("/api/users/**").permitAll()
+            .requestMatchers("/api/categories/**").permitAll() // Add this line
             .anyRequest().authenticated()
         );
     return http.build();
