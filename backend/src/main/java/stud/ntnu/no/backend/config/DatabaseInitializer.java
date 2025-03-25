@@ -13,17 +13,19 @@ public class DatabaseInitializer {
   @Bean
   CommandLineRunner initDatabase(UserRepository userRepository, PasswordEncoder passwordEncoder) {
     return args -> {
-      if (userRepository.findByUsername("admin").isEmpty()) {
-        User admin = new User();
-        admin.setUsername("Admin");
-        admin.setPasswordHash(passwordEncoder.encode("Admin1234"));
-        admin.setEmail("admin@example.com");
-        admin.setFirstName("Admin");
-        admin.setLastName("Administrator");
-        admin.setRole("ADMIN");
-        admin.setActive(true);
-        userRepository.save(admin);
-      }
+      // Slett alle eksisterende brukere (og testdata) før vi setter inn nye data
+      userRepository.deleteAll();
+
+      // Legg inn admin-brukeren på nytt
+      User admin = new User();
+      admin.setUsername("Admin");
+      admin.setPasswordHash(passwordEncoder.encode("Admin1234"));
+      admin.setEmail("admin@example.com");
+      admin.setFirstName("Admin");
+      admin.setLastName("Administrator");
+      admin.setRole("ADMIN");
+      admin.setActive(true);
+      userRepository.save(admin);
     };
   }
 }
