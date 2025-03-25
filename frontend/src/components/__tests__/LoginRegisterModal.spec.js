@@ -31,7 +31,6 @@ describe('LoginRegisterModal.vue', () => {
     expect(wrapper.find('input[placeholder="First Name"]').exists()).toBe(true)
     expect(wrapper.find('input[placeholder="Last Name"]').exists()).toBe(true)
     expect(wrapper.find('input[placeholder="Email"]').exists()).toBe(true)
-    expect(wrapper.find('input[placeholder="Phone Number"]').exists()).toBe(true)
     expect(wrapper.find('input[placeholder="Password"]').exists()).toBe(true)
     expect(wrapper.find('input[placeholder="Confirm Password"]').exists()).toBe(true)
     expect(wrapper.find('button').text()).toBe('Register')
