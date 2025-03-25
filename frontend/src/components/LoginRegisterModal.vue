@@ -7,15 +7,6 @@ const emit = defineEmits(['close'])
 
 const isLogin = ref(true)
 
-//const identificator = ref('')
-//const password = ref('')
-
-//const firstName = ref('')
-//const lastName = ref('')
-//const email = ref('')
-//const phoneNumber = ref('')
-//const userName = ref('')
-
 const formTitle = computed(() => isLogin.value ? 'Login' : 'Register')
 const toggleText = computed(() => isLogin.value ? 'Need an account? Register' : 'Already have an account? Login')
 
