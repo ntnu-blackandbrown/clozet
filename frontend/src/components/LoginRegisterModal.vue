@@ -62,7 +62,6 @@ const { value: userName, errorMessage: userNameError } = useField('userName')
 const { value: firstName, errorMessage: firstNameError } = useField('firstName')
 const { value: lastName, errorMessage: lastNameError } = useField('lastName')
 const { value: email, errorMessage: emailError } = useField('email')
-const { value: phoneNumber, errorMessage: phoneNumberError } = useField('phoneNumber')
 
 const toggleForm = () => {
   isLogin.value = !isLogin.value
@@ -109,8 +108,6 @@ const close = () => {
           <span class="error" id="lastNameErrSpan">{{ lastNameError }}</span>
           <input v-model="email" type="email" placeholder="Email" />
           <span class="error" id="emailErrSpan">{{ emailError }}</span>
-          <input v-model="phoneNumber" type="tel" placeholder="Phone Number" />
-          <span class="error" id="phoneNumberErrSpan">{{ phoneNumberError }}</span>
         </template>
 
 
