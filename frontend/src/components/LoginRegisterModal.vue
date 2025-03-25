@@ -2,18 +2,23 @@
 import { ref, computed } from 'vue'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
+import { useUserStore } from '../stores/UserStore'
+
+const userStore = useUserStore()
 
 const emit = defineEmits(['close'])
 
 const isLogin = ref(true)
 
-const formTitle = computed(() => isLogin.value ? 'Login' : 'Register')
-const toggleText = computed(() => isLogin.value ? 'Need an account? Register' : 'Already have an account? Login')
+const formTitle = computed(() => (isLogin.value ? 'Login' : 'Register'))
+const toggleText = computed(() =>
+  isLogin.value ? 'Need an account? Register' : 'Already have an account? Login',
+)
 
 // Login schema
 const loginSchema = yup.object({
   identificator: yup.string().required('Email or username is required'),
-  password: yup.string().required('Password is required')
+  password: yup.string().required('Password is required'),
 })
 
 // Register schema
@@ -23,34 +28,47 @@ const registerSchema = yup.object({
   lastName: yup.string().required('Last name is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
   phoneNumber: yup.string().matches(/^\+?[\d\s-]+$/, 'Invalid phone number'),
-  password: yup.string()
+  password: yup
+    .string()
     .required('Password is required')
     .min(8, 'Password must be at least 8 characters')
     .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
     .matches(/[0-9]/, 'Password must contain at least one number'),
-  confirmPassword: yup.string()
+  confirmPassword: yup
+    .string()
     .required('Please confirm your password')
-    .oneOf([yup.ref('password')], 'Passwords must match')
+    .oneOf([yup.ref('password')], 'Passwords must match'),
 })
 
 // Use computed to switch between schemas
-const currentSchema = computed(() => isLogin.value ? loginSchema : registerSchema)
+const currentSchema = computed(() => (isLogin.value ? loginSchema : registerSchema))
 
 const { handleSubmit, errors, meta } = useForm({
-  validationSchema: currentSchema
+  validationSchema: currentSchema,
 })
 
 // Add computed property for form validity
 const isFormValid = computed(() => {
   if (isLogin.value) {
-    return !errors.value.identificator && !errors.value.password &&
-           identificator.value && password.value
+    return (
+      !errors.value.identificator && !errors.value.password && identificator.value && password.value
+    )
   } else {
-    return !errors.value.userName && !errors.value.firstName && !errors.value.lastName &&
-           !errors.value.email && !errors.value.password && !errors.value.confirmPassword &&
-           userName.value && firstName.value && lastName.value && email.value &&
-           password.value && confirmPassword.value
+    return (
+      !errors.value.userName &&
+      !errors.value.firstName &&
+      !errors.value.lastName &&
+      !errors.value.email &&
+      !errors.value.password &&
+      !errors.value.confirmPassword &&
+      userName.value &&
+      firstName.value &&
+      lastName.value &&
+      email.value &&
+      password.value &&
+      confirmPassword.value
+    )
   }
 })
 
@@ -69,17 +87,25 @@ const toggleForm = () => {
 
 const submit = handleSubmit(async (values) => {
   console.log(values)
-  try{
-    if (isLogin.value){
-    console.log('Login')
-    //Call the login API
-    //push to logged in home page
-  } else {
-    console.log('Register')
-    //Call the register API
-    //push to logged in home page
-  }
-  emit('close') // close the modal after submit
+  try {
+    if (isLogin.value) {
+      console.log('Login')
+      //userStore.handleLogin(values)
+      //Call the login API
+      //push to logged in home page
+    } else {
+      console.log('Register')
+      userStore.handleRegister(
+        values.username,
+        values.email,
+        values.password,
+        values.firstName,
+        values.lastName,
+      )
+      //Call the register API
+      //push to logged in home page
+    }
+    emit('close') // close the modal after submit
   } catch (error) {
     console.error('Error while submitting form:', error)
   }
@@ -91,12 +117,12 @@ const close = () => {
 </script>
 
 <template>
-  <div class = "backdrop" @click.self="close">
+  <div class="backdrop" @click.self="close">
     <div class="container">
       <h2>{{ formTitle }}</h2>
 
       <!-- FORM CONTENT-->
-       <form @submit.prevent='submit'>
+      <form @submit.prevent="submit">
         <input v-if="isLogin" type="text" v-model="identificator" placeholder="Email or Username" />
         <span class="error" id="identificatorErrSpan">{{ identificatorError }}</span>
         <template v-if="!isLogin">
@@ -110,18 +136,31 @@ const close = () => {
           <span class="error" id="emailErrSpan">{{ emailError }}</span>
         </template>
 
-
         <input v-model="password" type="password" placeholder="Password" />
         <span class="error" id="passwordErrSpan">{{ passwordError }}</span>
-        <input v-if="!isLogin" v-model="confirmPassword" type="password" placeholder="Confirm Password" />
-        <span v-if="!isLogin" class="error" id="confirmPasswordErrSpan">{{ confirmPasswordError }}</span>
+        <input
+          v-if="!isLogin"
+          v-model="confirmPassword"
+          type="password"
+          placeholder="Confirm Password"
+        />
+        <span v-if="!isLogin" class="error" id="confirmPasswordErrSpan">{{
+          confirmPasswordError
+        }}</span>
         <button type="submit" :disabled="!isFormValid">{{ isLogin ? 'Login' : 'Register' }}</button>
-       </form>
+      </form>
 
-       <!-- FORM SWITCH -->
-        <p>
-          <button id="toggle-form-btn" data-testid="toggle-form-btn" class="toggle-form" @click="toggleForm">{{ toggleText }}</button>
-        </p>
+      <!-- FORM SWITCH -->
+      <p>
+        <button
+          id="toggle-form-btn"
+          data-testid="toggle-form-btn"
+          class="toggle-form"
+          @click="toggleForm"
+        >
+          {{ toggleText }}
+        </button>
+      </p>
     </div>
   </div>
 </template>
@@ -196,7 +235,7 @@ input:focus {
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
 }
 
-button[type="submit"] {
+button[type='submit'] {
   width: 100%;
   padding: 1rem;
   font-size: 1rem;
@@ -209,12 +248,12 @@ button[type="submit"] {
   transition: all 0.3s ease;
 }
 
-button[type="submit"]:disabled {
+button[type='submit']:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
 
-button[type="submit"]:hover:not(:disabled) {
+button[type='submit']:hover:not(:disabled) {
   background-color: #444;
 }
 

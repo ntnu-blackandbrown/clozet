@@ -44,7 +44,7 @@ describe('LoginRegisterModal.vue', () => {
     expect(wrapper.emitted()).toHaveProperty('close')
   })
 
-  it('check if the login button is disabled when the form is invalid', async() => {
+  it('check if the login button is disabled when the form is invalid', async () => {
     const submitBtn = wrapper.find('button')
     expect(submitBtn.attributes('disabled')).toBeDefined()
 
