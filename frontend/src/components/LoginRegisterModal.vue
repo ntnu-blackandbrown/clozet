@@ -116,49 +116,113 @@ const close = () => {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6); /* dark overlay */
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999;
+  padding: 2rem;
+  overflow-y: auto;
 }
 
 .container {
   background: white;
-  padding: 2rem;
-  border-radius: 8px;
+  padding: 3rem;
+  border-radius: 16px;
   width: 90%;
   max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  margin: auto;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.container h2 {
+  color: #333;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  font-weight: 500;
+  text-align: center;
 }
 
 input {
   width: 100%;
-  margin: 0.5rem 0;
-  padding: 0.5rem;
-  font-size: 1rem;
+  margin: 0.75rem 0;
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
-button {
-  padding: 0.6rem 1.2rem;
+input:focus {
+  outline: none;
+  border-color: #c4c4c4;
+  background-color: white;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 1rem;
   font-size: 1rem;
-  margin-top: 0.5rem;
+  margin-top: 1.5rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #444;
 }
 
 .toggle-form {
   background: none;
   border: none;
-  color: blue;
-  text-decoration: underline;
+  color: #666;
+  text-decoration: none;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   display: block;
-  margin: 0 auto;
+  margin: 1.5rem auto 0;
+  transition: color 0.3s ease;
+}
+
+.toggle-form:hover {
+  color: #333;
 }
 
 .error {
   display: block;
   color: #e74c3c;
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  margin: 0.25rem 0 0.5rem;
+  padding-left: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 2rem;
+  }
 }
 </style>
