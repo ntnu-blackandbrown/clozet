@@ -1,10 +1,12 @@
-package stud.ntnu.no.backend.User;
+package stud.ntnu.no.backend.User.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stud.ntnu.no.backend.User.DTOs.*;
 import stud.ntnu.no.backend.User.Exceptions.EmailAlreadyInUseException;
 import stud.ntnu.no.backend.User.Exceptions.UserNotFoundException;
+import stud.ntnu.no.backend.User.Model.User;
+import stud.ntnu.no.backend.User.Repository.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

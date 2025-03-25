@@ -7,7 +7,7 @@ import stud.ntnu.no.backend.User.DTOs.RegisterUserDTO;
 import stud.ntnu.no.backend.User.DTOs.StatusUserDTO;
 import stud.ntnu.no.backend.User.DTOs.UpdateUserDTO;
 import stud.ntnu.no.backend.User.DTOs.UserDTO;
-import stud.ntnu.no.backend.User.UserService;
+import stud.ntnu.no.backend.User.Service.UserService;
 
 import java.util.List;
 
