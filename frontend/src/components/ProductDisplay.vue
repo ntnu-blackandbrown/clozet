@@ -72,8 +72,14 @@ const images = ref([
         </button>
       </div>
       <div id="product-info">
-        <p>{{ created_at }}</p>
-        <p>{{ updated_at }}</p>
+        <div class="info-item">
+          <span class="info-label">Posted:</span>
+          <span class="info-value">{{ created_at }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Updated:</span>
+          <span class="info-value">{{ updated_at }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -182,5 +188,29 @@ const images = ref([
 
 .wishlist-button:hover .heart-icon {
   color: #e11d48;
+}
+
+#product-info {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.info-label {
+  font-weight: 500;
+  margin-right: 0.5rem;
+  color: #475569;
+}
+
+.info-value {
+  color: #64748b;
 }
 </style>
