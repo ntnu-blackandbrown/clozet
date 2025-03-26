@@ -1,7 +1,7 @@
 package stud.ntnu.no.backend.model;
 
 import jakarta.persistence.*;
-import stud.ntnu.no.backend.User.Model.User;
+import stud.ntnu.no.backend.User.Entity.User;
 
 import java.time.LocalDateTime;
 

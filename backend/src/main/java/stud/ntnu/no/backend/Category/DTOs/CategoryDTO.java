@@ -1,22 +1,47 @@
 package stud.ntnu.no.backend.Category.DTOs;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class CategoryDTO {
   private Long id;
   @NotBlank(message = "Name is required")
+  @Size(min = 3, max = 100)
   private String name;
 
   @NotBlank(message = "Description is required")
+  @Size(max = 255)
   private String description;
   private Long parentId;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
+  private List<Long> subcategoryIds;
+  private String parentName;
 
   // Getters and setters
 
+
+  public List<Long> getSubcategoryIds() {
+    return subcategoryIds;
+  }
+
+  public void setSubcategoryIds(List<Long> subcategoryIds) {
+    this.subcategoryIds = subcategoryIds;
+  }
+
+
+
+  // Add getter and setter
+  public String getParentName() {
+    return parentName;
+  }
+
+  public void setParentName(String parentName) {
+    this.parentName = parentName;
+  }
 
   public Long getId() {
     return id;
