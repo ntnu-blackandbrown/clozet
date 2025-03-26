@@ -4,7 +4,7 @@ import { computed, ref } from 'vue'
 // Define props with TypeScript types
 interface Props {
   name: string
-  type?: 'category' | 'location' | 'seller' | 'price'
+  type?: 'category' | 'location' | 'seller' | 'price' | 'shipping' | 'availability'
   amount?: string | number
   currency?: string
   color?: string
@@ -21,10 +21,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Default colors based on badge type using refs
 const defaultColors = ref({
-  category: { bg: '#e2e8f0', text: '#1a202c' },   // Light gray
-  location: { bg: '#f3f4f6', text: '#374151' },   // Light gray-blue
-  seller: { bg: '#edf2f7', text: '#2d3748' },     // Light blue-gray
-  price: { bg: '#f0fff4', text: '#276749' }       // Light green
+  category: { bg: '#e2e8f0', text: '#1a202c' },    // Light gray
+  location: { bg: '#f3f4f6', text: '#374151' },    // Light gray-blue
+  seller: { bg: '#edf2f7', text: '#2d3748' },      // Light blue-gray
+  price: { bg: '#f0fff4', text: '#276749' },       // Light green
+  shipping: { bg: '#ebf8ff', text: '#2b6cb0' },    // Light blue
+  availability: { bg: '#fef6e4', text: '#c05621' } // Light orange
 })
 
 // Compute actual colors to use
@@ -66,6 +68,20 @@ const getIcon = () => {
     case 'price':
       currentIcon.value = `
         <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+      `
+      break
+    case 'shipping':
+      currentIcon.value = `
+        <rect x="1" y="3" width="15" height="13"></rect>
+        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+      `
+      break
+    case 'availability':
+      currentIcon.value = `
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
       `
       break
     default:

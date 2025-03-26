@@ -58,8 +58,8 @@ const images = ref([
       </div>
       <div id="seller-info">
         <Badge name="Your Seller Name" type="seller" />
-        <p>{{ shipping_options }}</p>
-        <p>{{ status }}</p>
+        <Badge :name="shipping_options" type="shipping" />
+        <Badge :name="status" type="availability" />
       </div>
       <div>
         <button>Contact Seller</button>
