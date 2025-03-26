@@ -2,6 +2,7 @@
 import { mount } from '@vue/test-utils'
 import LoginRegisterModal from '@/components/LoginRegisterModal.vue'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
 
 // Mock console.log to prevent noise in test output
 vi.spyOn(console, 'log').mockImplementation(() => {})
@@ -12,6 +13,7 @@ describe('LoginRegisterModal.vue', () => {
   let toggleBtn
 
   beforeEach(() => {
+    setActivePinia(createPinia())
     wrapper = mount(LoginRegisterModal)
     toggleBtn = wrapper.find('button[data-testid="toggle-form-btn"]')
   })

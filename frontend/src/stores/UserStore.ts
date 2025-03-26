@@ -21,8 +21,8 @@ export const useUserStore = defineStore('user', () => {
         password: password,
         firstName: firstName,
         lastName: lastName,
-        role: "user"
-      });
+        role: 'user',
+      })
       console.log(response)
     } catch (error) {
       console.error('Error while registering user:', error)
