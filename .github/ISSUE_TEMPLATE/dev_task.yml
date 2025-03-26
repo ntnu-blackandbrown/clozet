@@ -1,0 +1,60 @@
+---
+name: 🛠️ Development Task
+description: Beskriv en utviklingsoppgave relatert til backend-systemstruktur
+title: "[Task] [Brief Task Name]"
+labels: ["backend", "frontend", "MVP", "critical", "High priority"]  # Added new labels
+assignees: ["kaamyashinde"]  # Updated assignee
+projects: ["Clozet"]
+milestone: "Basic Infrastructure and Core Functionalities"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 🛠️ Development Task  
+        *Beskriv oppgaven nedenfor. Vær så spesifikk som mulig!*  
+
+  - type: textarea
+    attributes:
+      label: "Beskrivelse"
+      description: "Hva skal implementeres/endres? Hvorfor er dette nødvendig?"
+      placeholder: "Eksempel: 'Implementer caching i produktkatalog-API for å redusere databasekall...'"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: "Acceptance Criteria"
+      description: "Hvordan vet vi at oppgaven er fullført? List opp krav."
+      placeholder: |
+        - [ ] Cache lagrer data i 1 time
+        - [ ] Cache tømmes ved produktoppdateringer
+        - [ ] Metrikker logges for cache-treff
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: "Tekniske Detaljer"
+      description: "Teknologier/rammeverk som bør brukes, eller avhengigheter."
+      placeholder: "Eksempel: 'Bruk Redis for caching. Se 'shared-cache-modul' for eksisterende implementasjon.'"
+
+  - type: dropdown
+    attributes:
+      label: "Kompleksitet"
+      description: "Estimert arbeidsmengde"
+      options:
+        - "Liten (1-2 timer)"
+        - "Medium (halv dag)"
+        - "Høy (1+ dager)"
+    validations:
+      required: true
+
+  - type: checkboxes
+    attributes:
+      label: "Forhåndsvalg"
+      options:
+        - label: "Krever database-migrering"
+          required: false
+        - label: "Krever dokumentasjonsoppdatering"
+          required: false
+---
