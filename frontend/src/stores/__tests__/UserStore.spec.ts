@@ -30,17 +30,14 @@ describe('UserStore', () => {
 
     await store.handleRegister('user', 'user@example.com', 'Password1', 'First', 'Last')
 
-    expect(mockedAxios.post).toHaveBeenCalledWith(
-      'http://localhost:8080/api/users',
-      {
-        email: 'user@example.com',
-        username: 'user',
-        password: 'Password1',
-        firstName: 'First',
-        lastName: 'Last',
-        role: 'user',
-      }
-    )
+    expect(mockedAxios.post).toHaveBeenCalledWith('http://localhost:8080/api/users', {
+      email: 'user@example.com',
+      username: 'user',
+      password: 'Password1',
+      firstName: 'First',
+      lastName: 'Last',
+      role: 'user',
+    })
     expect(consoleLogSpy).toHaveBeenCalledWith(responseData)
     consoleLogSpy.mockRestore()
   })

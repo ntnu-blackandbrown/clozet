@@ -7,8 +7,8 @@ import LoginRegisterModal from '../components/LoginRegisterModal.vue'
 vi.mock('../components/LoginRegisterModal.vue', () => ({
   default: {
     name: 'LoginRegisterModal',
-    template: '<div class="mock-modal"></div>'
-  }
+    template: '<div class="mock-modal"></div>',
+  },
 }))
 
 describe('App.vue', () => {

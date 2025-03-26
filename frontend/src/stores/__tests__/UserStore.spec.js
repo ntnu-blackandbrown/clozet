@@ -39,30 +39,21 @@ describe('UserStore', () => {
         id: 1,
         username: 'testuser',
         token: 'test-token',
-        identificator: 'test-id'
-      }
+        identificator: 'test-id',
+      },
     }
     axios.post.mockResolvedValueOnce(mockResponse)
 
-    await store.handleRegister(
-      'testuser',
-      'test@example.com',
-      'password123',
-      'Test',
-      'User'
-    )
+    await store.handleRegister('testuser', 'test@example.com', 'password123', 'Test', 'User')
 
-    expect(axios.post).toHaveBeenCalledWith(
-      'http://localhost:8080/api/users',
-      {
-        email: 'test@example.com',
-        username: 'testuser',
-        password: 'password123',
-        firstName: 'Test',
-        lastName: 'User',
-        role: 'user'
-      }
-    )
+    expect(axios.post).toHaveBeenCalledWith('http://localhost:8080/api/users', {
+      email: 'test@example.com',
+      username: 'testuser',
+      password: 'password123',
+      firstName: 'Test',
+      lastName: 'User',
+      role: 'user',
+    })
     expect(axios.post).toHaveBeenCalledTimes(1)
   })
 
@@ -73,18 +64,9 @@ describe('UserStore', () => {
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-    await store.handleRegister(
-      'testuser',
-      'test@example.com',
-      'password123',
-      'Test',
-      'User'
-    )
+    await store.handleRegister('testuser', 'test@example.com', 'password123', 'Test', 'User')
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Error while registering user:',
-      mockError
-    )
+    expect(consoleSpy).toHaveBeenCalledWith('Error while registering user:', mockError)
     expect(axios.post).toHaveBeenCalledTimes(1)
 
     consoleSpy.mockRestore()

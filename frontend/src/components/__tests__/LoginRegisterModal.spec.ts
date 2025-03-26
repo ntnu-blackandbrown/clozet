@@ -87,7 +87,7 @@ describe('LoginRegisterModal.vue', () => {
     expect(wrapper.emitted()).toHaveProperty('close')
     consoleLogSpy.mockRestore()
   })
-/*
+  /*
   it('submits the register form and calls handleRegister', async () => {
     // Switch to register mode.
     const toggleButton = wrapper.find('[data-testid="toggle-form-btn"]')
