@@ -61,9 +61,15 @@ const images = ref([
         <Badge :name="shipping_options" type="shipping" />
         <Badge :name="status" type="availability" />
       </div>
-      <div>
-        <button>Contact Seller</button>
-        <button>Wishlist</button>
+      <div class="action-buttons">
+        <button class="contact-button">Contact Seller</button>
+        <button class="wishlist-button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               class="heart-icon">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </button>
       </div>
       <div id="product-info">
         <p>{{ created_at }}</p>
@@ -126,5 +132,55 @@ const images = ref([
 
 .product-details {
   flex: 1;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.contact-button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.contact-button:hover {
+  background-color: #2563eb;
+}
+
+.wishlist-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wishlist-button:hover {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}
+
+.wishlist-button .heart-icon {
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+.wishlist-button:hover .heart-icon {
+  color: #e11d48;
 }
 </style>
