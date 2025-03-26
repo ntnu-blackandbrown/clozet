@@ -96,7 +96,7 @@ const submit = handleSubmit(async (values) => {
     } else {
       console.log('Register')
       userStore.handleRegister(
-        values.username,
+        values.userName,
         values.email,
         values.password,
         values.firstName,
