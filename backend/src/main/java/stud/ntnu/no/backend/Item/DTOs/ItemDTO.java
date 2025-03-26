@@ -27,6 +27,8 @@ public class ItemDTO {
     private boolean isVippsPaymentEnabled;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+
     
     // Constructors
     public ItemDTO() {
