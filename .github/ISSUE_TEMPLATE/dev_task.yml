@@ -2,10 +2,9 @@
 name: 🛠️ Development Task
 description: Beskriv en utviklingsoppgave relatert til backend-systemstruktur
 title: "[Task] [Brief Task Name]"
-labels: ["backend", "frontend", "MVP", "critical", "High priority"]  # Added new labels
-assignees: ["kaamyashinde"]  # Updated assignee
-projects: ["Clozet"]
-milestone: "Basic Infrastructure and Core Functionalities"
+labels: ["backend", "frontend", "MVP", "critical", "High priority"]
+assignees: ["kaamyashinde"]
+projects: ["Clozet"]  # Optional: Links to a project board
 body:
   - type: markdown
     attributes:
