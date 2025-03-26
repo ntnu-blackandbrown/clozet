@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import stud.ntnu.no.backend.Category.DTOs.CategoryDTO;
 import stud.ntnu.no.backend.Category.Exceptions.CategoryNotFoundException;
 import stud.ntnu.no.backend.Category.Mapper.CategoryMapper;
-import stud.ntnu.no.backend.Category.Model.Category;
+import stud.ntnu.no.backend.Category.Entity.Category;
 import stud.ntnu.no.backend.Category.Repository.CategoryRepository;
 
 import java.time.LocalDateTime;
