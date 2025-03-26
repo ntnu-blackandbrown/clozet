@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-
+import Badge from '../components/Badge.vue'
 const imageUrl = ref('')
 const itemId = ref('')
 const title = ref('Nike Shoes')
-const description_full = ref('This is a long description of the product. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.')
+const description_full = ref(
+  "This is a long description of the product. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+)
 const category = ref('Shoes')
 const location = ref('Oslo')
 const price = ref('1000')
@@ -27,13 +29,12 @@ const images = ref([
   { src: image1, alt: 'Image 1' },
   { src: image2, alt: 'Image 2' },
   { src: image3, alt: 'Image 3' },
-  { src: screenshot, alt: 'Screenshot' }
+  { src: screenshot, alt: 'Screenshot' },
 ])
-
 </script>
 
 <template>
-  <div>
+  <div class="product-display">
     <div class="product-image-container">
       <div class="gallery-container">
         <div v-for="(image, index) in images" :key="index" class="gallery-item">
@@ -45,23 +46,41 @@ const images = ref([
       </div>
     </div>
 
-    <h3>{{ title }}</h3>
-    <p>{{ description_full }}</p>
-    <p>{{ category }}</p>
-    <p>{{ location }}</p>
-    <p>{{ price }}</p>
-    <p>{{ seller }}</p>
-    <p>{{ shipping_options }}</p>
-    <p>{{ status }}</p>
-    <p>{{ created_at }}</p>
-    <p>{{ updated_at }}</p>
+    <div class="product-details">
+      <div id="product-title">
+        <h3>{{ title }}</h3>
+      </div>
+      <div id="product-description">
+        <p>{{ description_full }}</p>
+        <Badge name="Your Category Name" type="category" />
+        <Badge name="Your Location Name" type="location" />
+        <Badge amount="1000" currency="NOK" type="price" />
+      </div>
+      <div id="seller-info">
+        <Badge name="Your Seller Name" type="seller" />
+        <p>{{ shipping_options }}</p>
+        <p>{{ status }}</p>
+      </div>
+      <div>
+        <button>Contact Seller</button>
+        <button>Wishlist</button>
+      </div>
+      <div id="product-info">
+        <p>{{ created_at }}</p>
+        <p>{{ updated_at }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <style>
+.product-display {
+  display: flex;
+}
+
 .product-image-container {
   display: flex;
-  margin-bottom: 20px;
+  margin-right: 20px;
   align-items: flex-start;
 }
 
@@ -103,5 +122,9 @@ const images = ref([
 
 .gallery-image:hover {
   border-color: #4a90e2;
+}
+
+.product-details {
+  flex: 1;
 }
 </style>
