@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.User.Model;
+package stud.ntnu.no.backend.User.Entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -117,5 +117,17 @@ public class User {
 
   public void setActive(boolean active) {
     isActive = active;
+  }
+
+  public void setFullName(String fullName) {
+    if (fullName != null) {
+      String[] parts = fullName.split(" ", 2);
+      if (parts.length > 0) {
+        this.firstName = parts[0];
+      }
+      if (parts.length > 1) {
+        this.lastName = parts[1];
+      }
+    }
   }
 }

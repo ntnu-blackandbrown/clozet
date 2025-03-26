@@ -58,4 +58,15 @@ public class UpdateUserDTO {
   public void setRole(String role) {
     this.role = role;
   }
+
+  public String getFullName() {
+    if (firstName != null && lastName != null) {
+      return firstName + " " + lastName;
+    } else if (firstName != null) {
+      return firstName;
+    } else if (lastName != null) {
+      return lastName;
+    }
+    return null;
+  }
 }

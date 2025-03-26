@@ -4,7 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import stud.ntnu.no.backend.User.Model.User;
+import stud.ntnu.no.backend.User.Entity.User;
 import stud.ntnu.no.backend.User.Repository.UserRepository;
 
 @Configuration

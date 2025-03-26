@@ -19,7 +19,7 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/users/**").permitAll()
-            .requestMatchers("/api/categories/**").permitAll() // Add this line
+            .requestMatchers("/api/**").permitAll() //for nå tillater jeg alle requests, og så senere, så må man ha vilidering, for alt annet utennom registrering, men det blir sikret senerer
             .anyRequest().authenticated()
         );
     return http.build();

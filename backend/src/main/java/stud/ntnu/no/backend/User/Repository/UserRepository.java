@@ -1,7 +1,7 @@
 package stud.ntnu.no.backend.User.Repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import stud.ntnu.no.backend.User.Model.User;
+import stud.ntnu.no.backend.User.Entity.User;
 
 import java.util.Optional;
 
