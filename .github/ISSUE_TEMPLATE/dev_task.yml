@@ -1,5 +1,5 @@
 ---
-name: 🛠️ Development Task
+name: 🛠️ Frontend Development Task
 description: Beskriv en utviklingsoppgave relatert til backend-systemstruktur
 title: "[Task] [Brief Task Name]"
 labels: ["backend", "frontend", "MVP", "critical", "High priority"]
