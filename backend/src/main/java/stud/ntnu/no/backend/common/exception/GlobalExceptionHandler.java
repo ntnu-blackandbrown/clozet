@@ -11,9 +11,9 @@ import stud.ntnu.no.backend.Category.Exceptions.CategoryValidationException;
 import stud.ntnu.no.backend.User.Exceptions.EmailAlreadyInUseException;
 import stud.ntnu.no.backend.User.Exceptions.UserNotFoundException;
 import stud.ntnu.no.backend.User.Exceptions.UserValidationException;
+import stud.ntnu.no.backend.User.Exceptions.UsernameAlreadyExistsException;
 import stud.ntnu.no.backend.Review.Exceptions.ReviewNotFoundException;
 import stud.ntnu.no.backend.Review.Exceptions.ReviewValidationException;
-import stud.ntnu.no.backend.User.Exceptions.UsernameAlreadyExistsException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -60,6 +60,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<Object> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
     // Generic exception handlers
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -82,7 +87,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllUncaughtException(Exception ex) {
         return buildErrorResponse("Unexpected error occurred: " + ex.getMessage(),
-            HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private ResponseEntity<Object> buildErrorResponse(String message, HttpStatus status) {
@@ -93,11 +98,5 @@ public class GlobalExceptionHandler {
         body.put("message", message);
 
         return new ResponseEntity<>(body, status);
-    }
-
-    // Add this inside the GlobalExceptionHandler class
-    @ExceptionHandler(UsernameAlreadyExistsException.class)
-    public ResponseEntity<Object> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
-        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 }
