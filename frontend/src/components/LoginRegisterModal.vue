@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useUserStore } from '../stores/UserStore'
+import BaseModal from './BaseModal.vue'
 
 const userStore = useUserStore()
 
@@ -110,104 +111,56 @@ const submit = handleSubmit(async (values) => {
     console.error('Error while submitting form:', error)
   }
 })
-
-const close = () => {
-  emit('close') //close when clicking outside the modal
-}
 </script>
 
 <template>
-  <div class="backdrop" @click.self="close">
-    <div class="container">
-      <h2>{{ formTitle }}</h2>
+  <BaseModal @close="emit('close')" maxWidth="400px" padding="3rem" hideCloseButton>
+    <h2>{{ formTitle }}</h2>
 
-      <!-- FORM CONTENT-->
-      <form @submit.prevent="submit">
-        <input v-if="isLogin" type="text" v-model="identificator" placeholder="Email or Username" />
-        <span class="error" id="identificatorErrSpan">{{ identificatorError }}</span>
-        <template v-if="!isLogin">
-          <input v-model="userName" type="text" placeholder="Username" />
-          <span class="error" id="userNameErrSpan">{{ userNameError }}</span>
-          <input v-model="firstName" type="text" placeholder="First Name" />
-          <span class="error" id="firstNameErrSpan">{{ firstNameError }}</span>
-          <input v-model="lastName" type="text" placeholder="Last Name" />
-          <span class="error" id="lastNameErrSpan">{{ lastNameError }}</span>
-          <input v-model="email" type="email" placeholder="Email" />
-          <span class="error" id="emailErrSpan">{{ emailError }}</span>
-        </template>
+    <!-- FORM CONTENT-->
+    <form @submit.prevent="submit">
+      <input v-if="isLogin" type="text" v-model="identificator" placeholder="Email or Username" />
+      <span class="error" id="identificatorErrSpan">{{ identificatorError }}</span>
+      <template v-if="!isLogin">
+        <input v-model="userName" type="text" placeholder="Username" />
+        <span class="error" id="userNameErrSpan">{{ userNameError }}</span>
+        <input v-model="firstName" type="text" placeholder="First Name" />
+        <span class="error" id="firstNameErrSpan">{{ firstNameError }}</span>
+        <input v-model="lastName" type="text" placeholder="Last Name" />
+        <span class="error" id="lastNameErrSpan">{{ lastNameError }}</span>
+        <input v-model="email" type="email" placeholder="Email" />
+        <span class="error" id="emailErrSpan">{{ emailError }}</span>
+      </template>
 
-        <input v-model="password" type="password" placeholder="Password" />
-        <span class="error" id="passwordErrSpan">{{ passwordError }}</span>
-        <input
-          v-if="!isLogin"
-          v-model="confirmPassword"
-          type="password"
-          placeholder="Confirm Password"
-        />
-        <span v-if="!isLogin" class="error" id="confirmPasswordErrSpan">{{
-          confirmPasswordError
-        }}</span>
-        <button type="submit" :disabled="!isFormValid">{{ isLogin ? 'Login' : 'Register' }}</button>
-      </form>
+      <input v-model="password" type="password" placeholder="Password" />
+      <span class="error" id="passwordErrSpan">{{ passwordError }}</span>
+      <input
+        v-if="!isLogin"
+        v-model="confirmPassword"
+        type="password"
+        placeholder="Confirm Password"
+      />
+      <span v-if="!isLogin" class="error" id="confirmPasswordErrSpan">{{
+        confirmPasswordError
+      }}</span>
+      <button type="submit" :disabled="!isFormValid">{{ isLogin ? 'Login' : 'Register' }}</button>
+    </form>
 
-      <!-- FORM SWITCH -->
-      <p>
-        <button
-          id="toggle-form-btn"
-          data-testid="toggle-form-btn"
-          class="toggle-form"
-          @click="toggleForm"
-        >
-          {{ toggleText }}
-        </button>
-      </p>
-    </div>
-  </div>
+    <!-- FORM SWITCH -->
+    <p>
+      <button
+        id="toggle-form-btn"
+        data-testid="toggle-form-btn"
+        class="toggle-form"
+        @click="toggleForm"
+      >
+        {{ toggleText }}
+      </button>
+    </p>
+  </BaseModal>
 </template>
 
 <style scoped>
-.backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(5px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-  padding: 2rem;
-  overflow-y: auto;
-}
-
-.container {
-  background: white;
-  padding: 3rem;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  margin: auto;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.container::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
 .container h2 {
   color: #333;
   font-size: 1.8rem;
@@ -282,7 +235,7 @@ button[type='submit']:hover:not(:disabled) {
 }
 
 @media (max-width: 480px) {
-  .container {
+  :deep(.container) {
     padding: 2rem;
   }
 }
