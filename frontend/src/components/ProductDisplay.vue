@@ -6,52 +6,53 @@ import Badge from '../components/Badge.vue'
 const props = defineProps({
   imageUrl: {
     type: String,
-    default: ''
+    default: '',
   },
   itemId: {
     type: String,
-    default: ''
+    default: '',
   },
   title: {
     type: String,
-    default: 'Nike Shoes'
+    default: 'Nike Shoes',
   },
   description_full: {
     type: String,
-    default: "This is a long description of the product. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
+    default:
+      "This is a long description of the product. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
   },
   category: {
     type: String,
-    default: 'Shoes'
+    default: 'Shoes',
   },
   location: {
     type: String,
-    default: 'Oslo'
+    default: 'Oslo',
   },
   price: {
     type: Number,
-    default: 1000
+    default: 1000,
   },
   seller: {
     type: String,
-    default: 'John Doe'
+    default: 'John Doe',
   },
   shipping_options: {
     type: String,
-    default: 'Standard Shipping'
+    default: 'Standard Shipping',
   },
   status: {
     type: String,
-    default: 'Available'
+    default: 'Available',
   },
   created_at: {
     type: String,
-    default: '2021-01-01'
+    default: '2021-01-01',
   },
   updated_at: {
     type: String,
-    default: '2021-01-01'
-  }
+    default: '2021-01-01',
+  },
 })
 
 // Import all images from assets/images
@@ -102,10 +103,21 @@ const images = ref([
       <div class="action-buttons">
         <button class="contact-button">Contact Seller</button>
         <button class="wishlist-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-               class="heart-icon">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="heart-icon"
+          >
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+            ></path>
           </svg>
         </button>
       </div>

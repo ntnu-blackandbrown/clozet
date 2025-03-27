@@ -6,28 +6,30 @@ import type { PropType } from 'vue'
 const props = defineProps({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   type: {
-    type: String as PropType<'category' | 'location' | 'seller' | 'price' | 'shipping' | 'availability'>,
-    default: 'category'
+    type: String as PropType<
+      'category' | 'location' | 'seller' | 'price' | 'shipping' | 'availability'
+    >,
+    default: 'category',
   },
   amount: {
     type: [String, Number] as PropType<string | number>,
-    default: ''
+    default: '',
   },
   currency: {
     type: String,
-    default: 'NOK'
+    default: 'NOK',
   },
   color: {
     type: String,
-    default: ''
+    default: '',
   },
   textColor: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
 })
 
 // 2) Store default colors in a plain object (no ref needed)
@@ -37,7 +39,7 @@ const defaultColors = {
   seller: { bg: '#edf2f7', text: '#2d3748' },
   price: { bg: '#f0fff4', text: '#276749' },
   shipping: { bg: '#ebf8ff', text: '#2b6cb0' },
-  availability: { bg: '#fef6e4', text: '#c05621' }
+  availability: { bg: '#fef6e4', text: '#c05621' },
 }
 
 // 3) Store icon paths in a plain object
@@ -63,7 +65,7 @@ const iconPaths = {
   availability: `
     <circle cx="12" cy="12" r="10"></circle>
     <polyline points="12 6 12 12 16 14"></polyline>
-  `
+  `,
 }
 
 // 4) Use computed properties for colors, display text, and icon

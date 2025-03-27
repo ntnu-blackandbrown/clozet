@@ -16,7 +16,7 @@ const emit = defineEmits(['close'])
 
 // Expose methods to parent component
 defineExpose({
-  setProductId
+  setProductId,
 })
 </script>
 

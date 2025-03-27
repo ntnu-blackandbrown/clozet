@@ -4,24 +4,24 @@ import { defineProps } from 'vue'
 const props = defineProps({
   id: {
     type: String,
-    required: true
+    required: true,
   },
   title: {
     type: String,
-    required: true
+    required: true,
   },
   price: {
     type: Number,
-    required: true
+    required: true,
   },
   category: {
     type: String,
-    required: true
+    required: true,
   },
   image: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const emit = defineEmits(['click'])
@@ -34,7 +34,7 @@ const handleClick = () => {
 <template>
   <div class="product-card" @click="handleClick">
     <div class="product-image">
-      <img :src="image" :alt="title">
+      <img :src="image" :alt="title" />
     </div>
     <div class="product-info">
       <h3>{{ title }}</h3>
@@ -51,7 +51,9 @@ const handleClick = () => {
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .product-card:hover {

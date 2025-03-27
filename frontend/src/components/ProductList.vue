@@ -6,24 +6,24 @@ import ProductCard from './ProductCard.vue'
 const props = defineProps({
   productId: {
     type: Number,
-    default: ''
+    default: '',
   },
   title: {
     type: String,
-    default: 'Nike Running Shoes'
+    default: 'Nike Running Shoes',
   },
   price: {
     type: Number,
-    default: 1200
+    default: 1200,
   },
   category: {
     type: String,
-    default: 'Shoes'
+    default: 'Shoes',
   },
   image: {
     type: String,
-    default: '/src/assets/images/main-image.png'
-  }
+    default: '/src/assets/images/main-image.png',
+  },
 })
 
 // Sample product data
@@ -33,22 +33,22 @@ const products = ref([
     title: 'Nike Running Shoes',
     price: '1200',
     category: 'Shoes',
-    image: '/src/assets/images/main-image.png'
+    image: '/src/assets/images/main-image.png',
   },
   {
     id: 'prod-2',
     title: 'Designer Backpack',
     price: '800',
     category: 'Bags',
-    image: '/src/assets/images/image-1.png'
+    image: '/src/assets/images/image-1.png',
   },
   {
     id: 'prod-3',
     title: 'Casual Denim Jacket',
     price: '950',
     category: 'Clothing',
-    image: '/src/assets/images/image-2.png'
-  }
+    image: '/src/assets/images/image-2.png',
+  },
 ])
 
 const showProductModal = ref(false)
@@ -92,7 +92,7 @@ const openProductModal = (productId) => {
         v-bind="product"
         @click="openProductModal"
       />
-           <ProductCard
+      <ProductCard
         v-for="product in products"
         :key="product.id"
         v-bind="product"
