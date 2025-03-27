@@ -1,20 +1,9 @@
 <script setup>
-import { defineEmits, defineProps } from 'vue'
+import { defineEmits, ref } from 'vue'
 
-const props = defineProps({
-  hideCloseButton: {
-    type: Boolean,
-    default: false
-  },
-  maxWidth: {
-    type: String,
-    default: '900px'
-  },
-  padding: {
-    type: String,
-    default: '2rem'
-  }
-})
+const hideCloseButton = ref(false)
+const maxWidth = ref('900px')
+const padding = ref('2rem')
 
 const emit = defineEmits(['close'])
 
