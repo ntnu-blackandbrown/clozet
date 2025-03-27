@@ -2,6 +2,29 @@
 import { ref, nextTick } from 'vue'
 import ProductDisplayModal from '../components/modals/ProductDisplayModal.vue'
 
+const props = defineProps({
+  productId: {
+    type: Number,
+    default: ''
+  },
+  title: {
+    type: String,
+    default: 'Nike Running Shoes'
+  },
+  price: {
+    type: Number,
+    default: 1200
+  },
+  category: {
+    type: String,
+    default: 'Shoes'
+  },
+  image: {
+    type: String,
+    default: '/src/assets/images/main-image.png'
+  }
+})
+
 // Sample product data
 const products = ref([
   {
@@ -45,18 +68,16 @@ const openProductModal = (productId) => {
 
     <div class="products-grid">
       <div
-        v-for="product in products"
-        :key="product.id"
         class="product-card"
-        @click="openProductModal(product.id)"
+        @click="openProductModal(id)"
       >
         <div class="product-image">
-          <img :src="product.image" :alt="product.title">
+          <img :src="image" :alt="title">
         </div>
         <div class="product-info">
-          <h3>{{ product.title }}</h3>
-          <p class="price">{{ product.price }} NOK</p>
-          <p class="category">{{ product.category }}</p>
+          <h3>{{ title }}</h3>
+          <p class="price">{{ price }} NOK</p>
+          <p class="category">{{category }}</p>
           <button class="view-details">View Details</button>
         </div>
       </div>
