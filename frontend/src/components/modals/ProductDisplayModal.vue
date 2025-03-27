@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import ProductDisplay from './ProductDisplay.vue'
+import ProductDisplay from '../ProductDisplay.vue'
 import BaseModal from './BaseModal.vue'
 
 // Use ref for the productId instead of defineProps

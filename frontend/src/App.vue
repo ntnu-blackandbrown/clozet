@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import LoginRegisterModal from './components/LoginRegisterModal.vue'
+import LoginRegisterModal from './components/modals/LoginRegisterModal.vue'
 import ProductList from './components/ProductList.vue'
 
 const showLoginModal = ref(false)

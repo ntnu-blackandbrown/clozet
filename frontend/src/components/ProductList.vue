@@ -1,6 +1,6 @@
 <script setup>
 import { ref, nextTick } from 'vue'
-import ProductDisplayModal from './ProductDisplayModal.vue'
+import ProductDisplayModal from '../components/modals/ProductDisplayModal.vue'
 
 // Sample product data
 const products = ref([
