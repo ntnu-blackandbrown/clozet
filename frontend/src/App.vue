@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import LoginRegisterModal from './components/modals/LoginRegisterModal.vue'
 import ProductList from './components/ProductList.vue'
+import { RouterView } from 'vue-router'
 
 const showLoginModal = ref(false)
 </script>
@@ -9,12 +10,16 @@ const showLoginModal = ref(false)
 <template>
   <div :class="{ blurred: showLoginModal }">
     <header>
-      <h1>Welcome to Clozet!</h1>
-      <button @click="showLoginModal = true" class="login-button">Login / Register</button>
-    </header>
+      <img alt="Vue logo" class="logo" src="@/assets/logo.png" width="125" height="125" />
 
+        <h1>Welcome to Clozet!</h1>
+        <nav>
+          <RouterLink to="/product-display">Product Display</RouterLink>
+        </nav>
+        <button @click="showLoginModal = true" class="login-button">Login / Register</button>
+    </header>
     <main>
-      <ProductList />
+      <RouterView />
     </main>
   </div>
 
