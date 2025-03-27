@@ -1,13 +1,9 @@
-package stud.ntnu.no.backend.Message.Entity;
+package stud.ntnu.no.backend.Message.DTOs;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-@Entity
-@Table(name = "messages")
-public class Message {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class MessageDTO {
     private Long id;
     private String sender;
     private String receiver;
@@ -15,27 +11,16 @@ public class Message {
     private LocalDateTime timestamp;
     private Boolean isRead;
 
-    // Default constructor required by JPA
-    public Message() {
+    public MessageDTO() {
     }
-    
-    // Full constructor
-    public Message(Long id, String sender, String receiver, String content,
-                  LocalDateTime timestamp, Boolean isRead) {
+
+    public MessageDTO(Long id, String sender, String receiver, String content, 
+                     LocalDateTime timestamp, Boolean isRead) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
         this.timestamp = timestamp;
-        this.isRead = isRead;
-    }
-    
-    // Constructor for new messages (without ID)
-    public Message(String sender, String receiver, String content, Boolean isRead) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.content = content;
-        this.timestamp = LocalDateTime.now(); // Set current time
         this.isRead = isRead;
     }
 
@@ -86,5 +71,35 @@ public class Message {
 
     public void setIsRead(Boolean isRead) {
         this.isRead = isRead;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MessageDTO that = (MessageDTO) o;
+        return Objects.equals(id, that.id) &&
+               Objects.equals(sender, that.sender) &&
+               Objects.equals(receiver, that.receiver) &&
+               Objects.equals(content, that.content) &&
+               Objects.equals(timestamp, that.timestamp) &&
+               Objects.equals(isRead, that.isRead);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, sender, receiver, content, timestamp, isRead);
+    }
+
+    @Override
+    public String toString() {
+        return "MessageDTO{" +
+                "id=" + id +
+                ", sender='" + sender + '\'' +
+                ", receiver='" + receiver + '\'' +
+                ", content='" + content + '\'' +
+                ", timestamp=" + timestamp +
+                ", isRead=" + isRead +
+                '}';
     }
 }
