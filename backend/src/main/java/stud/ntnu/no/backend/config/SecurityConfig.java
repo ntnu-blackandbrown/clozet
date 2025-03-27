@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.security.config;
+package stud.ntnu.no.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -2,7 +2,7 @@ package stud.ntnu.no.backend.Review.Entity;
 
 import jakarta.persistence.*;
 import stud.ntnu.no.backend.User.Entity.User;
-import stud.ntnu.no.backend.model.Transaction;
+import stud.ntnu.no.backend.Transaction.Entity.Transaction;
 
 import java.time.LocalDateTime;
 

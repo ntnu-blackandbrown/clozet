@@ -2,9 +2,13 @@ package stud.ntnu.no.backend.Item.Entity;
 
 import jakarta.persistence.*;
 import stud.ntnu.no.backend.Category.Entity.Category;
+import stud.ntnu.no.backend.Favorite.Entity.Favorite;
+import stud.ntnu.no.backend.ItemImage.Entity.ItemImage;
 import stud.ntnu.no.backend.Location.Entity.Location;
+import stud.ntnu.no.backend.Message.Entity.Message;
+import stud.ntnu.no.backend.ShippingOption.Entity.ShippingOption;
+import stud.ntnu.no.backend.Transaction.Entity.Transaction;
 import stud.ntnu.no.backend.User.Entity.User;
-import stud.ntnu.no.backend.model.*;
 
 import java.time.LocalDateTime;
 import java.util.List;

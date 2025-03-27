@@ -15,6 +15,9 @@ import stud.ntnu.no.backend.User.Exceptions.UserValidationException;
 import stud.ntnu.no.backend.User.Exceptions.UsernameAlreadyExistsException;
 import stud.ntnu.no.backend.Review.Exceptions.ReviewNotFoundException;
 import stud.ntnu.no.backend.Review.Exceptions.ReviewValidationException;
+import stud.ntnu.no.backend.ShippingOption.Exceptions.ShippingOptionNotFoundException;
+import stud.ntnu.no.backend.ShippingOption.Exceptions.ShippingOptionValidationException;
+
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -108,5 +111,16 @@ public class GlobalExceptionHandler {
         public InvalidDataException(String message) {
             super(message);
         }
+    }
+
+    // ShippingOption exception handlers
+    @ExceptionHandler(ShippingOptionNotFoundException.class)
+    public ResponseEntity<Object> handleShippingOptionNotFoundException(ShippingOptionNotFoundException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ShippingOptionValidationException.class)
+    public ResponseEntity<Object> handleShippingOptionValidationException(ShippingOptionValidationException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

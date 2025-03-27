@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import stud.ntnu.no.backend.Category.DTOs.CategoryDTO;
 import stud.ntnu.no.backend.Category.Exceptions.CategoryNotFoundException;
 import stud.ntnu.no.backend.Category.Service.CategoryService;
-import stud.ntnu.no.backend.security.config.SecurityConfig;
+import stud.ntnu.no.backend.config.SecurityConfig;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
