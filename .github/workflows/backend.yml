@@ -82,7 +82,7 @@ jobs:
     name: Deploy Backend to Heroku
     runs-on: ubuntu-latest
     needs: package-backend
-    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
