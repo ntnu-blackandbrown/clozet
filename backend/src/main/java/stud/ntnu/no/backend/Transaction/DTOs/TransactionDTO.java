@@ -1,27 +1,20 @@
-package stud.ntnu.no.backend.Transaction.Entity;
+package stud.ntnu.no.backend.Transaction.DTOs;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-@Table(name = "transactions")
-public class Transaction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class TransactionDTO {
     private Long id;
     private String description;
     private BigDecimal amount;
     private LocalDateTime timestamp;
     private String status;
 
-    // Default constructor
-    public Transaction() {
+    public TransactionDTO() {
     }
 
-    // Constructor with all fields
-    public Transaction(Long id, String description, BigDecimal amount, LocalDateTime timestamp, String status) {
+    public TransactionDTO(Long id, String description, BigDecimal amount, LocalDateTime timestamp, String status) {
         this.id = id;
         this.description = description;
         this.amount = amount;
@@ -29,15 +22,6 @@ public class Transaction {
         this.status = status;
     }
 
-    // Constructor for creating new transactions
-    public Transaction(String description, BigDecimal amount, String status) {
-        this.description = description;
-        this.amount = amount;
-        this.status = status;
-        this.timestamp = LocalDateTime.now();
-    }
-
-    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -82,7 +66,7 @@ public class Transaction {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Transaction that = (Transaction) o;
+        TransactionDTO that = (TransactionDTO) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(amount, that.amount) &&
@@ -97,7 +81,7 @@ public class Transaction {
 
     @Override
     public String toString() {
-        return "Transaction{" +
+        return "TransactionDTO{" +
                 "id=" + id +
                 ", description='" + description + '\'' +
                 ", amount=" + amount +
