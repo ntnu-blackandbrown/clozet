@@ -129,7 +129,15 @@
       <version>1.12.20</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
+
+
 
   <build>
     <plugins>

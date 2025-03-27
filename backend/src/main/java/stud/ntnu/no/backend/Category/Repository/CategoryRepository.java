@@ -2,7 +2,7 @@
 package stud.ntnu.no.backend.Category.Repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import stud.ntnu.no.backend.Category.Model.Category;
+import stud.ntnu.no.backend.Category.Entity.Category;
 
 import java.util.List;
 

@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import stud.ntnu.no.backend.Category.DTOs.CategoryDTO;
-import stud.ntnu.no.backend.Category.Model.Category;
+import stud.ntnu.no.backend.Category.Entity.Category;
 
 import java.util.List;
 import java.util.stream.Collectors;
