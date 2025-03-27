@@ -2,6 +2,7 @@ package stud.ntnu.no.backend.Item.Entity;
 
 import jakarta.persistence.*;
 import stud.ntnu.no.backend.Category.Entity.Category;
+import stud.ntnu.no.backend.Location.Entity.Location;
 import stud.ntnu.no.backend.User.Entity.User;
 import stud.ntnu.no.backend.model.*;
 
