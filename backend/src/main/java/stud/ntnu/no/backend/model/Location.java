@@ -60,4 +60,6 @@ public class Location {
   public void setId(Long id) {
     this.id = id;
   }
+
+
 }

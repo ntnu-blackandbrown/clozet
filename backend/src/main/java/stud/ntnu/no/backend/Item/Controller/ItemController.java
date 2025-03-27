@@ -90,4 +90,8 @@ public class ItemController {
         itemService.deleteItem(id, user.getId());
         return ResponseEntity.noContent().build();
     }
+
+    public Object getUserId() {
+        return null;
+    }
 }

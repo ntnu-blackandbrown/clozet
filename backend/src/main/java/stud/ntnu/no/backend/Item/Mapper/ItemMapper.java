@@ -1,11 +1,13 @@
 package stud.ntnu.no.backend.Item.Mapper;
 
 import org.springframework.stereotype.Component;
-import stud.ntnu.no.backend.Item.DTOs.ItemDTO;
-import stud.ntnu.no.backend.Item.DTOs.CreateItemDTO;
-import stud.ntnu.no.backend.Item.Entity.Item;
 import stud.ntnu.no.backend.Category.Entity.Category;
+import stud.ntnu.no.backend.Item.DTOs.CreateItemDTO;
+import stud.ntnu.no.backend.Item.DTOs.ItemDTO;
+import stud.ntnu.no.backend.Item.Entity.Item;
 import stud.ntnu.no.backend.User.Entity.User;
+import stud.ntnu.no.backend.model.Location;
+import stud.ntnu.no.backend.model.ShippingOption;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,14 +24,45 @@ public class ItemMapper {
         ItemDTO dto = new ItemDTO();
         dto.setId(item.getId());
         dto.setTitle(item.getTitle());
-        dto.setDescription(item.getDescription());
+        dto.setShortDescription(item.getShortDescription());
+        dto.setLongDescription(item.getLongDescription());
         dto.setPrice(item.getPrice());
-        dto.setCategoryId(item.getCategory() != null ? item.getCategory().getId() : null);
-        dto.setCategoryName(item.getCategory() != null ? item.getCategory().getName() : null);
-        dto.setSellerId(item.getSeller() != null ? item.getSeller().getId() : null);
-        dto.setSellerName(item.getSeller() != null ? item.getSeller().getUsername() : null);
-        dto.setImageUrl(item.getImageUrl());
-        dto.setActive(item.isActive());
+        
+        // Category information
+        if (item.getCategory() != null) {
+            dto.setCategoryId(item.getCategory().getId());
+            dto.setCategoryName(item.getCategory().getName());
+        }
+        
+        // Seller information
+        if (item.getSeller() != null) {
+            dto.setSellerId(item.getSeller().getId());
+            dto.setSellerName(item.getSeller().getUsername());
+        }
+        
+        // Location information
+        if (item.getLocation() != null) {
+            dto.setLocationId(item.getLocation().getId());
+            dto.setLocationName(item.getLocation().getCity());
+        }
+        
+        // Shipping option information
+        if (item.getShippingOption() != null) {
+            dto.setShippingOptionId(item.getShippingOption().getId());
+            dto.setShippingOptionName(item.getShippingOption().getName());
+        }
+        
+        // Geographic coordinates
+        dto.setLatitude(item.getLatitude());
+        dto.setLongitude(item.getLongitude());
+        
+        // Item details
+        dto.setCondition(item.getCondition());
+        dto.setSize(item.getSize());
+        dto.setBrand(item.getBrand());
+        dto.setColor(item.getColor());
+        dto.setAvailable(item.isAvailable());
+        dto.setVippsPaymentEnabled(item.isVippsPaymentEnabled());
         dto.setCreatedAt(item.getCreatedAt());
         dto.setUpdatedAt(item.getUpdatedAt());
         
@@ -45,21 +78,65 @@ public class ItemMapper {
                 .collect(Collectors.toList());
     }
 
-    public Item toEntity(CreateItemDTO dto, Category category, User seller) {
+    public Item toEntity(CreateItemDTO dto, Category category, User seller, Location location, ShippingOption shippingOption) {
         if (dto == null) {
             return null;
         }
 
         Item item = new Item();
         item.setTitle(dto.getTitle());
-        item.setDescription(dto.getDescription());
+        item.setShortDescription(dto.getShortDescription());
+        item.setLongDescription(dto.getLongDescription());
         item.setPrice(dto.getPrice());
         item.setCategory(category);
         item.setSeller(seller);
-        item.setImageUrl(dto.getImageUrl());
-        item.setActive(true);
-        item.setCreatedAt(LocalDateTime.now());
+        item.setLocation(location);
+        item.setShippingOption(shippingOption);
+        item.setLatitude(dto.getLatitude());
+        item.setLongitude(dto.getLongitude());
+        item.setCondition(dto.getCondition());
+        item.setSize(dto.getSize());
+        item.setBrand(dto.getBrand());
+        item.setColor(dto.getColor());
+        item.setAvailable(true);
+        item.setVippsPaymentEnabled(dto.isVippsPaymentEnabled());
         
+        LocalDateTime now = LocalDateTime.now();
+        item.setCreatedAt(now);
+        item.setUpdatedAt(now);
+
         return item;
+    }
+    
+    public void updateEntityFromDto(Item item, CreateItemDTO dto, Category category, Location location, ShippingOption shippingOption) {
+        if (item == null || dto == null) {
+            return;
+        }
+        
+        item.setTitle(dto.getTitle());
+        item.setShortDescription(dto.getShortDescription());
+        item.setLongDescription(dto.getLongDescription());
+        item.setPrice(dto.getPrice());
+        
+        if (category != null) {
+            item.setCategory(category);
+        }
+        
+        if (location != null) {
+            item.setLocation(location);
+        }
+        
+        if (shippingOption != null) {
+            item.setShippingOption(shippingOption);
+        }
+        
+        item.setLatitude(dto.getLatitude());
+        item.setLongitude(dto.getLongitude());
+        item.setCondition(dto.getCondition());
+        item.setSize(dto.getSize());
+        item.setBrand(dto.getBrand());
+        item.setColor(dto.getColor());
+        item.setVippsPaymentEnabled(dto.isVippsPaymentEnabled());
+        item.setUpdatedAt(LocalDateTime.now());
     }
 }

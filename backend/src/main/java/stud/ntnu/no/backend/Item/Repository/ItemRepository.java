@@ -12,4 +12,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findByCategoryId(Long categoryId);
     List<Item> findByActiveTrue();
     List<Item> findByTitleContainingIgnoreCase(String title);
+
+    List<Item> findByAvailableTrue();
 }

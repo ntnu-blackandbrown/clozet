@@ -1,37 +1,43 @@
 package stud.ntnu.no.backend.Item.Controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import stud.ntnu.no.backend.Item.DTOs.CreateItemDTO;
 import stud.ntnu.no.backend.Item.DTOs.ItemDTO;
 import stud.ntnu.no.backend.Item.Service.ItemService;
+import stud.ntnu.no.backend.User.Entity.User;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.*;
 
 class ItemControllerTest {
 
-    private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
-
     @Mock
     private ItemService itemService;
+    
+    @Mock
+    private Authentication authentication;
+    
+    @Mock
+    private SecurityContext securityContext;
+    
+    @Mock
+    private User mockUser;
 
     @InjectMocks
     private ItemController itemController;
@@ -43,9 +49,13 @@ class ItemControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        objectMapper = new ObjectMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(itemController).build();
         fixedTime = LocalDateTime.now();
+        
+        // Setup security context mock
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        when(authentication.getPrincipal()).thenReturn(mockUser);
+        when(mockUser.getId()).thenReturn(1L);
 
         // Setup test item DTO
         testItemDTO = new ItemDTO();
@@ -92,161 +102,169 @@ class ItemControllerTest {
     }
 
     @Test
-    void getAllItems_shouldReturnActiveItems() throws Exception {
+    void getAllItems_shouldReturnActiveItems() {
         // Arrange
         List<ItemDTO> items = Arrays.asList(testItemDTO);
-        given(itemService.getActiveItems()).willReturn(items);
+        when(itemService.getActiveItems()).thenReturn(items);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/items"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].title").value("Test Item"));
+        // Act
+        ResponseEntity<List<ItemDTO>> response = itemController.getAllItems();
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1, response.getBody().size());
+        assertEquals("Test Item", response.getBody().get(0).getTitle());
+        verify(itemService, times(1)).getActiveItems();
     }
 
     @Test
-    void getAllItemsIncludingInactive_shouldReturnAllItems() throws Exception {
+    void getAllItemsIncludingInactive_shouldReturnAllItems() {
         // Arrange
         List<ItemDTO> items = Arrays.asList(testItemDTO);
-        given(itemService.getAllItems()).willReturn(items);
+        when(itemService.getAllItems()).thenReturn(items);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/items/all"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].available").value(true));
+        // Act
+        ResponseEntity<List<ItemDTO>> response = itemController.getAllItemsIncludingInactive();
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1, response.getBody().size());
+        assertEquals(true, response.getBody().get(0).isAvailable());
+        verify(itemService, times(1)).getAllItems();
     }
 
     @Test
-    void getItem_shouldReturnItemById() throws Exception {
+    void getItem_shouldReturnItemById() {
         // Arrange
-        given(itemService.getItem(1L)).willReturn(testItemDTO);
+        when(itemService.getItem(1L)).thenReturn(testItemDTO);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/items/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("Test Item"))
-                .andExpect(jsonPath("$.price").value(100.0));
+        // Act
+        ResponseEntity<ItemDTO> response = itemController.getItem(1L);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1L, response.getBody().getId());
+        assertEquals("Test Item", response.getBody().getTitle());
+        assertEquals(100.0, response.getBody().getPrice());
+        verify(itemService, times(1)).getItem(1L);
     }
 
     @Test
-    void getItemsBySeller_shouldReturnSellerItems() throws Exception {
-        // Arrange
-        List<ItemDTO> items = Arrays.asList(testItemDTO);
-        given(itemService.getItemsBySeller(1L)).willReturn(items);
-
-        // Act & Assert
-        mockMvc.perform(get("/api/items/seller/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].sellerId").value(1));
-    }
-
-    @Test
-    void getItemsByCategory_shouldReturnCategoryItems() throws Exception {
+    void getItemsBySeller_shouldReturnSellerItems() {
         // Arrange
         List<ItemDTO> items = Arrays.asList(testItemDTO);
-        given(itemService.getItemsByCategory(1L)).willReturn(items);
+        when(itemService.getItemsBySeller(1L)).thenReturn(items);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/items/category/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].categoryId").value(1));
+        // Act
+        ResponseEntity<List<ItemDTO>> response = itemController.getItemsBySeller(1L);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1, response.getBody().size());
+        assertEquals(1L, response.getBody().get(0).getSellerId());
+        verify(itemService, times(1)).getItemsBySeller(1L);
     }
 
     @Test
-    void searchItems_shouldReturnMatchingItems() throws Exception {
+    void getItemsByCategory_shouldReturnCategoryItems() {
+        // Arrange
+        List<ItemDTO> items = Arrays.asList(testItemDTO);
+        when(itemService.getItemsByCategory(1L)).thenReturn(items);
+
+        // Act
+        ResponseEntity<List<ItemDTO>> response = itemController.getItemsByCategory(1L);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1, response.getBody().size());
+        assertEquals(1L, response.getBody().get(0).getCategoryId());
+        verify(itemService, times(1)).getItemsByCategory(1L);
+    }
+
+    @Test
+    void searchItems_shouldReturnMatchingItems() {
         // Arrange
         List<ItemDTO> items = Arrays.asList(testItemDTO);
         String query = "test";
-        given(itemService.searchItems(query)).willReturn(items);
+        when(itemService.searchItems(query)).thenReturn(items);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/items/search")
-                .param("query", query))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].title").value("Test Item"));
+        // Act
+        ResponseEntity<List<ItemDTO>> response = itemController.searchItems(query);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1, response.getBody().size());
+        assertEquals("Test Item", response.getBody().get(0).getTitle());
+        verify(itemService, times(1)).searchItems(query);
     }
 
     @Test
-    void createItem_shouldCreateAndReturnItem() throws Exception {
+    void createItem_shouldCreateAndReturnItem() {
         // Arrange
-        given(itemService.createItem(any(CreateItemDTO.class), any(Long.class))).willReturn(testItemDTO);
+        when(itemService.createItem(any(CreateItemDTO.class), eq(1L))).thenReturn(testItemDTO);
 
-        // Act & Assert
-        mockMvc.perform(post("/api/items")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testCreateItemDTO))
-                .with(request -> {
-                    request.setUserPrincipal(() -> "testUser");
-                    return request;
-                }))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("Test Item"));
+        // Act
+        ResponseEntity<ItemDTO> response = itemController.createItem(testCreateItemDTO);
+
+        // Assert
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(1L, response.getBody().getId());
+        assertEquals("Test Item", response.getBody().getTitle());
+        verify(itemService, times(1)).createItem(any(CreateItemDTO.class), eq(1L));
     }
 
     @Test
-    void updateItem_shouldUpdateAndReturnItem() throws Exception {
+    void updateItem_shouldUpdateAndReturnItem() {
         // Arrange
-        given(itemService.updateItem(eq(1L), any(CreateItemDTO.class), any(Long.class))).willReturn(testItemDTO);
+        when(itemService.updateItem(eq(1L), any(CreateItemDTO.class), eq(1L))).thenReturn(testItemDTO);
 
-        // Act & Assert
-        mockMvc.perform(put("/api/items/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testCreateItemDTO))
-                .with(request -> {
-                    request.setUserPrincipal(() -> "testUser");
-                    return request;
-                }))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("Test Item"));
+        // Act
+        ResponseEntity<ItemDTO> response = itemController.updateItem(1L, testCreateItemDTO);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1L, response.getBody().getId());
+        assertEquals("Test Item", response.getBody().getTitle());
+        verify(itemService, times(1)).updateItem(eq(1L), any(CreateItemDTO.class), eq(1L));
     }
 
     @Test
-    void deactivateItem_shouldDeactivateItem() throws Exception {
+    void deactivateItem_shouldDeactivateItem() {
         // Arrange
-        doNothing().when(itemService).deactivateItem(eq(1L), any(Long.class));
+        doNothing().when(itemService).deactivateItem(eq(1L), eq(1L));
 
-        // Act & Assert
-        mockMvc.perform(put("/api/items/1/deactivate")
-                .with(request -> {
-                    request.setUserPrincipal(() -> "testUser");
-                    return request;
-                }))
-                .andExpect(status().isNoContent());
+        // Act
+        ResponseEntity<Void> response = itemController.deactivateItem(1L);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(itemService, times(1)).deactivateItem(eq(1L), eq(1L));
     }
 
     @Test
-    void activateItem_shouldActivateItem() throws Exception {
+    void activateItem_shouldActivateItem() {
         // Arrange
-        doNothing().when(itemService).activateItem(eq(1L), any(Long.class));
+        doNothing().when(itemService).activateItem(eq(1L), eq(1L));
 
-        // Act & Assert
-        mockMvc.perform(put("/api/items/1/activate")
-                .with(request -> {
-                    request.setUserPrincipal(() -> "testUser");
-                    return request;
-                }))
-                .andExpect(status().isNoContent());
+        // Act
+        ResponseEntity<Void> response = itemController.activateItem(1L);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(itemService, times(1)).activateItem(eq(1L), eq(1L));
     }
 
     @Test
-    void deleteItem_shouldDeleteItem() throws Exception {
+    void deleteItem_shouldDeleteItem() {
         // Arrange
-        doNothing().when(itemService).deleteItem(eq(1L), any(Long.class));
+        doNothing().when(itemService).deleteItem(eq(1L), eq(1L));
 
-        // Act & Assert
-        mockMvc.perform(delete("/api/items/1")
-                .with(request -> {
-                    request.setUserPrincipal(() -> "testUser");
-                    return request;
-                }))
-                .andExpect(status().isNoContent());
+        // Act
+        ResponseEntity<Void> response = itemController.deleteItem(1L);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(itemService, times(1)).deleteItem(eq(1L), eq(1L));
     }
 }

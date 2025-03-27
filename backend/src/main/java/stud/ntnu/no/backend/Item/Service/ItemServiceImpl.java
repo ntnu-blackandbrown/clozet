@@ -1,5 +1,6 @@
 package stud.ntnu.no.backend.Item.Service;
 
+import io.micrometer.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stud.ntnu.no.backend.Category.Entity.Category;
@@ -12,9 +13,13 @@ import stud.ntnu.no.backend.Item.Exceptions.ItemNotFoundException;
 import stud.ntnu.no.backend.Item.Exceptions.ItemValidationException;
 import stud.ntnu.no.backend.Item.Mapper.ItemMapper;
 import stud.ntnu.no.backend.Item.Repository.ItemRepository;
+import stud.ntnu.no.backend.Location.Repository.LocationRepository;
+import stud.ntnu.no.backend.ShippingOption.repository.ShippingOptionRepository;
 import stud.ntnu.no.backend.User.Entity.User;
 import stud.ntnu.no.backend.User.Exceptions.UserNotFoundException;
 import stud.ntnu.no.backend.User.Repository.UserRepository;
+import stud.ntnu.no.backend.model.Location;
+import stud.ntnu.no.backend.model.ShippingOption;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,15 +30,21 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final LocationRepository locationRepository;
+    private final ShippingOptionRepository shippingOptionRepository;
     private final ItemMapper itemMapper;
 
-    public ItemServiceImpl(ItemRepository itemRepository, 
-                          CategoryRepository categoryRepository,
-                          UserRepository userRepository,
-                          ItemMapper itemMapper) {
+    public ItemServiceImpl(ItemRepository itemRepository,
+                           CategoryRepository categoryRepository,
+                           UserRepository userRepository,
+                           LocationRepository locationRepository,
+                           ShippingOptionRepository shippingOptionRepository,
+                           ItemMapper itemMapper) {
         this.itemRepository = itemRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
+        this.locationRepository = locationRepository;
+        this.shippingOptionRepository = shippingOptionRepository;
         this.itemMapper = itemMapper;
     }
 
@@ -44,7 +55,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDTO> getActiveItems() {
-        return itemMapper.toDtoList(itemRepository.findByActiveTrue());
+        return itemMapper.toDtoList(itemRepository.findByAvailableTrue());
     }
 
     @Override
@@ -79,75 +90,67 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
-    public ItemDTO createItem(CreateItemDTO itemDTO, Long sellerId) {
-        User seller = userRepository.findById(sellerId)
-            .orElseThrow(() -> new UserNotFoundException(sellerId));
-            
+    public ItemDTO createItem(CreateItemDTO itemDTO, Long userId) {
         Category category = categoryRepository.findById(itemDTO.getCategoryId())
-            .orElseThrow(() -> new CategoryNotFoundException(itemDTO.getCategoryId()));
-            
+            .orElseThrow(() -> new ItemValidationException("Category not found"));
+
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException(userId));
+
+        Location location = locationRepository.findById(itemDTO.getLocationId())
+            .orElseThrow(() -> new ItemValidationException("Location not found"));
+
+        ShippingOption shippingOption = shippingOptionRepository.findById(itemDTO.getShippingOptionId())
+            .orElseThrow(() -> new ItemValidationException("Shipping option not found"));
+
         validateItem(itemDTO);
-            
-        Item item = itemMapper.toEntity(itemDTO, category, seller);
-        Item savedItem = itemRepository.save(item);
-        
-        return itemMapper.toDto(savedItem);
+
+        Item item = itemMapper.toEntity(itemDTO, category, user, location, shippingOption);
+        item = itemRepository.save(item);
+        return itemMapper.toDto(item);
     }
 
     @Override
-    @Transactional
-    public ItemDTO updateItem(Long id, CreateItemDTO itemDTO, Long sellerId) {
-        Item existingItem = itemRepository.findById(id)
-            .orElseThrow(() -> new ItemNotFoundException(id));
-            
-        if (!existingItem.getSeller().getId().equals(sellerId)) {
-            throw new ItemValidationException("You can only update your own items");
+    public ItemDTO updateItem(Long itemId, CreateItemDTO itemDTO, Long userId) {
+        Item item = findItemAndVerifyOwnership(itemId, userId);
+        
+        Category category = null;
+        if (itemDTO.getCategoryId() != null) {
+            category = categoryRepository.findById(itemDTO.getCategoryId())
+                .orElseThrow(() -> new ItemValidationException("Category not found"));
         }
-            
-        Category category = categoryRepository.findById(itemDTO.getCategoryId())
-            .orElseThrow(() -> new CategoryNotFoundException(itemDTO.getCategoryId()));
-            
+
+        Location location = null;
+        if (itemDTO.getLocationId() != null) {
+            location = locationRepository.findById(itemDTO.getLocationId())
+                .orElseThrow(() -> new ItemValidationException("Location not found"));
+        }
+
+        ShippingOption shippingOption = null;
+        if (itemDTO.getShippingOptionId() != null) {
+            shippingOption = shippingOptionRepository.findById(itemDTO.getShippingOptionId())
+                .orElseThrow(() -> new ItemValidationException("Shipping option not found"));
+        }
+
         validateItem(itemDTO);
-            
-        existingItem.setTitle(itemDTO.getTitle());
-        existingItem.setDescription(itemDTO.getDescription());
-        existingItem.setPrice(itemDTO.getPrice());
-        existingItem.setCategory(category);
-        existingItem.setImageUrl(itemDTO.getImageUrl());
-        existingItem.setUpdatedAt(LocalDateTime.now());
         
-        Item updatedItem = itemRepository.save(existingItem);
-        
-        return itemMapper.toDto(updatedItem);
+        itemMapper.updateEntityFromDto(item, itemDTO, category, location, shippingOption);
+        item = itemRepository.save(item);
+        return itemMapper.toDto(item);
     }
 
     @Override
-    @Transactional
-    public void deactivateItem(Long id, Long sellerId) {
-        Item item = itemRepository.findById(id)
-            .orElseThrow(() -> new ItemNotFoundException(id));
-            
-        if (!item.getSeller().getId().equals(sellerId)) {
-            throw new ItemValidationException("You can only deactivate your own items");
-        }
-            
-        item.setActive(false);
+    public void deactivateItem(Long itemId, Long userId) {
+        Item item = findItemAndVerifyOwnership(itemId, userId);
+        item.setAvailable(false);
         item.setUpdatedAt(LocalDateTime.now());
         itemRepository.save(item);
     }
 
     @Override
-    @Transactional
-    public void activateItem(Long id, Long sellerId) {
-        Item item = itemRepository.findById(id)
-            .orElseThrow(() -> new ItemNotFoundException(id));
-            
-        if (!item.getSeller().getId().equals(sellerId)) {
-            throw new ItemValidationException("You can only activate your own items");
-        }
-            
-        item.setActive(true);
+    public void activateItem(Long itemId, Long userId) {
+        Item item = findItemAndVerifyOwnership(itemId, userId);
+        item.setAvailable(true);
         item.setUpdatedAt(LocalDateTime.now());
         itemRepository.save(item);
     }
@@ -155,23 +158,32 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public void deleteItem(Long id, Long sellerId) {
-        Item item = itemRepository.findById(id)
-            .orElseThrow(() -> new ItemNotFoundException(id));
-            
-        if (!item.getSeller().getId().equals(sellerId)) {
-            throw new ItemValidationException("You can only delete your own items");
-        }
-            
+        Item item = findItemAndVerifyOwnership(id, sellerId);
         itemRepository.delete(item);
     }
 
-    private void validateItem(CreateItemDTO itemDTO) {
-        if (itemDTO.getTitle() == null || itemDTO.getTitle().trim().isEmpty()) {
-            throw new ItemValidationException("Item title cannot be empty");
+    private Item findItemAndVerifyOwnership(Long itemId, Long userId) {
+        Item item = itemRepository.findById(itemId)
+            .orElseThrow(() -> new ItemNotFoundException(itemId));
+        
+        if (!item.getSeller().getId().equals(userId)) {
+            throw new ItemValidationException("You don't have permission to modify this item");
         }
         
-        if (itemDTO.getPrice() == null || itemDTO.getPrice().doubleValue() <= 0) {
-            throw new ItemValidationException("Item price must be positive");
+        return item;
+    }
+
+    private void validateItem(CreateItemDTO itemDTO) {
+        if (StringUtils.isBlank(itemDTO.getTitle())) {
+            throw new ItemValidationException("Title cannot be empty");
+        }
+
+        if (StringUtils.isBlank(itemDTO.getLongDescription())) {
+            throw new ItemValidationException("Description cannot be empty");
+        }
+
+        if (itemDTO.getPrice() < 0) {
+            throw new ItemValidationException("Item price cannot be negative");
         }
     }
 }

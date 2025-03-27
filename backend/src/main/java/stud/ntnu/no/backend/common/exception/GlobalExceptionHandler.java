@@ -6,6 +6,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import stud.ntnu.no.backend.Category.Exceptions.CategoryNotFoundException;
 import stud.ntnu.no.backend.Category.Exceptions.CategoryValidationException;
 import stud.ntnu.no.backend.User.Exceptions.EmailAlreadyInUseException;
@@ -98,5 +99,14 @@ public class GlobalExceptionHandler {
         body.put("message", message);
 
         return new ResponseEntity<>(body, status);
+    }
+
+
+    //Item class
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public class InvalidDataException extends RuntimeException {
+        public InvalidDataException(String message) {
+            super(message);
+        }
     }
 }
