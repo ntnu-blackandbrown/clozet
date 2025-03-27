@@ -8,7 +8,8 @@ import stud.ntnu.no.backend.ShippingOption.Entity.ShippingOption;
 import stud.ntnu.no.backend.ShippingOption.Exceptions.ShippingOptionNotFoundException;
 import stud.ntnu.no.backend.ShippingOption.Exceptions.ShippingOptionValidationException;
 import stud.ntnu.no.backend.ShippingOption.Mapper.ShippingOptionMapper;
-import stud.ntnu.no.backend.ShippingOption.Repository.ShippingOptionRepository;
+import stud.ntnu.no.backend.ShippingOption.repository.ShippingOptionRepository;
+
 
 import java.util.List;
 
