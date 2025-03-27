@@ -1,113 +1,112 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, defineProps } from 'vue'
+import type { PropType } from 'vue'
 
-// Define props with TypeScript types
-interface Props {
-  name: string
-  type?: 'category' | 'location' | 'seller' | 'price' | 'shipping' | 'availability'
-  amount?: string | number
-  currency?: string
-  color?: string
-  textColor?: string
+// 1) Define props directly in defineProps with default values
+const props = defineProps({
+  name: {
+    type: String,
+    required: true
+  },
+  type: {
+    type: String as PropType<'category' | 'location' | 'seller' | 'price' | 'shipping' | 'availability'>,
+    default: 'category'
+  },
+  amount: {
+    type: [String, Number] as PropType<string | number>,
+    default: ''
+  },
+  currency: {
+    type: String,
+    default: 'NOK'
+  },
+  color: {
+    type: String,
+    default: ''
+  },
+  textColor: {
+    type: String,
+    default: ''
+  }
+})
+
+// 2) Store default colors in a plain object (no ref needed)
+const defaultColors = {
+  category: { bg: '#e2e8f0', text: '#1a202c' },
+  location: { bg: '#f3f4f6', text: '#374151' },
+  seller: { bg: '#edf2f7', text: '#2d3748' },
+  price: { bg: '#f0fff4', text: '#276749' },
+  shipping: { bg: '#ebf8ff', text: '#2b6cb0' },
+  availability: { bg: '#fef6e4', text: '#c05621' }
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  type: 'category',
-  amount: '',
-  currency: 'NOK',
-  color: '',
-  textColor: ''
+// 3) Store icon paths in a plain object
+const iconPaths = {
+  category: `
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+  `,
+  location: `
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+    <circle cx="12" cy="10" r="3"></circle>
+  `,
+  seller: `
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+    <circle cx="12" cy="7" r="4"></circle>
+  `,
+  shipping: `
+    <rect x="1" y="3" width="15" height="13"></rect>
+    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+  `,
+  availability: `
+    <circle cx="12" cy="12" r="10"></circle>
+    <polyline points="12 6 12 12 16 14"></polyline>
+  `
+}
+
+// 4) Use computed properties for colors, display text, and icon
+const bgColor = computed(() => {
+  // Fallback to the default color for the given type
+  return props.color || defaultColors[props.type].bg
 })
 
-// Default colors based on badge type using refs
-const defaultColors = ref({
-  category: { bg: '#e2e8f0', text: '#1a202c' },    // Light gray
-  location: { bg: '#f3f4f6', text: '#374151' },    // Light gray-blue
-  seller: { bg: '#edf2f7', text: '#2d3748' },      // Light blue-gray
-  price: { bg: '#f0fff4', text: '#276749' },       // Light green
-  shipping: { bg: '#ebf8ff', text: '#2b6cb0' },    // Light blue
-  availability: { bg: '#fef6e4', text: '#c05621' } // Light orange
+const txtColor = computed(() => {
+  // Fallback to the default text color for the given type
+  return props.textColor || defaultColors[props.type].text
 })
 
-// Compute actual colors to use
-const bgColor = computed(() => props.color || defaultColors.value[props.type].bg)
-const txtColor = computed(() => props.textColor || defaultColors.value[props.type].text)
+const currentIcon = computed(() => {
+  if (props.type === 'price') return ''
+  return iconPaths[props.type] || ''
+})
 
-// Compute display text based on badge type
 const displayText = computed(() => {
-  if (props.type === 'price') {
-    return props.amount
-  }
-  return props.name
+  // If it's a price, we show amount; otherwise, we show name
+  return props.type === 'price' ? props.amount : props.name
 })
 
-// Store the current icon in a ref
-const currentIcon = ref('')
-
-// Update the icon when needed
-const getIcon = () => {
-  switch (props.type) {
-    case 'category':
-      currentIcon.value = `
-        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-        <line x1="7" y1="7" x2="7.01" y2="7"></line>
-      `
-      break
-    case 'location':
-      currentIcon.value = `
-        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-        <circle cx="12" cy="10" r="3"></circle>
-      `
-      break
-    case 'seller':
-      currentIcon.value = `
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-        <circle cx="12" cy="7" r="4"></circle>
-      `
-      break
-    case 'price':
-      currentIcon.value = `
-        <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-      `
-      break
-    case 'shipping':
-      currentIcon.value = `
-        <rect x="1" y="3" width="15" height="13"></rect>
-        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-        <circle cx="5.5" cy="18.5" r="2.5"></circle>
-        <circle cx="18.5" cy="18.5" r="2.5"></circle>
-      `
-      break
-    case 'availability':
-      currentIcon.value = `
-        <circle cx="12" cy="12" r="10"></circle>
-        <polyline points="12 6 12 12 16 14"></polyline>
-      `
-      break
-    default:
-      currentIcon.value = ''
-  }
-  return currentIcon.value
-}
-
-// Format price display with currency
+// Only relevant if you need a separate "formattedPrice"
 const formattedPrice = computed(() => {
-  if (props.type === 'price') {
-    return `${props.amount} ${props.currency}`
-  }
-  return ''
+  return props.type === 'price' ? `${props.amount} ${props.currency}` : ''
 })
-
-// Get icon on component creation
-getIcon()
 </script>
 
 <template>
   <div class="badge" :style="{ backgroundColor: bgColor, color: txtColor }">
-    <svg v-if="currentIcon" class="badge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-         v-html="currentIcon">
-    </svg>
+    <svg
+      v-if="currentIcon"
+      class="badge-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      v-html="currentIcon"
+    />
     <span v-if="type === 'price'" class="badge-text">{{ displayText }} {{ currency }}</span>
     <span v-else class="badge-text">{{ displayText }}</span>
   </div>
