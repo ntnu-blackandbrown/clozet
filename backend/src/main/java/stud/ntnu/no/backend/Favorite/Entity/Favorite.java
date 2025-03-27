@@ -1,64 +1,74 @@
 package stud.ntnu.no.backend.Favorite.Entity;
 
 import jakarta.persistence.*;
-import stud.ntnu.no.backend.Item.Entity.Item;
-import stud.ntnu.no.backend.User.Entity.User;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "favorites", indexes = {
-    @Index(name = "idx_user_id", columnList = "user_id"),
-    @Index(name = "idx_item_id", columnList = "item_id")
-})
+@Table(name = "favorites")
 public class Favorite {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String userId;
+    private Long itemId;
+    private String itemType;
+    private LocalDateTime createdAt;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+    public Favorite() {
+    }
 
-  @ManyToOne
-  @JoinColumn(name = "item_id", nullable = false)
-  private Item item;
+    public Favorite(Long id, String userId, Long itemId, String itemType, LocalDateTime createdAt) {
+        this.id = id;
+        this.userId = userId;
+        this.itemId = itemId;
+        this.itemType = itemType;
+        this.createdAt = createdAt;
+    }
 
-  @Column(nullable = false)
-  private LocalDateTime createdAt;
+    public Favorite(String userId, Long itemId, String itemType) {
+        this.userId = userId;
+        this.itemId = itemId;
+        this.itemType = itemType;
+        this.createdAt = LocalDateTime.now();
+    }
 
-  // Getters and setters
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public String getUserId() {
+        return userId;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-  public User getUser() {
-    return user;
-  }
+    public Long getItemId() {
+        return itemId;
+    }
 
-  public void setUser(User user) {
-    this.user = user;
-  }
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
+    }
 
-  public Item getItem() {
-    return item;
-  }
+    public String getItemType() {
+        return itemType;
+    }
 
-  public void setItem(Item item) {
-    this.item = item;
-  }
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
+    }
 
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
