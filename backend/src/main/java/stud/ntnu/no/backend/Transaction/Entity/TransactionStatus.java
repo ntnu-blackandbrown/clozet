@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.model;
+package stud.ntnu.no.backend.Transaction.Entity;
 
 public enum TransactionStatus {
   PENDING,
