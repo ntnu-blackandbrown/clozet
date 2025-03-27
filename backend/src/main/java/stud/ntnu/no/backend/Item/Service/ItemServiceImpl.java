@@ -18,7 +18,7 @@ import stud.ntnu.no.backend.ShippingOption.repository.ShippingOptionRepository;
 import stud.ntnu.no.backend.User.Entity.User;
 import stud.ntnu.no.backend.User.Exceptions.UserNotFoundException;
 import stud.ntnu.no.backend.User.Repository.UserRepository;
-import stud.ntnu.no.backend.model.Location;
+import stud.ntnu.no.backend.Location.Entity.Location;
 import stud.ntnu.no.backend.model.ShippingOption;
 
 import java.time.LocalDateTime;

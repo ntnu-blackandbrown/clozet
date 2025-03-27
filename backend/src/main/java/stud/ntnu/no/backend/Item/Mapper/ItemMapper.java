@@ -6,7 +6,7 @@ import stud.ntnu.no.backend.Item.DTOs.CreateItemDTO;
 import stud.ntnu.no.backend.Item.DTOs.ItemDTO;
 import stud.ntnu.no.backend.Item.Entity.Item;
 import stud.ntnu.no.backend.User.Entity.User;
-import stud.ntnu.no.backend.model.Location;
+import stud.ntnu.no.backend.Location.Entity.Location;
 import stud.ntnu.no.backend.model.ShippingOption;
 
 import java.time.LocalDateTime;

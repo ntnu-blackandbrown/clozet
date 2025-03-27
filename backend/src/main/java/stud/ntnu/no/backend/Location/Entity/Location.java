@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.model;
+package stud.ntnu.no.backend.Location.Entity;
 
 import jakarta.persistence.*;
 
