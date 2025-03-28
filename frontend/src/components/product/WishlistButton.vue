@@ -4,12 +4,12 @@ import { ref } from 'vue'
 const props = defineProps({
   productId: {
     type: String,
-    required: true
+    required: true,
   },
   purchased: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const isWishlisted = ref(false)
@@ -25,7 +25,7 @@ const toggleWishlist = () => {
   <button
     v-if="!purchased"
     class="wishlist-button"
-    :class="{ 'wishlisted': isWishlisted }"
+    :class="{ wishlisted: isWishlisted }"
     @click="toggleWishlist"
     aria-label="Add to wishlist"
   >

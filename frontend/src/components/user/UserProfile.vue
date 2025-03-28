@@ -11,7 +11,7 @@ const sections = [
   { id: 'profile', label: 'Profile Settings' },
   { id: 'posts', label: 'My Posts' },
   { id: 'wishlist', label: 'My Wishlist' },
-  { id: 'purchases', label: 'My Purchases' }
+  { id: 'purchases', label: 'My Purchases' },
 ]
 
 const setActiveSection = (section) => {
@@ -30,22 +30,22 @@ const myPosts = [
     title: 'Nike Running Shoes',
     price: 1200,
     category: 'Shoes',
-    image: '/src/assets/images/main-image.png'
+    image: '/src/assets/images/main-image.png',
   },
   {
     id: 'post-2',
     title: 'Designer Backpack',
     price: 800,
     category: 'Bags',
-    image: '/src/assets/images/image-1.png'
+    image: '/src/assets/images/image-1.png',
   },
   {
     id: 'post-3',
     title: 'Casual Denim Jacket',
     price: 950,
     category: 'Clothing',
-    image: '/src/assets/images/image-2.png'
-  }
+    image: '/src/assets/images/image-2.png',
+  },
 ]
 
 const wishlistItems = [
@@ -54,15 +54,15 @@ const wishlistItems = [
     title: 'Leather Wallet',
     price: 450,
     category: 'Accessories',
-    image: '/src/assets/images/image-3.png'
+    image: '/src/assets/images/image-3.png',
   },
   {
     id: 'wish-2',
     title: 'Smart Watch',
     price: 2500,
     category: 'Electronics',
-    image: '/src/assets/images/Screenshot 2025-03-26 at 17.26.14.png'
-  }
+    image: '/src/assets/images/Screenshot 2025-03-26 at 17.26.14.png',
+  },
 ]
 
 const purchaseHistory = [
@@ -73,7 +73,7 @@ const purchaseHistory = [
     category: 'Accessories',
     image: '/src/assets/images/main-image.png',
     purchaseDate: '2024-03-15',
-    purchased: true
+    purchased: true,
   },
   {
     id: 'purchase-2',
@@ -82,8 +82,8 @@ const purchaseHistory = [
     category: 'Clothing',
     image: '/src/assets/images/image-1.png',
     purchaseDate: '2024-03-10',
-    purchased: true
-  }
+    purchased: true,
+  },
 ]
 </script>
 
@@ -175,13 +175,8 @@ const purchaseHistory = [
         <h2>My Purchases</h2>
         <div class="purchases-list">
           <div v-for="purchase in purchaseHistory" :key="purchase.id" class="purchase-item">
-            <ProductCard
-              v-bind="purchase"
-              @click="openProductModal(purchase.id)"
-            />
-            <div class="purchase-date">
-              Purchased on: {{ purchase.purchaseDate }}
-            </div>
+            <ProductCard v-bind="purchase" @click="openProductModal(purchase.id)" />
+            <div class="purchase-date">Purchased on: {{ purchase.purchaseDate }}</div>
           </div>
         </div>
       </div>

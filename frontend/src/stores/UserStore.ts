@@ -41,7 +41,7 @@ export const useUserStore = defineStore('user', () => {
           username: response.data.username,
           email: response.data.email,
           firstName: response.data.firstName,
-          lastName: response.data.lastName
+          lastName: response.data.lastName,
         }
         return { success: true, user: response.data }
       }
@@ -57,15 +57,15 @@ export const useUserStore = defineStore('user', () => {
     try {
       const response = await axios.post('http://localhost:8080/api/users/login', {
         username: identificator, // Backend forventer 'username'
-        password: password
-      });
+        password: password,
+      })
 
       if (response.data) {
         currentUser.value = {
           username: response.data.username,
           email: response.data.email,
           firstName: response.data.firstName,
-          lastName: response.data.lastName
+          lastName: response.data.lastName,
         }
 
         isLoggedIn.value = true
@@ -99,6 +99,6 @@ export const useUserStore = defineStore('user', () => {
     lastRegisteredUser,
     handleRegister,
     handleLogin,
-    logout
+    logout,
   }
 })
