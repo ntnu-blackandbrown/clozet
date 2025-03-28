@@ -1,6 +1,9 @@
 <script setup>
 import ProductList from '@/views/ProductListView.vue'
 import Badge from '@/components/utils/Badge.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 </script>
 
 <template>
@@ -32,7 +35,7 @@ import Badge from '@/components/utils/Badge.vue'
     </svg>
   </div>
   <div class="create-post-btn">
-    <button>Create a post!</button>
+    <button @click="router.push('/create-product')">Create a post!</button>
   </div>
 
   <div class="featured-products">
