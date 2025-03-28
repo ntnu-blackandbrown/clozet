@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps } from 'vue'
-import WishlistButton from './WishlistButton.vue'
+import WishlistButton from '@/components/utils/WishlistButton.vue'
 
 const props = defineProps({
   id: {

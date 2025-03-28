@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import Badge from '@/components/Badge.vue'
-import WishlistButton from './WishlistButton.vue'
+import Badge from '@/components/utils/Badge.vue'
+import WishlistButton from '@/components/utils/WishlistButton.vue'
 
 // Define props
 const props = defineProps({

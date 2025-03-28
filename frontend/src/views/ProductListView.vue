@@ -33,21 +33,21 @@ const products = ref([
     title: 'Nike Running Shoes',
     price: '1200',
     category: 'Shoes',
-    image: '/src/assets/images/main-image.png',
+    image: new URL('@/assets/images/main-image.png', import.meta.url).href,
   },
   {
     id: 'prod-2',
     title: 'Designer Backpack',
     price: '800',
     category: 'Bags',
-    image: '/src/assets/images/image-1.png',
+    image: new URL('@/assets/images/image-1.png', import.meta.url).href,
   },
   {
     id: 'prod-3',
     title: 'Casual Denim Jacket',
     price: '950',
     category: 'Clothing',
-    image: '/src/assets/images/image-2.png',
+    image: new URL('@/assets/images/image-2.png', import.meta.url).href,
   },
 ])
 
