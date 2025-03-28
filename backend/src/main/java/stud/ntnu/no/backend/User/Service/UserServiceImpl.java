@@ -126,6 +126,17 @@ public UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
 
     @Override
     public UserDTO login(LoginDTO loginDTO) {
-        return null;
+        if (loginDTO == null || loginDTO.getUsername() == null || loginDTO.getPassword() == null) {
+            throw new UserValidationException("Login data cannot be null");
+        }
+
+        User user = userRepository.findByUsername(loginDTO.getUsername())
+            .orElseThrow(() -> new UserNotFoundException("Invalid username or password"));
+
+        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPasswordHash())) {
+            throw new UserNotFoundException("Invalid username or password");
+        }
+
+        return userMapper.toDto(user);
     }
 }
