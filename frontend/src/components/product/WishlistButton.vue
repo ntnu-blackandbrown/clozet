@@ -5,6 +5,10 @@ const props = defineProps({
   productId: {
     type: String,
     required: true
+  },
+  purchased: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -19,6 +23,7 @@ const toggleWishlist = () => {
 
 <template>
   <button
+    v-if="!purchased"
     class="wishlist-button"
     :class="{ 'wishlisted': isWishlisted }"
     @click="toggleWishlist"

@@ -72,7 +72,8 @@ const purchaseHistory = [
     price: 600,
     category: 'Accessories',
     image: '/src/assets/images/main-image.png',
-    purchaseDate: '2024-03-15'
+    purchaseDate: '2024-03-15',
+    purchased: true
   },
   {
     id: 'purchase-2',
@@ -80,7 +81,8 @@ const purchaseHistory = [
     price: 250,
     category: 'Clothing',
     image: '/src/assets/images/image-1.png',
-    purchaseDate: '2024-03-10'
+    purchaseDate: '2024-03-10',
+    purchased: true
   }
 ]
 </script>

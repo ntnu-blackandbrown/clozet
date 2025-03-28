@@ -54,6 +54,10 @@ const props = defineProps({
     type: String,
     default: '2021-01-01',
   },
+  purchased: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 // Import all images from assets/images
@@ -103,7 +107,7 @@ const images = ref([
       </div>
       <div class="action-buttons">
         <button class="contact-button">Contact Seller</button>
-        <WishlistButton :product-id="itemId" />
+        <WishlistButton :product-id="itemId" :purchased="purchased" />
       </div>
       <div id="product-info">
         <div class="info-item">

@@ -23,6 +23,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  purchased: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['click'])
@@ -37,7 +41,7 @@ const handleClick = () => {
     <div class="product-image">
       <img :src="image" :alt="title" />
       <div class="wishlist-container">
-        <WishlistButton :product-id="id" @click.stop />
+        <WishlistButton :product-id="id" :purchased="purchased" @click.stop />
       </div>
     </div>
     <div class="product-info">
