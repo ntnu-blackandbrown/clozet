@@ -14,6 +14,7 @@ const showLoginModal = ref(false)
 
         <nav>
           <RouterLink to="/product-display">Product Display</RouterLink>
+          <RouterLink to="/edit-profile">Edit Profile</RouterLink>
         </nav>
         <button @click="showLoginModal = true" class="login-button">Login / Register</button>
     </header>
