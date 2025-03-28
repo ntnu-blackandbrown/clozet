@@ -13,7 +13,7 @@ const showLoginModal = ref(false)
       <img alt="Vue logo" class="logo" src="@/assets/logo.png" width="125" height="125" />
 
         <nav>
-          <RouterLink to="/product-display">Product Display</RouterLink>
+          <RouterLink to="/">Home</RouterLink>
           <RouterLink to="/edit-profile">Edit Profile</RouterLink>
         </nav>
         <button @click="showLoginModal = true" class="login-button">Login / Register</button>

@@ -35,29 +35,35 @@ const setActiveSection = (section) => {
       <div v-if="activeSection === 'profile'" class="profile-section">
         <h2>Profile Settings</h2>
         <div class="profile-form">
-          <div class="form-group">
-            <label>First Name</label>
-            <input type="text" placeholder="Your first name" />
+          <div class="name-fields">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" placeholder="Your first name" />
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" placeholder="Your last name" />
+            </div>
           </div>
-          <div class="form-group">
-            <label>Last Name</label>
-            <input type="text" placeholder="Your last name" />
+          <div class="credentials-fields">
+            <div class="form-group">
+              <label>Username</label>
+              <input type="text" placeholder="Your username" />
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" placeholder="Your password" />
+            </div>
           </div>
-          <div class="form-group">
-            <label>Username</label>
-            <input type="text" placeholder="Your username" />
-          </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" placeholder="Your email" />
-          </div>
-          <div class="form-group">
-            <label>Phone Number</label>
-            <input type="tel" placeholder="Your phone number" />
-          </div>
-          <div class="form-group">
-            <label>Password</label>
-            <input type="tel" placeholder="Your phone number" />
+          <div class="contact-fields">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" placeholder="Your email" />
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" placeholder="Your phone number" />
+            </div>
           </div>
           <div class="form-actions">
             <button class="save-button">Save Changes</button>
@@ -149,6 +155,21 @@ const setActiveSection = (section) => {
 
 .profile-form {
   max-width: 600px;
+}
+
+.name-fields,
+.credentials-fields,
+.contact-fields {
+  display: flex;
+  gap: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.name-fields .form-group,
+.credentials-fields .form-group,
+.contact-fields .form-group {
+  flex: 1;
+  margin-bottom: 0;
 }
 
 .form-group {
