@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import ProductCard from '@/components/product/ProductCard.vue'
 
 const activeSection = ref('profile')
 
@@ -13,6 +14,67 @@ const sections = [
 const setActiveSection = (section) => {
   activeSection.value = section
 }
+
+// Sample data for products
+const myPosts = [
+  {
+    id: 'post-1',
+    title: 'Nike Running Shoes',
+    price: 1200,
+    category: 'Shoes',
+    image: '/src/assets/images/main-image.png'
+  },
+  {
+    id: 'post-2',
+    title: 'Designer Backpack',
+    price: 800,
+    category: 'Bags',
+    image: '/src/assets/images/image-1.png'
+  },
+  {
+    id: 'post-3',
+    title: 'Casual Denim Jacket',
+    price: 950,
+    category: 'Clothing',
+    image: '/src/assets/images/image-2.png'
+  }
+]
+
+const wishlistItems = [
+  {
+    id: 'wish-1',
+    title: 'Leather Wallet',
+    price: 450,
+    category: 'Accessories',
+    image: '/src/assets/images/image-3.png'
+  },
+  {
+    id: 'wish-2',
+    title: 'Smart Watch',
+    price: 2500,
+    category: 'Electronics',
+    image: '/src/assets/images/Screenshot 2025-03-26 at 17.26.14.png'
+  }
+]
+
+const purchaseHistory = [
+  {
+    id: 'purchase-1',
+    title: 'Vintage Sunglasses',
+    price: 600,
+    category: 'Accessories',
+    image: '/src/assets/images/main-image.png',
+    purchaseDate: '2024-03-15'
+  },
+  {
+    id: 'purchase-2',
+    title: 'Summer T-Shirt',
+    price: 250,
+    category: 'Clothing',
+    image: '/src/assets/images/image-1.png',
+    purchaseDate: '2024-03-10'
+  }
+]
 </script>
 
 <template>
@@ -76,8 +138,11 @@ const setActiveSection = (section) => {
       <div v-if="activeSection === 'posts'" class="profile-section">
         <h2>My Posts</h2>
         <div class="posts-grid">
-          <!-- Posts will be displayed here -->
-          <div class="placeholder">Your posts will appear here</div>
+          <ProductCard
+            v-for="post in myPosts"
+            :key="post.id"
+            v-bind="post"
+          />
         </div>
       </div>
 
@@ -85,8 +150,11 @@ const setActiveSection = (section) => {
       <div v-if="activeSection === 'wishlist'" class="profile-section">
         <h2>My Wishlist</h2>
         <div class="wishlist-grid">
-          <!-- Wishlist items will be displayed here -->
-          <div class="placeholder">Your wishlist items will appear here</div>
+          <ProductCard
+            v-for="item in wishlistItems"
+            :key="item.id"
+            v-bind="item"
+          />
         </div>
       </div>
 
@@ -94,8 +162,12 @@ const setActiveSection = (section) => {
       <div v-if="activeSection === 'purchases'" class="profile-section">
         <h2>My Purchases</h2>
         <div class="purchases-list">
-          <!-- Purchase history will be displayed here -->
-          <div class="placeholder">Your purchase history will appear here</div>
+          <div v-for="purchase in purchaseHistory" :key="purchase.id" class="purchase-item">
+            <ProductCard v-bind="purchase" />
+            <div class="purchase-date">
+              Purchased on: {{ purchase.purchaseDate }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -257,9 +329,47 @@ const setActiveSection = (section) => {
 }
 
 .purchases-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.purchase-item {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.purchase-item :deep(.product-card) {
+  width: 100%;
+  margin: 0;
+}
+
+.purchase-item :deep(.product-image) {
+  height: 150px;
+}
+
+.purchase-item :deep(.product-info h3) {
+  font-size: 1rem;
+}
+
+.purchase-item :deep(.price) {
+  font-size: 0.9rem;
+}
+
+.purchase-item :deep(.category) {
+  font-size: 0.8rem;
+}
+
+.purchase-date {
+  color: #6b7280;
+  font-size: 0.875rem;
+  text-align: center;
+  margin-top: 0.5rem;
 }
 
 @media (max-width: 768px) {
