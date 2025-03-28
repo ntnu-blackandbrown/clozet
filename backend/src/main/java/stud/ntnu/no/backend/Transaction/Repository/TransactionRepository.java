@@ -8,5 +8,7 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     List<Transaction> findByStatus(String status);
-    List<Transaction> findByTimestampBetween(LocalDateTime start, LocalDateTime end);
+    // Change from findByTimestampBetween to findByCreatedAtBetween
+    List<Transaction> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
 }

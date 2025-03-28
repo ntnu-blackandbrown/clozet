@@ -10,8 +10,7 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findBySellerId(Long sellerId);
     List<Item> findByCategoryId(Long categoryId);
-    List<Item> findByActiveTrue();
+    List<Item> findByIsAvailableTrue();  // Changed from findByAvailableTrue()
     List<Item> findByTitleContainingIgnoreCase(String title);
-
-    List<Item> findByAvailableTrue();
+    // Other methods...
 }
