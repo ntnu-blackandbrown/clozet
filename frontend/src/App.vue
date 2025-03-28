@@ -12,7 +12,6 @@ const showLoginModal = ref(false)
     <header>
       <img alt="Vue logo" class="logo" src="@/assets/logo.png" width="125" height="125" />
 
-        <h1>Welcome to Clozet!</h1>
         <nav>
           <RouterLink to="/product-display">Product Display</RouterLink>
         </nav>
