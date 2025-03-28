@@ -1,5 +1,6 @@
 package stud.ntnu.no.backend.User.Service;
 
+import stud.ntnu.no.backend.User.DTOs.LoginDTO;
 import stud.ntnu.no.backend.User.DTOs.RegisterUserDTO;
 import stud.ntnu.no.backend.User.DTOs.StatusUserDTO;
 import stud.ntnu.no.backend.User.DTOs.UpdateUserDTO;
@@ -13,4 +14,5 @@ public interface UserService {
     UserDTO createUser(RegisterUserDTO registerUserDTO);
     UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO);
     void deleteUser(Long id);
+    UserDTO login(LoginDTO loginDTO);
 }

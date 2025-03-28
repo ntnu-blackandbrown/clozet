@@ -5,35 +5,52 @@ import stud.ntnu.no.backend.Message.DTOs.CreateMessageRequest;
 import stud.ntnu.no.backend.Message.DTOs.MessageDTO;
 import stud.ntnu.no.backend.Message.DTOs.UpdateMessageRequest;
 import stud.ntnu.no.backend.Message.Entity.Message;
+import stud.ntnu.no.backend.Item.Entity.Item;
+import stud.ntnu.no.backend.Item.Repository.ItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDateTime;
 
 @Component
 public class MessageMapper {
+    @Autowired
+    private ItemRepository itemRepository;
+
     public MessageDTO toDTO(Message message) {
         return new MessageDTO(
                 message.getId(),
-                message.getSender(),
-                message.getReceiver(),
+                message.getSenderId(),
+                message.getReceiverId(),
                 message.getContent(),
-                message.getTimestamp(),
-                message.getIsRead()
+                message.getCreatedAt(),
+                message.isRead()
         );
     }
 
     public Message toEntity(CreateMessageRequest request) {
-        return new Message(
-                request.getSender(),
-                request.getReceiver(),
-                request.getContent(),
-                request.getIsRead()
-        );
+        Message message = new Message();
+        message.setSenderId(request.getSenderId());
+        message.setReceiverId(request.getReceiverId());
+        message.setContent(request.getContent());
+        message.setRead(false); // Default to false as there's no isRead in the DTO
+        message.setCreatedAt(request.getTimestamp() != null ? 
+                            request.getTimestamp() : 
+                            LocalDateTime.now());
+
+        // Item association removed since itemId is not in the DTO anymore
+        
+        return message;
     }
 
     public void updateEntityFromRequest(Message message, UpdateMessageRequest request) {
         if (request.getContent() != null) {
             message.setContent(request.getContent());
         }
-        if (request.getIsRead() != null) {
-            message.setIsRead(request.getIsRead());
+        
+        if (request.getTimestamp() != null) {
+            message.setCreatedAt(request.getTimestamp());
         }
+        
+        // isRead update removed since it's not in UpdateMessageRequest
     }
 }

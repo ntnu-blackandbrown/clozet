@@ -1,27 +1,28 @@
 package stud.ntnu.no.backend.Transaction.DTOs;
 
-import java.time.LocalDateTime;
-
-public class TransactionDTO {
-    private Long id;
+public class CreateTransactionDTO {
     private Long itemId;
     private String buyerId;
     private String sellerId;
-    private double amount;
+    private double amount; // Changed from BigDecimal to double
     private String status;
     private String paymentMethod;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+
+    // Constructors
+    public CreateTransactionDTO() {
+    }
+
+    public CreateTransactionDTO(Long itemId, String buyerId, String sellerId, double amount, 
+                              String status, String paymentMethod) {
+        this.itemId = itemId;
+        this.buyerId = buyerId;
+        this.sellerId = sellerId;
+        this.amount = amount;
+        this.status = status;
+        this.paymentMethod = paymentMethod;
+    }
 
     // Getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getItemId() {
         return itemId;
     }
@@ -68,21 +69,5 @@ public class TransactionDTO {
 
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }

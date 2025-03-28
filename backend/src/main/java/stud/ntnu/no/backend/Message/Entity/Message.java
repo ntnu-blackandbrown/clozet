@@ -1,6 +1,7 @@
 package stud.ntnu.no.backend.Message.Entity;
 
 import jakarta.persistence.*;
+import stud.ntnu.no.backend.Item.Entity.Item;
 import java.time.LocalDateTime;
 
 @Entity
@@ -9,82 +10,77 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String sender;
-    private String receiver;
+    
+    private String senderId;
+    private String receiverId;
+    
+    // Add this field to match with mappedBy="item" in Item class
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
+    
     private String content;
-    private LocalDateTime timestamp;
-    private Boolean isRead;
-
-    // Default constructor required by JPA
+    private LocalDateTime createdAt;
+    private boolean isRead;
+    
+    // Constructors
     public Message() {
     }
     
-    // Full constructor
-    public Message(Long id, String sender, String receiver, String content,
-                  LocalDateTime timestamp, Boolean isRead) {
-        this.id = id;
-        this.sender = sender;
-        this.receiver = receiver;
-        this.content = content;
-        this.timestamp = timestamp;
-        this.isRead = isRead;
-    }
-    
-    // Constructor for new messages (without ID)
-    public Message(String sender, String receiver, String content, Boolean isRead) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.content = content;
-        this.timestamp = LocalDateTime.now(); // Set current time
-        this.isRead = isRead;
-    }
-
     // Getters and setters
     public Long getId() {
         return id;
     }
-
+    
     public void setId(Long id) {
         this.id = id;
     }
-
-    public String getSender() {
-        return sender;
+    
+    public String getSenderId() {
+        return senderId;
     }
-
-    public void setSender(String sender) {
-        this.sender = sender;
+    
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
-
-    public String getReceiver() {
-        return receiver;
+    
+    public String getReceiverId() {
+        return receiverId;
     }
-
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
+    
+    public void setReceiverId(String receiverId) {
+        this.receiverId = receiverId;
     }
-
+    
+    public Item getItem() {
+        return item;
+    }
+    
+    public void setItem(Item item) {
+        this.item = item;
+    }
+    
     public String getContent() {
         return content;
     }
-
+    
     public void setContent(String content) {
         this.content = content;
     }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
-
-    public Boolean getIsRead() {
+    
+    public boolean isRead() {
         return isRead;
     }
-
-    public void setIsRead(Boolean isRead) {
-        this.isRead = isRead;
+    
+    public void setRead(boolean read) {
+        isRead = read;
     }
 }
