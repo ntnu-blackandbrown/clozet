@@ -1,33 +1,17 @@
 package stud.ntnu.no.backend.Transaction.DTOs;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class TransactionDTO {
     private Long id;
+    private Long itemId;
     private String buyerId;
     private String sellerId;
-    private BigDecimal amount;
+    private double amount;
     private String status;
     private String paymentMethod;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Long itemId;
-
-    // Constructor
-    public TransactionDTO(Long id, String buyerId, String sellerId, double amount, 
-                         String status, String paymentMethod, LocalDateTime createdAt, 
-                         LocalDateTime updatedAt, Long itemId) {
-        this.id = id;
-        this.buyerId = buyerId;
-        this.sellerId = sellerId;
-        this.amount = BigDecimal.valueOf(amount);
-        this.status = status;
-        this.paymentMethod = paymentMethod;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.itemId = itemId;
-    }
 
     // Getters and setters
     public Long getId() {
@@ -36,6 +20,14 @@ public class TransactionDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
     }
 
     public String getBuyerId() {
@@ -54,11 +46,11 @@ public class TransactionDTO {
         this.sellerId = sellerId;
     }
 
-    public BigDecimal getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -92,13 +84,5 @@ public class TransactionDTO {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Long getItemId() {
-        return itemId;
-    }
-
-    public void setItemId(Long itemId) {
-        this.itemId = itemId;
     }
 }
