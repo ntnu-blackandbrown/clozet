@@ -55,23 +55,27 @@ export const useUserStore = defineStore('user', () => {
 
   async function handleLogin(identificator: string, password: string) {
     try {
-      // Dette er bare en stub-implementasjon inntil backend har login-endepunkt
-      // Senere vil dette endres til å kalle det faktiske login-endepunktet
-      console.log('Login attempt with:', { identificator, password })
+      const response = await axios.post('http://localhost:8080/api/users/login', {
+        username: identificator, // Backend forventer 'username'
+        password: password
+      });
 
-      // Simulerer vellykket innlogging for testing
-      currentUser.value = {
-        username: identificator,
-        email: identificator.includes('@') ? identificator : `${identificator}@example.com`,
-        firstName: 'Test',
-        lastName: 'User'
+      if (response.data) {
+        currentUser.value = {
+          username: response.data.username,
+          email: response.data.email,
+          firstName: response.data.firstName,
+          lastName: response.data.lastName
+        }
+
+        isLoggedIn.value = true
+        savedIdentificator.value = identificator
+        localStorage.setItem('user_identificator', identificator)
+
+        return { success: true, user: currentUser.value }
       }
 
-      isLoggedIn.value = true
-      savedIdentificator.value = identificator
-      localStorage.setItem('user_identificator', identificator)
-
-      return { success: true, user: currentUser.value }
+      return { success: false, error: 'No user data returned' }
     } catch (error) {
       console.error('Error while logging in:', error)
       return { success: false, error: error }

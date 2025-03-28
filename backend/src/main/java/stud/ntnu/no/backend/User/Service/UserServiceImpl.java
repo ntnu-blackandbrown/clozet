@@ -1,12 +1,15 @@
 package stud.ntnu.no.backend.User.Service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stud.ntnu.no.backend.User.DTOs.LoginDTO;
 import stud.ntnu.no.backend.User.DTOs.RegisterUserDTO;
 import stud.ntnu.no.backend.User.DTOs.StatusUserDTO;
 import stud.ntnu.no.backend.User.DTOs.UpdateUserDTO;
 import stud.ntnu.no.backend.User.DTOs.UserDTO;
 import stud.ntnu.no.backend.User.Entity.User;
+import stud.ntnu.no.backend.User.Exceptions.AuthenticationException;
 import stud.ntnu.no.backend.User.Mapper.UserMapper;
 import stud.ntnu.no.backend.User.Repository.UserRepository;
 
@@ -18,10 +21,12 @@ public class UserServiceImpl implements UserService {
     
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
     
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
     
     @Override
@@ -40,6 +45,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDTO createUser(RegisterUserDTO registerUserDTO) {
         User user = userMapper.toEntity(registerUserDTO);
+        
+        // Kryptere passordet før lagring
+        user.setPasswordHash(passwordEncoder.encode(registerUserDTO.getPassword()));
+        
         User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
     }
@@ -89,5 +98,21 @@ public class UserServiceImpl implements UserService {
             throw new NoSuchElementException("User not found with id: " + id);
         }
         userRepository.deleteById(id);
+    }
+    
+    @Override
+    public UserDTO login(LoginDTO loginDTO) {
+        User user = userRepository.findByUsername(loginDTO.getUsername())
+            .orElseThrow(() -> new AuthenticationException("Invalid username or password"));
+        
+        if (!user.isActive()) {
+            throw new AuthenticationException("User account is disabled");
+        }
+        
+        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPasswordHash())) {
+            throw new AuthenticationException("Invalid username or password");
+        }
+        
+        return userMapper.toDto(user);
     }
 }

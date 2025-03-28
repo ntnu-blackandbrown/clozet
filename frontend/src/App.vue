@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import LoginRegisterModal from './components/modals/LoginRegisterModal.vue'
 import ProductList from './components/ProductList.vue'
 import { RouterView } from 'vue-router'
@@ -8,6 +8,10 @@ import { useUserStore } from './stores/UserStore'
 const userStore = useUserStore()
 const showLoginModal = ref(false)
 const testRegistrationStatus = ref('')
+
+// Beregnet egenskap som viser om brukeren er logget inn
+const currentUser = computed(() => userStore.currentUser)
+const isLoggedIn = computed(() => userStore.isLoggedIn)
 
 // Funksjon for hurtigregistrering med testdata
 const testRegister = async () => {
@@ -22,7 +26,7 @@ const testRegister = async () => {
       lastName: 'User'
     }
 
-    await userStore.handleRegister(
+    const registerResult = await userStore.handleRegister(
       testUser.username,
       testUser.email,
       testUser.password,
@@ -30,14 +34,39 @@ const testRegister = async () => {
       testUser.lastName
     )
 
-    testRegistrationStatus.value = 'Suksess! Testbruker registrert'
-    setTimeout(() => {
-      testRegistrationStatus.value = ''
-    }, 3000)
+    if (registerResult.success && registerResult.user) {
+      testRegistrationStatus.value = 'Registrering vellykket! Logger inn...'
+
+      // Automatisk innlogging etter registrering
+      const loginResult = await userStore.handleLogin(testUser.username, testUser.password)
+
+      if (loginResult.success) {
+        testRegistrationStatus.value = `Logget inn som ${loginResult.user.username}`
+        setTimeout(() => {
+          testRegistrationStatus.value = ''
+        }, 5000)
+      } else {
+        testRegistrationStatus.value = 'Registrering OK, men innlogging feilet'
+      }
+    } else {
+      testRegistrationStatus.value = 'Registrering feilet'
+      setTimeout(() => {
+        testRegistrationStatus.value = ''
+      }, 3000)
+    }
   } catch (error) {
     testRegistrationStatus.value = 'Feil ved registrering'
     console.error('Error in test registration:', error)
   }
+}
+
+// Logge ut
+const logout = () => {
+  userStore.logout()
+  testRegistrationStatus.value = 'Logget ut'
+  setTimeout(() => {
+    testRegistrationStatus.value = ''
+  }, 3000)
 }
 </script>
 
@@ -46,15 +75,27 @@ const testRegister = async () => {
     <header>
       <img alt="Vue logo" class="logo" src="@/assets/logo.png" width="125" height="125" />
 
-        <h1>Welcome to Clozet!</h1>
-        <nav>
-          <RouterLink to="/product-display">Product Display</RouterLink>
-        </nav>
-        <div class="auth-buttons">
+      <h1>Welcome to Clozet!</h1>
+      <nav>
+        <RouterLink to="/product-display">Product Display</RouterLink>
+      </nav>
+
+      <div class="auth-section">
+        <!-- Brukerinfo når logget inn -->
+        <div v-if="isLoggedIn" class="user-info">
+          <span class="welcome-msg">Hei, {{ currentUser?.firstName || currentUser?.username }}!</span>
+          <button @click="logout" class="logout-button">Logg ut</button>
+        </div>
+
+        <!-- Knapper for innlogging/registrering når ikke logget inn -->
+        <div v-else class="auth-buttons">
           <button @click="showLoginModal = true" class="login-button">Login / Register</button>
           <button @click="testRegister" class="test-button">Test Registrering</button>
-          <span v-if="testRegistrationStatus" class="status-message">{{ testRegistrationStatus }}</span>
         </div>
+
+        <!-- Statusmelding -->
+        <span v-if="testRegistrationStatus" class="status-message">{{ testRegistrationStatus }}</span>
+      </div>
     </header>
     <main>
       <RouterView />
@@ -80,6 +121,12 @@ header {
   user-select: none;
 }
 
+.auth-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
 .auth-buttons {
   display: flex;
   align-items: center;
@@ -100,6 +147,20 @@ header {
   background-color: #444;
 }
 
+.logout-button {
+  padding: 0.5rem 1rem;
+  background-color: #666;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.logout-button:hover {
+  background-color: #888;
+}
+
 .test-button {
   padding: 0.5rem 1rem;
   background-color: #4CAF50;
@@ -116,7 +177,18 @@ header {
 
 .status-message {
   font-size: 0.85rem;
-  margin-left: 10px;
+  margin-top: 8px;
+  color: #333;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.welcome-msg {
+  font-weight: 500;
   color: #333;
 }
 

@@ -27,7 +27,7 @@ const loginSchema = yup.object({
 
 // Register schema
 const registerSchema = yup.object({
-  userName: yup.string().required('Username is required'),
+  username: yup.string().required('Username is required'),
   firstName: yup.string().required('First name is required'),
   lastName: yup.string().required('Last name is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
@@ -60,13 +60,13 @@ const isFormValid = computed(() => {
     )
   } else {
     return (
-      !errors.value.userName &&
+      !errors.value.username &&
       !errors.value.firstName &&
       !errors.value.lastName &&
       !errors.value.email &&
       !errors.value.password &&
       !errors.value.confirmPassword &&
-      userName.value &&
+      username.value &&
       firstName.value &&
       lastName.value &&
       email.value &&
@@ -80,7 +80,7 @@ const { value: identificator, errorMessage: identificatorError } = useField('ide
 const { value: password, errorMessage: passwordError } = useField('password')
 const { value: confirmPassword, errorMessage: confirmPasswordError } = useField('confirmPassword')
 
-const { value: userName, errorMessage: userNameError } = useField('userName')
+const { value: username, errorMessage: usernameError } = useField('username')
 const { value: firstName, errorMessage: firstNameError } = useField('firstName')
 const { value: lastName, errorMessage: lastNameError } = useField('lastName')
 const { value: email, errorMessage: emailError } = useField('email')
@@ -117,7 +117,7 @@ const submit = handleSubmit(async (values) => {
     } else {
       console.log('Register')
       result = await userStore.handleRegister(
-        values.userName,
+        values.username,
         values.email,
         values.password,
         values.firstName,
@@ -156,8 +156,8 @@ const submit = handleSubmit(async (values) => {
       <input v-if="isLogin" type="text" v-model="identificator" placeholder="Email or Username" />
       <span class="error" id="identificatorErrSpan">{{ identificatorError }}</span>
       <template v-if="!isLogin">
-        <input v-model="userName" type="text" placeholder="Username" />
-        <span class="error" id="userNameErrSpan">{{ userNameError }}</span>
+        <input v-model="username" type="text" placeholder="Username" />
+        <span class="error" id="usernameErrSpan">{{ usernameError }}</span>
         <input v-model="firstName" type="text" placeholder="First Name" />
         <span class="error" id="firstNameErrSpan">{{ firstNameError }}</span>
         <input v-model="lastName" type="text" placeholder="Last Name" />
