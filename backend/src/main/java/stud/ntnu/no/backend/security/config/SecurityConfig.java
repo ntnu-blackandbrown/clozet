@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/users/register").permitAll()
+                .requestMatchers("/api/users/**").permitAll()
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll() // For H2 console access
                 .anyRequest().authenticated()
