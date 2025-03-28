@@ -20,22 +20,22 @@ const router = createRouter({
         {
           path: 'settings',
           name: 'profile-settings',
-          component: () => import('@/views/ProfileSettingsView.vue'),
+          component: () => import('@/views/profile/MySettingsView.vue'),
         },
         {
           path: 'posts',
           name: 'my-posts',
-          component: () => import('@/views/MyPostsView.vue'),
+          component: () => import('@/views/profile/MyPostsView.vue'),
         },
         {
           path: 'wishlist',
           name: 'my-wishlist',
-          component: () => import('@/views/MyWishlistView.vue'),
+          component: () => import('@/views/profile/MyWishlistView.vue'),
         },
         {
           path: 'purchases',
           name: 'my-purchases',
-          component: () => import('@/views/MyPurchasesView.vue'),
+          component: () => import('@/views/profile/MyPurchasesView.vue'),
         },
       ]
     },
