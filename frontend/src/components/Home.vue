@@ -50,8 +50,9 @@ import Badge from './Badge.vue'
 }
 
 .search-wrapper {
-  position: relative; /* Let us position the icon absolutely within this container */
+  position: relative;
   display: inline-block;
+  margin-right: 10px;
 }
 
 .search-bar {
@@ -60,10 +61,9 @@ import Badge from './Badge.vue'
   font-size: 16px;
   border: 2px solid ;
   border-radius: 24px;
-  padding-right: 40px; /* space for the icon on the right */
+  padding-right: 40px;
 }
 
-/* Position the SVG in the top-right corner of the input */
 .search-icon {
   position: absolute;
   right: 10px;
@@ -71,13 +71,13 @@ import Badge from './Badge.vue'
   width: 20px;
   height: 20px;
   transform: translateY(-50%);
-  pointer-events: none; /* so clicks go through to the input */
-  stroke: black; /* pick a color that suits your design */
+  pointer-events: none;
+  stroke: black;
 }
 
 .create-post-btn {
-  display: flex;
-  align-items: center;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .create-post-btn button {
