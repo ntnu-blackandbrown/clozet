@@ -1,26 +1,22 @@
 package stud.ntnu.no.backend.Message.DTOs;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 public class MessageDTO {
     private Long id;
-    private String sender;
-    private String receiver;
+    private String senderId;
+    private String receiverId;
     private String content;
-    private LocalDateTime timestamp;
-    private Boolean isRead;
+    private LocalDateTime createdAt;
+    private boolean isRead;
 
-    public MessageDTO() {
-    }
-
-    public MessageDTO(Long id, String sender, String receiver, String content, 
-                     LocalDateTime timestamp, Boolean isRead) {
+    // Constructor
+    public MessageDTO(Long id, String senderId, String receiverId, String content, LocalDateTime createdAt, boolean isRead) {
         this.id = id;
-        this.sender = sender;
-        this.receiver = receiver;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
         this.content = content;
-        this.timestamp = timestamp;
+        this.createdAt = createdAt;
         this.isRead = isRead;
     }
 
@@ -33,20 +29,20 @@ public class MessageDTO {
         this.id = id;
     }
 
-    public String getSender() {
-        return sender;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
-    public String getReceiver() {
-        return receiver;
+    public String getReceiverId() {
+        return receiverId;
     }
 
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
+    public void setReceiverId(String receiverId) {
+        this.receiverId = receiverId;
     }
 
     public String getContent() {
@@ -57,49 +53,19 @@ public class MessageDTO {
         this.content = content;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Boolean getIsRead() {
+    public boolean isRead() {
         return isRead;
     }
 
-    public void setIsRead(Boolean isRead) {
-        this.isRead = isRead;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MessageDTO that = (MessageDTO) o;
-        return Objects.equals(id, that.id) &&
-               Objects.equals(sender, that.sender) &&
-               Objects.equals(receiver, that.receiver) &&
-               Objects.equals(content, that.content) &&
-               Objects.equals(timestamp, that.timestamp) &&
-               Objects.equals(isRead, that.isRead);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, sender, receiver, content, timestamp, isRead);
-    }
-
-    @Override
-    public String toString() {
-        return "MessageDTO{" +
-                "id=" + id +
-                ", sender='" + sender + '\'' +
-                ", receiver='" + receiver + '\'' +
-                ", content='" + content + '\'' +
-                ", timestamp=" + timestamp +
-                ", isRead=" + isRead +
-                '}';
+    public void setRead(boolean read) {
+        isRead = read;
     }
 }

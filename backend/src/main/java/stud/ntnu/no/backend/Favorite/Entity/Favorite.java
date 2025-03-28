@@ -1,6 +1,7 @@
 package stud.ntnu.no.backend.Favorite.Entity;
 
 import jakarta.persistence.*;
+import stud.ntnu.no.backend.Item.Entity.Item;
 import java.time.LocalDateTime;
 
 @Entity
@@ -10,7 +11,14 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String userId;
+
+    @Column(name = "item_id", insertable = false, updatable = false)
     private Long itemId;
+    
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
+    
     private String itemType;
     private LocalDateTime createdAt;
 
@@ -49,11 +57,23 @@ public class Favorite {
     }
 
     public Long getItemId() {
-        return itemId;
+        return item != null ? item.getId() : itemId;
     }
 
     public void setItemId(Long itemId) {
         this.itemId = itemId;
+
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+        if (item != null) {
+            this.itemId = item.getId();
+        }
     }
 
     public String getItemType() {

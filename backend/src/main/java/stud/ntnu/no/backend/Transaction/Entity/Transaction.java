@@ -1,9 +1,8 @@
 package stud.ntnu.no.backend.Transaction.Entity;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
+import stud.ntnu.no.backend.Item.Entity.Item;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @Table(name = "transactions")
@@ -11,30 +10,31 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String description;
-    private BigDecimal amount;
-    private LocalDateTime timestamp;
+    
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
+    
+    private String buyerId;
+    private String sellerId;
+    private double amount;
     private String status;
+    private String paymentMethod;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    // Default constructor
+    // Constructors
     public Transaction() {
     }
 
-    // Constructor with all fields
-    public Transaction(Long id, String description, BigDecimal amount, LocalDateTime timestamp, String status) {
-        this.id = id;
-        this.description = description;
-        this.amount = amount;
-        this.timestamp = timestamp;
-        this.status = status;
-    }
-
-    // Constructor for creating new transactions
-    public Transaction(String description, BigDecimal amount, String status) {
-        this.description = description;
+    public Transaction(String buyerId, String sellerId, double amount, String status, String paymentMethod) {
+        this.buyerId = buyerId;
+        this.sellerId = sellerId;
         this.amount = amount;
         this.status = status;
-        this.timestamp = LocalDateTime.now();
+        this.paymentMethod = paymentMethod;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     // Getters and setters
@@ -46,28 +46,36 @@ public class Transaction {
         this.id = id;
     }
 
-    public String getDescription() {
-        return description;
+    public Item getItem() {
+        return item;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setItem(Item item) {
+        this.item = item;
     }
 
-    public BigDecimal getAmount() {
+    public String getBuyerId() {
+        return buyerId;
+    }
+
+    public void setBuyerId(String buyerId) {
+        this.buyerId = buyerId;
+    }
+
+    public String getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(String sellerId) {
+        this.sellerId = sellerId;
+    }
+
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
     }
 
     public String getStatus() {
@@ -78,31 +86,27 @@ public class Transaction {
         this.status = status;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Transaction that = (Transaction) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(amount, that.amount) &&
-                Objects.equals(timestamp, that.timestamp) &&
-                Objects.equals(status, that.status);
+    public String getPaymentMethod() {
+        return paymentMethod;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, description, amount, timestamp, status);
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
-    @Override
-    public String toString() {
-        return "Transaction{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                ", amount=" + amount +
-                ", timestamp=" + timestamp +
-                ", status='" + status + '\'' +
-                '}';
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

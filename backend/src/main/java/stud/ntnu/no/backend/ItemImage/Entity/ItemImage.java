@@ -3,70 +3,69 @@ package stud.ntnu.no.backend.ItemImage.Entity;
 import jakarta.persistence.*;
 import stud.ntnu.no.backend.Item.Entity.Item;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "item_images", indexes = {
-    @Index(name = "idx_item_id", columnList = "item_id")
-})
+@Table(name = "item_images")
 public class ItemImage {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @ManyToOne
-  @JoinColumn(name = "item_id", nullable = false)
-  private Item item;
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
+    
+    private String imageUrl;
+    private boolean isPrimary;
+    private int displayOrder;
 
-  @Column(nullable = false)
-  private String imageUrl;
+    // Constructors
+    public ItemImage() {
+    }
 
-  @Column(nullable = false)
-  private boolean isPrimary;
+    public ItemImage(String imageUrl, boolean isPrimary, int displayOrder) {
+        this.imageUrl = imageUrl;
+        this.isPrimary = isPrimary;
+        this.displayOrder = displayOrder;
+    }
 
-  @Column(nullable = false)
-  private LocalDateTime createdAt;
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
 
-  // Getters and setters
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    public Item getItem() {
+        return item;
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public void setItem(Item item) {
+        this.item = item;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-  public Item getItem() {
-    return item;
-  }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
-  public void setItem(Item item) {
-    this.item = item;
-  }
+    public boolean isPrimary() {
+        return isPrimary;
+    }
 
-  public String getImageUrl() {
-    return imageUrl;
-  }
+    public void setPrimary(boolean primary) {
+        isPrimary = primary;
+    }
 
-  public void setImageUrl(String imageUrl) {
-    this.imageUrl = imageUrl;
-  }
+    public int getDisplayOrder() {
+        return displayOrder;
+    }
 
-  public boolean isPrimary() {
-    return isPrimary;
-  }
-
-  public void setPrimary(boolean primary) {
-    isPrimary = primary;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
+    }
 }

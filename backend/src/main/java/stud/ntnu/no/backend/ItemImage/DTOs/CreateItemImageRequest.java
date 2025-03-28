@@ -1,30 +1,16 @@
 package stud.ntnu.no.backend.ItemImage.DTOs;
 
-public class ItemImageDTO {
-    private Long id;
+public class CreateItemImageRequest {
     private Long itemId;
     private String imageUrl;
     private boolean isPrimary;
     private int displayOrder;
 
     // Constructor
-    public ItemImageDTO(Long id, Long itemId, String imageUrl, boolean isPrimary, int displayOrder) {
-        this.id = id;
-        this.itemId = itemId;
-        this.imageUrl = imageUrl;
-        this.isPrimary = isPrimary;
-        this.displayOrder = displayOrder;
+    public CreateItemImageRequest() {
     }
 
     // Getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getItemId() {
         return itemId;
     }
@@ -45,8 +31,8 @@ public class ItemImageDTO {
         return isPrimary;
     }
 
-    public void setPrimary(boolean primary) {
-        isPrimary = primary;
+    public void setIsPrimary(boolean isPrimary) {
+        this.isPrimary = isPrimary;
     }
 
     public int getDisplayOrder() {

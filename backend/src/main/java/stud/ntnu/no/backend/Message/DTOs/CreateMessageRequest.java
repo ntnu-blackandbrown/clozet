@@ -1,21 +1,14 @@
 package stud.ntnu.no.backend.Message.DTOs;
 
-import java.util.Objects;
-
 public class CreateMessageRequest {
     private String sender;
     private String receiver;
     private String content;
     private Boolean isRead;
+    private Long itemId;
 
+    // Default constructor
     public CreateMessageRequest() {
-    }
-
-    public CreateMessageRequest(String sender, String receiver, String content, Boolean isRead) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.content = content;
-        this.isRead = isRead;
     }
 
     // Getters and setters
@@ -50,30 +43,12 @@ public class CreateMessageRequest {
     public void setIsRead(Boolean isRead) {
         this.isRead = isRead;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CreateMessageRequest that = (CreateMessageRequest) o;
-        return Objects.equals(sender, that.sender) &&
-               Objects.equals(receiver, that.receiver) &&
-               Objects.equals(content, that.content) &&
-               Objects.equals(isRead, that.isRead);
+    
+    public Long getItemId() {
+        return itemId;
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(sender, receiver, content, isRead);
-    }
-
-    @Override
-    public String toString() {
-        return "CreateMessageRequest{" +
-                "sender='" + sender + '\'' +
-                ", receiver='" + receiver + '\'' +
-                ", content='" + content + '\'' +
-                ", isRead=" + isRead +
-                '}';
+    
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
     }
 }

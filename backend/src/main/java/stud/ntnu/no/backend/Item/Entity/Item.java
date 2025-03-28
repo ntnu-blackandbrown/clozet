@@ -11,7 +11,9 @@ import stud.ntnu.no.backend.Transaction.Entity.Transaction;
 import stud.ntnu.no.backend.User.Entity.User;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "items", indexes = {
@@ -84,7 +86,7 @@ public class Item {
   private LocalDateTime updatedAt;
 
   @OneToMany(mappedBy = "item")
-  private List<Favorite> favorites;
+  private Set<Favorite> favorites = new HashSet<>();
 
   @OneToMany(mappedBy = "item")
   private List<ItemImage> images;
@@ -94,6 +96,11 @@ public class Item {
 
   @OneToMany(mappedBy = "item")
   private List<Message> messages;
+
+  // Constructors
+  public Item() {
+    this.favorites = new HashSet<>();
+  }
 
   // Getters and setters
 
@@ -249,11 +256,11 @@ public class Item {
     this.updatedAt = updatedAt;
   }
 
-  public List<Favorite> getFavorites() {
+  public Set<Favorite> getFavorites() {
     return favorites;
   }
 
-  public void setFavorites(List<Favorite> favorites) {
+  public void setFavorites(Set<Favorite> favorites) {
     this.favorites = favorites;
   }
 

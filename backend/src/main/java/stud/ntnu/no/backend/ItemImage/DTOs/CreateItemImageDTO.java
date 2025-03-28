@@ -1,41 +1,45 @@
 package stud.ntnu.no.backend.ItemImage.DTOs;
 
 public class CreateItemImageDTO {
-    private String imageUrl;
-    private String altText;
-    private Integer position;
     private Long itemId;
-    
+    private String imageUrl;
+    private boolean isPrimary;
+    private int displayOrder;
+
+    // Constructor
+    public CreateItemImageDTO() {
+    }
+
     // Getters and setters
-    public String getImageUrl() {
-        return imageUrl;
-    }
-    
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-    
-    public String getAltText() {
-        return altText;
-    }
-    
-    public void setAltText(String altText) {
-        this.altText = altText;
-    }
-    
-    public Integer getPosition() {
-        return position;
-    }
-    
-    public void setPosition(Integer position) {
-        this.position = position;
-    }
-    
     public Long getItemId() {
         return itemId;
     }
-    
+
     public void setItemId(Long itemId) {
         this.itemId = itemId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public boolean isPrimary() {
+        return isPrimary;
+    }
+
+    public void setIsPrimary(boolean isPrimary) {
+        this.isPrimary = isPrimary;
+    }
+
+    public int getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }
