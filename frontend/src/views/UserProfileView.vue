@@ -1,82 +1,55 @@
 <script setup>
 import { ref } from 'vue'
-import ProductCard from '@/components/product/ProductCard.vue'
+import { useRoute } from 'vue-router'
 import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
-import ProfileSettingsView from '@/views/ProfileSettingsView.vue'
-import MyPostsView from '@/views/MyPostsView.vue'
-import MyWishlistView from '@/views/MyWishlistView.vue'
-import MyPurchasesView from '@/views/MyPurchasesView.vue'
 
-const activeSection = ref('profile')
+const route = useRoute()
 const showProductModal = ref(false)
 const selectedProductId = ref('')
-
-const sections = [
-  { id: 'profile', label: 'Profile Settings' },
-  { id: 'posts', label: 'My Posts' },
-  { id: 'wishlist', label: 'My Wishlist' },
-  { id: 'purchases', label: 'My Purchases' },
-]
-
-const setActiveSection = (section) => {
-  activeSection.value = section
-}
 
 const openProductModal = (productId) => {
   selectedProductId.value = productId
   showProductModal.value = true
 }
-
-// Sample data for products
-const purchaseHistory = [
-  {
-    id: 'purchase-1',
-    title: 'Vintage Sunglasses',
-    price: 600,
-    category: 'Accessories',
-    image: '/src/assets/images/main-image.png',
-    purchaseDate: '2024-03-15',
-    purchased: true,
-  },
-  {
-    id: 'purchase-2',
-    title: 'Summer T-Shirt',
-    price: 250,
-    category: 'Clothing',
-    image: '/src/assets/images/image-1.png',
-    purchaseDate: '2024-03-10',
-    purchased: true,
-  },
-]
 </script>
 
 <template>
   <div class="profile-container">
     <!-- Vertical Navigation Menu -->
     <nav class="profile-nav">
-      <button
-        v-for="section in sections"
-        :key="section.id"
-        :class="['nav-button', { active: activeSection === section.id }]"
-        @click="setActiveSection(section.id)"
+      <RouterLink
+        to="/profile/settings"
+        class="nav-link"
+        :class="{ active: route.path === '/profile/settings' }"
       >
-        {{ section.label }}
-      </button>
+        Profile Settings
+      </RouterLink>
+      <RouterLink
+        to="/profile/posts"
+        class="nav-link"
+        :class="{ active: route.path === '/profile/posts' }"
+      >
+        My Posts
+      </RouterLink>
+      <RouterLink
+        to="/profile/wishlist"
+        class="nav-link"
+        :class="{ active: route.path === '/profile/wishlist' }"
+      >
+        My Wishlist
+      </RouterLink>
+      <RouterLink
+        to="/profile/purchases"
+        class="nav-link"
+        :class="{ active: route.path === '/profile/purchases' }"
+      >
+        My Purchases
+      </RouterLink>
     </nav>
 
     <!-- Content Area -->
     <div class="profile-content">
-      <!-- Profile Settings Section -->
-      <ProfileSettingsView v-if="activeSection === 'profile'" />
-
-      <!-- My Posts Section -->
-      <MyPostsView v-if="activeSection === 'posts'" />
-
-      <!-- My Wishlist Section -->
-      <MyWishlistView v-if="activeSection === 'wishlist'" />
-
-      <!-- My Purchases Section -->
-      <MyPurchasesView v-if="activeSection === 'purchases'" />
+      <RouterView />
     </div>
 
     <!-- Product Display Modal -->
@@ -95,6 +68,7 @@ const purchaseHistory = [
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  min-height: calc(100vh - 64px); /* Adjust based on your header height */
 }
 
 .profile-nav {
@@ -102,27 +76,32 @@ const purchaseHistory = [
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-.nav-button {
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
+  background-color: white;
   padding: 1rem;
-  text-align: left;
-  background: none;
-  border: none;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+  padding: 1rem 1.5rem;
+  text-decoration: none;
+  color: #4b5563;
   border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  color: #333;
   transition: all 0.2s ease;
-}
-
-.nav-button:hover {
-  background-color: #f3f4f6;
-}
-
-.nav-button.active {
-  background-color: #e5e7eb;
   font-weight: 500;
+}
+
+.nav-link:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.nav-link.active {
+  background-color: #e5e7eb;
+  color: #111827;
 }
 
 .profile-content {
@@ -131,165 +110,7 @@ const purchaseHistory = [
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.profile-section h2 {
-  margin-bottom: 2rem;
-  color: #333;
-  font-size: 1.5rem;
-}
-
-.profile-form {
-  max-width: 600px;
-}
-
-.name-fields,
-.credentials-fields,
-.contact-fields {
-  display: flex;
-  gap: 4rem;
-  margin-bottom: 1.5rem;
-}
-
-.name-fields .form-group,
-.credentials-fields .form-group,
-.contact-fields .form-group {
-  flex: 1;
-  margin-bottom: 0;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #374151;
-  font-weight: 500;
-}
-
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #e1e1e1;
-  border-radius: 8px;
-  background-color: #f8f9fa;
-  transition: all 0.2s ease;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #3b82f6;
-  background-color: white;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-}
-
-.form-group textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.save-button,
-.delete-button {
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.save-button {
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-}
-
-.save-button:hover {
-  background-color: #2563eb;
-}
-
-.delete-button {
-  background-color: #ef4444;
-  color: white;
-  border: none;
-}
-
-.delete-button:hover {
-  background-color: #dc2626;
-}
-
-.placeholder {
-  text-align: center;
-  padding: 2rem;
-  background-color: #f3f4f6;
-  border-radius: 8px;
-  color: #6b7280;
-}
-
-.posts-grid,
-.wishlist-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-.purchases-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
-}
-
-.purchase-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.purchase-item :deep(.product-card) {
-  width: 100%;
-  margin: 0;
-  cursor: pointer;
-}
-
-.purchase-item :deep(.product-card:hover) {
-  transform: translateY(-2px);
-  transition: transform 0.2s ease;
-}
-
-.purchase-item :deep(.product-image) {
-  height: 150px;
-}
-
-.purchase-item :deep(.product-info h3) {
-  font-size: 1rem;
-}
-
-.purchase-item :deep(.price) {
-  font-size: 0.9rem;
-}
-
-.purchase-item :deep(.category) {
-  font-size: 0.8rem;
-}
-
-.purchase-date {
-  color: #6b7280;
-  font-size: 0.875rem;
-  text-align: center;
-  margin-top: 0.5rem;
+  min-height: 500px;
 }
 
 @media (max-width: 768px) {
@@ -302,11 +123,20 @@ const purchaseHistory = [
     width: 100%;
     flex-direction: row;
     overflow-x: auto;
-    padding-bottom: 1rem;
+    padding: 0.75rem;
+    position: relative;
+    top: 0;
+    margin-bottom: 1rem;
   }
 
-  .nav-button {
+  .nav-link {
     white-space: nowrap;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .profile-content {
+    padding: 1rem;
   }
 }
 </style>

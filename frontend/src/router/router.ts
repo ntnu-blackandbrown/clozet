@@ -9,14 +9,35 @@ const router = createRouter({
       component: () => import('@/views/HomeView.vue'),
     },
     {
-      path: '/product-display',
-      name: 'product-display',
-      component: () => import('@/components/modals/ProductDisplayModal.vue'),
-    },
-    {
-      path: '/edit-profile',
-      name: 'edit-profile',
+      path: '/profile',
+      name: 'profile',
       component: () => import('@/views/UserProfileView.vue'),
+      children: [
+        {
+          path: '',
+          redirect: '/profile/settings'
+        },
+        {
+          path: 'settings',
+          name: 'profile-settings',
+          component: () => import('@/views/ProfileSettingsView.vue'),
+        },
+        {
+          path: 'posts',
+          name: 'my-posts',
+          component: () => import('@/views/MyPostsView.vue'),
+        },
+        {
+          path: 'wishlist',
+          name: 'my-wishlist',
+          component: () => import('@/views/MyWishlistView.vue'),
+        },
+        {
+          path: 'purchases',
+          name: 'my-purchases',
+          component: () => import('@/views/MyPurchasesView.vue'),
+        },
+      ]
     },
   ],
 })

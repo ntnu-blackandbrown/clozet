@@ -78,7 +78,7 @@ const logout = () => {
       <h1>Welcome to Clozet!</h1>
       <nav>
         <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/edit-profile">Edit Profile</RouterLink>
+        <RouterLink to="/profile">Profile</RouterLink>
       </nav>
 
       <div class="auth-section">
