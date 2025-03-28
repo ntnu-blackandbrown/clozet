@@ -1,11 +1,19 @@
 package stud.ntnu.no.backend.Message.DTOs;
 
+import java.time.LocalDateTime;
+
 public class UpdateMessageRequest {
     private String content;
-    private Boolean isRead;
+    private LocalDateTime timestamp;
 
     // Default constructor
     public UpdateMessageRequest() {
+    }
+
+    // Constructor with arguments
+    public UpdateMessageRequest(String content, LocalDateTime timestamp) {
+        this.content = content;
+        this.timestamp = timestamp;
     }
 
     // Getters and setters
@@ -17,11 +25,11 @@ public class UpdateMessageRequest {
         this.content = content;
     }
 
-    public Boolean getIsRead() {
-        return isRead;
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setIsRead(Boolean isRead) {
-        this.isRead = isRead;
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 }

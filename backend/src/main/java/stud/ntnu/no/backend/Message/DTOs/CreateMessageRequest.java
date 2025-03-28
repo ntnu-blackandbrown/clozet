@@ -1,31 +1,40 @@
 package stud.ntnu.no.backend.Message.DTOs;
 
+import java.time.LocalDateTime;
+
 public class CreateMessageRequest {
-    private String sender;
-    private String receiver;
+    private String senderId;
+    private String receiverId;
     private String content;
-    private Boolean isRead;
-    private Long itemId;
+    private LocalDateTime timestamp;
 
     // Default constructor
     public CreateMessageRequest() {
     }
 
+    // Constructor with arguments
+    public CreateMessageRequest(String senderId, String receiverId, String content, LocalDateTime timestamp) {
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.content = content;
+        this.timestamp = timestamp;
+    }
+
     // Getters and setters
-    public String getSender() {
-        return sender;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
-    public String getReceiver() {
-        return receiver;
+    public String getReceiverId() {
+        return receiverId;
     }
 
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
+    public void setReceiverId(String receiverId) {
+        this.receiverId = receiverId;
     }
 
     public String getContent() {
@@ -36,19 +45,11 @@ public class CreateMessageRequest {
         this.content = content;
     }
 
-    public Boolean getIsRead() {
-        return isRead;
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setIsRead(Boolean isRead) {
-        this.isRead = isRead;
-    }
-    
-    public Long getItemId() {
-        return itemId;
-    }
-    
-    public void setItemId(Long itemId) {
-        this.itemId = itemId;
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 }

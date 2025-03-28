@@ -9,6 +9,8 @@ import stud.ntnu.no.backend.Item.Entity.Item;
 import stud.ntnu.no.backend.Item.Repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
+
 @Component
 public class MessageMapper {
     @Autowired
@@ -27,18 +29,15 @@ public class MessageMapper {
 
     public Message toEntity(CreateMessageRequest request) {
         Message message = new Message();
-        message.setSenderId(request.getSender());
-        message.setReceiverId(request.getReceiver());
+        message.setSenderId(request.getSenderId());
+        message.setReceiverId(request.getReceiverId());
         message.setContent(request.getContent());
-        message.setRead(request.getIsRead() != null ? request.getIsRead() : false);
-        message.setCreatedAt(java.time.LocalDateTime.now());
-        
-        // Set the item if itemId is provided
-        if (request.getItemId() != null) {
-            Item item = itemRepository.findById(request.getItemId())
-                .orElseThrow(() -> new RuntimeException("Item not found with id: " + request.getItemId()));
-            message.setItem(item);
-        }
+        message.setRead(false); // Default to false as there's no isRead in the DTO
+        message.setCreatedAt(request.getTimestamp() != null ? 
+                            request.getTimestamp() : 
+                            LocalDateTime.now());
+
+        // Item association removed since itemId is not in the DTO anymore
         
         return message;
     }
@@ -47,8 +46,11 @@ public class MessageMapper {
         if (request.getContent() != null) {
             message.setContent(request.getContent());
         }
-        if (request.getIsRead() != null) {
-            message.setRead(request.getIsRead());
+        
+        if (request.getTimestamp() != null) {
+            message.setCreatedAt(request.getTimestamp());
         }
+        
+        // isRead update removed since it's not in UpdateMessageRequest
     }
 }
