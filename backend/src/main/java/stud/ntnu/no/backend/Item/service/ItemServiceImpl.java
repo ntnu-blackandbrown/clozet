@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.Item.service;
+package stud.ntnu.no.backend.item.service;
 
 import io.micrometer.common.util.StringUtils;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class ItemServiceImpl implements ItemService {
+public class ItemServiceImpl implements stud.ntnu.no.backend.Item.service.ItemService {
 
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
