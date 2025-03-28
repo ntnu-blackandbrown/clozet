@@ -1,7 +1,7 @@
 <script setup>
 import { ref, nextTick } from 'vue'
 import ProductDisplayModal from '../components/modals/ProductDisplayModal.vue'
-import ProductCard from './ProductCard.vue'
+import ProductCard from './product/ProductCard.vue'
 
 const props = defineProps({
   productId: {
