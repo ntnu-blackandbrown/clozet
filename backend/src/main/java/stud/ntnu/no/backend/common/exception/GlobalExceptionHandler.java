@@ -7,16 +7,24 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import stud.ntnu.no.backend.Category.Exceptions.CategoryNotFoundException;
-import stud.ntnu.no.backend.Category.Exceptions.CategoryValidationException;
-import stud.ntnu.no.backend.User.Exceptions.EmailAlreadyInUseException;
-import stud.ntnu.no.backend.User.Exceptions.UserNotFoundException;
-import stud.ntnu.no.backend.User.Exceptions.UserValidationException;
-import stud.ntnu.no.backend.User.Exceptions.UsernameAlreadyExistsException;
-import stud.ntnu.no.backend.Review.Exceptions.ReviewNotFoundException;
-import stud.ntnu.no.backend.Review.Exceptions.ReviewValidationException;
-import stud.ntnu.no.backend.ShippingOption.Exceptions.ShippingOptionNotFoundException;
-import stud.ntnu.no.backend.ShippingOption.Exceptions.ShippingOptionValidationException;
+import stud.ntnu.no.backend.Item.exception.ItemNotFoundException;
+import stud.ntnu.no.backend.Item.exception.ItemValidationException;
+import stud.ntnu.no.backend.category.exception.CategoryNotFoundException;
+import stud.ntnu.no.backend.category.exception.CategoryValidationException;
+import stud.ntnu.no.backend.favorite.exception.FavoriteNotFoundException;
+import stud.ntnu.no.backend.favorite.exception.FavoriteValidationException;
+import stud.ntnu.no.backend.itemimage.exception.ItemImageNotFoundException;
+import stud.ntnu.no.backend.itemimage.exception.ItemImageValidationException;
+import stud.ntnu.no.backend.location.exception.LocationNotFoundException;
+import stud.ntnu.no.backend.location.exception.LocationValidationException;
+import stud.ntnu.no.backend.message.exception.MessageNotFoundException;
+import stud.ntnu.no.backend.transaction.exception.TransactionNotFoundException;
+import stud.ntnu.no.backend.transaction.exception.TransactionValidationException;
+import stud.ntnu.no.backend.user.exception.*;
+import stud.ntnu.no.backend.review.exception.ReviewNotFoundException;
+import stud.ntnu.no.backend.review.exception.ReviewValidationException;
+import stud.ntnu.no.backend.shippingoption.exception.ShippingOptionNotFoundException;
+import stud.ntnu.no.backend.shippingoption.exception.ShippingOptionValidationException;
 
 
 import java.time.LocalDateTime;
@@ -104,14 +112,69 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, status);
     }
 
-
-    //Item class
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public class InvalidDataException extends RuntimeException {
-        public InvalidDataException(String message) {
-            super(message);
-        }
+    // Message exception handler
+    @ExceptionHandler(MessageNotFoundException.class)
+    public ResponseEntity<Object> handleMessageNotFoundException(MessageNotFoundException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    // Transaction exception handler
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<Object> handleTransactionNotFoundException(TransactionNotFoundException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    // Favorite exception handler
+    @ExceptionHandler(FavoriteNotFoundException.class)
+    public ResponseEntity<Object> handleFavoriteNotFoundException(FavoriteNotFoundException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    // Location exception handlers
+    @ExceptionHandler(LocationNotFoundException.class)
+    public ResponseEntity<Object> handleLocationNotFoundException(LocationNotFoundException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(LocationValidationException.class)
+    public ResponseEntity<Object> handleLocationValidationException(LocationValidationException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    // Item image exception handlers
+    @ExceptionHandler(ItemImageNotFoundException.class)
+    public ResponseEntity<Object> handleItemImageNotFoundException(ItemImageNotFoundException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ItemImageValidationException.class)
+    public ResponseEntity<Object> handleItemImageValidationException(ItemImageValidationException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    // Item exception handlers
+    @ExceptionHandler(ItemNotFoundException.class)
+    public ResponseEntity<Object> handleItemNotFoundException(ItemNotFoundException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ItemValidationException.class)
+    public ResponseEntity<Object> handleItemValidationException(ItemValidationException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    // Authentication exception handler
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(InvalidDataException.class)
+    public ResponseEntity<Object> handleInvalidDataException(InvalidDataException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+
 
     // ShippingOption exception handlers
     @ExceptionHandler(ShippingOptionNotFoundException.class)
@@ -123,4 +186,25 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleShippingOptionValidationException(ShippingOptionValidationException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(TransactionValidationException.class)
+    public ResponseEntity<Object> handleTransactionValidationException(TransactionValidationException ex) {
+        return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FavoriteValidationException.class)
+    public ResponseEntity<Object> handleFavoriteValidationException(FavoriteValidationException ex) {
+        return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    private ResponseEntity<Object> createErrorResponse(String message, HttpStatus status) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("timestamp", LocalDateTime.now());
+        errorResponse.put("status", status.value());
+        errorResponse.put("error", status.getReasonPhrase());
+        errorResponse.put("message", message);
+
+        return new ResponseEntity<>(errorResponse, status);
+    }
+
 }

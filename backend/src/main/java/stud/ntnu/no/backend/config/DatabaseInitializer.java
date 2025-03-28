@@ -4,8 +4,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import stud.ntnu.no.backend.User.Entity.User;
-import stud.ntnu.no.backend.User.Repository.UserRepository;
+import stud.ntnu.no.backend.user.entity.User;
+import stud.ntnu.no.backend.user.repository.UserRepository;
 
 @Configuration
 public class DatabaseInitializer {

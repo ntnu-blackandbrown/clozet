@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.ShippingOption.Controller;
+package stud.ntnu.no.backend.shippingoption.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,9 +7,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import stud.ntnu.no.backend.ShippingOption.DTOs.CreateShippingOptionDTO;
-import stud.ntnu.no.backend.ShippingOption.DTOs.ShippingOptionDTO;
-import stud.ntnu.no.backend.ShippingOption.Service.ShippingOptionService;
+import stud.ntnu.no.backend.shippingoption.dto.CreateShippingOptionDTO;
+import stud.ntnu.no.backend.shippingoption.dto.ShippingOptionDTO;
+import stud.ntnu.no.backend.shippingoption.service.ShippingOptionService;
 
 import java.util.Arrays;
 import java.util.List;
