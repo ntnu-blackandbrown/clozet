@@ -1,25 +1,19 @@
 package stud.ntnu.no.backend.Transaction.DTOs;
 
-import java.math.BigDecimal;
-
 public class UpdateTransactionRequest {
-    private BigDecimal amount;
     private String status;
     private String paymentMethod;
 
-    // Default constructor
+    // Constructors
     public UpdateTransactionRequest() {
     }
 
-    // Getters and setters
-    public BigDecimal getAmount() {
-        return amount;
+    public UpdateTransactionRequest(String status, String paymentMethod) {
+        this.status = status;
+        this.paymentMethod = paymentMethod;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
+    // Getters and Setters
     public String getStatus() {
         return status;
     }

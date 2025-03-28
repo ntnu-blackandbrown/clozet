@@ -3,7 +3,7 @@ package stud.ntnu.no.backend.Transaction.Mapper;
 import org.springframework.stereotype.Component;
 import stud.ntnu.no.backend.Item.Entity.Item;
 import stud.ntnu.no.backend.Item.Repository.ItemRepository;
-import stud.ntnu.no.backend.Transaction.DTOs.CreateTransactionDTO;
+import stud.ntnu.no.backend.Transaction.DTOs.CreateTransactionRequest;
 import stud.ntnu.no.backend.Transaction.DTOs.TransactionDTO;
 import stud.ntnu.no.backend.Transaction.Entity.Transaction;
 
@@ -36,11 +36,11 @@ public class TransactionMapper {
         return dto;
     }
 
-    public Transaction toEntity(CreateTransactionDTO dto) {
+    public Transaction toEntity(CreateTransactionRequest dto) {
         Transaction transaction = new Transaction();
         transaction.setBuyerId(dto.getBuyerId());
         transaction.setSellerId(dto.getSellerId());
-        transaction.setAmount(dto.getAmount()); // Now directly assigning double value
+        transaction.setAmount(dto.getAmount());
         transaction.setStatus(dto.getStatus());
         transaction.setPaymentMethod(dto.getPaymentMethod());
         transaction.setCreatedAt(LocalDateTime.now());

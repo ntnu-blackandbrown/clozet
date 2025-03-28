@@ -1,20 +1,36 @@
 package stud.ntnu.no.backend.Transaction.DTOs;
 
-import java.math.BigDecimal;
-
 public class CreateTransactionRequest {
+    private Long itemId;
     private String buyerId;
     private String sellerId;
-    private BigDecimal amount;
+    private double amount;
     private String status;
     private String paymentMethod;
-    private Long itemId;
 
-    // Default constructor
+    // Constructors
     public CreateTransactionRequest() {
     }
 
+    public CreateTransactionRequest(Long itemId, String buyerId, String sellerId, double amount,
+                              String status, String paymentMethod) {
+        this.itemId = itemId;
+        this.buyerId = buyerId;
+        this.sellerId = sellerId;
+        this.amount = amount;
+        this.status = status;
+        this.paymentMethod = paymentMethod;
+    }
+
     // Getters and setters
+    public Long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
+    }
+
     public String getBuyerId() {
         return buyerId;
     }
@@ -31,11 +47,11 @@ public class CreateTransactionRequest {
         this.sellerId = sellerId;
     }
 
-    public BigDecimal getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -53,13 +69,5 @@ public class CreateTransactionRequest {
 
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
-    }
-
-    public Long getItemId() {
-        return itemId;
-    }
-
-    public void setItemId(Long itemId) {
-        this.itemId = itemId;
     }
 }
