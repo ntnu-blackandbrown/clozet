@@ -5,6 +5,7 @@ import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
 import ProfileSettingsView from '@/views/ProfileSettingsView.vue'
 import MyPostsView from '@/views/MyPostsView.vue'
 import MyWishlistView from '@/views/MyWishlistView.vue'
+import MyPurchasesView from '@/views/MyPurchasesView.vue'
 
 const activeSection = ref('profile')
 const showProductModal = ref(false)
@@ -75,15 +76,7 @@ const purchaseHistory = [
       <MyWishlistView v-if="activeSection === 'wishlist'" />
 
       <!-- My Purchases Section -->
-      <div v-if="activeSection === 'purchases'" class="profile-section">
-        <h2>My Purchases</h2>
-        <div class="purchases-list">
-          <div v-for="purchase in purchaseHistory" :key="purchase.id" class="purchase-item">
-            <ProductCard v-bind="purchase" @click="openProductModal(purchase.id)" />
-            <div class="purchase-date">Purchased on: {{ purchase.purchaseDate }}</div>
-          </div>
-        </div>
-      </div>
+      <MyPurchasesView v-if="activeSection === 'purchases'" />
     </div>
 
     <!-- Product Display Modal -->
