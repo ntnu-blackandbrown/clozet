@@ -1,5 +1,6 @@
 <script setup>
 import { defineProps } from 'vue'
+import WishlistButton from './WishlistButton.vue'
 
 const props = defineProps({
   id: {
@@ -35,6 +36,9 @@ const handleClick = () => {
   <div class="product-card" @click="handleClick">
     <div class="product-image">
       <img :src="image" :alt="title" />
+      <div class="wishlist-container">
+        <WishlistButton :product-id="id" @click.stop />
+      </div>
     </div>
     <div class="product-info">
       <h3>{{ title }}</h3>
@@ -64,6 +68,7 @@ const handleClick = () => {
 .product-image {
   height: 200px;
   overflow: hidden;
+  position: relative;
 }
 
 .product-image img {
@@ -111,5 +116,15 @@ const handleClick = () => {
 
 .view-details:hover {
   background-color: #2563eb;
+}
+
+.wishlist-container {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  padding: 4px;
 }
 </style>
