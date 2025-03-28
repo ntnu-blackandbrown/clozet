@@ -1,8 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import ProductCard from '@/components/product/ProductCard.vue'
+import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
 
 const activeSection = ref('profile')
+const showProductModal = ref(false)
+const selectedProductId = ref('')
 
 const sections = [
   { id: 'profile', label: 'Profile Settings' },
@@ -13,6 +16,11 @@ const sections = [
 
 const setActiveSection = (section) => {
   activeSection.value = section
+}
+
+const openProductModal = (productId) => {
+  selectedProductId.value = productId
+  showProductModal.value = true
 }
 
 // Sample data for products
@@ -142,6 +150,7 @@ const purchaseHistory = [
             v-for="post in myPosts"
             :key="post.id"
             v-bind="post"
+            @click="openProductModal(post.id)"
           />
         </div>
       </div>
@@ -154,6 +163,7 @@ const purchaseHistory = [
             v-for="item in wishlistItems"
             :key="item.id"
             v-bind="item"
+            @click="openProductModal(item.id)"
           />
         </div>
       </div>
@@ -163,7 +173,10 @@ const purchaseHistory = [
         <h2>My Purchases</h2>
         <div class="purchases-list">
           <div v-for="purchase in purchaseHistory" :key="purchase.id" class="purchase-item">
-            <ProductCard v-bind="purchase" />
+            <ProductCard
+              v-bind="purchase"
+              @click="openProductModal(purchase.id)"
+            />
             <div class="purchase-date">
               Purchased on: {{ purchase.purchaseDate }}
             </div>
@@ -171,6 +184,13 @@ const purchaseHistory = [
         </div>
       </div>
     </div>
+
+    <!-- Product Display Modal -->
+    <ProductDisplayModal
+      v-if="showProductModal"
+      :productId="selectedProductId"
+      @close="showProductModal = false"
+    />
   </div>
 </template>
 
@@ -347,6 +367,12 @@ const purchaseHistory = [
 .purchase-item :deep(.product-card) {
   width: 100%;
   margin: 0;
+  cursor: pointer;
+}
+
+.purchase-item :deep(.product-card:hover) {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
 }
 
 .purchase-item :deep(.product-image) {
