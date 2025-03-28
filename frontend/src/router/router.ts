@@ -13,6 +13,11 @@ const router = createRouter({
       name: 'product-display',
       component: () => import('@/components/modals/ProductDisplayModal.vue'),
     },
+    {
+      path:'/edit-profile',
+      name:'edit-profile',
+      component: () => import('@/components/user/UserProfile.vue'),
+    }
   ],
 })
 

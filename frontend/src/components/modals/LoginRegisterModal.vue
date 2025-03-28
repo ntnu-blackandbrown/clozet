@@ -2,8 +2,8 @@
 import { ref, computed } from 'vue'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
-import { useUserStore } from '../../stores/UserStore'
-import BaseModal from './BaseModal.vue'
+import { useUserStore } from '@/stores/UserStore'
+import BaseModal from '@/components/modals/BaseModal.vue'
 
 const userStore = useUserStore()
 

@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import Badge from '../components/Badge.vue'
+import Badge from '@/components/Badge.vue'
 
 // Define props
 const props = defineProps({
@@ -56,11 +56,11 @@ const props = defineProps({
 })
 
 // Import all images from assets/images
-import mainImage from '../assets/images/main-image.png'
-import image1 from '../assets/images/image-1.png'
-import image2 from '../assets/images/image-2.png'
-import image3 from '../assets/images/image-3.png'
-import screenshot from '../assets/images/Screenshot 2025-03-26 at 17.26.14.png'
+import mainImage from '@/assets/images/main-image.png'
+import image1 from '@/assets/images/image-1.png'
+import image2 from '@/assets/images/image-2.png'
+import image3 from '@/assets/images/image-3.png'
+import screenshot from '@/assets/images/Screenshot 2025-03-26 at 17.26.14.png'
 
 // Store all images in an array
 const images = ref([
