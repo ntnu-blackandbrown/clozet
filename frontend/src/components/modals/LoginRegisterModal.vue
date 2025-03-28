@@ -2,8 +2,8 @@
 import { ref, computed } from 'vue'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
-import { useUserStore } from '../../stores/UserStore'
-import BaseModal from './BaseModal.vue'
+import { useUserStore } from '@/stores/UserStore'
+import BaseModal from '@/components/modals/BaseModal.vue'
 
 const userStore = useUserStore()
 
@@ -99,7 +99,7 @@ const submit = handleSubmit(async (values) => {
   statusType.value = 'info'
 
   try {
-    let result;
+    let result
 
     if (isLogin.value) {
       console.log('Login')
@@ -316,7 +316,7 @@ button[type='submit']:hover:not(:disabled) {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   border-top-color: #fff;
   animation: spin 1s linear infinite;
@@ -324,7 +324,9 @@ button[type='submit']:hover:not(:disabled) {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 480px) {

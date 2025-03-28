@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import ProductDisplay from '../ProductDisplay.vue'
-import BaseModal from './BaseModal.vue'
+import ProductDisplay from '@/components/product/ProductDisplay.vue'
+import BaseModal from '@/components/modals/BaseModal.vue'
 
 // Use ref for the productId instead of defineProps
 const productId = ref('')

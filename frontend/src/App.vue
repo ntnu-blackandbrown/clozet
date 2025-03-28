@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed } from 'vue'
-import LoginRegisterModal from './components/modals/LoginRegisterModal.vue'
-import ProductList from './components/ProductList.vue'
+import { ref } from 'vue'
+import LoginRegisterModal from '@/components/modals/LoginRegisterModal.vue'
+import ProductList from '@/components/product/ProductList.vue'
 import { RouterView } from 'vue-router'
 import { useUserStore } from './stores/UserStore'
 
@@ -23,7 +23,7 @@ const testRegister = async () => {
       email: `testuser${Math.floor(Math.random() * 10000)}@example.com`,
       password: 'Password123',
       firstName: 'Test',
-      lastName: 'User'
+      lastName: 'User',
     }
 
     const registerResult = await userStore.handleRegister(
@@ -31,7 +31,7 @@ const testRegister = async () => {
       testUser.email,
       testUser.password,
       testUser.firstName,
-      testUser.lastName
+      testUser.lastName,
     )
 
     if (registerResult.success && registerResult.user) {
@@ -77,13 +77,16 @@ const logout = () => {
 
       <h1>Welcome to Clozet!</h1>
       <nav>
+        <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/product-display">Product Display</RouterLink>
       </nav>
 
       <div class="auth-section">
         <!-- Brukerinfo når logget inn -->
         <div v-if="isLoggedIn" class="user-info">
-          <span class="welcome-msg">Hei, {{ currentUser?.firstName || currentUser?.username }}!</span>
+          <span class="welcome-msg"
+            >Hei, {{ currentUser?.firstName || currentUser?.username }}!</span
+          >
           <button @click="logout" class="logout-button">Logg ut</button>
         </div>
 
@@ -94,7 +97,9 @@ const logout = () => {
         </div>
 
         <!-- Statusmelding -->
-        <span v-if="testRegistrationStatus" class="status-message">{{ testRegistrationStatus }}</span>
+        <span v-if="testRegistrationStatus" class="status-message">{{
+          testRegistrationStatus
+        }}</span>
       </div>
     </header>
     <main>
@@ -163,7 +168,7 @@ header {
 
 .test-button {
   padding: 0.5rem 1rem;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 0.375rem;

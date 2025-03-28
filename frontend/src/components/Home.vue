@@ -1,6 +1,6 @@
 <script setup>
-import ProductList from './ProductList.vue'
-import Badge from './Badge.vue'
+import ProductList from '@/components/product/ProductList.vue'
+import Badge from '@/components/Badge.vue'
 </script>
 
 <template>
@@ -16,11 +16,7 @@ import Badge from './Badge.vue'
     <Badge type="category" name="Shoes" />
   </div>
   <div class="search-wrapper">
-    <input
-      class="search-bar"
-      type="text"
-      placeholder="Search for a product..."
-    />
+    <input class="search-bar" type="text" placeholder="Search for a product..." />
     <!-- Inline SVG icon -->
     <svg
       class="search-icon"

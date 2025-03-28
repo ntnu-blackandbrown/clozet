@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import Badge from '../components/Badge.vue'
+import Badge from '@/components/Badge.vue'
+import WishlistButton from './WishlistButton.vue'
 
 // Define props
 const props = defineProps({
@@ -53,14 +54,18 @@ const props = defineProps({
     type: String,
     default: '2021-01-01',
   },
+  purchased: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 // Import all images from assets/images
-import mainImage from '../assets/images/main-image.png'
-import image1 from '../assets/images/image-1.png'
-import image2 from '../assets/images/image-2.png'
-import image3 from '../assets/images/image-3.png'
-import screenshot from '../assets/images/Screenshot 2025-03-26 at 17.26.14.png'
+import mainImage from '@/assets/images/main-image.png'
+import image1 from '@/assets/images/image-1.png'
+import image2 from '@/assets/images/image-2.png'
+import image3 from '@/assets/images/image-3.png'
+import screenshot from '@/assets/images/Screenshot 2025-03-26 at 17.26.14.png'
 
 // Store all images in an array
 const images = ref([
@@ -102,24 +107,7 @@ const images = ref([
       </div>
       <div class="action-buttons">
         <button class="contact-button">Contact Seller</button>
-        <button class="wishlist-button">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="heart-icon"
-          >
-            <path
-              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-            ></path>
-          </svg>
-        </button>
+        <WishlistButton :product-id="itemId" :purchased="purchased" />
       </div>
       <div id="product-info">
         <div class="info-item">
@@ -212,32 +200,6 @@ const images = ref([
 
 .contact-button:hover {
   background-color: #2563eb;
-}
-
-.wishlist-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
-  border-radius: 50%;
-  border: 1px solid #e2e8f0;
-  background-color: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.wishlist-button:hover {
-  background-color: #fef2f2;
-  border-color: #fecaca;
-}
-
-.wishlist-button .heart-icon {
-  color: #64748b;
-  transition: color 0.2s ease;
-}
-
-.wishlist-button:hover .heart-icon {
-  color: #e11d48;
 }
 
 #product-info {
