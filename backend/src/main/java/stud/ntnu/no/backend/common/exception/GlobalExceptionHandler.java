@@ -12,12 +12,14 @@ import stud.ntnu.no.backend.Item.exception.ItemValidationException;
 import stud.ntnu.no.backend.category.exception.CategoryNotFoundException;
 import stud.ntnu.no.backend.category.exception.CategoryValidationException;
 import stud.ntnu.no.backend.favorite.exception.FavoriteNotFoundException;
+import stud.ntnu.no.backend.favorite.exception.FavoriteValidationException;
 import stud.ntnu.no.backend.itemimage.exception.ItemImageNotFoundException;
 import stud.ntnu.no.backend.itemimage.exception.ItemImageValidationException;
 import stud.ntnu.no.backend.location.exception.LocationNotFoundException;
 import stud.ntnu.no.backend.location.exception.LocationValidationException;
 import stud.ntnu.no.backend.message.exception.MessageNotFoundException;
 import stud.ntnu.no.backend.transaction.exception.TransactionNotFoundException;
+import stud.ntnu.no.backend.transaction.exception.TransactionValidationException;
 import stud.ntnu.no.backend.user.exception.*;
 import stud.ntnu.no.backend.review.exception.ReviewNotFoundException;
 import stud.ntnu.no.backend.review.exception.ReviewValidationException;
@@ -184,4 +186,25 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleShippingOptionValidationException(ShippingOptionValidationException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(TransactionValidationException.class)
+    public ResponseEntity<Object> handleTransactionValidationException(TransactionValidationException ex) {
+        return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FavoriteValidationException.class)
+    public ResponseEntity<Object> handleFavoriteValidationException(FavoriteValidationException ex) {
+        return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    private ResponseEntity<Object> createErrorResponse(String message, HttpStatus status) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("timestamp", LocalDateTime.now());
+        errorResponse.put("status", status.value());
+        errorResponse.put("error", status.getReasonPhrase());
+        errorResponse.put("message", message);
+
+        return new ResponseEntity<>(errorResponse, status);
+    }
+
 }
