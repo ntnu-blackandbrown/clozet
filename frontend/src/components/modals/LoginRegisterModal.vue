@@ -10,6 +10,9 @@ const userStore = useUserStore()
 const emit = defineEmits(['close'])
 
 const isLogin = ref(true)
+const isSubmitting = ref(false)
+const statusMessage = ref('')
+const statusType = ref('') // 'success' eller 'error'
 
 const formTitle = computed(() => (isLogin.value ? 'Login' : 'Register'))
 const toggleText = computed(() =>
@@ -45,7 +48,7 @@ const registerSchema = yup.object({
 // Use computed to switch between schemas
 const currentSchema = computed(() => (isLogin.value ? loginSchema : registerSchema))
 
-const { handleSubmit, errors, meta } = useForm({
+const { handleSubmit, errors, resetForm } = useForm({
   validationSchema: currentSchema,
 })
 
@@ -84,31 +87,62 @@ const { value: email, errorMessage: emailError } = useField('email')
 
 const toggleForm = () => {
   isLogin.value = !isLogin.value
+  statusMessage.value = ''
+  statusType.value = ''
+  resetForm()
 }
 
 const submit = handleSubmit(async (values) => {
   console.log(values)
+  isSubmitting.value = true
+  statusMessage.value = isLogin.value ? 'Logger inn...' : 'Registrerer bruker...'
+  statusType.value = 'info'
+
   try {
+    let result;
+
     if (isLogin.value) {
       console.log('Login')
-      //userStore.handleLogin(values)
-      //Call the login API
-      //push to logged in home page
+      result = await userStore.handleLogin(values.identificator, values.password)
+      if (result.success && result.user) {
+        statusMessage.value = `Innlogging vellykket! Velkommen, ${result.user.username}`
+        statusType.value = 'success'
+        setTimeout(() => {
+          emit('close') // Lukk modal etter kort tid
+        }, 1500)
+      } else {
+        statusMessage.value = 'Innlogging feilet. Kontroller brukernavn/e-post og passord.'
+        statusType.value = 'error'
+      }
     } else {
       console.log('Register')
-      userStore.handleRegister(
+      result = await userStore.handleRegister(
         values.userName,
         values.email,
         values.password,
         values.firstName,
         values.lastName,
       )
-      //Call the register API
-      //push to logged in home page
+
+      if (result.success && result.user) {
+        statusMessage.value = `Registrering vellykket! Velkommen, ${result.user.username}`
+        statusType.value = 'success'
+        setTimeout(() => {
+          emit('close') // Lukk modal etter kort tid
+        }, 1500)
+      } else {
+        statusMessage.value = 'Registrering feilet. Prøv et annet brukernavn eller e-post.'
+        statusType.value = 'error'
+      }
     }
-    emit('close') // close the modal after submit
   } catch (error) {
     console.error('Error while submitting form:', error)
+    statusMessage.value = isLogin.value
+      ? 'Innlogging feilet på grunn av teknisk feil.'
+      : 'Registrering feilet på grunn av teknisk feil.'
+    statusType.value = 'error'
+  } finally {
+    isSubmitting.value = false
   }
 })
 </script>
@@ -143,7 +177,18 @@ const submit = handleSubmit(async (values) => {
       <span v-if="!isLogin" class="error" id="confirmPasswordErrSpan">{{
         confirmPasswordError
       }}</span>
-      <button type="submit" :disabled="!isFormValid">{{ isLogin ? 'Login' : 'Register' }}</button>
+
+      <!-- Status Message -->
+      <div v-if="statusMessage" class="status-message" :class="statusType">
+        {{ statusMessage }}
+      </div>
+
+      <button type="submit" :disabled="!isFormValid || isSubmitting">
+        <span v-if="isSubmitting">
+          <span class="spinner"></span>
+        </span>
+        <span v-else>{{ isLogin ? 'Login' : 'Register' }}</span>
+      </button>
     </form>
 
     <!-- FORM SWITCH -->
@@ -153,6 +198,7 @@ const submit = handleSubmit(async (values) => {
         data-testid="toggle-form-btn"
         class="toggle-form"
         @click="toggleForm"
+        :disabled="isSubmitting"
       >
         {{ toggleText }}
       </button>
@@ -199,6 +245,7 @@ button[type='submit'] {
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 button[type='submit']:disabled {
@@ -222,8 +269,13 @@ button[type='submit']:hover:not(:disabled) {
   transition: color 0.3s ease;
 }
 
-.toggle-form:hover {
+.toggle-form:hover:not(:disabled) {
   color: #333;
+}
+
+.toggle-form:disabled {
+  color: #ccc;
+  cursor: not-allowed;
 }
 
 .error {
@@ -232,6 +284,47 @@ button[type='submit']:hover:not(:disabled) {
   font-size: 0.8rem;
   margin: 0.25rem 0 0.5rem;
   padding-left: 0.5rem;
+}
+
+.status-message {
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.status-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.status-message.info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s linear infinite;
+  margin-right: 5px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 @media (max-width: 480px) {
