@@ -4,6 +4,7 @@ import ProductCard from '@/components/product/ProductCard.vue'
 import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
 import ProfileSettingsView from '@/views/ProfileSettingsView.vue'
 import MyPostsView from '@/views/MyPostsView.vue'
+import MyWishlistView from '@/views/MyWishlistView.vue'
 
 const activeSection = ref('profile')
 const showProductModal = ref(false)
@@ -26,23 +27,6 @@ const openProductModal = (productId) => {
 }
 
 // Sample data for products
-const wishlistItems = [
-  {
-    id: 'wish-1',
-    title: 'Leather Wallet',
-    price: 450,
-    category: 'Accessories',
-    image: '/src/assets/images/image-3.png',
-  },
-  {
-    id: 'wish-2',
-    title: 'Smart Watch',
-    price: 2500,
-    category: 'Electronics',
-    image: '/src/assets/images/Screenshot 2025-03-26 at 17.26.14.png',
-  },
-]
-
 const purchaseHistory = [
   {
     id: 'purchase-1',
@@ -88,17 +72,7 @@ const purchaseHistory = [
       <MyPostsView v-if="activeSection === 'posts'" />
 
       <!-- My Wishlist Section -->
-      <div v-if="activeSection === 'wishlist'" class="profile-section">
-        <h2>My Wishlist</h2>
-        <div class="wishlist-grid">
-          <ProductCard
-            v-for="item in wishlistItems"
-            :key="item.id"
-            v-bind="item"
-            @click="openProductModal(item.id)"
-          />
-        </div>
-      </div>
+      <MyWishlistView v-if="activeSection === 'wishlist'" />
 
       <!-- My Purchases Section -->
       <div v-if="activeSection === 'purchases'" class="profile-section">
