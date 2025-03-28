@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import LoginRegisterModal from '@/components/modals/LoginRegisterModal.vue'
 import ProductList from '@/components/product/ProductList.vue'
 import { RouterView } from 'vue-router'
@@ -78,7 +78,7 @@ const logout = () => {
       <h1>Welcome to Clozet!</h1>
       <nav>
         <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/product-display">Product Display</RouterLink>
+        <RouterLink to="/edit-profile">Edit Profile</RouterLink>
       </nav>
 
       <div class="auth-section">
