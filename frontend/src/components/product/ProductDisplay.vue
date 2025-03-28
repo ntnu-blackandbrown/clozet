@@ -5,9 +5,9 @@ import WishlistButton from '@/components/utils/WishlistButton.vue'
 
 // Define props
 const props = defineProps({
-  imageUrl: {
-    type: String,
-    default: '',
+  images: {
+    type: Array,
+    default: () => [],
   },
   itemId: {
     type: String,
@@ -60,21 +60,7 @@ const props = defineProps({
   },
 })
 
-// Import all images from assets/images
-import mainImage from '@/assets/images/main-image.png'
-import image1 from '@/assets/images/image-1.png'
-import image2 from '@/assets/images/image-2.png'
-import image3 from '@/assets/images/image-3.png'
-import screenshot from '@/assets/images/Screenshot 2025-03-26 at 17.26.14.png'
-
-// Store all images in an array
-const images = ref([
-  { src: mainImage, alt: 'Main Image' },
-  { src: image1, alt: 'Image 1' },
-  { src: image2, alt: 'Image 2' },
-  { src: image3, alt: 'Image 3' },
-  { src: screenshot, alt: 'Screenshot' },
-])
+// Remove the static image imports and ref
 </script>
 
 <template>
@@ -82,11 +68,11 @@ const images = ref([
     <div class="product-image-container">
       <div class="gallery-container">
         <div v-for="(image, index) in images" :key="index" class="gallery-item">
-          <img :src="image.src" :alt="image.alt" class="gallery-image" />
+          <img :src="image" :alt="'Product image ' + (index + 1)" class="gallery-image" />
         </div>
       </div>
       <div class="main-image-container">
-        <img :src="images[0].src" :alt="images[0].alt" class="main-image" />
+        <img :src="images[0]" :alt="'Main product image'" class="main-image" />
       </div>
     </div>
 
