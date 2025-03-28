@@ -35,6 +35,9 @@ import Badge from './Badge.vue'
       <line x1="21" y1="21" x2="16.65" y2="16.65" />
     </svg>
   </div>
+  <div class="create-post-btn">
+    <button>Create a post!</button>
+  </div>
 
   <div class="featured-products">
     <ProductList />
@@ -70,5 +73,33 @@ import Badge from './Badge.vue'
   transform: translateY(-50%);
   pointer-events: none; /* so clicks go through to the input */
   stroke: black; /* pick a color that suits your design */
+}
+
+.create-post-btn {
+  display: flex;
+  align-items: center;
+}
+
+.create-post-btn button {
+  background-color: gray;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.create-post-btn button:hover {
+  background-color: black;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.create-post-btn button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>
