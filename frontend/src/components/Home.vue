@@ -59,7 +59,7 @@ import Badge from './Badge.vue'
   width: 300px;
   padding: 8px 12px;
   font-size: 16px;
-  border: 2px solid ;
+  border: 2px solid black;
   border-radius: 24px;
   padding-right: 40px;
 }
