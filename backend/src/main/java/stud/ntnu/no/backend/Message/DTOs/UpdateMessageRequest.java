@@ -1,17 +1,19 @@
 package stud.ntnu.no.backend.Message.DTOs;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
 
 public class UpdateMessageRequest {
     private String content;
-    private Boolean isRead;
+    private LocalDateTime timestamp;
 
+    // Default constructor
     public UpdateMessageRequest() {
     }
 
-    public UpdateMessageRequest(String content, Boolean isRead) {
+    // Constructor with arguments
+    public UpdateMessageRequest(String content, LocalDateTime timestamp) {
         this.content = content;
-        this.isRead = isRead;
+        this.timestamp = timestamp;
     }
 
     // Getters and setters
@@ -23,33 +25,11 @@ public class UpdateMessageRequest {
         this.content = content;
     }
 
-    public Boolean getIsRead() {
-        return isRead;
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setIsRead(Boolean isRead) {
-        this.isRead = isRead;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UpdateMessageRequest that = (UpdateMessageRequest) o;
-        return Objects.equals(content, that.content) &&
-               Objects.equals(isRead, that.isRead);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(content, isRead);
-    }
-
-    @Override
-    public String toString() {
-        return "UpdateMessageRequest{" +
-                "content='" + content + '\'' +
-                ", isRead=" + isRead +
-                '}';
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 }

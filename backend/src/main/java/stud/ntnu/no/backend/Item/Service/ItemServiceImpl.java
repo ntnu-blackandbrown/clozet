@@ -55,7 +55,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDTO> getActiveItems() {
-        return itemMapper.toDtoList(itemRepository.findByAvailableTrue());
+        return itemMapper.toDtoList(itemRepository.findByIsAvailableTrue());
     }
 
     @Override

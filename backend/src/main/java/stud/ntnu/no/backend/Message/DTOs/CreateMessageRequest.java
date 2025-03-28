@@ -1,38 +1,40 @@
 package stud.ntnu.no.backend.Message.DTOs;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
 
 public class CreateMessageRequest {
-    private String sender;
-    private String receiver;
+    private String senderId;
+    private String receiverId;
     private String content;
-    private Boolean isRead;
+    private LocalDateTime timestamp;
 
+    // Default constructor
     public CreateMessageRequest() {
     }
 
-    public CreateMessageRequest(String sender, String receiver, String content, Boolean isRead) {
-        this.sender = sender;
-        this.receiver = receiver;
+    // Constructor with arguments
+    public CreateMessageRequest(String senderId, String receiverId, String content, LocalDateTime timestamp) {
+        this.senderId = senderId;
+        this.receiverId = receiverId;
         this.content = content;
-        this.isRead = isRead;
+        this.timestamp = timestamp;
     }
 
     // Getters and setters
-    public String getSender() {
-        return sender;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
-    public String getReceiver() {
-        return receiver;
+    public String getReceiverId() {
+        return receiverId;
     }
 
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
+    public void setReceiverId(String receiverId) {
+        this.receiverId = receiverId;
     }
 
     public String getContent() {
@@ -43,37 +45,11 @@ public class CreateMessageRequest {
         this.content = content;
     }
 
-    public Boolean getIsRead() {
-        return isRead;
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setIsRead(Boolean isRead) {
-        this.isRead = isRead;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CreateMessageRequest that = (CreateMessageRequest) o;
-        return Objects.equals(sender, that.sender) &&
-               Objects.equals(receiver, that.receiver) &&
-               Objects.equals(content, that.content) &&
-               Objects.equals(isRead, that.isRead);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(sender, receiver, content, isRead);
-    }
-
-    @Override
-    public String toString() {
-        return "CreateMessageRequest{" +
-                "sender='" + sender + '\'' +
-                ", receiver='" + receiver + '\'' +
-                ", content='" + content + '\'' +
-                ", isRead=" + isRead +
-                '}';
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 }

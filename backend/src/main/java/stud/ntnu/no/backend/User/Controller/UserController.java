@@ -3,6 +3,7 @@ package stud.ntnu.no.backend.User.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import stud.ntnu.no.backend.User.DTOs.LoginDTO;
 import stud.ntnu.no.backend.User.DTOs.RegisterUserDTO;
 import stud.ntnu.no.backend.User.DTOs.StatusUserDTO;
 import stud.ntnu.no.backend.User.DTOs.UpdateUserDTO;
@@ -42,5 +43,10 @@ public class UserController {
   public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
     userService.deleteUser(id);
     return ResponseEntity.noContent().build();
+  }
+  
+  @PostMapping("/login")
+  public UserDTO login(@RequestBody LoginDTO loginDTO) {
+    return userService.login(loginDTO);
   }
 }
