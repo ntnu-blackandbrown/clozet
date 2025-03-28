@@ -1,17 +1,17 @@
-package stud.ntnu.no.backend.User.Service;
+package stud.ntnu.no.backend.user.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stud.ntnu.no.backend.User.DTOs.LoginDTO;
-import stud.ntnu.no.backend.User.DTOs.RegisterUserDTO;
-import stud.ntnu.no.backend.User.DTOs.StatusUserDTO;
-import stud.ntnu.no.backend.User.DTOs.UpdateUserDTO;
-import stud.ntnu.no.backend.User.DTOs.UserDTO;
-import stud.ntnu.no.backend.User.Entity.User;
-import stud.ntnu.no.backend.User.Exceptions.AuthenticationException;
-import stud.ntnu.no.backend.User.Mapper.UserMapper;
-import stud.ntnu.no.backend.User.Repository.UserRepository;
+import stud.ntnu.no.backend.user.dto.LoginDTO;
+import stud.ntnu.no.backend.user.dto.RegisterUserDTO;
+import stud.ntnu.no.backend.user.dto.StatusUserDTO;
+import stud.ntnu.no.backend.user.dto.UpdateUserDTO;
+import stud.ntnu.no.backend.user.dto.UserDTO;
+import stud.ntnu.no.backend.user.entity.User;
+import stud.ntnu.no.backend.user.exception.AuthenticationException;
+import stud.ntnu.no.backend.user.mapper.UserMapper;
+import stud.ntnu.no.backend.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;

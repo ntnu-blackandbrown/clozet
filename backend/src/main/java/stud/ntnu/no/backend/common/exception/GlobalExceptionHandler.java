@@ -7,16 +7,16 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import stud.ntnu.no.backend.Category.Exceptions.CategoryNotFoundException;
-import stud.ntnu.no.backend.Category.Exceptions.CategoryValidationException;
-import stud.ntnu.no.backend.User.Exceptions.EmailAlreadyInUseException;
-import stud.ntnu.no.backend.User.Exceptions.UserNotFoundException;
-import stud.ntnu.no.backend.User.Exceptions.UserValidationException;
-import stud.ntnu.no.backend.User.Exceptions.UsernameAlreadyExistsException;
-import stud.ntnu.no.backend.Review.Exceptions.ReviewNotFoundException;
-import stud.ntnu.no.backend.Review.Exceptions.ReviewValidationException;
-import stud.ntnu.no.backend.ShippingOption.Exceptions.ShippingOptionNotFoundException;
-import stud.ntnu.no.backend.ShippingOption.Exceptions.ShippingOptionValidationException;
+import stud.ntnu.no.backend.category.exception.CategoryNotFoundException;
+import stud.ntnu.no.backend.category.exception.CategoryValidationException;
+import stud.ntnu.no.backend.user.exception.EmailAlreadyInUseException;
+import stud.ntnu.no.backend.user.exception.UserNotFoundException;
+import stud.ntnu.no.backend.user.exception.UserValidationException;
+import stud.ntnu.no.backend.user.exception.UsernameAlreadyExistsException;
+import stud.ntnu.no.backend.review.exception.ReviewNotFoundException;
+import stud.ntnu.no.backend.review.exception.ReviewValidationException;
+import stud.ntnu.no.backend.shippingoption.exception.ShippingOptionNotFoundException;
+import stud.ntnu.no.backend.shippingoption.exception.ShippingOptionValidationException;
 
 
 import java.time.LocalDateTime;

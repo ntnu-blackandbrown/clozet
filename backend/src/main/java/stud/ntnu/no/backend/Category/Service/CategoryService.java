@@ -1,6 +1,6 @@
-package stud.ntnu.no.backend.Category.Service;
+package stud.ntnu.no.backend.category.service;
 
-import stud.ntnu.no.backend.Category.DTOs.CategoryDTO;
+import stud.ntnu.no.backend.category.dto.CategoryDTO;
 
 import java.util.List;
 
