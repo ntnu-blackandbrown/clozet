@@ -1,6 +1,6 @@
 <script setup>
-import ProductList from '@/components/product/ProductList.vue'
-import Badge from '@/components/Badge.vue'
+import ProductList from '@/views/ProductListView.vue'
+import Badge from '@/components/utils/Badge.vue'
 </script>
 
 <template>

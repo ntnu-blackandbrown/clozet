@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
-import LoginRegisterModal from '@/components/modals/LoginRegisterModal.vue'
-import ProductList from '@/components/product/ProductList.vue'
+import LoginRegisterModal from '@/views/LoginRegisterView.vue'
+import ProductList from '@/views/ProductListView.vue'
 import { RouterView } from 'vue-router'
 import { useUserStore } from './stores/UserStore'
 
