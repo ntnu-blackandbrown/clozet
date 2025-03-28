@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.common.util;
+package stud.ntnu.no.backend.security.util;
 
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ public class JwtUtils {
     private int jwtExpirationMs;
 
     public String generateJwtToken(UserDetails userDetails) {
-        logger.info("Genererer JWT for bruker: {}", userDetails.getUsername());
+        logger.info("Generating JWT for user: {}", userDetails.getUsername());
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userDetails.getUsername());
     }
@@ -31,24 +31,24 @@ public class JwtUtils {
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-            logger.debug("JWT token validert");
+            logger.debug("JWT token validated");
             return true;
         } catch (SignatureException e) {
-            logger.error("Ugyldig JWT signatur: {}", e.getMessage());
+            logger.error("Invalid JWT signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
-            logger.error("Ugyldig JWT token: {}", e.getMessage());
+            logger.error("Invalid JWT token: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
-            logger.error("JWT token er utløpt: {}", e.getMessage());
+            logger.error("JWT token is expired: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
-            logger.error("JWT token støttes ikke: {}", e.getMessage());
+            logger.error("JWT token is unsupported: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
-            logger.error("JWT claims string er tom: {}", e.getMessage());
+            logger.error("JWT claims string is empty: {}", e.getMessage());
         }
         return false;
     }
 
     public String getUsernameFromToken(String token) {
-        logger.debug("Henter brukernavn fra JWT");
+        logger.debug("Extracting username from JWT");
         return getClaimFromToken(token, Claims::getSubject);
     }
 
@@ -64,8 +64,8 @@ public class JwtUtils {
     private String createToken(Map<String, Object> claims, String subject) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
-        logger.debug("Oppretter JWT med utløpsdato: {}", expiryDate);
-        
+        logger.debug("Creating JWT with expiration date: {}", expiryDate);
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)

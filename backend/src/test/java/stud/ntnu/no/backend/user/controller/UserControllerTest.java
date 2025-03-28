@@ -14,7 +14,7 @@ import stud.ntnu.no.backend.user.dto.StatusUserDTO;
 import stud.ntnu.no.backend.user.dto.UpdateUserDTO;
 import stud.ntnu.no.backend.user.dto.UserDTO;
 import stud.ntnu.no.backend.user.service.UserService;
-import stud.ntnu.no.backend.config.SecurityConfig;
+import stud.ntnu.no.backend.security.config.SecurityConfig;
 
 import java.util.Arrays;
 import java.util.List;

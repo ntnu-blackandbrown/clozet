@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.controller;
+package stud.ntnu.no.backend.security.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,9 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import stud.ntnu.no.backend.common.util.JwtUtils;
+import stud.ntnu.no.backend.security.util.JwtUtils;
+import stud.ntnu.no.backend.controller.MessageResponse;
 import stud.ntnu.no.backend.user.dto.LoginDTO;
-
 
 @RestController
 @RequestMapping("/api/auth")
@@ -28,54 +28,55 @@ public class AuthController {
     @Value("${app.jwt.cookie-max-age}")
     private int jwtCookieMaxAge;
 
+    @Value("${app.jwt.secure-cookie:false}")
+    private boolean secureCookie;
+
     public AuthController(AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginRequest,
-                                            HttpServletResponse response) {
-        logger.info("Login-forsøk for bruker: {}", loginRequest.getUsername());
-        
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginRequest, HttpServletResponse response) {
+        logger.info("Login attempt for user: {}", loginRequest.getUsername());
+
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
-                loginRequest.getUsername(), 
+                loginRequest.getUsername(),
                 loginRequest.getPassword()
             )
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        
+
         String jwt = jwtUtils.generateJwtToken(userDetails);
-        
-        // Opprett en sikker cookie
+
+        // Create secure cookie
         Cookie cookie = new Cookie("jwt", jwt);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true); // Bruk kun for HTTPS
+        cookie.setSecure(secureCookie); // Set based on environment
         cookie.setPath("/");
         cookie.setMaxAge(jwtCookieMaxAge);
-        cookie.setAttribute("SameSite", "Lax");
         response.addCookie(cookie);
-        
-        logger.info("Bruker {} logget på vellykket", loginRequest.getUsername());
+
+        logger.info("User {} logged in successfully", loginRequest.getUsername());
         return ResponseEntity.ok(new MessageResponse("Innlogging vellykket"));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser(HttpServletResponse response) {
-        logger.info("Utlogging forespurt");
-        
-        // Ugyldiggjør cookies
+        logger.info("Logout requested");
+
+        // Invalidate cookie
         Cookie cookie = new Cookie("jwt", null);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(secureCookie);
         cookie.setPath("/");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
-        
-        logger.info("Bruker logget ut vellykket");
+
+        logger.info("User logged out successfully");
         return ResponseEntity.ok(new MessageResponse("Utlogging vellykket"));
     }
 }
