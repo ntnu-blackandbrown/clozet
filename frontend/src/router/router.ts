@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import MessagesView from '../views/MessagesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,13 +15,25 @@ const router = createRouter({
       component: () => import('@/views/CreateProductView.vue'),
     },
     {
+      path: '/messages',
+      name: 'messages',
+      component: MessagesView,
+      children: [
+        {
+          path: ':chatId',
+          name: 'chat',
+          component: MessagesView
+        }
+      ]
+    },
+    {
       path: '/profile',
       name: 'profile',
       component: () => import('@/views/UserProfileView.vue'),
       children: [
         {
           path: '',
-          redirect: '/profile/settings'
+          redirect: '/profile/settings',
         },
         {
           path: 'settings',
@@ -42,8 +55,12 @@ const router = createRouter({
           name: 'my-purchases',
           component: () => import('@/views/profile/MyPurchasesView.vue'),
         },
-      ]
+      ],
     },
+    {
+      path: '/',
+      redirect: '/messages'
+    }
   ],
 })
 

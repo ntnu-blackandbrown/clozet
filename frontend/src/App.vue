@@ -79,6 +79,7 @@ const logout = () => {
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/profile">Profile</RouterLink>
+        <RouterLink to="/messages">Messages</RouterLink>
       </nav>
 
       <div class="auth-section">
