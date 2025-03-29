@@ -47,9 +47,9 @@ async function testSecuritySetup() {
       role: 'USER'
     }
 
-    // Step 1: Register user
-    statusMessage.value = 'Registrerer testbruker...'
-    await axios.post('/api/users', testUser)
+    // Step 1: Register user with correct endpoint
+    statusMessage.value = `Registrerer testbruker via /api/users/register...`
+    await axios.post('/api/users/register', testUser)
 
     // Step 2: Login with created user
     statusMessage.value = 'Logger inn med testbruker...'
@@ -73,6 +73,7 @@ async function testSecuritySetup() {
     }
   }
 }
+
 </script>
 
 <template>
