@@ -4,6 +4,7 @@ import LoginRegisterModal from '@/views/LoginRegisterView.vue'
 import ProductList from '@/views/ProductListView.vue'
 import { RouterView } from 'vue-router'
 import { useUserStore } from './stores/UserStore'
+import Footer from '@/components/layout/Footer.vue'
 
 const userStore = useUserStore()
 const showLoginModal = ref(false)
@@ -71,7 +72,7 @@ const logout = () => {
 </script>
 
 <template>
-  <div>
+  <div class="app-container">
     <header class="main-header">
       <div class="header-content">
         <div class="header-left">
@@ -106,12 +107,19 @@ const logout = () => {
     <main>
       <RouterView />
     </main>
+    <Footer />
   </div>
 
   <LoginRegisterModal v-if="showLoginModal" @close="showLoginModal = false" />
 </template>
 
 <style scoped>
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .main-header {
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -264,9 +272,11 @@ const logout = () => {
 }
 
 main {
+  flex: 1;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
