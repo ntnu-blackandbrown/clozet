@@ -14,6 +14,11 @@ const router = createRouter({
       component: () => import('@/views/CreateProductView.vue'),
     },
     {
+      path: '/messages',
+      name: 'messages',
+      component: () => import('@/views/MessagesView.vue'),
+    },
+    {
       path: '/profile',
       name: 'profile',
       component: () => import('@/views/UserProfileView.vue'),
