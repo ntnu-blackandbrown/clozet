@@ -47,18 +47,14 @@ async function testSecuritySetup() {
       role: 'USER'
     }
 
-    // Step 1: Register user with correct endpoint
-    statusMessage.value = `Registrerer testbruker via /api/users/register...`
-    await axios.post('/api/users/register', testUser)
+    // Bruk authStore.register som håndterer både registrering og innlogging
+    statusMessage.value = 'Registrerer og logger inn testbruker...'
+    const result = await authStore.register(testUser)
 
-    // Step 2: Login with created user
-    statusMessage.value = 'Logger inn med testbruker...'
-    const loginResult = await authStore.login(testUser.username, testUser.password)
-
-    if (loginResult.success) {
+    if (result.success) {
       statusMessage.value = `✅ Sikkerhetskonfigurasjon fungerer! Logget inn som ${testUser.username}`
     } else {
-      statusMessage.value = '❌ Innlogging feilet etter registrering'
+      statusMessage.value = '❌ Sikkerhetstest feilet ved registrering/innlogging'
     }
   } catch (error) {
     console.error('Security test failed:', error)
