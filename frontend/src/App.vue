@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
 import { RouterView } from 'vue-router'
 import { useUserStore } from './stores/UserStore'
+import { useAuthStore } from './stores/AuthStore'
 
 const authStore = useAuthStore()
 const showLoginModal = ref(false)
@@ -72,43 +73,47 @@ async function testSecuritySetup() {
 
 <template>
   <div :class="{ blurred: showLoginModal }">
-    <header>
-      <img alt="Vue logo" class="logo" src="@/assets/logo.png" width="125" height="125" />
+    <header class="main-header">
+      <div class="header-content">
+        <div class="header-left">
+          <RouterLink to="/" class="logo-container">
+            <img src="@/assets/logo.png" alt="Clozet Logo" class="logo-image" />
+            <h1 class="logo">Clozet</h1>
+          </RouterLink>
+          <nav class="main-nav">
+            <RouterLink to="/">Home</RouterLink>
+            <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
+            <RouterLink v-if="isLoggedIn" to="/messages">Messages</RouterLink>
+          </nav>
+        </div>
 
-      <h1>Welcome to Clozet!</h1>
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
-      </nav>
+        <div class="auth-section">
+          <!-- User info when logged in -->
+          <div v-if="isLoggedIn" class="user-info">
+            <span class="welcome-msg">Hei, {{ userDetails?.firstName || userDetails?.username }}!</span>
+            <button @click="logout" class="logout-button">Logg ut</button>
+          </div>
 
-      <div class="auth-section">
-        <!-- User info when logged in -->
-        <div v-if="isLoggedIn" class="user-info">
-          <span class="welcome-msg"
-            >Hei, {{ userDetails?.firstName || userDetails?.username }}!</span
+          <!-- Login/register buttons when not logged in -->
+          <div v-else class="auth-buttons">
+            <button @click="showLoginModal = true" class="login-button">Login / Register</button>
+            <button @click="testSecuritySetup" :disabled="isLoading" class="test-button">
+              {{ isLoading ? 'Tester...' : 'Test Sikkerhet' }}
+            </button>
+          </div>
+
+          <!-- Status message -->
+          <span
+            v-if="statusMessage"
+            class="status-message"
+            :class="{
+              success: statusMessage.includes('✅'),
+              error: statusMessage.includes('❌'),
+            }"
           >
-          <button @click="logout" class="logout-button">Logg ut</button>
+            {{ statusMessage }}
+          </span>
         </div>
-
-        <!-- Login/register buttons when not logged in -->
-        <div v-else class="auth-buttons">
-          <button @click="showLoginModal = true" class="login-button">Login / Register</button>
-          <button @click="testSecuritySetup" :disabled="isLoading" class="test-button">
-            {{ isLoading ? 'Tester...' : 'Test Sikkerhet' }}
-          </button>
-        </div>
-
-        <!-- Status message -->
-        <span
-          v-if="statusMessage"
-          class="status-message"
-          :class="{
-            success: statusMessage.includes('✅'),
-            error: statusMessage.includes('❌'),
-          }"
-        >
-          {{ statusMessage }}
-        </span>
       </div>
     </header>
     <main>
