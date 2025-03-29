@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -13,6 +14,7 @@ import stud.ntnu.no.backend.category.dto.CategoryDTO;
 import stud.ntnu.no.backend.category.exception.CategoryNotFoundException;
 import stud.ntnu.no.backend.category.service.CategoryService;
 import stud.ntnu.no.backend.security.config.SecurityConfig;
+import stud.ntnu.no.backend.security.util.JwtUtils;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -25,7 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CategoryController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, JwtUtils.class})
+@AutoConfigureMockMvc(addFilters = false)
 class CategoryControllerTest {
 
     @Autowired
@@ -36,6 +39,12 @@ class CategoryControllerTest {
 
     @MockBean
     private CategoryService categoryService;
+
+    //@MockBean
+    //private JwtUtils jwtUtils; // Legg til denne linjen
+
+    @MockBean
+    private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
 
     private CategoryDTO testCategory;
     private LocalDateTime fixedTime;

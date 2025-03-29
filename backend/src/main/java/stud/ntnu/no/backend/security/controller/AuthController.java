@@ -1,6 +1,5 @@
 package stud.ntnu.no.backend.security.controller;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +38,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginRequest, HttpServletResponse response) {
         logger.info("Login attempt for user: {}", loginRequest.getUsername());
-
+        
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 loginRequest.getUsername(),
@@ -52,15 +51,21 @@ public class AuthController {
 
         String jwt = jwtUtils.generateJwtToken(userDetails);
 
-        // Create secure cookie
-        Cookie cookie = new Cookie("jwt", jwt);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(secureCookie); // Set based on environment
-        cookie.setPath("/");
-        cookie.setMaxAge(jwtCookieMaxAge);
-        response.addCookie(cookie);
+        // Bygg cookie-strengen manuelt med SameSite=Lax
+        StringBuilder cookieBuilder = new StringBuilder();
+        cookieBuilder.append("jwt=").append(jwt).append(";");
+        cookieBuilder.append(" Max-Age=").append(jwtCookieMaxAge).append(";");
+        cookieBuilder.append(" Path=/;");
+        cookieBuilder.append(" HttpOnly;");
+        if (secureCookie) {
+            cookieBuilder.append(" Secure;");
+        }
+        cookieBuilder.append(" SameSite=Lax");
 
-        logger.info("User {} logged in successfully", loginRequest.getUsername());
+        // Legg til headeren i responsen
+        response.addHeader("Set-Cookie", cookieBuilder.toString());
+        logger.info("Set-Cookie header: {}", cookieBuilder.toString());
+
         return ResponseEntity.ok(new MessageResponse("Innlogging vellykket"));
     }
 
@@ -68,15 +73,20 @@ public class AuthController {
     public ResponseEntity<?> logoutUser(HttpServletResponse response) {
         logger.info("Logout requested");
 
-        // Invalidate cookie
-        Cookie cookie = new Cookie("jwt", null);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(secureCookie);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+        // Invalidate cookie ved å sette maxAge=0
+        StringBuilder cookieBuilder = new StringBuilder();
+        cookieBuilder.append("jwt=;");
+        cookieBuilder.append(" Max-Age=0;");
+        cookieBuilder.append(" Path=/;");
+        cookieBuilder.append(" HttpOnly;");
+        if (secureCookie) {
+            cookieBuilder.append(" Secure;");
+        }
+        cookieBuilder.append(" SameSite=Lax");
 
-        logger.info("User logged out successfully");
+        response.addHeader("Set-Cookie", cookieBuilder.toString());
+        logger.info("Set-Cookie header for logout: {}", cookieBuilder.toString());
+
         return ResponseEntity.ok(new MessageResponse("Utlogging vellykket"));
     }
 }
