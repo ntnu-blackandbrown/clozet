@@ -1,8 +1,8 @@
 package stud.ntnu.no.backend.transaction.mapper;
 
 import org.springframework.stereotype.Component;
-import stud.ntnu.no.backend.Item.entity.Item;
-import stud.ntnu.no.backend.Item.repository.ItemRepository;
+import stud.ntnu.no.backend.item.entity.Item;
+import stud.ntnu.no.backend.item.repository.ItemRepository;
 import stud.ntnu.no.backend.transaction.dto.CreateTransactionRequest;
 import stud.ntnu.no.backend.transaction.dto.TransactionDTO;
 import stud.ntnu.no.backend.transaction.entity.Transaction;

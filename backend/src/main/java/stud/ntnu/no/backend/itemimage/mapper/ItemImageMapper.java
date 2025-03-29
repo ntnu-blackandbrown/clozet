@@ -2,11 +2,11 @@ package stud.ntnu.no.backend.itemimage.mapper;
 
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
-import stud.ntnu.no.backend.Item.entity.Item;
+import stud.ntnu.no.backend.item.entity.Item;
 import stud.ntnu.no.backend.itemimage.dto.CreateItemImageDTO;
 import stud.ntnu.no.backend.itemimage.dto.ItemImageDTO;
 import stud.ntnu.no.backend.itemimage.entity.ItemImage;
-import stud.ntnu.no.backend.Item.repository.ItemRepository;
+import stud.ntnu.no.backend.item.repository.ItemRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

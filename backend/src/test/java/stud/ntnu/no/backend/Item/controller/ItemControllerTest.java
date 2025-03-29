@@ -10,9 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import stud.ntnu.no.backend.Item.dto.CreateItemDTO;
-import stud.ntnu.no.backend.Item.dto.ItemDTO;
-import stud.ntnu.no.backend.Item.service.ItemService;
+import stud.ntnu.no.backend.item.controller.ItemController;
+import stud.ntnu.no.backend.item.dto.CreateItemDTO;
+import stud.ntnu.no.backend.item.dto.ItemDTO;
+import stud.ntnu.no.backend.item.service.ItemService;
 import stud.ntnu.no.backend.user.entity.User;
 
 import java.time.LocalDateTime;

@@ -1,7 +1,8 @@
 package stud.ntnu.no.backend.itemimage.entity;
 
 import jakarta.persistence.*;
-import stud.ntnu.no.backend.Item.entity.Item;
+import stud.ntnu.no.backend.item.entity.Item;
+
 
 @Entity
 @Table(name = "item_images")

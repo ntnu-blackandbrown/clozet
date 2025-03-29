@@ -6,13 +6,14 @@ import org.springframework.transaction.annotation.Transactional;
 import stud.ntnu.no.backend.category.entity.Category;
 import stud.ntnu.no.backend.category.exception.CategoryNotFoundException;
 import stud.ntnu.no.backend.category.repository.CategoryRepository;
-import stud.ntnu.no.backend.Item.dto.CreateItemDTO;
-import stud.ntnu.no.backend.Item.dto.ItemDTO;
-import stud.ntnu.no.backend.Item.entity.Item;
-import stud.ntnu.no.backend.Item.exception.ItemNotFoundException;
-import stud.ntnu.no.backend.Item.exception.ItemValidationException;
-import stud.ntnu.no.backend.Item.mapper.ItemMapper;
-import stud.ntnu.no.backend.Item.repository.ItemRepository;
+
+import stud.ntnu.no.backend.item.dto.CreateItemDTO;
+import stud.ntnu.no.backend.item.dto.ItemDTO;
+import stud.ntnu.no.backend.item.entity.Item;
+import stud.ntnu.no.backend.item.exception.ItemNotFoundException;
+import stud.ntnu.no.backend.item.exception.ItemValidationException;
+import stud.ntnu.no.backend.item.mapper.ItemMapper;
+import stud.ntnu.no.backend.item.repository.ItemRepository;
 import stud.ntnu.no.backend.location.repository.LocationRepository;
 import stud.ntnu.no.backend.shippingoption.repository.ShippingOptionRepository;
 import stud.ntnu.no.backend.user.entity.User;
@@ -25,7 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class ItemServiceImpl implements stud.ntnu.no.backend.Item.service.ItemService {
+public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemService {
 
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;

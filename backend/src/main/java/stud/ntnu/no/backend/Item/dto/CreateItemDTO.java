@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.Item.dto;
+package stud.ntnu.no.backend.item.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

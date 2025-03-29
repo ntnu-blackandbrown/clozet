@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.Item.exception;
+package stud.ntnu.no.backend.item.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

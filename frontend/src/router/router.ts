@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/AuthStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,11 +13,13 @@ const router = createRouter({
       path: '/create-product',
       name: 'create-product',
       component: () => import('@/views/CreateProductView.vue'),
+      meta: { requiresAuth: true }
     },
     {
       path: '/profile',
       name: 'profile',
       component: () => import('@/views/UserProfileView.vue'),
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
@@ -45,6 +48,22 @@ const router = createRouter({
       ]
     },
   ],
+})
+
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore()
+
+  // If not logged in and store has not been initialized yet, check user status
+  if (!authStore.isLoggedIn && !from.name) {
+    await authStore.fetchUserInfo()
+  }
+
+  // Protected routes logic
+  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
+    next({ name: 'home' })
+  } else {
+    next()
+  }
 })
 
 export default router
