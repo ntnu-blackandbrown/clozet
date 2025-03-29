@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import MessagesView from '../views/MessagesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,7 +17,14 @@ const router = createRouter({
     {
       path: '/messages',
       name: 'messages',
-      component: () => import('@/views/MessagesView.vue'),
+      component: MessagesView,
+      children: [
+        {
+          path: ':chatId',
+          name: 'chat',
+          component: MessagesView
+        }
+      ]
     },
     {
       path: '/profile',
@@ -49,6 +57,10 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: '/',
+      redirect: '/messages'
+    }
   ],
 })
 
