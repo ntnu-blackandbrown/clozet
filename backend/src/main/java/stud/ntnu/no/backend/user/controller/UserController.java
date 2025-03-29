@@ -29,7 +29,7 @@ public class UserController {
     return userService.getUserById(id);
   }
 
-  @PostMapping
+  @PostMapping("/register")
   public UserDTO createUser(@RequestBody RegisterUserDTO registerUserDTO) {
     return userService.createUser(registerUserDTO);
   }

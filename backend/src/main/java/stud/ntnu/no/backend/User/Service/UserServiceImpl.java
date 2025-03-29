@@ -23,8 +23,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     
     public UserServiceImpl(UserRepository userRepository, 
-                          UserMapper userMapper, 
-                          PasswordEncoder passwordEncoder) {
+                           UserMapper userMapper, 
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
@@ -41,79 +41,86 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new UserNotFoundException(id));
         return userMapper.toDto(user);
     }
-
-@Override
-@Transactional
-public UserDTO createUser(RegisterUserDTO registerUserDTO) {
-    if (registerUserDTO == null) {
-        throw new UserValidationException("User registration data cannot be null");
+    
+    @Override
+    public UserDTO getUserByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+        return userMapper.toDto(user);
     }
 
-    // Check if username or email already exists
-    if (userRepository.findByUsername(registerUserDTO.getUsername()).isPresent()) {
-        throw new UsernameAlreadyExistsException(registerUserDTO.getUsername());
+    @Override
+    @Transactional
+    public UserDTO createUser(RegisterUserDTO registerUserDTO) {
+        if (registerUserDTO == null) {
+            throw new UserValidationException("User registration data cannot be null");
+        }
+
+        // Sjekk om brukernavn eller e-post allerede finnes
+        if (userRepository.findByUsername(registerUserDTO.getUsername()).isPresent()) {
+            throw new UsernameAlreadyExistsException(registerUserDTO.getUsername());
+        }
+
+        if (userRepository.existsByEmail(registerUserDTO.getEmail())) {
+            throw new EmailAlreadyInUseException(registerUserDTO.getEmail());
+        }
+
+        // Konverter DTO til entitet
+        User user = userMapper.toEntity(registerUserDTO);
+
+        // Krypter passordet før lagring
+        user.setPasswordHash(passwordEncoder.encode(registerUserDTO.getPassword()));
+
+        // Lagre brukeren
+        User savedUser = userRepository.save(user);
+
+        // Returner den opprettede brukeren som DTO
+        return userMapper.toDto(savedUser);
     }
 
-    if (userRepository.existsByEmail(registerUserDTO.getEmail())) {
-        throw new EmailAlreadyInUseException(registerUserDTO.getEmail());
+    @Override
+    @Transactional
+    public UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
+        User existingUser = userRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException(id));
+
+        // Sjekk om brukernavn oppdateres og allerede finnes
+        if (updateUserDTO.getUsername() != null &&
+            !updateUserDTO.getUsername().equals(existingUser.getUsername()) &&
+            userRepository.findByUsername(updateUserDTO.getUsername()).isPresent()) {
+            throw new UsernameAlreadyExistsException(updateUserDTO.getUsername());
+        }
+
+        // Sjekk om e-post oppdateres og allerede finnes
+        if (updateUserDTO.getEmail() != null &&
+            !updateUserDTO.getEmail().equals(existingUser.getEmail()) &&
+            userRepository.existsByEmail(updateUserDTO.getEmail())) {
+            throw new EmailAlreadyInUseException(updateUserDTO.getEmail());
+        }
+
+        // Oppdater feltene
+        if (updateUserDTO.getUsername() != null) {
+            existingUser.setUsername(updateUserDTO.getUsername());
+        }
+        if (updateUserDTO.getEmail() != null) {
+            existingUser.setEmail(updateUserDTO.getEmail());
+        }
+        if (updateUserDTO.getFirstName() != null) {
+            existingUser.setFirstName(updateUserDTO.getFirstName());
+        }
+        if (updateUserDTO.getLastName() != null) {
+            existingUser.setLastName(updateUserDTO.getLastName());
+        }
+        if (updateUserDTO.getRole() != null) {
+            existingUser.setRole(updateUserDTO.getRole());
+        }
+
+        existingUser.setActive(updateUserDTO.isActive());
+        existingUser.setUpdatedAt(LocalDateTime.now());
+
+        User updatedUser = userRepository.save(existingUser);
+        return userMapper.toDto(updatedUser);
     }
-
-    // Convert DTO to entity
-    User user = userMapper.toEntity(registerUserDTO);
-
-    // Hash the password before saving
-    user.setPasswordHash(passwordEncoder.encode(registerUserDTO.getPassword()));
-
-    // Save the user
-    User savedUser = userRepository.save(user);
-
-    // Return the created user as DTO
-    return userMapper.toDto(savedUser);
-}
-
-@Override
-@Transactional
-public UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
-    User existingUser = userRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException(id));
-
-    // Check if username is being updated and already exists
-    if (updateUserDTO.getUsername() != null &&
-        !updateUserDTO.getUsername().equals(existingUser.getUsername()) &&
-        userRepository.findByUsername(updateUserDTO.getUsername()).isPresent()) {
-        throw new UsernameAlreadyExistsException(updateUserDTO.getUsername());
-    }
-
-    // Check if email is being updated and already exists
-    if (updateUserDTO.getEmail() != null &&
-        !updateUserDTO.getEmail().equals(existingUser.getEmail()) &&
-        userRepository.existsByEmail(updateUserDTO.getEmail())) {
-        throw new EmailAlreadyInUseException(updateUserDTO.getEmail());
-    }
-
-    // Update the user fields
-    if (updateUserDTO.getUsername() != null) {
-        existingUser.setUsername(updateUserDTO.getUsername());
-    }
-    if (updateUserDTO.getEmail() != null) {
-        existingUser.setEmail(updateUserDTO.getEmail());
-    }
-    if (updateUserDTO.getFirstName() != null) {
-        existingUser.setFirstName(updateUserDTO.getFirstName());
-    }
-    if (updateUserDTO.getLastName() != null) {
-        existingUser.setLastName(updateUserDTO.getLastName());
-    }
-    if (updateUserDTO.getRole() != null) {
-        existingUser.setRole(updateUserDTO.getRole());
-    }
-
-    existingUser.setActive(updateUserDTO.isActive());
-    existingUser.setUpdatedAt(LocalDateTime.now());
-
-    User updatedUser = userRepository.save(existingUser);
-    return userMapper.toDto(updatedUser);
-}
 
     @Override
     @Transactional

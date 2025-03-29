@@ -11,6 +11,7 @@ import java.util.List;
 public interface UserService {
     List<StatusUserDTO> getAllUsers();
     UserDTO getUserById(Long id);
+    UserDTO getUserByUsername(String username);  // Ny metode for /me-endepunkt
     UserDTO createUser(RegisterUserDTO registerUserDTO);
     UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO);
     void deleteUser(Long id);
