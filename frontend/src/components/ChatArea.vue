@@ -5,10 +5,6 @@
         <div class="contact-avatar"></div>
         <div class="contact-info">
           <div class="contact-name">{{ contact?.name || 'Select a chat' }}</div>
-          <div class="contact-status" v-if="contact">
-            <span class="status-dot"></span>
-            Online
-          </div>
         </div>
       </div>
       <div class="chat-actions" v-if="contact">
@@ -105,21 +101,6 @@ defineProps({
 
 .contact-name {
   font-weight: 600;
-}
-
-.contact-status {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 14px;
-  color: #10b981;
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #10b981;
 }
 
 .chat-actions {
