@@ -51,11 +51,19 @@
     <div v-else class="no-chat-selected">
       Select a chat to start messaging
     </div>
+
+    <MessageInput
+      v-if="contact"
+      @send-message="handleSendMessage"
+    />
   </div>
 </template>
 
 <script setup>
-defineProps({
+import { ref } from 'vue';
+import MessageInput from './MessageInput.vue';
+
+const props = defineProps({
   activeChat: {
     type: Number,
     required: true
@@ -69,6 +77,24 @@ defineProps({
     default: null
   }
 });
+
+const emit = defineEmits(['send-message']);
+
+const handleSendMessage = (text) => {
+  emit('send-message', {
+    chatId: props.activeChat,
+    message: {
+      type: 'text',
+      content: text,
+      time: new Date().toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }),
+      sent: true
+    }
+  });
+};
 </script>
 
 <style scoped>
@@ -76,6 +102,7 @@ defineProps({
   flex: 1;
   display: flex;
   flex-direction: column;
+  background: white;
 }
 
 .chat-header {
@@ -114,12 +141,6 @@ defineProps({
   border: 1px solid #e5e7eb;
   background: white;
   cursor: pointer;
-}
-
-.action-btn.primary {
-  background: #4f46e5;
-  color: white;
-  border: none;
 }
 
 .chat-messages {

@@ -12,6 +12,7 @@
       :active-chat="activeChat"
       :messages="chatMessages[activeChat]"
       :contact="chats.find(chat => chat.id === activeChat)"
+      @send-message="handleNewMessage"
     />
   </div>
 </template>
@@ -44,7 +45,7 @@ const chats = [
 ];
 
 // Chat messages for each chat
-const chatMessages = {
+const chatMessages = ref({
   1: [
     { id: 1, type: 'text', content: 'Initiating quantum calculations...', time: '09:15', sent: false },
     { id: 2, type: 'text', content: 'Neural networks optimized for maximum efficiency', time: '09:16', sent: false },
@@ -95,10 +96,47 @@ const chatMessages = {
     { id: 2, type: 'text', content: 'All services running smoothly, no issues detected', time: '19:16', sent: true },
     { id: 3, type: 'file', fileName: 'status_report.pdf', fileSize: '2.1mb', time: '19:17', sent: true }
   ]
-};
+});
 
 const handleChatSelect = (chatId) => {
   router.push(`/messages/${chatId}`);
+};
+
+const handleNewMessage = ({ chatId, message }) => {
+  if (!chatMessages.value[chatId]) {
+    chatMessages.value[chatId] = [];
+  }
+
+  // Add an id to the message
+  message.id = chatMessages.value[chatId].length + 1;
+
+  // Add the message to the chat
+  chatMessages.value[chatId].push(message);
+
+  // Simulate a response after 1 second
+  setTimeout(() => {
+    const responses = [
+      'Thanks for your message!',
+      'I will get back to you soon.',
+      'Got it, working on it!',
+      'Interesting point!',
+      'Let me check that for you.'
+    ];
+
+    const response = {
+      id: chatMessages.value[chatId].length + 1,
+      type: 'text',
+      content: responses[Math.floor(Math.random() * responses.length)],
+      time: new Date().toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }),
+      sent: false
+    };
+
+    chatMessages.value[chatId].push(response);
+  }, 1000);
 };
 
 // Set initial chat if none selected
