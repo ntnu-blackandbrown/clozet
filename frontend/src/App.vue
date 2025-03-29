@@ -75,12 +75,11 @@ const logout = () => {
     <header class="main-header">
       <div class="header-content">
         <div class="header-left">
-          <div class="logo-container">
+          <RouterLink to="/" class="logo-container">
             <img src="@/assets/logo.png" alt="Clozet Logo" class="logo-image" />
             <h1 class="logo">Clozet</h1>
-          </div>
+          </RouterLink>
           <nav class="main-nav">
-            <RouterLink to="/" class="nav-link">Home</RouterLink>
             <RouterLink to="/profile" class="nav-link">Profile</RouterLink>
             <RouterLink to="/messages" class="nav-link">Messages</RouterLink>
           </nav>
@@ -140,6 +139,12 @@ const logout = () => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.logo-container:hover {
+  opacity: 0.8;
 }
 
 .logo-image {
