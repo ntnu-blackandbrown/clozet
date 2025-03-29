@@ -20,12 +20,21 @@ public class JwtUtils {
     private String jwtSecret;
 
     @Value("${app.jwt.expiration}")
-    private int jwtExpirationMs;
+    private int jwtExpirationMs; // Access token utløpstid i millisekunder
+
+    @Value("${app.jwt.refresh-expiration}")
+    private int jwtRefreshExpirationMs; // Refresh token utløpstid i millisekunder
 
     public String generateJwtToken(UserDetails userDetails) {
         logger.info("Generating JWT for user: {}", userDetails.getUsername());
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userDetails.getUsername());
+    }
+    
+    public String generateRefreshToken(UserDetails userDetails) {
+        logger.info("Generating refresh token for user: {}", userDetails.getUsername());
+        Map<String, Object> claims = new HashMap<>();
+        return createRefreshToken(claims, userDetails.getUsername());
     }
 
     public boolean validateJwtToken(String authToken) {
@@ -64,7 +73,21 @@ public class JwtUtils {
     private String createToken(Map<String, Object> claims, String subject) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
-        logger.debug("Creating JWT with expiration date: {}", expiryDate);
+        logger.debug("Creating access token with expiration date: {}", expiryDate);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
+    
+    private String createRefreshToken(Map<String, Object> claims, String subject) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtRefreshExpirationMs);
+        logger.debug("Creating refresh token with expiration date: {}", expiryDate);
 
         return Jwts.builder()
                 .setClaims(claims)
