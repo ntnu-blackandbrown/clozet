@@ -20,7 +20,7 @@ const router = createRouter({
       children: [
         {
           path: '',
-          redirect: '/profile/settings'
+          redirect: '/profile/settings',
         },
         {
           path: 'settings',
@@ -42,7 +42,7 @@ const router = createRouter({
           name: 'my-purchases',
           component: () => import('@/views/profile/MyPurchasesView.vue'),
         },
-      ]
+      ],
     },
   ],
 })

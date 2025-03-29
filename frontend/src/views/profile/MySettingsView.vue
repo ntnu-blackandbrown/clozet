@@ -7,7 +7,7 @@ const formData = ref({
   username: '',
   password: '',
   email: '',
-  phoneNumber: ''
+  phoneNumber: '',
 })
 
 const handleSaveChanges = () => {
@@ -28,55 +28,31 @@ const handleDeleteAccount = () => {
       <div class="name-fields">
         <div class="form-group">
           <label>First Name</label>
-          <input
-            type="text"
-            placeholder="Your first name"
-            v-model="formData.firstName"
-          />
+          <input type="text" placeholder="Your first name" v-model="formData.firstName" />
         </div>
         <div class="form-group">
           <label>Last Name</label>
-          <input
-            type="text"
-            placeholder="Your last name"
-            v-model="formData.lastName"
-          />
+          <input type="text" placeholder="Your last name" v-model="formData.lastName" />
         </div>
       </div>
       <div class="credentials-fields">
         <div class="form-group">
           <label>Username</label>
-          <input
-            type="text"
-            placeholder="Your username"
-            v-model="formData.username"
-          />
+          <input type="text" placeholder="Your username" v-model="formData.username" />
         </div>
         <div class="form-group">
           <label>Password</label>
-          <input
-            type="password"
-            placeholder="Your password"
-            v-model="formData.password"
-          />
+          <input type="password" placeholder="Your password" v-model="formData.password" />
         </div>
       </div>
       <div class="contact-fields">
         <div class="form-group">
           <label>Email</label>
-          <input
-            type="email"
-            placeholder="Your email"
-            v-model="formData.email"
-          />
+          <input type="email" placeholder="Your email" v-model="formData.email" />
         </div>
         <div class="form-group">
           <label>Phone Number</label>
-          <input
-            type="tel"
-            placeholder="Your phone number"
-            v-model="formData.phoneNumber"
-          />
+          <input type="tel" placeholder="Your phone number" v-model="formData.phoneNumber" />
         </div>
       </div>
       <div class="form-actions">
