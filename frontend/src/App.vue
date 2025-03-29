@@ -1,78 +1,78 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
-import ProductList from '@/views/ProductListView.vue'
 import { RouterView } from 'vue-router'
 import { useUserStore } from './stores/UserStore'
-import Footer from '@/components/layout/Footer.vue'
+import { useAuthStore } from './stores/AuthStore'
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 const showLoginModal = ref(false)
-const testRegistrationStatus = ref('')
+const statusMessage = ref('')
+const isLoading = ref(false)
 
-// Beregnet egenskap som viser om brukeren er logget inn
-const currentUser = computed(() => userStore.currentUser)
-const isLoggedIn = computed(() => userStore.isLoggedIn)
+// Computed properties
+const isLoggedIn = computed(() => authStore.isLoggedIn)
+const userDetails = computed(() => authStore.userDetails)
 
-// Funksjon for hurtigregistrering med testdata
-const testRegister = async () => {
-  try {
-    testRegistrationStatus.value = 'Registrerer testbruker...'
+// Load user info on app start
+onMounted(async () => {
+  await authStore.fetchUserInfo()
+})
 
-    const testUser = {
-      username: `testuser${Math.floor(Math.random() * 10000)}`,
-      email: `testuser${Math.floor(Math.random() * 10000)}@example.com`,
-      password: 'Password123',
-      firstName: 'Test',
-      lastName: 'User',
-    }
-
-    const registerResult = await userStore.handleRegister(
-      testUser.username,
-      testUser.email,
-      testUser.password,
-      testUser.firstName,
-      testUser.lastName,
-    )
-
-    if (registerResult.success && registerResult.user) {
-      testRegistrationStatus.value = 'Registrering vellykket! Logger inn...'
-
-      // Automatisk innlogging etter registrering
-      const loginResult = await userStore.handleLogin(testUser.username, testUser.password)
-
-      if (loginResult.success) {
-        testRegistrationStatus.value = `Logget inn som ${loginResult.user.username}`
-        setTimeout(() => {
-          testRegistrationStatus.value = ''
-        }, 5000)
-      } else {
-        testRegistrationStatus.value = 'Registrering OK, men innlogging feilet'
-      }
-    } else {
-      testRegistrationStatus.value = 'Registrering feilet'
-      setTimeout(() => {
-        testRegistrationStatus.value = ''
-      }, 3000)
-    }
-  } catch (error) {
-    testRegistrationStatus.value = 'Feil ved registrering'
-    console.error('Error in test registration:', error)
+// Logout function
+const logout = async () => {
+  const result = await authStore.logout()
+  if (result.success) {
+    statusMessage.value = 'Logget ut'
+    setTimeout(() => {
+      statusMessage.value = ''
+    }, 3000)
   }
 }
 
-// Logge ut
-const logout = () => {
-  userStore.logout()
-  testRegistrationStatus.value = 'Logget ut'
-  setTimeout(() => {
-    testRegistrationStatus.value = ''
-  }, 3000)
+// Security test function
+async function testSecuritySetup() {
+  isLoading.value = true
+  statusMessage.value = 'Testing security setup...'
+
+  try {
+    // Generate random user data
+    const randomStr = Math.floor(Math.random() * 10000)
+    const testUser = {
+      username: `testuser${randomStr}`,
+      email: `testuser${randomStr}@example.com`,
+      password: 'Password123!',
+      firstName: 'Test',
+      lastName: 'User',
+      role: 'USER',
+    }
+
+    // Bruk authStore.register som håndterer både registrering og innlogging
+    statusMessage.value = 'Registrerer og logger inn testbruker...'
+    const result = await authStore.register(testUser)
+
+    if (result.success) {
+      statusMessage.value = `✅ Sikkerhetskonfigurasjon fungerer! Logget inn som ${testUser.username}`
+    } else {
+      statusMessage.value = '❌ Sikkerhetstest feilet ved registrering/innlogging'
+    }
+  } catch (error) {
+    console.error('Security test failed:', error)
+    statusMessage.value = `❌ Sikkerhetstest feilet: ${error.response?.data?.message || error.message}`
+  } finally {
+    isLoading.value = false
+    // Clear success message after 10 seconds
+    if (statusMessage.value.includes('✅')) {
+      setTimeout(() => {
+        statusMessage.value = ''
+      }, 10000)
+    }
+  }
 }
 </script>
 
 <template>
-  <div class="app-container">
+  <div :class="{ blurred: showLoginModal }">
     <header class="main-header">
       <div class="header-content">
         <div class="header-left">
@@ -81,26 +81,38 @@ const logout = () => {
             <h1 class="logo">Clozet</h1>
           </RouterLink>
           <nav class="main-nav">
-            <RouterLink to="/profile" class="nav-link">Profile</RouterLink>
-            <RouterLink to="/messages" class="nav-link">Messages</RouterLink>
+            <RouterLink to="/">Home</RouterLink>
+            <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
+            <RouterLink v-if="isLoggedIn" to="/messages">Messages</RouterLink>
           </nav>
         </div>
 
         <div class="auth-section">
-          <!-- Brukerinfo når logget inn -->
+          <!-- User info when logged in -->
           <div v-if="isLoggedIn" class="user-info">
-            <span class="welcome-msg">Hei, {{ currentUser?.firstName || currentUser?.username }}!</span>
+            <span class="welcome-msg">Hei, {{ userDetails?.firstName || userDetails?.username }}!</span>
             <button @click="logout" class="logout-button">Logg ut</button>
           </div>
 
-          <!-- Knapper for innlogging/registrering når ikke logget inn -->
+          <!-- Login/register buttons when not logged in -->
           <div v-else class="auth-buttons">
             <button @click="showLoginModal = true" class="login-button">Login / Register</button>
-            <button @click="testRegister" class="test-button">Test Registrering</button>
+            <button @click="testSecuritySetup" :disabled="isLoading" class="test-button">
+              {{ isLoading ? 'Tester...' : 'Test Sikkerhet' }}
+            </button>
           </div>
 
-          <!-- Statusmelding -->
-          <span v-if="testRegistrationStatus" class="status-message">{{ testRegistrationStatus }}</span>
+          <!-- Status message -->
+          <span
+            v-if="statusMessage"
+            class="status-message"
+            :class="{
+              success: statusMessage.includes('✅'),
+              error: statusMessage.includes('❌'),
+            }"
+          >
+            {{ statusMessage }}
+          </span>
         </div>
       </div>
     </header>
@@ -215,7 +227,9 @@ const logout = () => {
   gap: 0.75rem;
 }
 
-.login-button, .logout-button, .test-button {
+.login-button,
+.logout-button,
+.test-button {
   padding: 0.625rem 1.25rem;
   border: none;
   border-radius: 0.5rem;
@@ -249,15 +263,20 @@ const logout = () => {
   color: white;
 }
 
-.test-button:hover {
+.test-button:hover:not(:disabled) {
   background-color: #45a049;
   transform: translateY(-1px);
 }
 
+.test-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
 .status-message {
-  font-size: 0.875rem;
-  color: #666;
-  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  margin-top: 8px;
+  color: #333;
 }
 
 .user-info {
@@ -317,7 +336,9 @@ main {
     width: 100%;
   }
 
-  .login-button, .logout-button, .test-button {
+  .login-button,
+  .logout-button,
+  .test-button {
     width: 100%;
   }
 }

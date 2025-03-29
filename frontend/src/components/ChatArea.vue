@@ -48,37 +48,32 @@
         </div>
       </template>
     </div>
-    <div v-else class="no-chat-selected">
-      Select a chat to start messaging
-    </div>
+    <div v-else class="no-chat-selected">Select a chat to start messaging</div>
 
-    <MessageInput
-      v-if="contact"
-      @send-message="handleSendMessage"
-    />
+    <MessageInput v-if="contact" @send-message="handleSendMessage" />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import MessageInput from './MessageInput.vue';
+import { ref } from 'vue'
+import MessageInput from './MessageInput.vue'
 
 const props = defineProps({
   activeChat: {
     type: Number,
-    required: true
+    required: true,
   },
   messages: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   contact: {
     type: Object,
-    default: null
-  }
-});
+    default: null,
+  },
+})
 
-const emit = defineEmits(['send-message']);
+const emit = defineEmits(['send-message'])
 
 const handleSendMessage = (text) => {
   emit('send-message', {
@@ -89,12 +84,12 @@ const handleSendMessage = (text) => {
       time: new Date().toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
-        hour12: false
+        hour12: false,
       }),
-      sent: true
-    }
-  });
-};
+      sent: true,
+    },
+  })
+}
 </script>
 
 <style scoped>

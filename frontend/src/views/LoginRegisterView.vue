@@ -2,17 +2,18 @@
 import { ref, computed } from 'vue'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
-import { useUserStore } from '@/stores/UserStore'
+import { useAuthStore } from '@/stores/AuthStore'
+import axios from '@/api/axios'
 import BaseModal from '@/components/modals/BaseModal.vue'
 
-const userStore = useUserStore()
-
+const authStore = useAuthStore()
 const emit = defineEmits(['close'])
 
 const isLogin = ref(true)
 const isSubmitting = ref(false)
 const statusMessage = ref('')
-const statusType = ref('') // 'success' eller 'error'
+const statusType = ref('')
+const debugInfo = ref('')
 
 const formTitle = computed(() => (isLogin.value ? 'Login' : 'Register'))
 const toggleText = computed(() =>
@@ -21,7 +22,7 @@ const toggleText = computed(() =>
 
 // Login schema
 const loginSchema = yup.object({
-  identificator: yup.string().required('Email or username is required'),
+  username: yup.string().required('Username is required'),
   password: yup.string().required('Password is required'),
 })
 
@@ -31,7 +32,6 @@ const registerSchema = yup.object({
   firstName: yup.string().required('First name is required'),
   lastName: yup.string().required('Last name is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
-  phoneNumber: yup.string().matches(/^\+?[\d\s-]+$/, 'Invalid phone number'),
   password: yup
     .string()
     .required('Password is required')
@@ -45,19 +45,15 @@ const registerSchema = yup.object({
     .oneOf([yup.ref('password')], 'Passwords must match'),
 })
 
-// Use computed to switch between schemas
 const currentSchema = computed(() => (isLogin.value ? loginSchema : registerSchema))
 
 const { handleSubmit, errors, resetForm } = useForm({
   validationSchema: currentSchema,
 })
 
-// Add computed property for form validity
 const isFormValid = computed(() => {
   if (isLogin.value) {
-    return (
-      !errors.value.identificator && !errors.value.password && identificator.value && password.value
-    )
+    return !errors.value.username && !errors.value.password && username.value && password.value
   } else {
     return (
       !errors.value.username &&
@@ -76,11 +72,9 @@ const isFormValid = computed(() => {
   }
 })
 
-const { value: identificator, errorMessage: identificatorError } = useField('identificator')
+const { value: username, errorMessage: usernameError } = useField('username')
 const { value: password, errorMessage: passwordError } = useField('password')
 const { value: confirmPassword, errorMessage: confirmPasswordError } = useField('confirmPassword')
-
-const { value: username, errorMessage: usernameError } = useField('username')
 const { value: firstName, errorMessage: firstNameError } = useField('firstName')
 const { value: lastName, errorMessage: lastNameError } = useField('lastName')
 const { value: email, errorMessage: emailError } = useField('email')
@@ -89,58 +83,67 @@ const toggleForm = () => {
   isLogin.value = !isLogin.value
   statusMessage.value = ''
   statusType.value = ''
+  debugInfo.value = ''
   resetForm()
 }
 
 const submit = handleSubmit(async (values) => {
-  console.log(values)
   isSubmitting.value = true
   statusMessage.value = isLogin.value ? 'Logger inn...' : 'Registrerer bruker...'
   statusType.value = 'info'
+  debugInfo.value = ''
 
   try {
-    let result
-
     if (isLogin.value) {
-      console.log('Login')
-      result = await userStore.handleLogin(values.identificator, values.password)
-      if (result.success && result.user) {
-        statusMessage.value = `Innlogging vellykket! Velkommen, ${result.user.username}`
+      // Login using AuthStore (JWT cookie approach)
+      debugInfo.value = `POST til /api/auth/login med ${JSON.stringify({ username: values.username, password: values.password })}`
+      const result = await authStore.login(values.username, values.password)
+
+      if (result.success) {
+        statusMessage.value = `Innlogging vellykket!`
         statusType.value = 'success'
         setTimeout(() => {
-          emit('close') // Lukk modal etter kort tid
+          emit('close')
         }, 1500)
       } else {
-        statusMessage.value = 'Innlogging feilet. Kontroller brukernavn/e-post og passord.'
+        statusMessage.value = 'Innlogging feilet. Kontroller brukernavn og passord.'
         statusType.value = 'error'
       }
     } else {
-      console.log('Register')
-      result = await userStore.handleRegister(
-        values.username,
-        values.email,
-        values.password,
-        values.firstName,
-        values.lastName,
-      )
+      // Direct registration with correct endpoint
+      const userData = {
+        username: values.username,
+        email: values.email,
+        password: values.password,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        role: 'USER',
+      }
 
-      if (result.success && result.user) {
-        statusMessage.value = `Registrering vellykket! Velkommen, ${result.user.username}`
+      debugInfo.value = `POST til /api/users/register med ${JSON.stringify(userData)}`
+
+      const response = await axios.post('/api/users/register', userData)
+
+      if (response.data) {
+        statusMessage.value = `Registrering vellykket! Velkommen, ${response.data.username}`
         statusType.value = 'success'
-        setTimeout(() => {
-          emit('close') // Lukk modal etter kort tid
-        }, 1500)
-      } else {
-        statusMessage.value = 'Registrering feilet. Prøv et annet brukernavn eller e-post.'
-        statusType.value = 'error'
+
+        // Auto-login with new credentials
+        const loginResult = await authStore.login(values.username, values.password)
+        if (loginResult.success) {
+          setTimeout(() => {
+            emit('close')
+          }, 1500)
+        }
       }
     }
-  } catch (error) {
-    console.error('Error while submitting form:', error)
+  } catch (error: any) {
+    console.error('Error:', error)
     statusMessage.value = isLogin.value
       ? 'Innlogging feilet på grunn av teknisk feil.'
       : 'Registrering feilet på grunn av teknisk feil.'
     statusType.value = 'error'
+    debugInfo.value = `Feil: ${error.message}, Status: ${error.response?.status}, Data: ${JSON.stringify(error.response?.data)}`
   } finally {
     isSubmitting.value = false
   }
@@ -153,8 +156,9 @@ const submit = handleSubmit(async (values) => {
 
     <!-- FORM CONTENT-->
     <form @submit.prevent="submit">
-      <input v-if="isLogin" type="text" v-model="identificator" placeholder="Email or Username" />
-      <span class="error" id="identificatorErrSpan">{{ identificatorError }}</span>
+      <input v-if="isLogin" type="text" v-model="username" placeholder="Username" />
+      <span class="error" id="usernameErrSpan" v-if="isLogin">{{ usernameError }}</span>
+
       <template v-if="!isLogin">
         <input v-model="username" type="text" placeholder="Username" />
         <span class="error" id="usernameErrSpan">{{ usernameError }}</span>
@@ -181,6 +185,11 @@ const submit = handleSubmit(async (values) => {
       <!-- Status Message -->
       <div v-if="statusMessage" class="status-message" :class="statusType">
         {{ statusMessage }}
+      </div>
+
+      <!-- Debug Info -->
+      <div v-if="debugInfo" class="debug-info">
+        {{ debugInfo }}
       </div>
 
       <button type="submit" :disabled="!isFormValid || isSubmitting">
@@ -292,6 +301,18 @@ button[type='submit']:hover:not(:disabled) {
   margin: 10px 0;
   font-size: 0.9rem;
   text-align: center;
+}
+
+.debug-info {
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+  font-size: 0.75rem;
+  background-color: #f8f9fa;
+  color: #666;
+  word-break: break-all;
+  text-align: left;
+  font-family: monospace;
 }
 
 .status-message.success {

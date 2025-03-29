@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.Item.dto;
+package stud.ntnu.no.backend.item.dto;
 
 import java.time.LocalDateTime;
 

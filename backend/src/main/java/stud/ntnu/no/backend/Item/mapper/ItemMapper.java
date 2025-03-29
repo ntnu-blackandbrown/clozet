@@ -1,10 +1,11 @@
-package stud.ntnu.no.backend.Item.mapper;
+package stud.ntnu.no.backend.item.mapper;
 
 import org.springframework.stereotype.Component;
 import stud.ntnu.no.backend.category.entity.Category;
-import stud.ntnu.no.backend.Item.dto.CreateItemDTO;
-import stud.ntnu.no.backend.Item.dto.ItemDTO;
-import stud.ntnu.no.backend.Item.entity.Item;
+
+import stud.ntnu.no.backend.item.dto.CreateItemDTO;
+import stud.ntnu.no.backend.item.dto.ItemDTO;
+import stud.ntnu.no.backend.item.entity.Item;
 import stud.ntnu.no.backend.user.entity.User;
 import stud.ntnu.no.backend.location.entity.Location;
 import stud.ntnu.no.backend.shippingoption.entity.ShippingOption;

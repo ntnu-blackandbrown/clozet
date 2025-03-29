@@ -6,12 +6,8 @@
         v-model="messageText"
         placeholder="Type a message..."
         @keyup.enter="handleSend"
-      >
-      <button
-        class="send-button"
-        :class="{ active: messageText.trim() }"
-        @click="handleSend"
-      >
+      />
+      <button class="send-button" :class="{ active: messageText.trim() }" @click="handleSend">
         <i class="fas fa-paper-plane"></i>
       </button>
     </div>
@@ -19,18 +15,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
-const emit = defineEmits(['send-message']);
-const messageText = ref('');
+const emit = defineEmits(['send-message'])
+const messageText = ref('')
 
 const handleSend = () => {
-  const text = messageText.value.trim();
+  const text = messageText.value.trim()
   if (text) {
-    emit('send-message', text);
-    messageText.value = '';
+    emit('send-message', text)
+    messageText.value = ''
   }
-};
+}
 </script>
 
 <style scoped>

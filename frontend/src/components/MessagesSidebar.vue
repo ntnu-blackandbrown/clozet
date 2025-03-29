@@ -9,11 +9,17 @@
 
     <div class="search-bar">
       <i class="fas fa-search"></i>
-      <input type="text" placeholder="Search...">
+      <input type="text" placeholder="Search..." />
     </div>
 
     <div class="messages-list">
-      <div v-for="chat in chats" :key="chat.id" class="chat-item" :class="{ 'active': chat.id === activeId }" @click="$emit('select-chat', chat.id)">
+      <div
+        v-for="chat in chats"
+        :key="chat.id"
+        class="chat-item"
+        :class="{ active: chat.id === activeId }"
+        @click="$emit('select-chat', chat.id)"
+      >
         <div class="chat-avatar"></div>
         <div class="chat-info">
           <div class="chat-name">{{ chat.name }}</div>
@@ -32,15 +38,15 @@
 defineProps({
   chats: {
     type: Array,
-    required: true
+    required: true,
   },
   activeId: {
     type: Number,
-    default: null
-  }
-});
+    default: null,
+  },
+})
 
-defineEmits(['select-chat']);
+defineEmits(['select-chat'])
 </script>
 
 <style scoped>

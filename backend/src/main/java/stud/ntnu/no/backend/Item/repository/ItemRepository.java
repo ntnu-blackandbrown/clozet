@@ -1,8 +1,8 @@
-package stud.ntnu.no.backend.Item.repository;
+package stud.ntnu.no.backend.item.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import stud.ntnu.no.backend.Item.entity.Item;
+import stud.ntnu.no.backend.item.entity.Item;
 
 import java.util.List;
 

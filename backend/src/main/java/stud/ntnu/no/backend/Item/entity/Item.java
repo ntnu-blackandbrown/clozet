@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.Item.entity;
+package stud.ntnu.no.backend.item.entity;
 
 import jakarta.persistence.*;
 import stud.ntnu.no.backend.category.entity.Category;

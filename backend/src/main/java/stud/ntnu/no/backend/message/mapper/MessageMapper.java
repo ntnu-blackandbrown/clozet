@@ -5,7 +5,7 @@ import stud.ntnu.no.backend.message.dto.CreateMessageRequest;
 import stud.ntnu.no.backend.message.dto.MessageDTO;
 import stud.ntnu.no.backend.message.dto.UpdateMessageRequest;
 import stud.ntnu.no.backend.message.entity.Message;
-import stud.ntnu.no.backend.Item.repository.ItemRepository;
+import stud.ntnu.no.backend.item.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;

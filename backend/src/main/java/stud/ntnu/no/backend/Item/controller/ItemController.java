@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.Item.controller;
+package stud.ntnu.no.backend.item.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -6,9 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import stud.ntnu.no.backend.Item.dto.CreateItemDTO;
-import stud.ntnu.no.backend.Item.dto.ItemDTO;
-import stud.ntnu.no.backend.Item.service.ItemService;
+
+import stud.ntnu.no.backend.item.service.ItemService;
+import stud.ntnu.no.backend.item.dto.CreateItemDTO;
+import stud.ntnu.no.backend.item.dto.ItemDTO;
 import stud.ntnu.no.backend.user.entity.User;
 
 import java.util.List;

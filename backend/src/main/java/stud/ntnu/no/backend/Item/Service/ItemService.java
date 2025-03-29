@@ -1,7 +1,8 @@
-package stud.ntnu.no.backend.Item.service;
+package stud.ntnu.no.backend.item.service;
 
-import stud.ntnu.no.backend.Item.dto.ItemDTO;
-import stud.ntnu.no.backend.Item.dto.CreateItemDTO;
+
+import stud.ntnu.no.backend.item.dto.CreateItemDTO;
+import stud.ntnu.no.backend.item.dto.ItemDTO;
 
 import java.util.List;
 
