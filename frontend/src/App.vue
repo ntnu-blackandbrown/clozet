@@ -2,8 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
 import { RouterView } from 'vue-router'
-import { useAuthStore } from './stores/AuthStore'
-import axios from '@/api/axios'
+import { useUserStore } from './stores/UserStore'
 
 const authStore = useAuthStore()
 const showLoginModal = ref(false)
@@ -44,7 +43,7 @@ async function testSecuritySetup() {
       password: 'Password123!',
       firstName: 'Test',
       lastName: 'User',
-      role: 'USER'
+      role: 'USER',
     }
 
     // Bruk authStore.register som håndterer både registrering og innlogging
@@ -69,7 +68,6 @@ async function testSecuritySetup() {
     }
   }
 }
-
 </script>
 
 <template>
@@ -95,20 +93,20 @@ async function testSecuritySetup() {
         <!-- Login/register buttons when not logged in -->
         <div v-else class="auth-buttons">
           <button @click="showLoginModal = true" class="login-button">Login / Register</button>
-          <button
-            @click="testSecuritySetup"
-            :disabled="isLoading"
-            class="test-button"
-          >
+          <button @click="testSecuritySetup" :disabled="isLoading" class="test-button">
             {{ isLoading ? 'Tester...' : 'Test Sikkerhet' }}
           </button>
         </div>
 
         <!-- Status message -->
-        <span v-if="statusMessage" class="status-message" :class="{
-          'success': statusMessage.includes('✅'),
-          'error': statusMessage.includes('❌')
-        }">
+        <span
+          v-if="statusMessage"
+          class="status-message"
+          :class="{
+            success: statusMessage.includes('✅'),
+            error: statusMessage.includes('❌'),
+          }"
+        >
           {{ statusMessage }}
         </span>
       </div>
@@ -116,79 +114,153 @@ async function testSecuritySetup() {
     <main>
       <RouterView />
     </main>
+    <Footer />
   </div>
 
   <LoginRegisterModal v-if="showLoginModal" @close="showLoginModal = false" />
 </template>
 
 <style scoped>
-header {
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-header {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #e5e7eb;
 }
 
-.blurred {
-  filter: blur(5px);
-  transition: filter 0.3s ease;
-  pointer-events: none;
-  user-select: none;
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.logo-container:hover {
+  opacity: 0.8;
+}
+
+.logo-image {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.main-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #4b5563;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #333;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #333;
+  transition: width 0.2s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
 }
 
 .auth-section {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  gap: 0.5rem;
 }
 
 .auth-buttons {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.75rem;
+}
+
+.login-button,
+.logout-button,
+.test-button {
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .login-button {
-  padding: 0.5rem 1rem;
   background-color: #333;
   color: white;
-  border: none;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
 .login-button:hover {
   background-color: #444;
+  transform: translateY(-1px);
 }
 
 .logout-button {
-  padding: 0.5rem 1rem;
-  background-color: #666;
-  color: white;
-  border: none;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  background-color: #f3f4f6;
+  color: #4b5563;
 }
 
 .logout-button:hover {
-  background-color: #888;
+  background-color: #e5e7eb;
+  transform: translateY(-1px);
 }
 
 .test-button {
-  padding: 0.5rem 1rem;
   background-color: #4caf50;
   color: white;
-  border: none;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
 .test-button:hover:not(:disabled) {
   background-color: #45a049;
+  transform: translateY(-1px);
 }
 
 .test-button:disabled {
@@ -200,18 +272,6 @@ header {
   font-size: 0.85rem;
   margin-top: 8px;
   color: #333;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
-.success {
-  background-color: #e6f7e6;
-  color: #2e7d32;
-}
-
-.error {
-  background-color: #ffebee;
-  color: #c62828;
 }
 
 .user-info {
@@ -226,8 +286,55 @@ header {
 }
 
 main {
+  flex: 1;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .header-left {
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .logo-container {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .logo-image {
+    width: 32px;
+    height: 32px;
+  }
+
+  .main-nav {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .auth-section {
+    width: 100%;
+    align-items: center;
+  }
+
+  .auth-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .login-button,
+  .logout-button,
+  .test-button {
+    width: 100%;
+  }
 }
 </style>

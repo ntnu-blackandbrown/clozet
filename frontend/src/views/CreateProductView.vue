@@ -72,12 +72,14 @@ const validateForm = () => {
   errors.value = {}
 
   if (!formData.value.title) errors.value.title = 'Title is required'
-  if (!formData.value.shortDescription) errors.value.shortDescription = 'Short description is required'
+  if (!formData.value.shortDescription)
+    errors.value.shortDescription = 'Short description is required'
   if (!formData.value.longDescription) errors.value.longDescription = 'Long description is required'
   if (!formData.value.price) errors.value.price = 'Price is required'
   if (!formData.value.categoryId) errors.value.categoryId = 'Category is required'
   if (!formData.value.locationId) errors.value.locationId = 'Location is required'
-  if (!formData.value.shippingOptionId) errors.value.shippingOptionId = 'Shipping option is required'
+  if (!formData.value.shippingOptionId)
+    errors.value.shippingOptionId = 'Shipping option is required'
   if (!formData.value.condition) errors.value.condition = 'Condition is required'
   if (!formData.value.size) errors.value.size = 'Size is required'
   if (!formData.value.brand) errors.value.brand = 'Brand is required'
@@ -101,14 +103,14 @@ const handleDrop = (event) => {
 }
 
 const addImages = (files) => {
-  const validFiles = files.filter(file => file.type.startsWith('image/'))
+  const validFiles = files.filter((file) => file.type.startsWith('image/'))
 
   if (validFiles.length + imageFiles.value.length > maxImages) {
     alert(`You can only upload up to ${maxImages} images`)
     return
   }
 
-  validFiles.forEach(file => {
+  validFiles.forEach((file) => {
     if (imageFiles.value.length < maxImages) {
       imageFiles.value.push(file)
       const reader = new FileReader()
@@ -134,7 +136,7 @@ const handleSubmit = async () => {
     const submitData = new FormData()
 
     // Append all form fields
-    Object.keys(formData.value).forEach(key => {
+    Object.keys(formData.value).forEach((key) => {
       if (key === 'images') {
         // Append each image file
         imageFiles.value.forEach((file, index) => {
@@ -174,7 +176,7 @@ const handlePreview = () => {
         <div class="image-upload-container">
           <div
             class="image-upload-area"
-            :class="{ 'dragging': isDragging }"
+            :class="{ dragging: isDragging }"
             @dragenter.prevent="isDragging = true"
             @dragleave.prevent="isDragging = false"
             @dragover.prevent
@@ -232,12 +234,7 @@ const handlePreview = () => {
 
         <div class="form-group">
           <label for="title">Title</label>
-          <input
-            id="title"
-            v-model="formData.title"
-            type="text"
-            :class="{ 'error': errors.title }"
-          />
+          <input id="title" v-model="formData.title" type="text" :class="{ error: errors.title }" />
           <span class="error-message" v-if="errors.title">{{ errors.title }}</span>
         </div>
 
@@ -247,9 +244,11 @@ const handlePreview = () => {
             id="shortDescription"
             v-model="formData.shortDescription"
             type="text"
-            :class="{ 'error': errors.shortDescription }"
+            :class="{ error: errors.shortDescription }"
           />
-          <span class="error-message" v-if="errors.shortDescription">{{ errors.shortDescription }}</span>
+          <span class="error-message" v-if="errors.shortDescription">{{
+            errors.shortDescription
+          }}</span>
         </div>
 
         <div class="form-group">
@@ -258,9 +257,11 @@ const handlePreview = () => {
             id="longDescription"
             v-model="formData.longDescription"
             rows="4"
-            :class="{ 'error': errors.longDescription }"
+            :class="{ error: errors.longDescription }"
           ></textarea>
-          <span class="error-message" v-if="errors.longDescription">{{ errors.longDescription }}</span>
+          <span class="error-message" v-if="errors.longDescription">{{
+            errors.longDescription
+          }}</span>
         </div>
 
         <div class="form-group">
@@ -271,7 +272,7 @@ const handlePreview = () => {
             type="number"
             min="0"
             step="0.01"
-            :class="{ 'error': errors.price }"
+            :class="{ error: errors.price }"
           />
           <span class="error-message" v-if="errors.price">{{ errors.price }}</span>
         </div>
@@ -283,11 +284,7 @@ const handlePreview = () => {
 
         <div class="form-group">
           <label for="category">Category</label>
-          <select
-            id="category"
-            v-model="formData.categoryId"
-            :class="{ 'error': errors.categoryId }"
-          >
+          <select id="category" v-model="formData.categoryId" :class="{ error: errors.categoryId }">
             <option value="">Select a category</option>
             <option v-for="category in categories" :key="category.id" :value="category.id">
               {{ category.name }}
@@ -298,11 +295,7 @@ const handlePreview = () => {
 
         <div class="form-group">
           <label for="condition">Condition</label>
-          <select
-            id="condition"
-            v-model="formData.condition"
-            :class="{ 'error': errors.condition }"
-          >
+          <select id="condition" v-model="formData.condition" :class="{ error: errors.condition }">
             <option value="">Select condition</option>
             <option v-for="condition in conditions" :key="condition" :value="condition">
               {{ condition }}
@@ -313,11 +306,7 @@ const handlePreview = () => {
 
         <div class="form-group">
           <label for="size">Size</label>
-          <select
-            id="size"
-            v-model="formData.size"
-            :class="{ 'error': errors.size }"
-          >
+          <select id="size" v-model="formData.size" :class="{ error: errors.size }">
             <option value="">Select size</option>
             <option v-for="size in sizes" :key="size" :value="size">
               {{ size }}
@@ -328,23 +317,13 @@ const handlePreview = () => {
 
         <div class="form-group">
           <label for="brand">Brand</label>
-          <input
-            id="brand"
-            v-model="formData.brand"
-            type="text"
-            :class="{ 'error': errors.brand }"
-          />
+          <input id="brand" v-model="formData.brand" type="text" :class="{ error: errors.brand }" />
           <span class="error-message" v-if="errors.brand">{{ errors.brand }}</span>
         </div>
 
         <div class="form-group">
           <label for="color">Color</label>
-          <input
-            id="color"
-            v-model="formData.color"
-            type="text"
-            :class="{ 'error': errors.color }"
-          />
+          <input id="color" v-model="formData.color" type="text" :class="{ error: errors.color }" />
           <span class="error-message" v-if="errors.color">{{ errors.color }}</span>
         </div>
       </section>
@@ -355,11 +334,7 @@ const handlePreview = () => {
 
         <div class="form-group">
           <label for="location">Location</label>
-          <select
-            id="location"
-            v-model="formData.locationId"
-            :class="{ 'error': errors.locationId }"
-          >
+          <select id="location" v-model="formData.locationId" :class="{ error: errors.locationId }">
             <option value="">Select location</option>
             <option v-for="location in locations" :key="location.id" :value="location.id">
               {{ location.name }}
@@ -373,22 +348,21 @@ const handlePreview = () => {
           <select
             id="shipping"
             v-model="formData.shippingOptionId"
-            :class="{ 'error': errors.shippingOptionId }"
+            :class="{ error: errors.shippingOptionId }"
           >
             <option value="">Select shipping option</option>
             <option v-for="option in shippingOptions" :key="option.id" :value="option.id">
               {{ option.name }}
             </option>
           </select>
-          <span class="error-message" v-if="errors.shippingOptionId">{{ errors.shippingOptionId }}</span>
+          <span class="error-message" v-if="errors.shippingOptionId">{{
+            errors.shippingOptionId
+          }}</span>
         </div>
 
         <div class="form-group">
           <label class="checkbox-label">
-            <input
-              type="checkbox"
-              v-model="formData.isVippsPaymentEnabled"
-            />
+            <input type="checkbox" v-model="formData.isVippsPaymentEnabled" />
             Enable Vipps Payment
           </label>
         </div>
@@ -396,9 +370,7 @@ const handlePreview = () => {
 
       <div class="form-actions">
         <button type="button" @click="router.back()" class="cancel-button">Cancel</button>
-        <button type="button" class="preview-button" @click="handlePreview">
-          Preview Product
-        </button>
+        <button type="button" class="preview-button" @click="handlePreview">Preview Product</button>
         <button type="submit" class="submit-button" :disabled="isSubmitting">
           {{ isSubmitting ? 'Creating...' : 'Create Product' }}
         </button>
@@ -413,11 +385,13 @@ const handlePreview = () => {
           :images="imagePreviews"
           :title="formData.title"
           :description_full="formData.longDescription"
-          :category="categories.find(c => c.id === formData.categoryId)?.name || ''"
-          :location="locations.find(l => l.id === formData.locationId)?.name || ''"
+          :category="categories.find((c) => c.id === formData.categoryId)?.name || ''"
+          :location="locations.find((l) => l.id === formData.locationId)?.name || ''"
           :price="Number(formData.price)"
           :seller="userStore.user?.name || 'Current User'"
-          :shipping_options="shippingOptions.find(s => s.id === formData.shippingOptionId)?.name || ''"
+          :shipping_options="
+            shippingOptions.find((s) => s.id === formData.shippingOptionId)?.name || ''
+          "
           :status="'Available'"
           :created_at="new Date().toLocaleDateString()"
           :updated_at="new Date().toLocaleDateString()"
@@ -465,8 +439,8 @@ label {
   font-weight: 500;
 }
 
-input[type="text"],
-input[type="number"],
+input[type='text'],
+input[type='number'],
 select,
 textarea {
   width: 100%;
@@ -477,8 +451,8 @@ textarea {
   transition: border-color 0.2s;
 }
 
-input[type="text"]:focus,
-input[type="number"]:focus,
+input[type='text']:focus,
+input[type='number']:focus,
 select:focus,
 textarea:focus {
   outline: none;
@@ -504,7 +478,7 @@ textarea:focus {
   cursor: pointer;
 }
 
-.checkbox-label input[type="checkbox"] {
+.checkbox-label input[type='checkbox'] {
   width: 1.25rem;
   height: 1.25rem;
   margin: 0;

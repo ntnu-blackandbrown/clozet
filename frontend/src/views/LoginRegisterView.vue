@@ -117,7 +117,7 @@ const submit = handleSubmit(async (values) => {
         password: values.password,
         firstName: values.firstName,
         lastName: values.lastName,
-        role: 'USER'
+        role: 'USER',
       }
 
       debugInfo.value = `POST til /api/users/register med ${JSON.stringify(userData)}`

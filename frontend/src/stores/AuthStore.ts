@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import axios from "../api/axios"
+import axios from '../api/axios'
 
 interface UserInfo {
-  id: number;
-  username: string;
-  role: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
+  id: number
+  username: string
+  role: string
+  email?: string
+  firstName?: string
+  lastName?: string
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -56,32 +56,32 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // Legg til dette etter login-funksjonen
-async function register(userData: any) {
-  try {
-    // Bruk samme axios-instans som med login
-    await axios.post('/api/users/register', userData)
-    // Logg inn automatisk etter vellykket registrering
-    const loginResult = await login(userData.username, userData.password)
-    return loginResult
-  } catch (error) {
-    console.error('Registration failed:', error)
-    return { success: false, error }
+  async function register(userData: any) {
+    try {
+      // Bruk samme axios-instans som med login
+      await axios.post('/api/users/register', userData)
+      // Logg inn automatisk etter vellykket registrering
+      const loginResult = await login(userData.username, userData.password)
+      return loginResult
+    } catch (error) {
+      console.error('Registration failed:', error)
+      return { success: false, error }
+    }
   }
-}
 
-// Husk å inkludere register i return-objektet
-return {
-  isLoggedIn,
-  userId,
-  username,
-  role,
-  userDetails,
-  login,
-  logout,
-  register, // Legg til denne linjen
-  fetchUserInfo,
-  resetState
-}
+  // Husk å inkludere register i return-objektet
+  return {
+    isLoggedIn,
+    userId,
+    username,
+    role,
+    userDetails,
+    login,
+    logout,
+    register, // Legg til denne linjen
+    fetchUserInfo,
+    resetState,
+  }
 
   function resetState() {
     isLoggedIn.value = false
@@ -100,6 +100,6 @@ return {
     login,
     logout,
     fetchUserInfo,
-    resetState
+    resetState,
   }
 })
