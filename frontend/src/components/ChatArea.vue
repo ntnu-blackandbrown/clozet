@@ -12,8 +12,6 @@
         </div>
       </div>
       <div class="chat-actions" v-if="contact">
-        <button class="action-btn">Call</button>
-        <button class="action-btn primary">View Profile</button>
         <button class="action-btn">
           <i class="fas fa-ellipsis-v"></i>
         </button>

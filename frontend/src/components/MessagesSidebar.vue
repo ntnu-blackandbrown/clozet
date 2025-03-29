@@ -84,24 +84,32 @@ defineEmits(['select-chat']);
 }
 
 .search-bar {
-  padding: 12px 20px;
+  padding: 16px 20px;
   position: relative;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .search-bar input {
-  width: 100%;
-  padding: 8px 32px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  width: 80%;
+  padding: 12px 12px 12px 40px;
+  border: none;
+  border-radius: 24px;
   font-size: 14px;
+  background: #f3f4f6;
+  outline: none;
+}
+
+.search-bar input::placeholder {
+  color: #6b7280;
 }
 
 .search-bar i {
   position: absolute;
-  left: 32px;
+  left: 35px;
   top: 50%;
   transform: translateY(-50%);
   color: #6b7280;
+  font-size: 14px;
 }
 
 .messages-list {
@@ -111,10 +119,11 @@ defineEmits(['select-chat']);
 
 .chat-item {
   display: flex;
-  padding: 12px 20px;
+  padding: 16px 20px;
   gap: 12px;
   cursor: pointer;
   transition: background-color 0.2s;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .chat-item:hover {
