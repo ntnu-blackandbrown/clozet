@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Kjører en integrasjonstest som sender ekte e-post til Papercut (lokalt).
- * Forutsetter at Papercut lytter på localhost:1025.
+ * Forutsetter at Papercut lytter på localhost:25.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")  // Sørg for at du bruker application-test.properties med Papercut-oppsett
