@@ -4,17 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c7275f5f-a06c-4ee1-aff5-c7adf7638d87" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/stud/ntnu/no/backend/User/Service/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/stud/ntnu/no/backend/User/Service/UserServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/stud/ntnu/no/backend/common/service/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/stud/ntnu/no/backend/common/service/EmailService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/stud/ntnu/no/backend/common/service/EmailServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/stud/ntnu/no/backend/common/service/EmailServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/clozet.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/clozet.mv.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/stores/AuthStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/stores/AuthStore.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/stores/UserStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/stores/UserStore.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/EmailVerification.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/EmailVerification.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/LoginRegisterView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/LoginRegisterView.vue" afterDir="false" />
-    </list>
+    <list default="true" id="c7275f5f-a06c-4ee1-aff5-c7adf7638d87" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -104,7 +94,7 @@
       <workItem from="1742973406036" duration="78000" />
       <workItem from="1742974762406" duration="143000" />
       <workItem from="1743322046366" duration="6402000" />
-      <workItem from="1743376970051" duration="440000" />
+      <workItem from="1743376970051" duration="489000" />
     </task>
     <servers />
   </component>
