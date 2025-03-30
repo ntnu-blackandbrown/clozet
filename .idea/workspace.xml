@@ -6,11 +6,26 @@
   <component name="ChangeListManager">
     <list default="true" id="c7275f5f-a06c-4ee1-aff5-c7adf7638d87" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/stud/ntnu/no/backend/User/Service/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/stud/ntnu/no/backend/User/Service/UserServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/stud/ntnu/no/backend/common/service/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/stud/ntnu/no/backend/common/service/EmailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/stud/ntnu/no/backend/common/service/EmailServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/stud/ntnu/no/backend/common/service/EmailServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/clozet.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/clozet.mv.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/stores/AuthStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/stores/AuthStore.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/stores/UserStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/stores/UserStore.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/EmailVerification.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/EmailVerification.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/LoginRegisterView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/LoginRegisterView.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Vue Composition API Component" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -44,34 +59,29 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/backend-restructuring-category&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/email-implementaion&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/janja/Dropbox/NTNU/Semester 4/Fullstack-Case/clozet&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/kevin/Dropbox/NTNU/Semester 4/Fullstack-Case/clozet&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;C:\\Users\\kevin\\Dropbox\\NTNU\\Semester 4\\Fullstack-Case\\clozet\\frontend\\node_modules\\prettier&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\kevin\\Dropbox\\NTNU\\Semester 4\\Fullstack-Case\\clozet\\frontend\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;vue.recent.templates&quot;: [
+      &quot;Vue Composition API Component&quot;
+    ]
   }
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\janja\Dropbox\NTNU\Semester 4\Fullstack-Case\clozet" />
     </key>
-  </component>
-  <component name="RunManager">
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="clozet" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="clozet" />
-      <option name="filePath" />
-      <method v="2" />
-    </configuration>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -93,10 +103,17 @@
       <workItem from="1742914318865" duration="63000" />
       <workItem from="1742973406036" duration="78000" />
       <workItem from="1742974762406" duration="143000" />
+      <workItem from="1743322046366" duration="6402000" />
+      <workItem from="1743376970051" duration="440000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/frontend/src/api/axios.js" />
+      </list>
+    </option>
   </component>
 </project>

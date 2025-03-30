@@ -1,5 +1,7 @@
 package stud.ntnu.no.backend.user.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,12 +11,14 @@ import stud.ntnu.no.backend.user.dto.RegisterUserDTO;
 import stud.ntnu.no.backend.user.dto.UserDTO;
 import stud.ntnu.no.backend.user.dto.UpdateUserDTO;
 import stud.ntnu.no.backend.user.entity.User;
+import stud.ntnu.no.backend.user.entity.VerificationToken;
 import stud.ntnu.no.backend.user.exception.EmailAlreadyInUseException;
 import stud.ntnu.no.backend.user.exception.UserNotFoundException;
 import stud.ntnu.no.backend.user.exception.UserValidationException;
 import stud.ntnu.no.backend.user.exception.UsernameAlreadyExistsException;
 import stud.ntnu.no.backend.user.mapper.UserMapper;
 import stud.ntnu.no.backend.user.repository.UserRepository;
+import stud.ntnu.no.backend.user.repository.VerificationTokenRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,15 +32,22 @@ public class UserServiceImpl extends UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final VerificationTokenRepository verificationTokenRepository;
+    
+    @Value("${app.email.verification-expiry-hours:24}")
+    private int verificationExpiryHours;
 
+    @Autowired
     public UserServiceImpl(UserRepository userRepository,
-                           UserMapper userMapper,
-                           PasswordEncoder passwordEncoder,
-                           EmailService emailService) {
+                          UserMapper userMapper,
+                          PasswordEncoder passwordEncoder,
+                          EmailService emailService,
+                          VerificationTokenRepository verificationTokenRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
+        this.verificationTokenRepository = verificationTokenRepository;
     }
 
     @Override
@@ -48,16 +59,16 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public UserDTO getUserById(Long id) {
-        User user = userRepository.findById(id)
+        return userRepository.findById(id)
+                .map(userMapper::toDto)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        return userMapper.toDto(user);
     }
 
     @Override
     public UserDTO getUserByUsername(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
-        return userMapper.toDto(user);
+        return userRepository.findByUsername(username)
+                .map(userMapper::toDto)
+                .orElseThrow(() -> new UserNotFoundException("Username " + username + " not found"));
     }
 
     @Transactional
@@ -101,11 +112,18 @@ public class UserServiceImpl extends UserService {
         user.setUpdatedAt(LocalDateTime.now());
         user.setRole("ROLE_USER");
 
-        String token = UUID.randomUUID().toString();
-        user.setVerificationToken(token);
-        user.setVerificationTokenExpiry(LocalDateTime.now().plusHours(24));
-
+        // Save the user first
         User savedUser = userRepository.save(user);
+        
+        // Generate a verification token
+        String token = UUID.randomUUID().toString();
+        LocalDateTime expiryDate = LocalDateTime.now().plusHours(verificationExpiryHours);
+        
+        // Create and save the verification token
+        VerificationToken verificationToken = new VerificationToken(token, expiryDate, savedUser);
+        verificationTokenRepository.save(verificationToken);
+        
+        // Send verification email
         emailService.sendVerificationEmail(savedUser.getEmail(), token);
     }
 
@@ -115,35 +133,35 @@ public class UserServiceImpl extends UserService {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
-        if (updateUserDTO.getUsername() != null &&
-            !updateUserDTO.getUsername().equals(existingUser.getUsername()) &&
-            userRepository.findByUsername(updateUserDTO.getUsername()).isPresent()) {
-            throw new UsernameAlreadyExistsException(updateUserDTO.getUsername());
-        }
-        if (updateUserDTO.getEmail() != null &&
-            !updateUserDTO.getEmail().equals(existingUser.getEmail()) &&
-            userRepository.existsByEmail(updateUserDTO.getEmail())) {
-            throw new EmailAlreadyInUseException(updateUserDTO.getEmail());
-        }
-        if (updateUserDTO.getUsername() != null) {
+        if (updateUserDTO.getUsername() != null && !updateUserDTO.getUsername().equals(existingUser.getUsername())) {
+            if (userRepository.findByUsername(updateUserDTO.getUsername()).isPresent()) {
+                throw new UsernameAlreadyExistsException(updateUserDTO.getUsername());
+            }
             existingUser.setUsername(updateUserDTO.getUsername());
         }
-        if (updateUserDTO.getEmail() != null) {
+
+        if (updateUserDTO.getEmail() != null && !updateUserDTO.getEmail().equals(existingUser.getEmail())) {
+            if (userRepository.existsByEmail(updateUserDTO.getEmail())) {
+                throw new EmailAlreadyInUseException(updateUserDTO.getEmail());
+            }
             existingUser.setEmail(updateUserDTO.getEmail());
         }
+
         if (updateUserDTO.getFirstName() != null) {
             existingUser.setFirstName(updateUserDTO.getFirstName());
         }
+
         if (updateUserDTO.getLastName() != null) {
             existingUser.setLastName(updateUserDTO.getLastName());
         }
-        if (updateUserDTO.getRole() != null) {
+
+        // Only ADMIN can change roles
+        if (updateUserDTO.getRole() != null && existingUser.getRole().contains("ADMIN")) {
             existingUser.setRole(updateUserDTO.getRole());
         }
-        existingUser.setActive(updateUserDTO.isActive());
+
         existingUser.setUpdatedAt(LocalDateTime.now());
-        User updatedUser = userRepository.save(existingUser);
-        return userMapper.toDto(updatedUser);
+        return userMapper.toDto(userRepository.save(existingUser));
     }
 
     @Transactional
@@ -157,14 +175,8 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public UserDTO login(LoginDTO loginDTO) {
-        if (loginDTO == null || loginDTO.getUsername() == null || loginDTO.getPassword() == null) {
-            throw new UserValidationException("Login data cannot be null");
-        }
-        User user = userRepository.findByUsername(loginDTO.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("Invalid username or password"));
-        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPasswordHash())) {
-            throw new UserNotFoundException("Invalid username or password");
-        }
-        return userMapper.toDto(user);
+        return userRepository.findByUsername(loginDTO.getUsername())
+                .map(userMapper::toDto)
+                .orElseThrow(() -> new UserNotFoundException("Username " + loginDTO.getUsername() + " not found"));
     }
 }

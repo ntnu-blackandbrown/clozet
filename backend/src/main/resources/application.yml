@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: dev
+  mail:
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+# Application-specific settings
+app:
+  email:
+    from: noreply@clozet.com
+    verification-expiry-hours: 24
+    password-reset-expiry-hours: 1
+    base-url: http://localhost:5173
+    
+logging:
+  level:
+    org.springframework.mail: DEBUG 

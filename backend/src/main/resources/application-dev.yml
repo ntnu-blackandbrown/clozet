@@ -1,0 +1,15 @@
+spring:
+  mail:
+    host: localhost
+    port: 25
+    username: 
+    password: 
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls.enable: false
+
+app:
+  email:
+    base-url: http://localhost:5173 
