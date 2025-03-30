@@ -16,4 +16,7 @@ public interface UserService {
     UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO);
     void deleteUser(Long id);
     UserDTO login(LoginDTO loginDTO);
+    // Ny
+    void createUserAndSendVerificationEmail(RegisterUserDTO registerUserDTO);
+
 }

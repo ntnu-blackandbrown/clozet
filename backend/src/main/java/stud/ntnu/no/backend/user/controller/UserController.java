@@ -5,46 +5,48 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stud.ntnu.no.backend.user.dto.*;
 import stud.ntnu.no.backend.user.service.UserService;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-  @Autowired
-  private UserService userService;
+    @Autowired
+    private UserService userService;
 
-  @GetMapping
-  public List<StatusUserDTO> getAllUsers() {
-    return userService.getAllUsers();
-  }
+    @GetMapping
+    public List<StatusUserDTO> getAllUsers() {
+        return userService.getAllUsers();
+    }
 
-  @GetMapping("/{id}")
-  public UserDTO getUserById(@PathVariable Long id) {
-    return userService.getUserById(id);
-  }
+    @GetMapping("/{id}")
+    public UserDTO getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
 
-  // Registrering (uten e-post-sending)
-  @PostMapping("/register")
-  public ResponseEntity<?> createUser(@RequestBody RegisterUserDTO registerUserDTO) {
-    // Oppretter bruker i DB i inaktiv tilstand
-    UserDTO createdUser = userService.createUser(registerUserDTO);
-    return ResponseEntity.ok(createdUser);
-  }
+    @PostMapping("/register")
+    public ResponseEntity<?> createUser(@RequestBody RegisterUserDTO dto) {
+        // Kall ny service-metode som håndterer alt (oppretting + verifikasjons-e-post)
+        userService.createUserAndSendVerificationEmail(dto);
 
-  @PutMapping("/{id}")
-  public UserDTO updateUser(@PathVariable Long id, @RequestBody UpdateUserDTO updateUserDTO ) {
-    return userService.updateUser(id, updateUserDTO);
-  }
+        // Returner en enkel suksessmelding (eller en UserDTO, hvis du ønsker)
+        return ResponseEntity.ok("Bruker opprettet. Sjekk e-post for verifisering.");
+    }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-    userService.deleteUser(id);
-    return ResponseEntity.noContent().build();
-  }
+    @PutMapping("/{id}")
+    public UserDTO updateUser(@PathVariable Long id, @RequestBody UpdateUserDTO updateUserDTO ) {
+        return userService.updateUser(id, updateUserDTO);
+    }
 
-  @PostMapping("/login")
-  public UserDTO login(@RequestBody LoginDTO loginDTO) {
-    return userService.login(loginDTO);
-  }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/login")
+    public UserDTO login(@RequestBody LoginDTO loginDTO) {
+        return userService.login(loginDTO);
+    }
 }
