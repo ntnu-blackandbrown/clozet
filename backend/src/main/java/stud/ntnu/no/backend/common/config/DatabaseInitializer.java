@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.config;
+package stud.ntnu.no.backend.common.config;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;

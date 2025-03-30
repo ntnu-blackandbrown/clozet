@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.security.filter;
+package stud.ntnu.no.backend.common.security.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import stud.ntnu.no.backend.security.util.JwtUtils;
+import stud.ntnu.no.backend.common.security.util.JwtUtils;
 
 import java.io.IOException;
 import java.util.Arrays;

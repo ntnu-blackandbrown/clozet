@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.security.controller;
+package stud.ntnu.no.backend.common.security.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,8 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
-import stud.ntnu.no.backend.controller.MessageResponse;
-import stud.ntnu.no.backend.security.util.JwtUtils;
+import stud.ntnu.no.backend.common.controller.MessageResponse;
+import stud.ntnu.no.backend.common.security.util.JwtUtils;
 import stud.ntnu.no.backend.user.dto.LoginDTO;
 
 @RestController

@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.security.config;
+package stud.ntnu.no.backend.common.security.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import stud.ntnu.no.backend.security.filter.JwtAuthenticationFilter;
+import stud.ntnu.no.backend.common.security.filter.JwtAuthenticationFilter;
 
 import java.util.Arrays;
 
@@ -39,37 +39,41 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         logger.info("Configuring security filter chain");
 
-        // Bygg en CORS-konfigurasjon for alle localhost med alle porter
         CorsConfiguration corsConfig = new CorsConfiguration();
-        // Bruk allowedOriginPatterns for å støtte jokertegn for port
         corsConfig.setAllowedOriginPatterns(Arrays.asList("http://localhost:*"));
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         corsConfig.setAllowedHeaders(Arrays.asList("*"));
-        corsConfig.setAllowCredentials(true);  // Tillater at cookies sendes med
+        corsConfig.setAllowCredentials(true);
 
-        // Registrer CORS-oppsettet for alle endepunkter
         UrlBasedCorsConfigurationSource corsSource = new UrlBasedCorsConfigurationSource();
         corsSource.registerCorsConfiguration("/**", corsConfig);
 
         http
             .cors(cors -> cors.configurationSource(corsSource))
-            .csrf(csrf -> csrf.disable()) // CSRF-beskyttelse deaktiveres her (bruker SameSite-strategi)
+            .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(exc -> exc
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**",  "/api/users/register").permitAll()
-                .anyRequest().authenticated())
+                // Tillat bruk av register, verify, og passordreset
+                .requestMatchers("/api/users/register", "/api/users/verify", "/api/password/**").permitAll()
+                // Evt. /api/auth/** og H2 console
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
+                .anyRequest().authenticated()
+            )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // Tillat at H2-console åpnes i nettleseren
+        // Tillat at H2-console vises
         http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
 
         return http.build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 

@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.security.util;
+package stud.ntnu.no.backend.common.security.util;
 
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.controller;
+package stud.ntnu.no.backend.common.controller;
 
 public class MessageResponse {
     private String message;

@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.security.service;
+package stud.ntnu.no.backend.common.security.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

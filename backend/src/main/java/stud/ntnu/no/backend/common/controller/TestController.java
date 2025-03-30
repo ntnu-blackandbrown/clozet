@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.controller;
+package stud.ntnu.no.backend.common.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
