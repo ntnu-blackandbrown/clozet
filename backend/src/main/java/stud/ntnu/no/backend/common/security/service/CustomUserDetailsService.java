@@ -15,7 +15,6 @@ import java.util.Collections;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-
     private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
     @Autowired
@@ -24,19 +23,22 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.debug("Loading user details for: {}", username);
-
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> {
                     logger.warn("User not found: {}", username);
                     return new UsernameNotFoundException("User not found: " + username);
                 });
-
         logger.debug("User found: {}, active: {}", username, user.isActive());
+
+        String role = user.getRole();
+        if (role == null || role.trim().isEmpty() || !role.equals("ROLE_ADMIN")) {
+            role = "ROLE_USER";
+        }
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(username)
-                .password(user.getPasswordHash())  // Make sure this matches your User entity
-                .authorities(Collections.singletonList(new SimpleGrantedAuthority(user.getRole())))
+                .password(user.getPasswordHash())
+                .authorities(Collections.singletonList(new SimpleGrantedAuthority(role)))
                 .accountExpired(false)
                 .accountLocked(false)
                 .credentialsExpired(false)

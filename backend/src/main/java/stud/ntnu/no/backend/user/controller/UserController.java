@@ -3,7 +3,10 @@ package stud.ntnu.no.backend.user.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stud.ntnu.no.backend.user.dto.*;
+import stud.ntnu.no.backend.user.dto.LoginDTO;
+import stud.ntnu.no.backend.user.dto.RegisterUserDTO;
+import stud.ntnu.no.backend.user.dto.UpdateUserDTO;
+import stud.ntnu.no.backend.user.dto.UserDTO;
 import stud.ntnu.no.backend.user.service.UserService;
 
 import java.util.List;
@@ -16,37 +19,31 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<StatusUserDTO> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    // Endre mapping slik at kun numeriske verdier matches
-    @GetMapping("/{id:\\d+}")
+    @GetMapping("/{id}")
     public UserDTO getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
-
     @PostMapping("/register")
-    public ResponseEntity<?> createUser(@RequestBody RegisterUserDTO dto) {
-        // Kall ny service-metode som håndterer alt (oppretting + verifikasjons-e-post)
-        userService.createUserAndSendVerificationEmail(dto);
-
-        // Returner en enkel suksessmelding (eller en UserDTO, hvis du ønsker)
-        return ResponseEntity.ok("Bruker opprettet. Sjekk e-post for verifisering.");
+    public ResponseEntity<?> createUser(@RequestBody RegisterUserDTO registerUserDTO) {
+        userService.createUserAndSendVerificationEmail(registerUserDTO);
+        return ResponseEntity.ok("User registered. Please check your email for verification.");
     }
 
-    @PutMapping("/{id:\\d+}")
-    public UserDTO updateUser(@PathVariable Long id, @RequestBody UpdateUserDTO updateUserDTO ) {
+    @PutMapping("/{id}")
+    public UserDTO updateUser(@PathVariable Long id, @RequestBody UpdateUserDTO updateUserDTO) {
         return userService.updateUser(id, updateUserDTO);
     }
 
-    @DeleteMapping("/{id:\\d+}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
-
 
     @PostMapping("/login")
     public UserDTO login(@RequestBody LoginDTO loginDTO) {

@@ -1,28 +1,33 @@
 package stud.ntnu.no.backend.user.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 import stud.ntnu.no.backend.user.dto.RegisterUserDTO;
-import stud.ntnu.no.backend.user.dto.StatusUserDTO;
 import stud.ntnu.no.backend.user.dto.UserDTO;
 import stud.ntnu.no.backend.user.entity.User;
 
-import java.util.List;
+@Component
+public class UserMapper {
 
-@Mapper(componentModel = "spring")
-public interface UserMapper {
-    // Simple mapping with no subcategory references
-    UserDTO toDto(User user);
-    StatusUserDTO toStatusDto(User user);
+    public UserDTO toDto(User user) {
+        if (user == null) return null;
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setActive(user.isActive());
+        dto.setRole(user.getRole());
+        return dto;
+    }
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "passwordHash", source = "password")
-    @Mapping(target = "active", constant = "true")
-    @Mapping(target = "phoneNumber", ignore = true)  // Add these mappings
-    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
-    @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
-    @Mapping(target = "fullName", ignore = true)
-    User toEntity(RegisterUserDTO registerUserDTO);
-
-    List<StatusUserDTO> toStatusDtoList(List<User> users);
+    public User toEntity(RegisterUserDTO dto) {
+        if (dto == null) return null;
+        User user = new User();
+        user.setUsername(dto.getUsername());
+        user.setEmail(dto.getEmail());
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        return user;
+    }
 }
