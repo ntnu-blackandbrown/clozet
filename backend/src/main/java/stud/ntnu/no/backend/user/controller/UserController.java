@@ -20,10 +20,12 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/{id}")
+    // Endre mapping slik at kun numeriske verdier matches
+    @GetMapping("/{id:\\d+}")
     public UserDTO getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody RegisterUserDTO dto) {
@@ -34,16 +36,17 @@ public class UserController {
         return ResponseEntity.ok("Bruker opprettet. Sjekk e-post for verifisering.");
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id:\\d+}")
     public UserDTO updateUser(@PathVariable Long id, @RequestBody UpdateUserDTO updateUserDTO ) {
         return userService.updateUser(id, updateUserDTO);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id:\\d+}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
 
     @PostMapping("/login")
     public UserDTO login(@RequestBody LoginDTO loginDTO) {

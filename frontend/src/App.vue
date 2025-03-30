@@ -2,7 +2,6 @@
 import { ref, computed, onMounted } from 'vue'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
 import { RouterView } from 'vue-router'
-import { useUserStore } from './stores/UserStore'
 import { useAuthStore } from './stores/AuthStore'
 
 const authStore = useAuthStore()
