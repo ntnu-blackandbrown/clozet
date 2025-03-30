@@ -20,13 +20,11 @@ const toggleText = computed(() =>
   isLogin.value ? 'Need an account? Register' : 'Already have an account? Login',
 )
 
-// Login schema
 const loginSchema = yup.object({
   username: yup.string().required('Username is required'),
   password: yup.string().required('Password is required'),
 })
 
-// Register schema
 const registerSchema = yup.object({
   username: yup.string().required('Username is required'),
   firstName: yup.string().required('First name is required'),
@@ -51,26 +49,26 @@ const { handleSubmit, errors, resetForm } = useForm({
   validationSchema: currentSchema,
 })
 
-const isFormValid = computed(() => {
-  if (isLogin.value) {
-    return !errors.value.username && !errors.value.password && username.value && password.value
-  } else {
-    return (
-      !errors.value.username &&
-      !errors.value.firstName &&
-      !errors.value.lastName &&
-      !errors.value.email &&
-      !errors.value.password &&
-      !errors.value.confirmPassword &&
-      username.value &&
-      firstName.value &&
-      lastName.value &&
-      email.value &&
-      password.value &&
-      confirmPassword.value
-    )
-  }
-})
+const isLoginFormValid = computed(() =>
+  username.value && password.value && !errors.value.username && !errors.value.password
+)
+
+const isRegisterFormValid = computed(() =>
+  username.value &&
+  firstName.value &&
+  lastName.value &&
+  email.value &&
+  password.value &&
+  confirmPassword.value &&
+  !errors.value.username &&
+  !errors.value.firstName &&
+  !errors.value.lastName &&
+  !errors.value.email &&
+  !errors.value.password &&
+  !errors.value.confirmPassword
+)
+
+const isFormValid = computed(() => (isLogin.value ? isLoginFormValid.value : isRegisterFormValid.value))
 
 const { value: username, errorMessage: usernameError } = useField('username')
 const { value: password, errorMessage: passwordError } = useField('password')
@@ -95,22 +93,18 @@ const submit = handleSubmit(async (values) => {
 
   try {
     if (isLogin.value) {
-      // Login using AuthStore (JWT cookie approach)
       debugInfo.value = `POST til /api/auth/login med ${JSON.stringify({ username: values.username, password: values.password })}`
       const result = await authStore.login(values.username, values.password)
 
       if (result.success) {
         statusMessage.value = `Innlogging vellykket!`
         statusType.value = 'success'
-        setTimeout(() => {
-          emit('close')
-        }, 1500)
+        setTimeout(() => emit('close'), 1500)
       } else {
         statusMessage.value = 'Innlogging feilet. Kontroller brukernavn og passord.'
         statusType.value = 'error'
       }
     } else {
-      // Direct registration with correct endpoint
       const userData = {
         username: values.username,
         email: values.email,
@@ -121,23 +115,14 @@ const submit = handleSubmit(async (values) => {
       }
 
       debugInfo.value = `POST til /api/users/register med ${JSON.stringify(userData)}`
-
       const response = await axios.post('/api/users/register', userData)
 
       if (response.data) {
-        statusMessage.value = `Registrering vellykket! Velkommen, ${response.data.username}`
+        statusMessage.value = `Registrering vellykket! Sjekk e-posten din for verifikasjonslenke.`
         statusType.value = 'success'
-
-        // Auto-login with new credentials
-        const loginResult = await authStore.login(values.username, values.password)
-        if (loginResult.success) {
-          setTimeout(() => {
-            emit('close')
-          }, 1500)
-        }
       }
     }
-  } catch (error: any) {
+  } catch (error: never) {
     console.error('Error:', error)
     statusMessage.value = isLogin.value
       ? 'Innlogging feilet på grunn av teknisk feil.'
@@ -154,40 +139,48 @@ const submit = handleSubmit(async (values) => {
   <BaseModal @close="emit('close')" maxWidth="400px" padding="3rem" hideCloseButton>
     <h2>{{ formTitle }}</h2>
 
-    <!-- FORM CONTENT-->
     <form @submit.prevent="submit">
-      <input v-if="isLogin" type="text" v-model="username" placeholder="Username" />
-      <span class="error" id="usernameErrSpan" v-if="isLogin">{{ usernameError }}</span>
+      <div class="input-group">
+        <input name="username" type="text" v-model="username" placeholder="Username" />
+        <span class="error" v-if="usernameError">{{ usernameError }}</span>
+      </div>
 
       <template v-if="!isLogin">
-        <input v-model="username" type="text" placeholder="Username" />
-        <span class="error" id="usernameErrSpan">{{ usernameError }}</span>
-        <input v-model="firstName" type="text" placeholder="First Name" />
-        <span class="error" id="firstNameErrSpan">{{ firstNameError }}</span>
-        <input v-model="lastName" type="text" placeholder="Last Name" />
-        <span class="error" id="lastNameErrSpan">{{ lastNameError }}</span>
-        <input v-model="email" type="email" placeholder="Email" />
-        <span class="error" id="emailErrSpan">{{ emailError }}</span>
+        <div class="input-group">
+          <input name="firstName" type="text" v-model="firstName" placeholder="First Name" />
+          <span class="error" v-if="firstNameError">{{ firstNameError }}</span>
+        </div>
+
+        <div class="input-group">
+          <input name="lastName" type="text" v-model="lastName" placeholder="Last Name" />
+          <span class="error" v-if="lastNameError">{{ lastNameError }}</span>
+        </div>
+
+        <div class="input-group">
+          <input name="email" type="email" v-model="email" placeholder="Email" />
+          <span class="error" v-if="emailError">{{ emailError }}</span>
+        </div>
       </template>
 
-      <input v-model="password" type="password" placeholder="Password" />
-      <span class="error" id="passwordErrSpan">{{ passwordError }}</span>
-      <input
-        v-if="!isLogin"
-        v-model="confirmPassword"
-        type="password"
-        placeholder="Confirm Password"
-      />
-      <span v-if="!isLogin" class="error" id="confirmPasswordErrSpan">{{
-        confirmPasswordError
-      }}</span>
+      <div class="input-group">
+        <input name="password" type="password" v-model="password" placeholder="Password" />
+        <span class="error" v-if="passwordError">{{ passwordError }}</span>
+      </div>
 
-      <!-- Status Message -->
+      <div v-if="!isLogin" class="input-group">
+        <input
+          name="confirmPassword"
+          type="password"
+          v-model="confirmPassword"
+          placeholder="Confirm Password"
+        />
+        <span class="error" v-if="confirmPasswordError">{{ confirmPasswordError }}</span>
+      </div>
+
       <div v-if="statusMessage" class="status-message" :class="statusType">
         {{ statusMessage }}
       </div>
 
-      <!-- Debug Info -->
       <div v-if="debugInfo" class="debug-info">
         {{ debugInfo }}
       </div>
@@ -200,7 +193,6 @@ const submit = handleSubmit(async (values) => {
       </button>
     </form>
 
-    <!-- FORM SWITCH -->
     <p>
       <button
         id="toggle-form-btn"
@@ -224,22 +216,25 @@ const submit = handleSubmit(async (values) => {
   text-align: center;
 }
 
+.input-group {
+  margin-bottom: 1rem;
+}
+
 input {
   width: 100%;
-  margin: 0.75rem 0;
-  padding: 1rem 1.25rem;
+  padding: 1rem;
   font-size: 0.95rem;
-  border: 1px solid #e1e1e1;
+  border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: #f8f9fa;
-  transition: all 0.3s ease;
+  background-color: #fff;
   box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 input:focus {
   outline: none;
-  border-color: #c4c4c4;
-  background-color: white;
+  border-color: #888;
+  background-color: #fff;
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
 }
 
@@ -253,12 +248,11 @@ button[type='submit'] {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
+  transition: background-color 0.3s ease;
 }
 
 button[type='submit']:disabled {
-  background-color: #cccccc;
+  background-color: #ccc;
   cursor: not-allowed;
 }
 
@@ -270,12 +264,11 @@ button[type='submit']:hover:not(:disabled) {
   background: none;
   border: none;
   color: #666;
-  text-decoration: none;
-  cursor: pointer;
   font-size: 0.9rem;
+  margin-top: 1.5rem;
+  cursor: pointer;
+  text-align: center;
   display: block;
-  margin: 1.5rem auto 0;
-  transition: color 0.3s ease;
 }
 
 .toggle-form:hover:not(:disabled) {
@@ -291,8 +284,7 @@ button[type='submit']:hover:not(:disabled) {
   display: block;
   color: #e74c3c;
   font-size: 0.8rem;
-  margin: 0.25rem 0 0.5rem;
-  padding-left: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 .status-message {
@@ -310,8 +302,7 @@ button[type='submit']:hover:not(:disabled) {
   font-size: 0.75rem;
   background-color: #f8f9fa;
   color: #666;
-  word-break: break-all;
-  text-align: left;
+  word-break: break-word;
   font-family: monospace;
 }
 
@@ -347,12 +338,6 @@ button[type='submit']:hover:not(:disabled) {
 @keyframes spin {
   to {
     transform: rotate(360deg);
-  }
-}
-
-@media (max-width: 480px) {
-  :deep(.container) {
-    padding: 2rem;
   }
 }
 </style>

@@ -1,51 +1,44 @@
+<!-- EmailVerification.vue -->
 <template>
-  <div class="email-verification">
+  <div>
     <h2>E-postverifisering</h2>
     <p v-if="message">{{ message }}</p>
-    <button v-if="verified" @click="goToLogin">Gå til innlogging</button>
+    <p v-else>Verifiserer ...</p>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import axios from 'axios';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import axios from '@/api/axios'
+// Hvis du har en store for å hente brukerinfo, importer den
+import { useAuthStore } from '@/stores/AuthStore'
 
-export default defineComponent({
-  name: 'EmailVerification',
-  setup() {
-    const message = ref('');
-    const verified = ref(false);
-    const router = useRouter();
-    const route = useRoute();
+const route = useRoute()
+const router = useRouter()
+const message = ref('')
+const authStore = useAuthStore()
 
-    onMounted(async () => {
-      const token = route.query.token;
-      if (token && typeof token === 'string') {
-        try {
-          const response = await axios.get(`/api/users/verify?token=${token}`);
-          message.value = response.data;
-          verified.value = true;
-        } catch (error: any) {
-          message.value = error.response?.data || 'Verifisering feilet';
-        }
-      } else {
-        message.value = 'Ingen token funnet.';
-      }
-    });
+onMounted(async () => {
+  const token = route.query.token
+  if (!token || typeof token !== 'string') {
+    message.value = 'Ugyldig eller manglende token i URL.'
+    return
+  }
+  try {
+    const response = await axios.get(`/api/users/verify?token=${token}`, {
+      // Viktig dersom du bruker cookies for JWT
+      withCredentials: true
+    })
+    message.value = response.data
 
-    const goToLogin = () => {
-      router.push('/login');
-    };
+    // Hent brukerinfo fra server (om du har et endepunkt for "meg selv")
+    await authStore.fetchCurrentUser()
 
-    return { message, verified, goToLogin };
-  },
-});
+    // Naviger brukeren til dashboard
+    router.push('/dashboard')
+  } catch (error: any) {
+    message.value = 'Verifisering feilet: ' + (error.response?.data || error.message)
+  }
+})
 </script>
-
-<style scoped>
-.email-verification {
-  text-align: center;
-  margin-top: 50px;
-}
-</style>
