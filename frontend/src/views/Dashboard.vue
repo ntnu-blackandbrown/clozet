@@ -1,43 +1,37 @@
 <template>
   <div class="dashboard">
     <h2>Dashboard</h2>
-    <p v-if="user">Velkommen, {{ user.username }}!</p>
-    <p v-else>Ingen brukerlogg funnet.</p>
+    <p>Velkommen, {{ user?.username }}!</p>
     <button @click="logout">Logg ut</button>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import {useAuthStore} from "@/stores/AuthStore.ts";
+import { defineComponent, computed, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/AuthStore'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
-  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Dashboard',
   setup() {
-    const authStore = useAuthStore();
-    const router = useRouter();
+    const authStore = useAuthStore()
+    const router = useRouter()
+    const user = computed(() => authStore.user)
 
-    // Computed for å hente innlogget bruker
-    const user = computed(() => authStore.user);
-
-    // Funksjon for å logge ut
-    const logout = () => {
-      authStore.logout();
-      router.push('/login');
-    };
-
-    // Om brukeren ikke er logget inn, omdiriger til login-siden
     onMounted(() => {
       if (!authStore.user) {
-        router.push('/login');
+        router.push('/login')
       }
-    });
+    })
 
-    return { user, logout };
+    const logout = () => {
+      authStore.logout()
+      router.push('/login')
+    }
+
+    return { user, logout }
   },
-});
+})
 </script>
 
 <style scoped>
