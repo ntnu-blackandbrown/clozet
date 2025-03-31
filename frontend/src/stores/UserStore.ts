@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import apiClient from '@/api/axios'
 
 interface RegisterResponse {
   success: boolean
@@ -13,10 +13,9 @@ export const useUserStore = defineStore('user', {
   actions: {
     async register(username: string, email: string, password: string): Promise<RegisterResponse> {
       try {
-        const response = await axios.post(
+        const response = await apiClient.post(
           '/api/auth/register',
-          { username, email, password },
-          { withCredentials: true }
+          { username, email, password }
         )
         this.message = response.data
         return { success: true, message: response.data }

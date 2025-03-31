@@ -63,11 +63,6 @@ public class EmailConfig {
         return mailSender;
     }
 
-    @Bean
-    @Profile("dev")
-    public PapercutStarter papercutStarter() {
-        return new PapercutStarter();
-    }
 
     public String getEmailFrom() {
         return emailFrom;

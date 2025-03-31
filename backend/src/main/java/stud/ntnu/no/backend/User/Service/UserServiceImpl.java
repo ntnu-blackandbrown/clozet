@@ -86,7 +86,7 @@ public class UserServiceImpl extends UserService {
         User user = userMapper.toEntity(registerUserDTO);
         user.setPasswordHash(passwordEncoder.encode(registerUserDTO.getPassword()));
         user.setRole("ROLE_USER");
-        user.setActive(false);
+        user.setActive(true);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         User savedUser = userRepository.save(user);

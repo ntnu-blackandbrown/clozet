@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import apiClient from '@/api/axios'
 
 interface User {
   id: number
@@ -28,9 +28,8 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(username: string, password: string): Promise<LoginResponse> {
       try {
-        await axios.post('/api/auth/login',
-          { username, password },
-          { withCredentials: true }
+        await apiClient.post('/api/auth/login',
+          { username, password }
         )
 
         // Fetch user data after successful login
@@ -47,7 +46,7 @@ export const useAuthStore = defineStore('auth', {
 
     async fetchUserInfo(): Promise<User | null> {
       try {
-        const response = await axios.get('/api/me', { withCredentials: true })
+        const response = await apiClient.get('/api/me')
         this.user = response.data
         return response.data
       } catch (error) {
@@ -59,7 +58,7 @@ export const useAuthStore = defineStore('auth', {
 
     async logout(): Promise<LoginResponse> {
       try {
-        await axios.post('/api/auth/logout', {}, { withCredentials: true })
+        await apiClient.post('/api/auth/logout', {})
         this.user = null
         this.token = null
         return { success: true }

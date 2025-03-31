@@ -1,15 +1,16 @@
 spring:
   mail:
-    host: localhost
-    port: 25
-    username: 
-    password: 
+    host: sandbox.smtp.mailtrap.io
+    port: 2525
+    username: 5cb908f76b3044
+    password: d8ea28cdded2c1
     properties:
       mail:
         smtp:
-          auth: false
-          starttls.enable: false
+          auth: true
+          starttls.enable: true
 
 app:
   email:
-    base-url: http://localhost:5173 
+    base-url: ${FRONTEND_BASE_URL:http://localhost:5173}
+

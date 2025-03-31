@@ -91,8 +91,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/AuthStore'
+import { useUserStore } from '@/stores/UserStore'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import apiClient from '@/api/axios'
 
 const showLogin = ref(true)
 const loginUsername = ref('')
@@ -105,6 +106,7 @@ const registerSuccess = ref(false)
 const loginError = ref('')
 
 const authStore = useAuthStore()
+const userStore = useUserStore()
 const router = useRouter()
 
 const login = async () => {
@@ -121,28 +123,29 @@ const login = async () => {
 const register = async () => {
   try {
     registerMessage.value = ''
-    const response = await axios.post(
-      '/api/auth/register',
-      {
-        username: registerUsername.value,
-        email: registerEmail.value,
-        password: registerPassword.value
-      },
-      { withCredentials: true }
+    const result = await userStore.register(
+      registerUsername.value,
+      registerEmail.value,
+      registerPassword.value
     )
 
-    registerSuccess.value = true
-    registerMessage.value = 'Registrering vellykket! Vennligst sjekk e-posten din for å verifisere kontoen.'
+    if (result.success) {
+      registerSuccess.value = true
+      registerMessage.value = 'Registrering vellykket! Vennligst sjekk e-posten din for å verifisere kontoen.'
 
-    // Reset form fields
-    registerUsername.value = ''
-    registerEmail.value = ''
-    registerPassword.value = ''
+      // Reset form fields
+      registerUsername.value = ''
+      registerEmail.value = ''
+      registerPassword.value = ''
 
-    // After 2 seconds, redirect to verify-info page
-    setTimeout(() => {
-      router.push('/verify-info')
-    }, 2000)
+      // After 2 seconds, redirect to verify-info page
+      setTimeout(() => {
+        router.push('/verify-info')
+      }, 2000)
+    } else {
+      registerSuccess.value = false
+      registerMessage.value = result.message
+    }
   } catch (error: any) {
     registerSuccess.value = false
     registerMessage.value = error.response?.data || 'Registrering feilet. Vennligst prøv igjen.'
