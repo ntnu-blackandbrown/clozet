@@ -3,8 +3,6 @@ package stud.ntnu.no.backend.user.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stud.ntnu.no.backend.user.dto.LoginDTO;
-import stud.ntnu.no.backend.user.dto.RegisterUserDTO;
 import stud.ntnu.no.backend.user.dto.UpdateUserDTO;
 import stud.ntnu.no.backend.user.dto.UserDTO;
 import stud.ntnu.no.backend.user.service.UserService;
@@ -28,12 +26,6 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> createUser(@RequestBody RegisterUserDTO registerUserDTO) {
-        userService.createUserAndSendVerificationEmail(registerUserDTO);
-        return ResponseEntity.ok("User registered. Please check your email for verification.");
-    }
-
     @PutMapping("/{id}")
     public UserDTO updateUser(@PathVariable Long id, @RequestBody UpdateUserDTO updateUserDTO) {
         return userService.updateUser(id, updateUserDTO);
@@ -45,8 +37,4 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/login")
-    public UserDTO login(@RequestBody LoginDTO loginDTO) {
-        return userService.login(loginDTO);
-    }
 }

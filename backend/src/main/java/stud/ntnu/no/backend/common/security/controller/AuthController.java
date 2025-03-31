@@ -22,10 +22,8 @@ import stud.ntnu.no.backend.common.service.EmailService;
 import stud.ntnu.no.backend.user.dto.LoginDTO;
 import stud.ntnu.no.backend.user.dto.RegisterUserDTO;
 import stud.ntnu.no.backend.user.dto.UserDTO;
-import stud.ntnu.no.backend.user.entity.PasswordResetToken;
 import stud.ntnu.no.backend.user.entity.User;
 import stud.ntnu.no.backend.user.entity.VerificationToken;
-import stud.ntnu.no.backend.user.repository.PasswordResetTokenRepository;
 import stud.ntnu.no.backend.user.repository.UserRepository;
 import stud.ntnu.no.backend.user.repository.VerificationTokenRepository;
 import stud.ntnu.no.backend.user.service.UserService;
@@ -46,7 +44,6 @@ public class AuthController {
     private final EmailService emailService;
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${app.jwt.cookie-max-age}")
@@ -66,7 +63,6 @@ public class AuthController {
             EmailService emailService,
             UserRepository userRepository,
             VerificationTokenRepository verificationTokenRepository,
-            PasswordResetTokenRepository passwordResetTokenRepository,
             PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
@@ -75,7 +71,6 @@ public class AuthController {
         this.emailService = emailService;
         this.userRepository = userRepository;
         this.verificationTokenRepository = verificationTokenRepository;
-        this.passwordResetTokenRepository = passwordResetTokenRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -209,66 +204,8 @@ public class AuthController {
         
         return ResponseEntity.ok(new MessageResponse("Email verified successfully. You are now logged in."));
     }
-    
-    /**
-     * Request a password reset link
-     */
-    @PostMapping("/request-reset")
-    public ResponseEntity<?> requestPasswordReset(@RequestParam("email") String email) {
-        Optional<User> userOpt = userRepository.findAll().stream()
-                .filter(u -> email.equalsIgnoreCase(u.getEmail()))
-                .findFirst();
 
-        if (userOpt.isEmpty()) {
-            // Don't reveal that the email doesn't exist
-            return ResponseEntity.ok(new MessageResponse("If an account with that email exists, a password reset link has been sent."));
-        }
 
-        User user = userOpt.get();
-        
-        // Generate token
-        String token = UUID.randomUUID().toString();
-        LocalDateTime expiryDate = LocalDateTime.now().plusHours(1);
-        
-        // Save token
-        PasswordResetToken resetToken = new PasswordResetToken(token, expiryDate, user);
-        passwordResetTokenRepository.save(resetToken);
-        
-        // Send email
-        emailService.sendPasswordResetEmail(user.getEmail(), token);
-        
-        return ResponseEntity.ok(new MessageResponse("Password reset email sent successfully."));
-    }
-
-    /**
-     * Reset a user's password using token
-     */
-    @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestParam("token") String token,
-                                          @RequestParam("newPassword") String newPassword) {
-        Optional<PasswordResetToken> tokenOpt = passwordResetTokenRepository.findByToken(token);
-        
-        if (tokenOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Invalid or expired token"));
-        }
-        
-        PasswordResetToken resetToken = tokenOpt.get();
-        
-        if (LocalDateTime.now().isAfter(resetToken.getExpiryDate())) {
-            passwordResetTokenRepository.delete(resetToken);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Token has expired"));
-        }
-        
-        User user = resetToken.getUser();
-        user.setPasswordHash(passwordEncoder.encode(newPassword));
-        user.setUpdatedAt(LocalDateTime.now());
-        userRepository.save(user);
-        
-        // Delete used token
-        passwordResetTokenRepository.delete(resetToken);
-        
-        return ResponseEntity.ok(new MessageResponse("Password has been reset successfully"));
-    }
 
     /**
      * Logout user by invalidating tokens
