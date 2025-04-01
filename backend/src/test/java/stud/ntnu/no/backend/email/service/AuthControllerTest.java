@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import stud.ntnu.no.backend.common.controller.MessageResponse; // <-- Pass på å importere klassen
 import stud.ntnu.no.backend.common.security.controller.AuthController;
 import stud.ntnu.no.backend.common.security.util.JwtUtils;
 import stud.ntnu.no.backend.user.entity.User;
@@ -84,7 +85,7 @@ class AuthControllerTest {
         // Act
         ResponseEntity<?> result = authController.verifyEmail(token, response);
 
-        // Debug: se hva som faktisk kommer ut
+        // Debug: se hva som faktisk kommer ut (klasse og hash)
         System.out.println("RESPONSE BODY: " + result.getBody());
 
         // Assert
@@ -102,9 +103,14 @@ class AuthControllerTest {
         assertTrue(foundAccess, "Access token cookie ble ikke satt.");
         assertTrue(foundRefresh, "Refresh token cookie ble ikke satt.");
 
-        // Sjekk at body-teksten inneholder suksessmeldingen (juster til faktisk streng).
+        // **** ENDRINGEN: Cast til MessageResponse og sjekk getMessage() ****
+        MessageResponse messageResponse = (MessageResponse) result.getBody();
+        assertNotNull(messageResponse, "Forventet at body er et MessageResponse-objekt.");
+
+        // Sjekk at meldingen inneholder "Email verified successfully"
+        // (eller bruk equals hvis du forventer nøyaktig match)
         assertTrue(
-            result.getBody().toString().contains("Email verified successfully"),
+            messageResponse.getMessage().contains("Email verified successfully"),
             "Forventet suksessmelding i responsen."
         );
     }
@@ -122,8 +128,13 @@ class AuthControllerTest {
 
         // Assert
         assertEquals(400, result.getStatusCodeValue());
+
+        // **** ENDRINGEN: Cast til MessageResponse og sjekk getMessage() ****
+        MessageResponse messageResponse = (MessageResponse) result.getBody();
+        assertNotNull(messageResponse, "Forventet at body er et MessageResponse-objekt.");
+
         assertTrue(
-            result.getBody().toString().contains("Invalid verification token"),
+            messageResponse.getMessage().contains("Invalid verification token"),
             "Forventet feilmelding i responsen."
         );
     }
@@ -148,8 +159,13 @@ class AuthControllerTest {
 
         // Assert
         assertEquals(400, result.getStatusCodeValue());
+
+        // **** ENDRINGEN: Cast til MessageResponse og sjekk getMessage() ****
+        MessageResponse messageResponse = (MessageResponse) result.getBody();
+        assertNotNull(messageResponse, "Forventet at body er et MessageResponse-objekt.");
+
         assertTrue(
-            result.getBody().toString().contains("Verification token has expired"),
+            messageResponse.getMessage().contains("Verification token has expired"),
             "Forventet feilmelding om utløpt token i responsen."
         );
     }
