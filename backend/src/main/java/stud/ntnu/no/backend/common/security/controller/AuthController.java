@@ -16,14 +16,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import stud.ntnu.no.backend.common.config.EmailConfig;
 import stud.ntnu.no.backend.common.controller.MessageResponse;
 import stud.ntnu.no.backend.common.security.util.JwtUtils;
 import stud.ntnu.no.backend.common.service.EmailService;
 import stud.ntnu.no.backend.user.dto.LoginDTO;
+import stud.ntnu.no.backend.user.dto.PasswordResetDTO;
+import stud.ntnu.no.backend.user.dto.PasswordResetRequestDTO;
 import stud.ntnu.no.backend.user.dto.RegisterUserDTO;
 import stud.ntnu.no.backend.user.dto.UserDTO;
+import stud.ntnu.no.backend.user.entity.PasswordResetToken;
 import stud.ntnu.no.backend.user.entity.User;
 import stud.ntnu.no.backend.user.entity.VerificationToken;
+import stud.ntnu.no.backend.user.repository.PasswordResetTokenRepository;
 import stud.ntnu.no.backend.user.repository.UserRepository;
 import stud.ntnu.no.backend.user.repository.VerificationTokenRepository;
 import stud.ntnu.no.backend.user.service.UserService;
@@ -44,7 +49,9 @@ public class AuthController {
     private final EmailService emailService;
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailConfig emailConfig;
 
     @Value("${app.jwt.cookie-max-age}")
     private int jwtCookieMaxAge;  // For access-token (f.eks. 900 sekunder = 15 minutter)
@@ -63,6 +70,8 @@ public class AuthController {
             EmailService emailService,
             UserRepository userRepository,
             VerificationTokenRepository verificationTokenRepository,
+            PasswordResetTokenRepository passwordResetTokenRepository,
+            EmailConfig emailConfig,
             PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
@@ -71,6 +80,8 @@ public class AuthController {
         this.emailService = emailService;
         this.userRepository = userRepository;
         this.verificationTokenRepository = verificationTokenRepository;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.emailConfig = emailConfig;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -205,8 +216,6 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("Email verified successfully. You are now logged in."));
     }
 
-
-
     /**
      * Logout user by invalidating tokens
      */
@@ -277,6 +286,87 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new MessageResponse("Refresh token invalid or missing"));
         }
+    }
+
+    /**
+     * Request password reset email
+     */
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> requestPasswordReset(@RequestBody PasswordResetRequestDTO request) {
+        logger.info("Password reset requested for email: {}", request.getEmail());
+
+        Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
+        if (userOpt.isEmpty()) {
+            // Don't reveal if email exists or not for security
+            return ResponseEntity.ok(new MessageResponse(
+                "If an account exists with that email, a password reset link has been sent."));
+        }
+
+        User user = userOpt.get();
+
+        // Delete any existing token for this user
+        passwordResetTokenRepository.findByUser(user).ifPresent(passwordResetTokenRepository::delete);
+
+        // Generate a new token
+        String token = UUID.randomUUID().toString();
+        int expiryHours = emailConfig.getPasswordResetExpiryHours();
+        PasswordResetToken passwordResetToken = new PasswordResetToken(
+            token,
+            LocalDateTime.now().plusHours(expiryHours),
+            user);
+
+        passwordResetTokenRepository.save(passwordResetToken);
+
+        // Send email with reset link
+        emailService.sendPasswordResetEmail(user.getEmail(), token);
+
+        return ResponseEntity.ok(new MessageResponse(
+            "If an account exists with that email, a password reset link has been sent."));
+    }
+
+    /**
+     * Validate reset token
+     */
+    @GetMapping("/reset-password/validate")
+    public ResponseEntity<?> validateResetToken(@RequestParam("token") String token) {
+        Optional<PasswordResetToken> tokenOpt = passwordResetTokenRepository.findByToken(token);
+
+        if (tokenOpt.isEmpty() || tokenOpt.get().isExpired()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new MessageResponse("Invalid or expired password reset token"));
+        }
+
+        return ResponseEntity.ok(new MessageResponse("Valid token"));
+    }
+
+    /**
+     * Reset password with token
+     */
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetDTO resetRequest) {
+        Optional<PasswordResetToken> tokenOpt = passwordResetTokenRepository.findByToken(resetRequest.getToken());
+
+        if (tokenOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new MessageResponse("Invalid password reset token"));
+        }
+
+        PasswordResetToken resetToken = tokenOpt.get();
+
+        if (resetToken.isExpired()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new MessageResponse("Password reset token has expired"));
+        }
+
+        User user = resetToken.getUser();
+        user.setPasswordHash(passwordEncoder.encode(resetRequest.getPassword()));
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
+
+        // Delete the token
+        passwordResetTokenRepository.delete(resetToken);
+
+        return ResponseEntity.ok(new MessageResponse("Password has been reset successfully"));
     }
 
     /**
