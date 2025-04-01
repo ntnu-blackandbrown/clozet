@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.category.service;
+package stud.ntnu.no.backend.acategory.aservice;
 
 import stud.ntnu.no.backend.category.dto.CategoryDTO;
 

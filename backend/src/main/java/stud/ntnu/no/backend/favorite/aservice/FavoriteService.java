@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.favorite.service;
+package stud.ntnu.no.backend.favorite.aservice;
 
 import stud.ntnu.no.backend.favorite.dto.CreateFavoriteRequest;
 import stud.ntnu.no.backend.favorite.dto.FavoriteDTO;
