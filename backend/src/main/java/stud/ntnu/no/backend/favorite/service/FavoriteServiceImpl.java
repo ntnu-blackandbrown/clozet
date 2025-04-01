@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.favorite.aservice;
+package stud.ntnu.no.backend.favorite.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

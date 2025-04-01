@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.aitem.aservice;
+package stud.ntnu.no.backend.item.service;
 
 
 import stud.ntnu.no.backend.item.dto.CreateItemDTO;
