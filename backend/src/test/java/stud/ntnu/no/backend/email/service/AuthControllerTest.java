@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import stud.ntnu.no.backend.common.controller.MessageResponse;
 import stud.ntnu.no.backend.common.security.controller.AuthController;
 import stud.ntnu.no.backend.common.security.util.JwtUtils;
 import stud.ntnu.no.backend.user.entity.User;
@@ -43,7 +42,7 @@ class AuthControllerTest {
     @InjectMocks
     private AuthController authController;
 
-    // Verdier som normalt injiseres via @Value i AuthController
+    // Disse blir vanligvis injisert via @Value i AuthController:
     private final int jwtCookieMaxAge = 900;
     private final int jwtRefreshCookieMaxAge = 604800;
     private final boolean secureCookie = false;
@@ -51,7 +50,6 @@ class AuthControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        // Sett verdier via Reflection (siden @Value vanligvis injiseres av Spring)
         org.springframework.test.util.ReflectionTestUtils.setField(authController, "jwtCookieMaxAge", jwtCookieMaxAge);
         org.springframework.test.util.ReflectionTestUtils.setField(authController, "jwtRefreshCookieMaxAge", jwtRefreshCookieMaxAge);
         org.springframework.test.util.ReflectionTestUtils.setField(authController, "secureCookie", secureCookie);
@@ -86,21 +84,29 @@ class AuthControllerTest {
         // Act
         ResponseEntity<?> result = authController.verifyEmail(token, response);
 
+        // Debug: se hva som faktisk kommer ut
+        System.out.println("RESPONSE BODY: " + result.getBody());
+
         // Assert
-        // Verifiser at brukeren er aktivert og lagret
+        // Verifiser at brukeren er aktivert
         verify(userRepository, times(1)).save(dummyUser);
+        assertTrue(dummyUser.isActive(), "Brukeren bør være aktivert.");
+
         // Verifiser at token slettes
         verify(verificationTokenRepository, times(1)).delete(verificationToken);
 
-        // Sjekk at cookie-headerne er lagt til responsen
+        // Sjekk at JWT-cookies ble satt
         assertNotNull(response.getHeaders("Set-Cookie"));
         boolean foundAccess = response.getHeaders("Set-Cookie").stream().anyMatch(h -> h.contains("jwt=access-token"));
         boolean foundRefresh = response.getHeaders("Set-Cookie").stream().anyMatch(h -> h.contains("refreshToken=refresh-token"));
         assertTrue(foundAccess, "Access token cookie ble ikke satt.");
         assertTrue(foundRefresh, "Refresh token cookie ble ikke satt.");
 
-        // Sjekk responsmeldingen
-        assertTrue(result.getBody().toString().contains("Email verified successfully"), "Forventet suksessmelding i responsen.");
+        // Sjekk at body-teksten inneholder suksessmeldingen (juster til faktisk streng).
+        assertTrue(
+            result.getBody().toString().contains("Email verified successfully"),
+            "Forventet suksessmelding i responsen."
+        );
     }
 
     @Test
@@ -108,15 +114,18 @@ class AuthControllerTest {
         // Arrange
         String token = "invalid-token";
         when(verificationTokenRepository.findByToken(token)).thenReturn(Optional.empty());
-
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         // Act
         ResponseEntity<?> result = authController.verifyEmail(token, response);
+        System.out.println("RESPONSE BODY: " + result.getBody());
 
         // Assert
         assertEquals(400, result.getStatusCodeValue());
-        assertTrue(result.getBody().toString().contains("Invalid verification token"));
+        assertTrue(
+            result.getBody().toString().contains("Invalid verification token"),
+            "Forventet feilmelding i responsen."
+        );
     }
 
     @Test
@@ -131,14 +140,17 @@ class AuthControllerTest {
         // Opprett et VerificationToken med utløpt tid
         VerificationToken verificationToken = new VerificationToken(token, LocalDateTime.now().minusHours(1), dummyUser);
         when(verificationTokenRepository.findByToken(token)).thenReturn(Optional.of(verificationToken));
-
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         // Act
         ResponseEntity<?> result = authController.verifyEmail(token, response);
+        System.out.println("RESPONSE BODY: " + result.getBody());
 
         // Assert
         assertEquals(400, result.getStatusCodeValue());
-        assertTrue(result.getBody().toString().contains("Verification token has expired"));
+        assertTrue(
+            result.getBody().toString().contains("Verification token has expired"),
+            "Forventet feilmelding om utløpt token i responsen."
+        );
     }
 }
