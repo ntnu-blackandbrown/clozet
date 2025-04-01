@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.shippingoption.controller;
+package stud.ntnu.no.backend.shippingoptions.controllers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
