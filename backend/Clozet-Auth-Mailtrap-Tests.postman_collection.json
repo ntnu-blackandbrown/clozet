@@ -142,6 +142,52 @@
       ]
     },
     {
+      "name": "3.1. Change Password (Logged In)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"currentPassword\": \"password123\",\n  \"newPassword\": \"newpassword789\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/me/change-password",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "me", "change-password"]
+        },
+        "description": "Change password while logged in. Requires authentication (cookies from login)."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Password change successful\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.message).to.include(\"Password changed successfully\");",
+              "});",
+              "",
+              "pm.collectionVariables.set(\"oldPassword\", \"password123\");",
+              "pm.collectionVariables.set(\"newPassword\", \"newpassword789\");",
+              "",
+              "console.log(\"✅ Password changed successfully while logged in.\");",
+              "console.log(\"📝 NEXT STEP: Try logging out and then logging in with the new password.\");"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "4. Logout User",
       "request": {
         "method": "POST",
@@ -179,7 +225,50 @@
               "});",
               "",
               "console.log(\"✅ User successfully logged out.\");",
-              "console.log(\"📝 NEXT STEP: You can test the forgot password functionality.\");"
+              "console.log(\"📝 NEXT STEP: You can test login with the new password or test the forgot password functionality.\");"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4.1. Login with Changed Password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"{{newPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Log in with the new password after changing it while logged in."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Authentication cookies are set\", function () {",
+              "    pm.expect(pm.cookies.has(\"jwt\")).to.be.true;",
+              "    pm.expect(pm.cookies.has(\"refreshToken\")).to.be.true;",
+              "});",
+              "",
+              "console.log(\"✅ Successfully logged in with the new password.\");",
+              "console.log(\"📝 NEXT STEP: You can now test other features or the forgot password functionality.\");"
             ]
           }
         }
@@ -375,6 +464,11 @@
       "value": "",
       "type": "string",
       "description": "Token from password reset email (extract from Mailtrap)"
+    },
+    {
+      "key": "oldPassword",
+      "value": "password123",
+      "type": "string"
     },
     {
       "key": "newPassword",

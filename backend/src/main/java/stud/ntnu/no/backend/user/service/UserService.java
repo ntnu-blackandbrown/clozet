@@ -1,5 +1,6 @@
 package stud.ntnu.no.backend.user.service;
 
+import stud.ntnu.no.backend.user.dto.ChangePasswordDTO;
 import stud.ntnu.no.backend.user.dto.LoginDTO;
 import stud.ntnu.no.backend.user.dto.RegisterUserDTO;
 import stud.ntnu.no.backend.user.dto.UpdateUserDTO;
@@ -16,4 +17,5 @@ public abstract class UserService {
     public abstract UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO);
     public abstract void deleteUser(Long id);
     public abstract UserDTO login(LoginDTO loginDTO);
+    public abstract void changePassword(String username, ChangePasswordDTO changePasswordDTO);
 }

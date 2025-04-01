@@ -51,36 +51,47 @@ app:
    - This will verify the user's email and automatically log them in
    - JWT cookies will be set
 
-### 2. Login/Logout
+### 2. Login/Logout and Password Change
 
-5. Send the **Logout User** request to test logout functionality
-   - This will invalidate the JWT tokens and remove cookies
-
-6. Send the **Login User** request to test login functionality
+5. Send the **Login User** request to test login functionality
    - This will authenticate with the registered user credentials
    - JWT cookies will be set
 
-### 3. Password Reset Flow
+6. Send the **Change Password (Logged In)** request
+   - This will change the user's password while logged in
+   - The current password and new password will be sent in the request
+   - The password will be updated in the database
+   
+   **Known Issue:** The change password endpoint currently returns a 500 error but still changes the password successfully. This will be fixed in a future update.
+   
+7. Send the **Logout User** request to test logout functionality
+   - This will invalidate the JWT tokens and remove cookies
 
-7. Send the **Request Password Reset** request
+8. Send the **Login with Changed Password** request
+   - This will authenticate with the new password
+   - Confirms the password was successfully changed
+
+### 3. Password Reset Flow (via Email)
+
+9. Send the **Request Password Reset** request
    - This will trigger a password reset email to be sent to Mailtrap
    
-8. Check your Mailtrap inbox for the password reset email
-   - Subject: "Tilbakestill ditt passord på Clozet"
-   - Extract the reset token from the email link (after `token=` in the URL)
+10. Check your Mailtrap inbox for the password reset email
+    - Subject: "Tilbakestill ditt passord på Clozet"
+    - Extract the reset token from the email link (after `token=` in the URL)
    
-9. Set the `resetToken` variable in Postman with the extracted token
-   - Click on the collection (Clozet-Auth-Mailtrap-Tests)
-   - Go to the Variables tab
-   - Update the `resetToken` value
+11. Set the `resetToken` variable in Postman with the extracted token
+    - Click on the collection (Clozet-Auth-Mailtrap-Tests)
+    - Go to the Variables tab
+    - Update the `resetToken` value
    
-10. Send the **Validate Reset Token** request
+12. Send the **Validate Reset Token** request
     - This validates that the token is valid and not expired
     
-11. Send the **Reset Password** request
+13. Send the **Reset Password** request
     - This uses the token to reset the password to `newpassword123`
     
-12. Send the **Login with New Password** request
+14. Send the **Login with New Password** request
     - This tests logging in with the newly reset password
 
 ## Extracting Tokens from Mailtrap Emails
@@ -109,8 +120,17 @@ app:
   - Username: `testuser`
   - Email: `test@example.com`
   - Initial password: `password123`
-- After password reset, the new password will be `newpassword123`
-- Emails are sent when:
+- After changing password while logged in, the password becomes `newpassword789`
+- After password reset via email, the password becomes `newpassword123`
+- Email confirmation is required for:
   - A user registers (verification email)
   - A user requests a password reset (reset email)
-- If tests fail, check that the backend is running and the Mailtrap configuration is correct 
+- Password can be changed in two ways:
+  - While logged in using the `/api/me/change-password` endpoint (requires current password)
+  - Via password reset flow using email verification and token
+- If tests fail, check that the backend is running and the Mailtrap configuration is correct
+
+## Known Issues and Future Improvements
+
+- The "Change Password (Logged In)" endpoint currently returns HTTP 500 instead of HTTP 200 when successful. Despite this, the password is correctly updated in the database. This issue will be addressed in future updates.
+- The error handling for incorrect current password needs improvement. It currently returns HTTP 500 instead of HTTP 400 Bad Request. 
