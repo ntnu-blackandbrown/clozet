@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.acategory.aservice;
+package stud.ntnu.no.backend.category.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
