@@ -14,7 +14,6 @@ interface BadgeProps {
 
 const props = withDefaults(defineProps<BadgeProps>(), {
   type: 'category',
-  currency: 'NOK',
   color: '#e2e8f0',
   textColor: '#214b89',
   borderColor: '#214b89'
