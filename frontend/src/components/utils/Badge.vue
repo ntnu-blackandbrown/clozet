@@ -2,7 +2,7 @@
 import { computed, defineProps } from 'vue'
 import type { PropType } from 'vue'
 
-// 1) Define props directly in defineProps with default values
+
 const props = defineProps({
   name: {
     type: String,
@@ -14,35 +14,24 @@ const props = defineProps({
     >,
     default: 'category',
   },
-  amount: {
-    type: [String, Number] as PropType<string | number>,
-    default: '',
-  },
   currency: {
     type: String,
     default: 'NOK',
   },
   color: {
     type: String,
-    default: '',
+    default: '#e2e8f0',
   },
   textColor: {
     type: String,
-    default: '',
+    default: '#214b89',
   },
+  borderColor: {
+    type: String,
+    default: '#214b89',
+  }
 })
 
-// 2) Store default colors in a plain object (no ref needed)
-const defaultColors = {
-  category: { bg: '#e2e8f0', text: '#1a202c' },
-  location: { bg: '#f3f4f6', text: '#374151' },
-  seller: { bg: '#edf2f7', text: '#2d3748' },
-  price: { bg: '#f0fff4', text: '#276749' },
-  shipping: { bg: '#ebf8ff', text: '#2b6cb0' },
-  availability: { bg: '#fef6e4', text: '#c05621' },
-}
-
-// 3) Store icon paths in a plain object
 const iconPaths = {
   category: `
     <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
@@ -68,35 +57,15 @@ const iconPaths = {
   `,
 }
 
-// 4) Use computed properties for colors, display text, and icon
-const bgColor = computed(() => {
-  // Fallback to the default color for the given type
-  return props.color || defaultColors[props.type].bg
-})
-
-const txtColor = computed(() => {
-  // Fallback to the default text color for the given type
-  return props.textColor || defaultColors[props.type].text
-})
-
 const currentIcon = computed(() => {
   if (props.type === 'price') return ''
   return iconPaths[props.type] || ''
 })
 
-const displayText = computed(() => {
-  // If it's a price, we show amount; otherwise, we show name
-  return props.type === 'price' ? props.amount : props.name
-})
-
-// Only relevant if you need a separate "formattedPrice"
-const formattedPrice = computed(() => {
-  return props.type === 'price' ? `${props.amount} ${props.currency}` : ''
-})
 </script>
 
 <template>
-  <div class="badge" :style="{ backgroundColor: bgColor, color: txtColor }">
+  <div class="badge" :style="{ backgroundColor: props.color, color: props.textColor, border: `2px solid ${props.borderColor}`}">
     <svg
       v-if="currentIcon"
       class="badge-icon"
@@ -109,8 +78,8 @@ const formattedPrice = computed(() => {
       stroke-linejoin="round"
       v-html="currentIcon"
     />
-    <span v-if="type === 'price'" class="badge-text">{{ displayText }} {{ currency }}</span>
-    <span v-else class="badge-text">{{ displayText }}</span>
+    <span v-if="type === 'price'" class="badge-text">{{ props.name }} {{ props.currency }}</span>
+    <span v-else class="badge-text">{{ props.name }}</span>
   </div>
 </template>
 
