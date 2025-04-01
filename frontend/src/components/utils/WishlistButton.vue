@@ -1,15 +1,14 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
-const props = defineProps({
-  productId: {
-    type: String,
-    required: true,
-  },
-  isWishlisted: {
-    type: Boolean,
-    default: true,
-  },
+interface WishlistButtonProps {
+  productId?: number
+  isWishlisted?: boolean
+}
+
+const props = withDefaults(defineProps<WishlistButtonProps>(), {
+  productId: 0,
+  isWishlisted: false
 })
 
 const isWishlisted = ref(props.isWishlisted)
