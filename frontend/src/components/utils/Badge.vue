@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { PropType } from 'vue'
-import { badgeIcons, type BadgeType } from '@/components/utils/badgeIcons'
+import { badgeIcons, type BadgeType } from '@/components/utils/BadgeIcons'
 
 interface BadgeProps {
   name: string
@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<BadgeProps>(), {
   type: 'category',
   color: '#e2e8f0',
   textColor: '#214b89',
-  borderColor: '#214b89'
+  borderColor: '#214b89',
 })
 
 const currentIcon = computed(() => {
@@ -27,7 +27,7 @@ const currentIcon = computed(() => {
 const badgeStyle = computed(() => ({
   backgroundColor: props.color,
   color: props.textColor,
-  border: `2px solid ${props.borderColor}`
+  border: `2px solid ${props.borderColor}`,
 }))
 </script>
 
