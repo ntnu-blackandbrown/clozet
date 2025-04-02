@@ -88,4 +88,14 @@ export const useAuthStore = defineStore('auth', () => {
       loading.value = false
     }
   }
+
+  return {
+    user,
+    isLoggedIn,
+    userDetails,
+    login,
+    fetchUserInfo,
+    logout,
+    register,
+  }
 })
