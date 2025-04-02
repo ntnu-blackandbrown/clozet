@@ -1,6 +1,7 @@
 package stud.ntnu.no.backend.itemimage.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Service("localFileStorageService")
+@ConditionalOnProperty(name = "app.storage.use-cloudinary", havingValue = "false", matchIfMissing = true)
 public class LocalFileStorageService implements FileStorageService {
     private final Path fileStorageLocation;
 
@@ -27,19 +29,16 @@ public class LocalFileStorageService implements FileStorageService {
 
     @Override
     public String storeFile(MultipartFile file, Long itemId) throws IOException {
-        // Create itemId directory
         Path itemDirectory = fileStorageLocation.resolve(itemId.toString());
         if (!Files.exists(itemDirectory)) {
             Files.createDirectories(itemDirectory);
         }
 
-        // Generate unique filename
         String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
         String extension = originalFilename.contains(".") ?
             originalFilename.substring(originalFilename.lastIndexOf(".")) : "";
         String filename = UUID.randomUUID().toString() + extension;
 
-        // Copy file
         Path targetLocation = itemDirectory.resolve(filename);
         Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 

@@ -9,8 +9,19 @@ spring:
         smtp:
           auth: true
           starttls.enable: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 app:
   email:
     base-url: ${FRONTEND_BASE_URL:http://localhost:5173}
-
+  upload:
+    dir: uploads
+  storage:
+    use-cloudinary: false
+  cloudinary:
+    cloud-name: your-dev-cloud-name
+    api-key: your-dev-api-key
+    api-secret: your-dev-api-secret
