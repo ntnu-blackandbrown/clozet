@@ -33,7 +33,7 @@ public class ItemMarketPlaceMapper {
                 item.getPrice(),
                 item.getCategory().getName(),
                 imageUrl,
-                item.getLocation().getName(),
+                item.getLocation().getCity(),
                 item.isVippsPaymentEnabled(),
                 isWishlisted
         );
