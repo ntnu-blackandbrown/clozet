@@ -10,7 +10,6 @@ interface ProductDisplayModalProps {
 const props = defineProps<ProductDisplayModalProps>()
 
 const emit = defineEmits(['close'])
-
 </script>
 
 <template>
