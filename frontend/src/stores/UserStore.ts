@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import apiClient from '@/api/axios'
 
 interface RegisterResponse {
   success: boolean
