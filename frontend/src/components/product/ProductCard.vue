@@ -1,33 +1,20 @@
-<script setup>
+<script setup lang="ts">
 import { defineProps } from 'vue'
 import WishlistButton from '@/components/utils/WishlistButton.vue'
+import Badge from '@/components/utils/Badge.vue'
 
-const props = defineProps({
-  id: {
-    type: String,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  category: {
-    type: String,
-    required: true,
-  },
-  image: {
-    type: String,
-    required: true,
-  },
-  purchased: {
-    type: Boolean,
-    default: false,
-  },
-})
+interface ProductCardProps {
+  id: number
+  title: string
+  price: number
+  category: string
+  image: string
+  location: string
+  isVippsPaymentEnabled: boolean
+  isWishlisted: boolean
+}
+
+const props = defineProps<ProductCardProps>()
 
 const emit = defineEmits(['click'])
 
@@ -39,15 +26,28 @@ const handleClick = () => {
 <template>
   <div class="product-card" @click="handleClick">
     <div class="product-image">
-      <img :src="image" :alt="title" />
+      <img :src="props.image" :alt="props.title" />
       <div class="wishlist-container">
-        <WishlistButton :product-id="id" :purchased="purchased" @click.stop />
+        <WishlistButton :product-id="props.id" :is-wishlisted="props.isWishlisted" @click.stop />
       </div>
     </div>
     <div class="product-info">
       <h3>{{ title }}</h3>
-      <p class="price">{{ price }} NOK</p>
-      <p class="category">{{ category }}</p>
+      <Badge
+        :name="props.price.toString()"
+        :category="'price'"
+        :currency="'NOK'"
+        :color="'white'"
+        :textColor="'black'"
+        :borderColor="'black'"
+      />
+      <Badge
+        :name="props.category"
+        :category="'category'"
+        :color="'white'"
+        :textColor="'black'"
+        :borderColor="'black'"
+      />
       <button class="view-details">View Details</button>
     </div>
   </div>

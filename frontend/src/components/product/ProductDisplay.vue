@@ -1,108 +1,66 @@
-<script setup>
-import { ref } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import Badge from '@/components/utils/Badge.vue'
 import WishlistButton from '@/components/utils/WishlistButton.vue'
+import axios from 'axios'
+interface ProductDisplayProps {
+  id: number
+}
 
-// Define props
-const props = defineProps({
-  images: {
-    type: Array,
-    default: () => [],
-  },
-  itemId: {
-    type: String,
-    default: '',
-  },
-  title: {
-    type: String,
-    default: 'Nike Shoes',
-  },
-  description_full: {
-    type: String,
-    default:
-      "This is a long description of the product. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-  },
-  category: {
-    type: String,
-    default: 'Shoes',
-  },
-  location: {
-    type: String,
-    default: 'Oslo',
-  },
-  price: {
-    type: Number,
-    default: 1000,
-  },
-  seller: {
-    type: String,
-    default: 'John Doe',
-  },
-  shipping_options: {
-    type: String,
-    default: 'Standard Shipping',
-  },
-  status: {
-    type: String,
-    default: 'Available',
-  },
-  created_at: {
-    type: String,
-    default: '2021-01-01',
-  },
-  updated_at: {
-    type: String,
-    default: '2021-01-01',
-  },
-  purchased: {
-    type: Boolean,
-    default: false,
-  },
+const props = defineProps<ProductDisplayProps>()
+
+const getItemById = async () => {
+  const item = await axios.get(`/api/items/${props.id}`)
+  return item.data
+}
+
+const item = ref<any>(null)
+
+onMounted(async () => {
+  item.value = await getItemById()
 })
-
-// Remove the static image imports and ref
 </script>
 
 <template>
-  <div class="product-display">
+  <div v-if="item" class="product-display">
     <div class="product-image-container">
       <div class="gallery-container">
-        <div v-for="(image, index) in images" :key="index" class="gallery-item">
+        <div v-for="(image, index) in item.images" :key="index" class="gallery-item">
           <img :src="image" :alt="'Product image ' + (index + 1)" class="gallery-image" />
         </div>
       </div>
       <div class="main-image-container">
-        <img :src="images[0]" :alt="'Main product image'" class="main-image" />
+        <img :src="item.images[0]" :alt="'Main product image'" class="main-image" />
       </div>
     </div>
 
     <div class="product-details">
       <div id="product-title">
-        <h3>{{ title }}</h3>
+        <h3>{{ item.title }}</h3>
       </div>
       <div id="product-description">
-        <p>{{ description_full }}</p>
-        <Badge :name="category" type="category" />
-        <Badge :name="location" type="location" />
-        <Badge :amount="price" currency="NOK" type="price" />
+        <p>{{ item.description_full }}</p>
+        <Badge :name="item.category" type="category" />
+        <Badge :name="item.location" type="location" />
+        <Badge :name="item.price" type="price" />
       </div>
       <div id="seller-info">
-        <Badge :name="seller" type="seller" />
-        <Badge :name="shipping_options" type="shipping" />
-        <Badge :name="status" type="availability" />
+        <Badge :name="item.seller" type="seller" />
+        <Badge :name="item.shipping_options" type="shipping" />
+        <Badge :name="item.status" type="availability" />
       </div>
       <div class="action-buttons">
         <button class="contact-button">Contact Seller</button>
-        <WishlistButton :product-id="itemId" :purchased="purchased" />
+        <WishlistButton :product-id="item.id" :purchased="item.purchased" />
       </div>
       <div id="product-info">
         <div class="info-item">
           <span class="info-label">Posted:</span>
-          <span class="info-value">{{ created_at }}</span>
+          <span class="info-value">{{ item.created_at }}</span>
         </div>
         <div class="info-item">
           <span class="info-label">Updated:</span>
-          <span class="info-value">{{ updated_at }}</span>
+          <span class="info-value">{{ item.updated_at }}</span>
         </div>
       </div>
     </div>
