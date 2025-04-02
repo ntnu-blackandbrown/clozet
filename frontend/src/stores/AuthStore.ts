@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios' // Import standard axios
+import axios from '@/api/axios' // axios
 import type { AxiosError } from 'axios'
 import { computed, ref } from 'vue'
 
