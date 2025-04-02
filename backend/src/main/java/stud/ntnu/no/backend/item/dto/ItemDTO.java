@@ -1,6 +1,9 @@
 package stud.ntnu.no.backend.item.dto;
 
+import stud.ntnu.no.backend.itemimage.dto.ItemImageDTO;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ItemDTO {
     private Long id;
@@ -26,19 +29,21 @@ public class ItemDTO {
     private boolean isVippsPaymentEnabled;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<ItemImageDTO> images;
+
 
 
     
     // Constructors
     public ItemDTO() {
     }
-    
+
     public ItemDTO(Long id, String title, String shortDescription, String longDescription, double price,
                    Long categoryId, String categoryName, Long sellerId, String sellerName,
                    Long locationId, String locationName, Long shippingOptionId, String shippingOptionName,
                    double latitude, double longitude, String condition, String size,
                    String brand, String color, boolean isAvailable, boolean isVippsPaymentEnabled,
-                   LocalDateTime createdAt, LocalDateTime updatedAt) {
+                   LocalDateTime createdAt, LocalDateTime updatedAt, List<ItemImageDTO> images) {
         this.id = id;
         this.title = title;
         this.shortDescription = shortDescription;
@@ -62,6 +67,16 @@ public class ItemDTO {
         this.isVippsPaymentEnabled = isVippsPaymentEnabled;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.images = images;
+    }
+
+    // Add getter and setter for images
+    public List<ItemImageDTO> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ItemImageDTO> images) {
+        this.images = images;
     }
     
     // Getters and setters
