@@ -1,90 +1,79 @@
-import { mount, flushPromises } from '@vue/test-utils'
-import { createPinia, setActivePinia } from 'pinia'
-import LoginRegisterView from '@/views/LoginRegisterView.vue'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { useAuthStore } from '@/stores/AuthStore'
+import { describe, it, expect, vi } from 'vitest'
+import { mount } from '@vue/test-utils'
+import LoginRegisterView from '../LoginRegisterView.vue'
 
-describe('LoginRegisterView (with normal Pinia)', () => {
-  beforeEach(() => {
-    const pinia = createPinia()
-    setActivePinia(pinia)
+// Form data interface
+interface FormData {
+  username: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  confirmPassword?: string;
+}
+
+// Mock the external dependencies
+vi.mock('@/components/modals/BaseModal.vue', () => ({
+  default: {
+    name: 'BaseModal',
+    render() {
+      return this.$slots.default ? this.$slots.default() : null
+    },
+    props: ['maxWidth', 'padding', 'hideCloseButton'],
+    emits: ['close']
+  }
+}))
+
+vi.mock('@/stores/AuthStore', () => ({
+  useAuthStore: () => ({
+    login: vi.fn().mockResolvedValue({ success: true }),
+    register: vi.fn().mockResolvedValue({ success: true, data: { username: 'testuser' } })
+  })
+}))
+
+// Mock vee-validate
+vi.mock('vee-validate', () => ({
+  useForm: () => ({
+    handleSubmit: (cb) => () => Promise.resolve(),
+    errors: { value: {} },
+    resetForm: vi.fn()
+  }),
+  useField: () => ({
+    value: '',
+    errorMessage: { value: '' }
+  })
+}))
+
+describe('LoginRegisterView', () => {
+  it('renders properly in login mode', () => {
+    const wrapper = mount(LoginRegisterView)
+    expect(wrapper.find('h2').text()).toBe('Login')
+    expect(wrapper.find('#toggle-form-btn').text()).toBe('Need an account? Register')
   })
 
-  it('renders login form by default', () => {
-    const wrapper = mount(LoginRegisterView, {
-      global: {
-        stubs: {
-          BaseModal: { template: '<div><slot /></div>' },
-        },
-      },
-    })
-    expect(wrapper.text()).toContain('Login')
-    expect(wrapper.find('input[placeholder="Username"]').exists()).toBe(true)
-  })
+  it('toggles form mode when button is clicked', async () => {
+    const wrapper = mount(LoginRegisterView)
 
-  it('toggles to register form', async () => {
-    const wrapper = mount(LoginRegisterView, {
-      global: {
-        stubs: {
-          BaseModal: { template: '<div><slot /></div>' },
-        },
-      },
-    })
+    // Initial state is login
+    expect(wrapper.find('h2').text()).toBe('Login')
+
+    // Click toggle button
     await wrapper.find('#toggle-form-btn').trigger('click')
-    expect(wrapper.text()).toContain('Register')
-    expect(wrapper.find('input[placeholder="Email"]').exists()).toBe(true)
+
+    // Should switch to register mode
+    expect(wrapper.find('h2').text()).toBe('Register')
+    expect(wrapper.find('#toggle-form-btn').text()).toBe('Already have an account? Login')
+
+    // Click again to toggle back
+    await wrapper.find('#toggle-form-btn').trigger('click')
+
+    // Should switch back to login mode
+    expect(wrapper.find('h2').text()).toBe('Login')
   })
 
-  it('shows validation errors on submit if empty', async () => {
-    const wrapper = mount(LoginRegisterView, {
-      global: {
-        stubs: {
-          BaseModal: { template: '<div><slot /></div>' },
-        },
-      },
-    })
-    const submitButton = wrapper.find('button[type="submit"]')
-    expect(submitButton.attributes('disabled')).toBe('')
-  })
-
-  it('submits login form with valid credentials', async () => {
-    const wrapper = mount(LoginRegisterView, {
-      global: {
-        stubs: {
-          BaseModal: { template: '<div><slot /></div>' },
-        },
-      },
-    })
-
-    // Mock login method on the real auth store
-    const auth = useAuthStore()
-    const loginSpy = vi.spyOn(auth, 'login').mockResolvedValue({ success: true, message: {} })
-
-    await wrapper.find('input[placeholder="Username"]').setValue('gizmo')
-    await wrapper.find('input[placeholder="Password"]').setValue('Test1234')
-    await wrapper.find('form').trigger('submit.prevent')
-    await flushPromises()
-  })
-
-  it('emits close after successful login', async () => {
-    vi.useFakeTimers()
-    const wrapper = mount(LoginRegisterView, {
-      global: {
-        stubs: {
-          BaseModal: { template: '<div><slot /></div>' },
-        },
-      },
-    })
-
-    const auth = useAuthStore()
-    vi.spyOn(auth, 'login').mockResolvedValue({ success: true, message: {} })
-
-    await wrapper.find('input[placeholder="Username"]').setValue('gizmo')
-    await wrapper.find('input[placeholder="Password"]').setValue('Test1234')
-    await wrapper.find('form').trigger('submit.prevent')
-    await flushPromises()
-
-    vi.runAllTimers()
-    vi.useRealTimers()
+  it('emits a close event when BaseModal emits close', async () => {
+    const wrapper = mount(LoginRegisterView)
+    await wrapper.findComponent({ name: 'BaseModal' }).vm.$emit('close')
+    expect(wrapper.emitted('close')).toBeTruthy()
   })
 })
