@@ -1,0 +1,9 @@
+spring:
+  mail:
+    host: smtp.mailgun.org
+    port: 587
+    username: postmaster@sandbox25f0009567d5425391596f541e2cc221.mailgun.org
+    password: ${MAILGUN_SMTP_PASSWORD}  # <- hentes fra miljøvariabel
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
