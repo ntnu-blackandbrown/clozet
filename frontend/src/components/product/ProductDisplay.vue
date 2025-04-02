@@ -9,7 +9,7 @@ interface ProductDisplayProps {
 
 const props = defineProps<ProductDisplayProps>()
 
-const getItemById = async() => {
+const getItemById = async () => {
   const item = await axios.get(`/api/items/${props.id}`)
   return item.data
 }
@@ -19,11 +19,10 @@ const item = ref<any>(null)
 onMounted(async () => {
   item.value = await getItemById()
 })
-
 </script>
 
 <template>
-  <div class="product-display">
+  <div v-if="item" class="product-display">
     <div class="product-image-container">
       <div class="gallery-container">
         <div v-for="(image, index) in item.images" :key="index" class="gallery-item">
