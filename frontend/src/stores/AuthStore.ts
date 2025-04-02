@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-
+import axios from 'axios' // Import standard axios
+import type { AxiosError } from 'axios'
 
 interface User {
   id: number
@@ -26,27 +27,26 @@ export const useAuthStore = defineStore('auth', {
     userDetails: (state) => state.user,
   },
   actions: {
-    async login(username: string, password: string): Promise<LoginResponse> {
+    async login(username: string, password: string): Promise<{ success: boolean; message: unknown }> {
       try {
-        await apiClient.post('/api/auth/login',
-          { username, password }
-        )
+        await axios.post('/api/auth/login', { username, password })
 
         // Fetch user data after successful login
         await this.fetchUserInfo()
-        return { success: true }
-      } catch (error: any) {
+        return {message: undefined, success: true }
+      } catch (error: unknown) {
         console.error('Login error:', error)
+        const axiosError = error as AxiosError
         return {
           success: false,
-          message: error.response?.data || 'Login failed'
+          message: axiosError.response?.data || 'Login failed'
         }
       }
     },
 
     async fetchUserInfo(): Promise<User | null> {
       try {
-        const response = await apiClient.get('/api/me')
+        const response = await axios.get('/api/me')
         this.user = response.data
         return response.data
       } catch (error) {
@@ -56,17 +56,18 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async logout(): Promise<LoginResponse> {
+    async logout(): Promise<{ success: boolean; message: unknown }> {
       try {
-        await apiClient.post('/api/auth/logout', {})
+        await axios.post('/api/auth/logout', {})
         this.user = null
         this.token = null
-        return { success: true }
-      } catch (error: any) {
+        return {message: undefined, success: true }
+      } catch (error: unknown) {
         console.error('Logout error:', error)
+        const axiosError = error as AxiosError
         return {
           success: false,
-          message: error.response?.data || 'Logout failed'
+          message: axiosError.response?.data || 'Logout failed'
         }
       }
     },
