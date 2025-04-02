@@ -1,0 +1,16 @@
+spring:
+  mail:
+    host: smtp.mailgun.org
+    port: 587
+    username: postmaster@sandbox25f0009567d5425391596f541e2cc221.mailgun.org
+    password: ${MAILGUN_SMTP_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+app:
+  email:
+    from: postmaster@sandbox25f0009567d5425391596f541e2cc221.mailgun.org
+    base-url: https://clozet.netlify.app/ # ← bytt til frontend-produksjonsdomene
+    verification-expiry-hours: 24
+    password-reset-expiry-hours: 1
