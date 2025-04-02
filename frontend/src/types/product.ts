@@ -4,7 +4,7 @@ export interface Product {
   description_full: string
   category: string
   location: string
-  price: string
+  price: number
   seller: string
   shipping_options: string
   images: string[]
