@@ -1,36 +1,24 @@
-<script setup>
-import { ref } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import ProductCard from '@/components/product/ProductCard.vue'
 import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
+import type { Product } from '@/types/product'
+
+const myPosts = ref<Product[]>([])
+const props = defineProps<{
+  userId: number
+}>()
+
+onMounted(async () => {
+  const response = await axios.get(`api/items/seller/${props.userId}`)
+  myPosts.value = response.data
+})
 
 const showProductModal = ref(false)
-const selectedProductId = ref('')
+const selectedProductId = ref<number | null>(null)
 
-const myPosts = [
-  {
-    id: 'post-1',
-    title: 'Nike Running Shoes',
-    price: 1200,
-    category: 'Shoes',
-    image: '/src/assets/images/main-image.png',
-  },
-  {
-    id: 'post-2',
-    title: 'Designer Backpack',
-    price: 800,
-    category: 'Bags',
-    image: '/src/assets/images/image-1.png',
-  },
-  {
-    id: 'post-3',
-    title: 'Casual Denim Jacket',
-    price: 950,
-    category: 'Clothing',
-    image: '/src/assets/images/image-2.png',
-  },
-]
-
-const openProductModal = (productId) => {
+const openProductModal = (productId: number) => {
   selectedProductId.value = productId
   showProductModal.value = true
 }
