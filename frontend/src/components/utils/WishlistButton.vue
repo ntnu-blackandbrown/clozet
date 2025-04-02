@@ -1,29 +1,27 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
-const props = defineProps({
-  productId: {
-    type: String,
-    required: true,
-  },
-  purchased: {
-    type: Boolean,
-    default: false,
-  },
+interface WishlistButtonProps {
+  productId?: number
+  isWishlisted?: boolean
+}
+
+const props = withDefaults(defineProps<WishlistButtonProps>(), {
+  productId: 0,
+  isWishlisted: false,
 })
 
-const isWishlisted = ref(false)
+const isWishlisted = ref(props.isWishlisted)
 
 const toggleWishlist = () => {
   isWishlisted.value = !isWishlisted.value
   // TODO: Implement actual wishlist functionality with backend
-  console.log(`Wishlist toggled for product ${props.productId}`)
+  console.log('current state of isWishlisted: ', isWishlisted.value)
 }
 </script>
 
 <template>
   <button
-    v-if="!purchased"
     class="wishlist-button"
     :class="{ wishlisted: isWishlisted }"
     @click="toggleWishlist"
