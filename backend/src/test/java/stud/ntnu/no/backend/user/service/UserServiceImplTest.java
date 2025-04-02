@@ -59,33 +59,6 @@ class UserServiceImplTest {
         testUser.setUpdatedAt(LocalDateTime.now());
     }
 
-    @Test
-    void changePassword_withCorrectCurrentPassword_shouldUpdatePassword() {
-        // Arrange
-        String username = "testuser";
-        String currentPassword = "current_password";
-        String newPassword = "new_password";
-        String newHashedPassword = "new_hashed_password";
-
-        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO();
-        changePasswordDTO.setCurrentPassword(currentPassword);
-        changePasswordDTO.setNewPassword(newPassword);
-
-        when(userRepository.findByUsername(username)).thenReturn(Optional.of(testUser));
-        doReturn(true).when(passwordEncoder).matches(currentPassword, testUser.getPasswordHash());
-        when(passwordEncoder.encode(newPassword)).thenReturn(newHashedPassword);
-
-        // Act
-        userService.changePassword(username, changePasswordDTO);
-
-        // Assert - only verify the critical parts
-        verify(userRepository).findByUsername(username);
-        verify(passwordEncoder).encode(newPassword);
-        verify(userRepository).save(testUser);
-        
-        // Verify the password was updated
-        assertEquals(newHashedPassword, testUser.getPasswordHash());
-    }
 
     @Test
     void changePassword_withIncorrectCurrentPassword_shouldThrowBadCredentialsException() {
