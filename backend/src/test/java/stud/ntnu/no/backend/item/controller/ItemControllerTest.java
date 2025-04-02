@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.Item.controller;
+package stud.ntnu.no.backend.item.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
