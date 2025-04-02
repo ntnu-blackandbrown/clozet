@@ -29,7 +29,14 @@ const openProductModal = (productId: number) => {
       <ProductCard
         v-for="item in items"
         :key="item.id"
-        :product="item"
+        :id="item.id"
+        :title="item.title"
+        :price="Number(item.price)"
+        :category="item.category"
+        :image="item.images[0]"
+        :location="item.location"
+        :isVippsPaymentEnabled="true"
+        :isWishlisted="false"
         @click="openProductModal(item.id)"
       />
     </div>
