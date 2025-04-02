@@ -8,7 +8,7 @@ interface WishlistButtonProps {
 
 const props = withDefaults(defineProps<WishlistButtonProps>(), {
   productId: 0,
-  isWishlisted: false
+  isWishlisted: false,
 })
 
 const isWishlisted = ref(props.isWishlisted)
@@ -16,7 +16,7 @@ const isWishlisted = ref(props.isWishlisted)
 const toggleWishlist = () => {
   isWishlisted.value = !isWishlisted.value
   // TODO: Implement actual wishlist functionality with backend
-  console.log("current state of isWishlisted: ", isWishlisted.value)
+  console.log('current state of isWishlisted: ', isWishlisted.value)
 }
 </script>
 

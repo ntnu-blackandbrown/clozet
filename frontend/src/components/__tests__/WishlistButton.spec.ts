@@ -1,4 +1,4 @@
-import {expect, test, describe, assert} from 'vitest'
+import { expect, test, describe, assert } from 'vitest'
 import WishlistButton from '@/components/utils/WishlistButton.vue'
 import { mount } from '@vue/test-utils'
 

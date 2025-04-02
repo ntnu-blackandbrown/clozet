@@ -1,8 +1,7 @@
-import {expect, test, describe, assert} from 'vitest'
+import { expect, test, describe, assert } from 'vitest'
 import Badge from '@/components/utils/Badge.vue'
 import { mount } from '@vue/test-utils'
 describe('Badge', () => {
-
   const wrapper = mount(Badge, {
     props: {
       name: 'Test Badge',
@@ -26,7 +25,7 @@ describe('Badge', () => {
         color: '#e2e8f0',
         textColor: '#214b89',
         borderColor: '#214b89',
-      }
+      },
     })
     const currentIcon = newWrapper.find('svg')
     assert(!currentIcon.exists())
@@ -43,10 +42,8 @@ describe('Badge', () => {
         name: 'Price',
         type: 'price',
         currency: 'NOK',
-      }
+      },
     })
-    expect(newWrapper.find('span').text()).toBe("Price NOK")
+    expect(newWrapper.find('span').text()).toBe('Price NOK')
   })
-
 })
-
