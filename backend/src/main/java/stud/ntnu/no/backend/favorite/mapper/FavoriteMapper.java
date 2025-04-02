@@ -13,7 +13,6 @@ public class FavoriteMapper {
                 favorite.getId(),
                 favorite.getUserId(),
                 favorite.getItemId(),
-                favorite.getItemType(),
                 favorite.getCreatedAt()
         );
     }
@@ -21,14 +20,9 @@ public class FavoriteMapper {
     public Favorite toEntity(CreateFavoriteRequest request) {
         return new Favorite(
                 request.getUserId(),
-                request.getItemId(),
-                request.getItemType()
+                request.getItemId()
         );
     }
 
-    public void updateEntityFromRequest(Favorite favorite, UpdateFavoriteRequest request) {
-        if (request.getItemType() != null) {
-            favorite.setItemType(request.getItemType());
-        }
-    }
+
 }

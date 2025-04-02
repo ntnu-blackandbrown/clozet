@@ -26,24 +26,21 @@ public class Favorite {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    private String itemType;
     private LocalDateTime createdAt;
 
     public Favorite() {
     }
 
-    public Favorite(Long id, String userId, Long itemId, String itemType, LocalDateTime createdAt) {
+    public Favorite(Long id, String userId, Long itemId, LocalDateTime createdAt) {
         this.id = id;
         this.userId = userId;
         this.itemId = itemId;
-        this.itemType = itemType;
         this.createdAt = createdAt;
     }
 
-    public Favorite(String userId, Long itemId, String itemType) {
+    public Favorite(String userId, Long itemId) {
         this.userId = userId;
         this.itemId = itemId;
-        this.itemType = itemType;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -91,14 +88,6 @@ public class Favorite {
         if (item != null) {
             this.itemId = item.getId();
         }
-    }
-
-    public String getItemType() {
-        return itemType;
-    }
-
-    public void setItemType(String itemType) {
-        this.itemType = itemType;
     }
 
     public LocalDateTime getCreatedAt() {

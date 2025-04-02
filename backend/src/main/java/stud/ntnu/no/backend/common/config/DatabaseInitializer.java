@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import stud.ntnu.no.backend.category.entity.Category;
 import stud.ntnu.no.backend.category.repository.CategoryRepository;
+import stud.ntnu.no.backend.favorite.entity.Favorite;
+import stud.ntnu.no.backend.favorite.repository.FavoriteRepository;
 import stud.ntnu.no.backend.item.entity.Item;
 import stud.ntnu.no.backend.item.repository.ItemRepository;
 import stud.ntnu.no.backend.location.entity.Location;
@@ -24,8 +26,7 @@ import stud.ntnu.no.backend.user.repository.UserRepository;
 import stud.ntnu.no.backend.user.repository.VerificationTokenRepository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Configuration
 @Profile("!test")
@@ -53,6 +54,9 @@ public class DatabaseInitializer {
   
   @Autowired
   private ShippingOptionRepository shippingOptionRepository;
+  
+  @Autowired
+  private FavoriteRepository favoriteRepository;
 
   @Autowired
   private PasswordEncoder passwordEncoder;
@@ -77,7 +81,13 @@ public class DatabaseInitializer {
         createBasicEntities();
         
         // Create 10 items for the regular user
-        createItemsForUser(regularUser, 10);
+        List<Item> createdItems = createItemsForUser(regularUser, 10);
+        
+        // Create 5 additional users
+        List<User> additionalUsers = createAdditionalUsers(5);
+        
+        // Create favorites for the additional users
+        createFavoritesForUsers(additionalUsers, createdItems);
 
         logger.info("Database initialization completed successfully");
       } catch (Exception e) {
@@ -91,7 +101,11 @@ public class DatabaseInitializer {
   protected void cleanDatabase() {
     logger.info("Cleaning database - removing existing records");
 
-    // Delete dependent entities first to avoid foreign key constraints
+    // Delete favorites first
+    logger.info("Deleting favorites");
+    favoriteRepository.deleteAll();
+
+    // Delete dependent entities to avoid foreign key constraints
     logger.info("Deleting items");
     itemRepository.deleteAll();
     
@@ -158,6 +172,44 @@ public class DatabaseInitializer {
   }
 
   @Transactional
+  protected List<User> createAdditionalUsers(int count) {
+    logger.info("Creating {} additional users", count);
+    
+    List<User> users = new ArrayList<>();
+    String[] firstNames = {"John", "Sarah", "Michael", "Emma", "David"};
+    String[] lastNames = {"Smith", "Johnson", "Williams", "Jones", "Brown"};
+    
+    for (int i = 0; i < count; i++) {
+      String firstName = firstNames[i % firstNames.length];
+      String lastName = lastNames[i % lastNames.length];
+      String username = firstName.toLowerCase() + (i + 1);
+      String email = username + "@example.com";
+      
+      Optional<User> existingUser = userRepository.findByEmail(email);
+      if (existingUser.isPresent()) {
+        users.add(existingUser.get());
+        continue;
+      }
+      
+      User user = new User();
+      user.setUsername(username);
+      user.setPasswordHash(passwordEncoder.encode("Password123"));
+      user.setEmail(email);
+      user.setFirstName(firstName);
+      user.setLastName(lastName);
+      user.setRole("ROLE_USER");
+      user.setActive(true);
+      user.setCreatedAt(LocalDateTime.now());
+      user.setUpdatedAt(LocalDateTime.now());
+      
+      users.add(userRepository.save(user));
+    }
+    
+    logger.info("Successfully created {} additional users", users.size());
+    return users;
+  }
+
+  @Transactional
   protected void createBasicEntities() {
     // Create a default category if none exists
     if (categoryRepository.count() == 0) {
@@ -172,9 +224,9 @@ public class DatabaseInitializer {
     if (locationRepository.count() == 0) {
       Location location = new Location();
       location.setCity("Trondheim");
-      location.setRegion("Trøndelag"); // Setting required region field
-      location.setLatitude(63.4305); // Trondheim latitude
-      location.setLongitude(10.3951); // Trondheim longitude
+      location.setRegion("Trøndelag");
+      location.setLatitude(63.4305);
+      location.setLongitude(10.3951);
       locationRepository.save(location);
       logger.info("Default location created");
     }
@@ -190,8 +242,10 @@ public class DatabaseInitializer {
   }
   
   @Transactional
-  protected void createItemsForUser(User user, int count) {
+  protected List<Item> createItemsForUser(User user, int count) {
     logger.info("Creating {} items for user {}", count, user.getUsername());
+    
+    List<Item> createdItems = new ArrayList<>();
     
     // Get default entities
     Category category = categoryRepository.findAll().stream().findFirst()
@@ -230,9 +284,60 @@ public class DatabaseInitializer {
       item.setCreatedAt(LocalDateTime.now());
       item.setUpdatedAt(LocalDateTime.now());
       
-      itemRepository.save(item);
+      createdItems.add(itemRepository.save(item));
     }
     
     logger.info("Successfully created {} items for user {}", count, user.getUsername());
+    return createdItems;
+  }
+
+  @Transactional
+  protected void createFavoritesForUsers(List<User> users, List<Item> items) {
+    logger.info("Creating favorites for {} users on {} items", users.size(), items.size());
+
+    if (users.isEmpty() || items.isEmpty()) {
+      logger.warn("No users or items available to create favorites");
+      return;
+    }
+
+    Random random = new Random();
+
+    // Create a pattern of favorites with intentional overlap
+    for (int i = 0; i < users.size(); i++) {
+      User user = users.get(i);
+      Set<Item> userFavorites = new HashSet<>();
+
+      // Each user will have 3-5 favorites with designed overlap
+      int numFavorites = random.nextInt(3) + 3;
+
+      // Ensure overlap by using a sliding window approach
+      for (int j = 0; j < numFavorites; j++) {
+        int itemIndex = (i + j) % items.size();
+        userFavorites.add(items.get(itemIndex));
+      }
+
+      // Add a few random favorites to make it less structured
+      for (int j = 0; j < 2; j++) {
+        if (random.nextBoolean()) {
+          int randomItemIndex = random.nextInt(items.size());
+          userFavorites.add(items.get(randomItemIndex));
+        }
+      }
+
+      // Create favorite entities with proper User and Item relationships
+      for (Item item : userFavorites) {
+        Favorite favorite = new Favorite();
+        favorite.setUser(user);  // Set the actual User object
+        favorite.setItem(item);  // Set the actual Item object
+        favorite.setCreatedAt(LocalDateTime.now());
+
+        favoriteRepository.save(favorite);
+        logger.debug("Created favorite for user {} on item {}", user.getUsername(), item.getTitle());
+      }
+
+      logger.info("Created {} favorites for user {}", userFavorites.size(), user.getUsername());
+    }
+
+    logger.info("Successfully created favorites for all users");
   }
 }
