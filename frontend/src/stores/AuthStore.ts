@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
-import axios from 'axios' // Import standard axios
+import axios from '@/api/axios' // axios
 import type { AxiosError } from 'axios'
+import { computed, ref } from 'vue'
 
 interface User {
   id: number
@@ -10,66 +11,91 @@ interface User {
   lastName?: string
   active: boolean
   role: string
+  phoneNumber?: string
 }
 
-interface LoginResponse {
-  success: boolean
-  message?: string
-}
+export const useAuthStore = defineStore('auth', () => {
+  const user = ref<User | null>(null)
+  const token = ref<string | null>(null)
 
-export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    user: null as User | null,
-    token: null as string | null,
-  }),
-  getters: {
-    isLoggedIn: (state) => !!state.user,
-    userDetails: (state) => state.user,
-  },
-  actions: {
-    async login(username: string, password: string): Promise<{ success: boolean; message: unknown }> {
-      try {
-        await axios.post('/api/auth/login', { username, password })
+  const loading = ref(false)
+  const error = ref<string | null>(null)
 
-        // Fetch user data after successful login
-        await this.fetchUserInfo()
-        return {message: undefined, success: true }
-      } catch (error: unknown) {
-        console.error('Login error:', error)
-        const axiosError = error as AxiosError
-        return {
-          success: false,
-          message: axiosError.response?.data || 'Login failed'
-        }
-      }
-    },
+  const isLoggedIn = computed(() => !!user.value)
+  const userDetails = computed(() => user.value)
 
-    async fetchUserInfo(): Promise<User | null> {
-      try {
-        const response = await axios.get('/api/me')
-        this.user = response.data
-        return response.data
-      } catch (error) {
-        console.error('Error fetching user info:', error)
-        this.user = null
-        return null
-      }
-    },
+  const login = async (username: string, password: string) => {
+    try {
+      loading.value = true
 
-    async logout(): Promise<{ success: boolean; message: unknown }> {
-      try {
-        await axios.post('/api/auth/logout', {})
-        this.user = null
-        this.token = null
-        return {message: undefined, success: true }
-      } catch (error: unknown) {
-        console.error('Logout error:', error)
-        const axiosError = error as AxiosError
-        return {
-          success: false,
-          message: axiosError.response?.data || 'Logout failed'
-        }
-      }
-    },
-  },
+      await axios.post('/api/auth/login', { username, password })
+
+      await fetchUserInfo()
+      return { success: true, message: 'Login successful' }
+    } catch (error: unknown) {
+      console.error('Login error:', error)
+      const axiosError = error as AxiosError
+      return { success: false, message: axiosError.response?.data || 'Login failed' }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const fetchUserInfo = async () => {
+    try {
+      loading.value = true
+      const response = await axios.get('/api/me')
+      user.value = response.data
+      return response.data
+    } catch (error) {
+      console.error('Error fetching user info:', error)
+      user.value = null
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const logout = async () => {
+    try {
+      await axios.post('/api/auth/logout', {})
+      user.value = null
+      token.value = null
+      return { success: true, message: 'Logout successful' }
+    } catch (error) {
+      console.error('Logout error:', error)
+      return { success: false, message: 'Logout failed' }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const register = async (
+    username: string,
+    password: string,
+    email: string,
+    firstName: string,
+    lastName: string,
+  ) => {
+    try {
+      loading.value = true
+      await axios.post('/api/auth/register', { username, password, email, firstName, lastName })
+      return { success: true, message: 'Registration successful' }
+    } catch (error) {
+      console.error('Registration error:', error)
+      return { success: false, message: 'Registration failed' }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return {
+    user,
+    isLoggedIn,
+    userDetails,
+    login,
+    fetchUserInfo,
+    logout,
+    register,
+  }
 })
