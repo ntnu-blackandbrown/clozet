@@ -15,7 +15,7 @@ public class ProdEmailIntegrationTest {
 
     @Test
     void testSendMailgunVerification() {
-        String to = "dinmail@gmail.com"; // må være godkjent av Mailgun sandbox
+        String to = "kevindmazali@gmail.com"; // må være godkjent av Mailgun sandbox
         String token = "prod-test-token";
         emailService.sendVerificationEmail(to, token);
 
