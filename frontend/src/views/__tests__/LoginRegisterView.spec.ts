@@ -4,44 +4,44 @@ import LoginRegisterView from '../LoginRegisterView.vue'
 
 // Form data interface
 interface FormData {
-  username: string;
-  password: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  confirmPassword?: string;
+  username: string
+  password: string
+  firstName?: string
+  lastName?: string
+  email?: string
+  confirmPassword?: string
 }
 
 // Mock the external dependencies
 vi.mock('@/components/modals/BaseModal.vue', () => ({
   default: {
     name: 'BaseModal',
-    render() {
+    render(this: { $slots: { default?: () => any } }) {
       return this.$slots.default ? this.$slots.default() : null
     },
     props: ['maxWidth', 'padding', 'hideCloseButton'],
-    emits: ['close']
-  }
+    emits: ['close'],
+  },
 }))
 
 vi.mock('@/stores/AuthStore', () => ({
   useAuthStore: () => ({
     login: vi.fn().mockResolvedValue({ success: true }),
-    register: vi.fn().mockResolvedValue({ success: true, data: { username: 'testuser' } })
-  })
+    register: vi.fn().mockResolvedValue({ success: true, data: { username: 'testuser' } }),
+  }),
 }))
 
 // Mock vee-validate
 vi.mock('vee-validate', () => ({
   useForm: () => ({
-    handleSubmit: (cb) => () => Promise.resolve(),
+    handleSubmit: (cb: (values: any) => Promise<void>) => () => Promise.resolve(),
     errors: { value: {} },
-    resetForm: vi.fn()
+    resetForm: vi.fn(),
   }),
   useField: () => ({
     value: '',
-    errorMessage: { value: '' }
-  })
+    errorMessage: { value: '' },
+  }),
 }))
 
 describe('LoginRegisterView', () => {
