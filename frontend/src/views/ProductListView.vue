@@ -1,126 +1,41 @@
-<script setup>
-import { ref, nextTick } from 'vue'
+<script setup lang="ts">
+import { ref, nextTick, onMounted } from 'vue'
 import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
 import ProductCard from '@/components/product/ProductCard.vue'
+import axios from 'axios'
+import type { Product } from '@/types/product'
 
-const props = defineProps({
-  productId: {
-    type: Number,
-    default: '',
-  },
-  title: {
-    type: String,
-    default: 'Nike Running Shoes',
-  },
-  price: {
-    type: Number,
-    default: 1200,
-  },
-  category: {
-    type: String,
-    default: 'Shoes',
-  },
-  image: {
-    type: String,
-    default: '/src/assets/images/main-image.png',
-  },
+const items = ref<Product[]>([])
+const selectedProductId = ref<number | null>(null)
+
+onMounted(async () => {
+  const response = await axios.get('api/items')
+  items.value = response.data
 })
-
-// Sample product data
-const products = ref([
-  {
-    id: 'prod-1',
-    title: 'Nike Running Shoes',
-    price: '1200',
-    category: 'Shoes',
-    image: new URL('@/assets/images/main-image.png', import.meta.url).href,
-  },
-  {
-    id: 'prod-2',
-    title: 'Designer Backpack',
-    price: '800',
-    category: 'Bags',
-    image: new URL('@/assets/images/image-1.png', import.meta.url).href,
-  },
-  {
-    id: 'prod-3',
-    title: 'Casual Denim Jacket',
-    price: '950',
-    category: 'Clothing',
-    image: new URL('@/assets/images/image-2.png', import.meta.url).href,
-  },
-])
 
 const showProductModal = ref(false)
 const productModalRef = ref(null)
 
-const openProductModal = (productId) => {
+const openProductModal = (productId: number) => {
+  selectedProductId.value = productId
   showProductModal.value = true
-  // Use nextTick to ensure the modal is rendered before setting the productId
-  nextTick(() => {
-    productModalRef.value?.setProductId(productId)
-  })
 }
 </script>
 
 <template>
   <div class="product-list">
     <h2>Featured Products</h2>
-
     <div class="products-grid">
       <ProductCard
-        v-for="product in products"
-        :key="product.id"
-        v-bind="product"
-        @click="openProductModal"
-      />
-      <ProductCard
-        v-for="product in products"
-        :key="product.id"
-        v-bind="product"
-        @click="openProductModal"
-      />
-      <ProductCard
-        v-for="product in products"
-        :key="product.id"
-        v-bind="product"
-        @click="openProductModal"
-      />
-      <ProductCard
-        v-for="product in products"
-        :key="product.id"
-        v-bind="product"
-        @click="openProductModal"
-      />
-      <ProductCard
-        v-for="product in products"
-        :key="product.id"
-        v-bind="product"
-        @click="openProductModal"
-      />
-      <ProductCard
-        v-for="product in products"
-        :key="product.id"
-        v-bind="product"
-        @click="openProductModal"
-      />
-      <ProductCard
-        v-for="product in products"
-        :key="product.id"
-        v-bind="product"
-        @click="openProductModal"
-      />
-      <ProductCard
-        v-for="product in products"
-        :key="product.id"
-        v-bind="product"
-        @click="openProductModal"
+        v-for="item in items"
+        :key="item.id"
+        :product="item"
+        @click="openProductModal(item.id)"
       />
     </div>
-
     <ProductDisplayModal
-      v-if="showProductModal"
-      ref="productModalRef"
+      v-if="showProductModal && selectedProductId"
+      :product-id="selectedProductId"
       @close="showProductModal = false"
     />
   </div>
