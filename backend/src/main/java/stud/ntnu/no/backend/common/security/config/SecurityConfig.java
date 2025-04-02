@@ -57,7 +57,7 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 // Tillat bruk av register, verify, og passordreset
-                .requestMatchers("/api/users/**", "/api/users/verify", "/api/password/**").permitAll()
+                .requestMatchers("/api/users/**", "/api/users/verify", "/api/password/**", "/api/prod-test/verification").permitAll()
                 // Evt. /api/auth/** og H2 console
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
