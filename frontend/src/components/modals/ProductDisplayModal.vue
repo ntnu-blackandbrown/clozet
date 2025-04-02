@@ -1,28 +1,21 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import ProductDisplay from '@/components/product/ProductDisplay.vue'
 import BaseModal from '@/components/modals/BaseModal.vue'
 
-// Use ref for the productId instead of defineProps
-const productId = ref('')
-
-// Expose the method to set the productId when the component is used
-const setProductId = (id) => {
-  productId.value = id
+interface ProductDisplayModalProps {
+  productId: number
 }
 
-// Emit events for parent components
+const props = defineProps<ProductDisplayModalProps>()
+
 const emit = defineEmits(['close'])
 
-// Expose methods to parent component
-defineExpose({
-  setProductId,
-})
 </script>
 
 <template>
   <BaseModal @close="emit('close')">
-    <ProductDisplay :productId="productId" />
+    <ProductDisplay :id="props.productId" />
   </BaseModal>
 </template>
 
