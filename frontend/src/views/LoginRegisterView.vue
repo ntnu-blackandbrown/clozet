@@ -7,7 +7,6 @@ import BaseModal from '@/components/modals/BaseModal.vue'
 
 const authStore = useAuthStore()
 const emit = defineEmits(['close'])
-
 const isLogin = ref(true)
 const isSubmitting = ref(false)
 const statusMessage = ref('')
@@ -121,7 +120,11 @@ const submit = handleSubmit(async (values) => {
 
       debugInfo.value = `POST til /api/users/register med ${JSON.stringify(userData)}`
 
-      const response = await  (values.username, values.password, values.email, values.firstName, values.lastName)
+      const response = await (values.username,
+      values.password,
+      values.email,
+      values.firstName,
+      values.lastName)
 
       if (response.data) {
         statusMessage.value = `Registrering vellykket! Velkommen, ${response.data.username}`
