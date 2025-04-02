@@ -19,6 +19,9 @@ public class FavoriteDTO {
     this.createdAt = createdAt;
   }
 
+  public FavoriteDTO(Long id, String userId, Long itemId, LocalDateTime createdAt, boolean active) {
+  }
+
   public Long getId() {
     return id;
   }

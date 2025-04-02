@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stud.ntnu.no.backend.favorite.dto.CreateFavoriteRequest;
 import stud.ntnu.no.backend.favorite.dto.FavoriteDTO;
-import stud.ntnu.no.backend.favorite.dto.UpdateFavoriteRequest;
 import stud.ntnu.no.backend.favorite.service.FavoriteService;
 
 import java.util.List;
@@ -39,13 +38,6 @@ public class FavoriteController {
     @PostMapping
     public ResponseEntity<FavoriteDTO> createFavorite(@RequestBody CreateFavoriteRequest request) {
         return new ResponseEntity<>(favoriteService.createFavorite(request), HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<FavoriteDTO> updateFavorite(
-            @PathVariable Long id,
-            @RequestBody UpdateFavoriteRequest request) {
-        return ResponseEntity.ok(favoriteService.updateFavorite(id, request));
     }
 
     @DeleteMapping("/{id}")

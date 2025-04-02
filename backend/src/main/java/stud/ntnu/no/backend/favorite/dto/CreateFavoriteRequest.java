@@ -5,15 +5,15 @@ import java.util.Objects;
 public class CreateFavoriteRequest {
     private String userId;
     private Long itemId;
-    private String itemType;
+    private boolean isActive;
 
     public CreateFavoriteRequest() {
     }
 
-    public CreateFavoriteRequest(String userId, Long itemId, String itemType) {
+    public CreateFavoriteRequest(String userId, Long itemId, boolean isActive) {
         this.userId = userId;
         this.itemId = itemId;
-        this.itemType = itemType;
+        this.isActive = isActive;
     }
 
     public String getUserId() {
@@ -32,12 +32,12 @@ public class CreateFavoriteRequest {
         this.itemId = itemId;
     }
 
-    public String getItemType() {
-        return itemType;
+    public boolean isActive() {
+        return isActive;
     }
 
-    public void setItemType(String itemType) {
-        this.itemType = itemType;
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     @Override
@@ -45,22 +45,22 @@ public class CreateFavoriteRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CreateFavoriteRequest that = (CreateFavoriteRequest) o;
-        return Objects.equals(userId, that.userId) &&
-                Objects.equals(itemId, that.itemId) &&
-                Objects.equals(itemType, that.itemType);
+        return isActive == that.isActive &&
+            Objects.equals(userId, that.userId) &&
+            Objects.equals(itemId, that.itemId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, itemId, itemType);
+        return Objects.hash(userId, itemId, isActive);
     }
 
     @Override
     public String toString() {
         return "CreateFavoriteRequest{" +
-                "userId='" + userId + '\'' +
-                ", itemId=" + itemId +
-                ", itemType='" + itemType + '\'' +
-                '}';
+            "userId='" + userId + '\'' +
+            ", itemId=" + itemId +
+            ", isActive=" + isActive +
+            '}';
     }
 }

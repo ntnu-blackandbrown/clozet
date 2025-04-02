@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stud.ntnu.no.backend.favorite.dto.CreateFavoriteRequest;
 import stud.ntnu.no.backend.favorite.dto.FavoriteDTO;
-import stud.ntnu.no.backend.favorite.dto.UpdateFavoriteRequest;
 import stud.ntnu.no.backend.favorite.entity.Favorite;
 import stud.ntnu.no.backend.favorite.exception.FavoriteNotFoundException;
 import stud.ntnu.no.backend.favorite.mapper.FavoriteMapper;
@@ -28,31 +27,21 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     public List<FavoriteDTO> getAllFavorites() {
         return favoriteRepository.findAll().stream()
-                .map(favoriteMapper::toDTO)
-                .collect(Collectors.toList());
+            .map(favoriteMapper::toDTO)
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<FavoriteDTO> getFavoritesByUserId(String userId) {
         return favoriteRepository.findByUserId(userId).stream()
-                .map(favoriteMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-    
-    public List<FavoriteDTO> getFavoritesByItemId(Long itemId) {
-        return favoriteRepository.findByItemId(itemId).stream()
-                .map(favoriteMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    public boolean isFavorite(String userId, Long itemId) {
-        return favoriteRepository.existsByUserIdAndItemId(userId, itemId);
+            .map(favoriteMapper::toDTO)
+            .collect(Collectors.toList());
     }
 
     @Override
     public FavoriteDTO getFavoriteById(Long id) {
         Favorite favorite = favoriteRepository.findById(id)
-                .orElseThrow(() -> new FavoriteNotFoundException(id));
+            .orElseThrow(() -> new FavoriteNotFoundException(id));
         return favoriteMapper.toDTO(favorite);
     }
 
@@ -64,10 +53,10 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     @Override
-    public FavoriteDTO updateFavorite(Long id, UpdateFavoriteRequest request) {
+    public FavoriteDTO updateFavorite(Long id, CreateFavoriteRequest request) {
         Favorite favorite = favoriteRepository.findById(id)
-                .orElseThrow(() -> new FavoriteNotFoundException(id));
-
+            .orElseThrow(() -> new FavoriteNotFoundException(id));
+        favoriteMapper.updateEntity(favorite, request);
         Favorite updatedFavorite = favoriteRepository.save(favorite);
         return favoriteMapper.toDTO(updatedFavorite);
     }

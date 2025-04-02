@@ -11,7 +11,7 @@ public class Favorite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(name = "user_id", insertable = false, updatable = false)
     private String userId;
 
@@ -28,20 +28,23 @@ public class Favorite {
 
     private LocalDateTime createdAt;
 
-    public Favorite() {
-    }
+    private boolean isActive;
 
-    public Favorite(Long id, String userId, Long itemId, LocalDateTime createdAt) {
+    public Favorite() {}
+
+    public Favorite(Long id, String userId, Long itemId, LocalDateTime createdAt, boolean isActive) {
         this.id = id;
         this.userId = userId;
         this.itemId = itemId;
         this.createdAt = createdAt;
+        this.isActive = isActive;
     }
 
-    public Favorite(String userId, Long itemId) {
+    public Favorite(String userId, Long itemId, boolean isActive) {
         this.userId = userId;
         this.itemId = itemId;
         this.createdAt = LocalDateTime.now();
+        this.isActive = isActive;
     }
 
     public Long getId() {
@@ -59,11 +62,11 @@ public class Favorite {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-    
+
     public User getUser() {
         return user;
     }
-    
+
     public void setUser(User user) {
         this.user = user;
         if (user != null) {
@@ -96,5 +99,13 @@ public class Favorite {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }
