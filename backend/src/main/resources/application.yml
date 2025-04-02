@@ -24,11 +24,11 @@ app:
   upload:
     dir: uploads
   storage:
-    use-cloudinary: false
+    use-cloudinary: true
   cloudinary:
-    cloud-name: default-cloud-name
-    api-key: default-api-key
-    api-secret: default-api-secret
+    cloud-name: dmoe4eqt4
+    api-key: 298875699675921
+    api-secret: 1kAWETGi8leIYAugHlCtvH7rBAg
 
 logging:
   level:

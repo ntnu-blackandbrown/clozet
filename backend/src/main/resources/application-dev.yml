@@ -20,8 +20,8 @@ app:
   upload:
     dir: uploads
   storage:
-    use-cloudinary: false
+    use-cloudinary: true
   cloudinary:
-    cloud-name: your-dev-cloud-name
-    api-key: your-dev-api-key
-    api-secret: your-dev-api-secret
+    cloud-name: dmoe4eqt4
+    api-key: 298875699675921
+    api-secret: 1kAWETGi8leIYAugHlCtvH7rBAg

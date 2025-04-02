@@ -26,7 +26,7 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     public ImageServiceImpl(ItemImageRepository itemImageRepository,
                             ItemRepository itemRepository,
-                            @Qualifier("localFileStorageService") FileStorageService fileStorageService) {
+                            FileStorageService fileStorageService) {
         this.itemImageRepository = itemImageRepository;
         this.itemRepository = itemRepository;
         this.fileStorageService = fileStorageService;
