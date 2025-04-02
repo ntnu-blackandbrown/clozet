@@ -1,129 +1,173 @@
 package stud.ntnu.no.backend.user.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stud.ntnu.no.backend.user.dto.*;
+import stud.ntnu.no.backend.common.service.EmailService;
+import stud.ntnu.no.backend.user.dto.ChangePasswordDTO;
+import stud.ntnu.no.backend.user.dto.LoginDTO;
+import stud.ntnu.no.backend.user.dto.RegisterUserDTO;
+import stud.ntnu.no.backend.user.dto.UserDTO;
+import stud.ntnu.no.backend.user.dto.UpdateUserDTO;
 import stud.ntnu.no.backend.user.entity.User;
+import stud.ntnu.no.backend.user.entity.VerificationToken;
 import stud.ntnu.no.backend.user.exception.EmailAlreadyInUseException;
 import stud.ntnu.no.backend.user.exception.UserNotFoundException;
 import stud.ntnu.no.backend.user.exception.UserValidationException;
 import stud.ntnu.no.backend.user.exception.UsernameAlreadyExistsException;
 import stud.ntnu.no.backend.user.mapper.UserMapper;
 import stud.ntnu.no.backend.user.repository.UserRepository;
+import stud.ntnu.no.backend.user.repository.VerificationTokenRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private final VerificationTokenRepository verificationTokenRepository;
     
-    public UserServiceImpl(UserRepository userRepository, 
-                           UserMapper userMapper, 
-                           PasswordEncoder passwordEncoder) {
+    @Value("${app.email.verification-expiry-hours:24}")
+    private int verificationExpiryHours;
+
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository,
+                          UserMapper userMapper,
+                          PasswordEncoder passwordEncoder,
+                          EmailService emailService,
+                          VerificationTokenRepository verificationTokenRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
+        this.verificationTokenRepository = verificationTokenRepository;
     }
 
     @Override
-    public List<StatusUserDTO> getAllUsers() {
-        return userMapper.toStatusDtoList(userRepository.findAll());
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public UserDTO getUserById(Long id) {
-        User user = userRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException(id));
-        return userMapper.toDto(user);
-    }
-    
-    @Override
-    public UserDTO getUserByUsername(String username) {
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
-        return userMapper.toDto(user);
+        return userRepository.findById(id)
+                .map(userMapper::toDto)
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 
     @Override
+    public UserDTO getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .map(userMapper::toDto)
+                .orElseThrow(() -> new UserNotFoundException("Username " + username + " not found"));
+    }
+
     @Transactional
+    @Override
     public UserDTO createUser(RegisterUserDTO registerUserDTO) {
         if (registerUserDTO == null) {
             throw new UserValidationException("User registration data cannot be null");
         }
-
-        // Sjekk om brukernavn eller e-post allerede finnes
         if (userRepository.findByUsername(registerUserDTO.getUsername()).isPresent()) {
             throw new UsernameAlreadyExistsException(registerUserDTO.getUsername());
         }
-
         if (userRepository.existsByEmail(registerUserDTO.getEmail())) {
             throw new EmailAlreadyInUseException(registerUserDTO.getEmail());
         }
-
-        // Konverter DTO til entitet
         User user = userMapper.toEntity(registerUserDTO);
-
-        // Krypter passordet før lagring
         user.setPasswordHash(passwordEncoder.encode(registerUserDTO.getPassword()));
-
-        // Lagre brukeren
+        user.setRole("ROLE_USER");
+        user.setActive(true);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
         User savedUser = userRepository.save(user);
-
-        // Returner den opprettede brukeren som DTO
         return userMapper.toDto(savedUser);
     }
 
-    @Override
     @Transactional
+    @Override
+    public void createUserAndSendVerificationEmail(RegisterUserDTO registerUserDTO) {
+        if (registerUserDTO == null) {
+            throw new UserValidationException("User registration data cannot be null");
+        }
+        if (userRepository.findByUsername(registerUserDTO.getUsername()).isPresent()) {
+            throw new UsernameAlreadyExistsException(registerUserDTO.getUsername());
+        }
+        if (userRepository.existsByEmail(registerUserDTO.getEmail())) {
+            throw new EmailAlreadyInUseException(registerUserDTO.getEmail());
+        }
+        User user = userMapper.toEntity(registerUserDTO);
+        user.setPasswordHash(passwordEncoder.encode(registerUserDTO.getPassword()));
+        user.setActive(false);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+        user.setRole("ROLE_USER");
+
+        // Save the user first
+        User savedUser = userRepository.save(user);
+        
+        // Generate a verification token
+        String token = UUID.randomUUID().toString();
+        LocalDateTime expiryDate = LocalDateTime.now().plusHours(verificationExpiryHours);
+        
+        // Create and save the verification token
+        VerificationToken verificationToken = new VerificationToken(token, expiryDate, savedUser);
+        verificationTokenRepository.save(verificationToken);
+        
+        // Send verification email
+        emailService.sendVerificationEmail(savedUser.getEmail(), token);
+    }
+
+    @Transactional
+    @Override
     public UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
         User existingUser = userRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException(id));
+                .orElseThrow(() -> new UserNotFoundException(id));
 
-        // Sjekk om brukernavn oppdateres og allerede finnes
-        if (updateUserDTO.getUsername() != null &&
-            !updateUserDTO.getUsername().equals(existingUser.getUsername()) &&
-            userRepository.findByUsername(updateUserDTO.getUsername()).isPresent()) {
-            throw new UsernameAlreadyExistsException(updateUserDTO.getUsername());
-        }
-
-        // Sjekk om e-post oppdateres og allerede finnes
-        if (updateUserDTO.getEmail() != null &&
-            !updateUserDTO.getEmail().equals(existingUser.getEmail()) &&
-            userRepository.existsByEmail(updateUserDTO.getEmail())) {
-            throw new EmailAlreadyInUseException(updateUserDTO.getEmail());
-        }
-
-        // Oppdater feltene
-        if (updateUserDTO.getUsername() != null) {
+        if (updateUserDTO.getUsername() != null && !updateUserDTO.getUsername().equals(existingUser.getUsername())) {
+            if (userRepository.findByUsername(updateUserDTO.getUsername()).isPresent()) {
+                throw new UsernameAlreadyExistsException(updateUserDTO.getUsername());
+            }
             existingUser.setUsername(updateUserDTO.getUsername());
         }
-        if (updateUserDTO.getEmail() != null) {
+
+        if (updateUserDTO.getEmail() != null && !updateUserDTO.getEmail().equals(existingUser.getEmail())) {
+            if (userRepository.existsByEmail(updateUserDTO.getEmail())) {
+                throw new EmailAlreadyInUseException(updateUserDTO.getEmail());
+            }
             existingUser.setEmail(updateUserDTO.getEmail());
         }
+
         if (updateUserDTO.getFirstName() != null) {
             existingUser.setFirstName(updateUserDTO.getFirstName());
         }
+
         if (updateUserDTO.getLastName() != null) {
             existingUser.setLastName(updateUserDTO.getLastName());
         }
-        if (updateUserDTO.getRole() != null) {
+
+        // Only ADMIN can change roles
+        if (updateUserDTO.getRole() != null && existingUser.getRole().contains("ADMIN")) {
             existingUser.setRole(updateUserDTO.getRole());
         }
 
-        existingUser.setActive(updateUserDTO.isActive());
         existingUser.setUpdatedAt(LocalDateTime.now());
-
-        User updatedUser = userRepository.save(existingUser);
-        return userMapper.toDto(updatedUser);
+        return userMapper.toDto(userRepository.save(existingUser));
     }
 
-    @Override
     @Transactional
+    @Override
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new UserNotFoundException(id);
@@ -133,17 +177,37 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO login(LoginDTO loginDTO) {
-        if (loginDTO == null || loginDTO.getUsername() == null || loginDTO.getPassword() == null) {
-            throw new UserValidationException("Login data cannot be null");
+        return userRepository.findByUsername(loginDTO.getUsername())
+                .map(userMapper::toDto)
+                .orElseThrow(() -> new UserNotFoundException("Username " + loginDTO.getUsername() + " not found"));
+    }
+
+    @Transactional
+    @Override
+    public void changePassword(String username, ChangePasswordDTO changePasswordDTO) {
+        System.out.println("UserServiceImpl.changePassword - Username: " + username);
+        System.out.println("UserServiceImpl.changePassword - Current Password: " + (changePasswordDTO.getCurrentPassword() != null ? "******" : "null"));
+        System.out.println("UserServiceImpl.changePassword - New Password: " + (changePasswordDTO.getNewPassword() != null ? "******" : "null"));
+        
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("Username " + username + " not found"));
+        System.out.println("UserServiceImpl.changePassword - User found: " + user.getId());
+
+        // Verify current password
+        boolean passwordMatches = passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), user.getPasswordHash());
+        System.out.println("UserServiceImpl.changePassword - Password matches: " + passwordMatches);
+        
+        if (!passwordMatches) {
+            throw new BadCredentialsException("Current password is incorrect");
         }
 
-        User user = userRepository.findByUsername(loginDTO.getUsername())
-            .orElseThrow(() -> new UserNotFoundException("Invalid username or password"));
-
-        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPasswordHash())) {
-            throw new UserNotFoundException("Invalid username or password");
-        }
-
-        return userMapper.toDto(user);
+        // Update password
+        String newPasswordHash = passwordEncoder.encode(changePasswordDTO.getNewPassword());
+        System.out.println("UserServiceImpl.changePassword - New password hash generated");
+        
+        user.setPasswordHash(newPasswordHash);
+        user.setUpdatedAt(LocalDateTime.now());
+        User savedUser = userRepository.save(user);
+        System.out.println("UserServiceImpl.changePassword - Password updated, user ID: " + savedUser.getId());
     }
 }

@@ -29,7 +29,9 @@ public class User {
   @Column(nullable = false)
   private boolean isActive;
 
-  // Getters and setters
+  // Felter for e-postverifisering:
+  private String verificationToken;
+  private LocalDateTime verificationTokenExpiry;
 
   public Long getId() {
     return id;
@@ -119,6 +121,24 @@ public class User {
     isActive = active;
   }
 
+  public String getVerificationToken() {
+    return verificationToken;
+  }
+
+  public void setVerificationToken(String verificationToken) {
+    this.verificationToken = verificationToken;
+  }
+
+  public LocalDateTime getVerificationTokenExpiry() {
+    return verificationTokenExpiry;
+  }
+
+  public void setVerificationTokenExpiry(LocalDateTime verificationTokenExpiry) {
+    this.verificationTokenExpiry = verificationTokenExpiry;
+  }
+
+
+
   public void setFullName(String fullName) {
     if (fullName != null) {
       String[] parts = fullName.split(" ", 2);
@@ -130,5 +150,4 @@ public class User {
       }
     }
   }
-
 }

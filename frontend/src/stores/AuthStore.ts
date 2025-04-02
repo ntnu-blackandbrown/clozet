@@ -1,105 +1,75 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import axios from '../api/axios'
+import axios from 'axios' // Import standard axios
+import type { AxiosError } from 'axios'
 
-interface UserInfo {
+interface User {
   id: number
   username: string
-  role: string
-  email?: string
+  email: string
   firstName?: string
   lastName?: string
+  active: boolean
+  role: string
 }
 
-export const useAuthStore = defineStore('auth', () => {
-  const isLoggedIn = ref(false)
-  const userId = ref<number | null>(null)
-  const username = ref<string | null>(null)
-  const role = ref<string | null>(null)
-  const userDetails = ref<UserInfo | null>(null)
+interface LoginResponse {
+  success: boolean
+  message?: string
+}
 
-  async function login(username: string, password: string) {
-    try {
-      await axios.post('/api/auth/login', { username, password })
-      await fetchUserInfo()
-      return { success: true }
-    } catch (error) {
-      console.error('Login failed:', error)
-      return { success: false, error }
-    }
-  }
+export const useAuthStore = defineStore('auth', {
+  state: () => ({
+    user: null as User | null,
+    token: null as string | null,
+  }),
+  getters: {
+    isLoggedIn: (state) => !!state.user,
+    userDetails: (state) => state.user,
+  },
+  actions: {
+    async login(username: string, password: string): Promise<{ success: boolean; message: unknown }> {
+      try {
+        await axios.post('/api/auth/login', { username, password })
 
-  async function logout() {
-    try {
-      await axios.post('/api/auth/logout')
-      resetState()
-      return { success: true }
-    } catch (error) {
-      console.error('Logout failed:', error)
-      return { success: false, error }
-    }
-  }
+        // Fetch user data after successful login
+        await this.fetchUserInfo()
+        return {message: undefined, success: true }
+      } catch (error: unknown) {
+        console.error('Login error:', error)
+        const axiosError = error as AxiosError
+        return {
+          success: false,
+          message: axiosError.response?.data || 'Login failed'
+        }
+      }
+    },
 
-  async function fetchUserInfo() {
-    try {
-      const response = await axios.get('/api/me')
-      isLoggedIn.value = true
-      userId.value = response.data.id
-      username.value = response.data.username
-      role.value = response.data.role
-      userDetails.value = response.data
-      return { success: true, user: response.data }
-    } catch (error) {
-      resetState()
-      return { success: false, error }
-    }
-  }
+    async fetchUserInfo(): Promise<User | null> {
+      try {
+        const response = await axios.get('/api/me')
+        this.user = response.data
+        return response.data
+      } catch (error) {
+        console.error('Error fetching user info:', error)
+        this.user = null
+        return null
+      }
+    },
 
-  // Legg til dette etter login-funksjonen
-  async function register(userData: any) {
-    try {
-      // Bruk samme axios-instans som med login
-      await axios.post('/api/users/register', userData)
-      // Logg inn automatisk etter vellykket registrering
-      const loginResult = await login(userData.username, userData.password)
-      return loginResult
-    } catch (error) {
-      console.error('Registration failed:', error)
-      return { success: false, error }
-    }
-  }
-
-  // Husk å inkludere register i return-objektet
-  return {
-    isLoggedIn,
-    userId,
-    username,
-    role,
-    userDetails,
-    login,
-    logout,
-    register, // Legg til denne linjen
-    fetchUserInfo,
-    resetState,
-  }
-
-  function resetState() {
-    isLoggedIn.value = false
-    userId.value = null
-    username.value = null
-    role.value = null
-    userDetails.value = null
-  }
-
-  return {
-    isLoggedIn,
-    userId,
-    username,
-    role,
-    userDetails,
-    login,
-    logout,
-    fetchUserInfo,
-    resetState,
-  }
+    async logout(): Promise<{ success: boolean; message: unknown }> {
+      try {
+        await axios.post('/api/auth/logout', {})
+        this.user = null
+        this.token = null
+        return {message: undefined, success: true }
+      } catch (error: unknown) {
+        console.error('Logout error:', error)
+        const axiosError = error as AxiosError
+        return {
+          success: false,
+          message: axiosError.response?.data || 'Logout failed'
+        }
+      }
+    },
+  },
 })
