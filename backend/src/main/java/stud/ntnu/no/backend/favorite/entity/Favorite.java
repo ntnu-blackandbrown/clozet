@@ -28,6 +28,7 @@ public class Favorite {
 
     private LocalDateTime createdAt;
 
+    @Column(name = "active")
     private boolean isActive;
 
     public Favorite() {}

@@ -12,8 +12,7 @@ public class FavoriteMapper {
             favorite.getId(),
             favorite.getUserId(),
             favorite.getItemId(),
-            favorite.getCreatedAt(),
-            favorite.isActive()
+            favorite.getCreatedAt()
         );
     }
 

@@ -20,6 +20,11 @@ public class FavoriteDTO {
   }
 
   public FavoriteDTO(Long id, String userId, Long itemId, LocalDateTime createdAt, boolean active) {
+    this.id = id;
+    this.userId = userId;
+    this.itemId = itemId;
+    this.createdAt = createdAt;
+    // We don't need to store isActive as it's not part of this DTO's fields
   }
 
   public Long getId() {
