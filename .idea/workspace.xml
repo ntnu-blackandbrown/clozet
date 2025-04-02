@@ -5,8 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c7275f5f-a06c-4ee1-aff5-c7adf7638d87" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/frontend/src/stores/AuthStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/stores/AuthStore.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/stores/UserStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/stores/UserStore.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/LoginRegisterView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/LoginRegisterView.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,7 +106,7 @@
       <workItem from="1742974762406" duration="143000" />
       <workItem from="1743322046366" duration="6402000" />
       <workItem from="1743376970051" duration="489000" />
-      <workItem from="1743570820012" duration="2115000" />
+      <workItem from="1743570820012" duration="2637000" />
     </task>
     <servers />
   </component>

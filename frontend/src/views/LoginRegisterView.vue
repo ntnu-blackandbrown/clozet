@@ -3,15 +3,15 @@
     <div class="tab-selector">
       <button
         @click="showLogin = true"
-        :class="{ 'active': showLogin }"
+        :class="{ active: showLogin }"
       >
         Logg inn
       </button>
       <button
         @click="showLogin = false"
-        :class="{ 'active': !showLogin }"
+        :class="{ active: !showLogin }"
       >
-        Registrer deg
+        Registrer
       </button>
     </div>
 
@@ -19,67 +19,64 @@
       <h2>Logg inn</h2>
       <form @submit.prevent="login">
         <div class="form-group">
-          <label for="loginUsername">Brukernavn</label>
+          <label for="login-username">Brukernavn</label>
           <input
             type="text"
-            id="loginUsername"
+            id="login-username"
             v-model="loginUsername"
-            placeholder="Brukernavn"
             required
+            autocomplete="username"
           />
         </div>
         <div class="form-group">
-          <label for="loginPassword">Passord</label>
+          <label for="login-password">Passord</label>
           <input
             type="password"
-            id="loginPassword"
+            id="login-password"
             v-model="loginPassword"
-            placeholder="Passord"
             required
+            autocomplete="current-password"
           />
         </div>
-        <div class="forgot-password">
-          <router-link to="/forgot-password">Glemt passord?</router-link>
-        </div>
-        <button type="submit" class="submit-button">Logg inn</button>
+        <div v-if="loginError" class="error-message">{{ loginError }}</div>
+        <button type="submit" class="submit-btn">Logg inn</button>
       </form>
-      <div v-if="loginError" class="error">{{ loginError }}</div>
     </div>
 
     <div v-else class="form-container">
       <h2>Registrer deg</h2>
       <form @submit.prevent="register">
         <div class="form-group">
-          <label for="registerUsername">Brukernavn</label>
+          <label for="register-username">Brukernavn</label>
           <input
             type="text"
-            id="registerUsername"
+            id="register-username"
             v-model="registerUsername"
-            placeholder="Velg et brukernavn"
             required
+            autocomplete="username"
           />
         </div>
         <div class="form-group">
-          <label for="registerEmail">E-post</label>
+          <label for="register-email">E-post</label>
           <input
             type="email"
-            id="registerEmail"
+            id="register-email"
             v-model="registerEmail"
-            placeholder="Din e-postadresse"
             required
+            autocomplete="email"
           />
         </div>
         <div class="form-group">
-          <label for="registerPassword">Passord</label>
+          <label for="register-password">Passord</label>
           <input
             type="password"
-            id="registerPassword"
+            id="register-password"
             v-model="registerPassword"
-            placeholder="Velg et passord"
             required
+            autocomplete="new-password"
           />
         </div>
-        <button type="submit" class="submit-button">Registrer</button>
+        <button type="submit" class="submit-btn">Registrer</button>
       </form>
       <div v-if="registerMessage" class="message" :class="{ 'success': registerSuccess, 'error': !registerSuccess }">
         {{ registerMessage }}
@@ -90,10 +87,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useAuthStore } from '@/stores/AuthStore'
-import { useUserStore } from '@/stores/UserStore'
 import { useRouter } from 'vue-router'
-import apiClient from '@/api/axios'
+import axios from 'axios'
+import type { AxiosError } from 'axios'
 
 const showLogin = ref(true)
 const loginUsername = ref('')
@@ -105,170 +101,182 @@ const registerMessage = ref('')
 const registerSuccess = ref(false)
 const loginError = ref('')
 
-const authStore = useAuthStore()
-const userStore = useUserStore()
 const router = useRouter()
 
 const login = async () => {
   try {
-    const result = await authStore.login(loginUsername.value, loginPassword.value)
-    if (result.success) {
-      router.push('/dashboard')
+    const response = await axios.post('/api/auth/login', {
+      username: loginUsername.value,
+      password: loginPassword.value
+    })
+
+    // Clear any previous error
+    loginError.value = ''
+
+    // Fetch user data after successful login
+    const userResponse = await axios.get('/api/me')
+    if (userResponse.data) {
+      // Redirect to home page instead of non-existent dashboard
+      router.push('/')
     }
-  } catch (error: any) {
-    loginError.value = error.response?.data || 'Innlogging feilet. Sjekk brukernavn og passord.'
+  } catch (error: unknown) {
+    console.error('Login error:', error)
+    const axiosError = error as AxiosError
+
+    // Handle response data properly to fix the TypeScript error
+    if (axiosError.response?.data) {
+      if (typeof axiosError.response.data === 'object') {
+        // Convert object to string if needed
+        loginError.value = JSON.stringify(axiosError.response.data)
+      } else {
+        // Use as string
+        loginError.value = String(axiosError.response.data)
+      }
+    } else {
+      loginError.value = 'Innlogging feilet. Sjekk brukernavn og passord.'
+    }
   }
 }
 
 const register = async () => {
   try {
     registerMessage.value = ''
-    const result = await userStore.register(
-      registerUsername.value,
-      registerEmail.value,
-      registerPassword.value
+    const response = await axios.post(
+      '/api/auth/register',
+      {
+        username: registerUsername.value,
+        email: registerEmail.value,
+        password: registerPassword.value
+      }
     )
 
-    if (result.success) {
-      registerSuccess.value = true
-      registerMessage.value = 'Registrering vellykket! Vennligst sjekk e-posten din for å verifisere kontoen.'
+    registerSuccess.value = true
+    registerMessage.value = 'Registrering vellykket! Vennligst sjekk e-posten din for å verifisere kontoen.'
 
-      // Reset form fields
-      registerUsername.value = ''
-      registerEmail.value = ''
-      registerPassword.value = ''
+    // Reset form fields
+    registerUsername.value = ''
+    registerEmail.value = ''
+    registerPassword.value = ''
 
-      // After 2 seconds, redirect to verify-info page
-      setTimeout(() => {
-        router.push('/verify-info')
-      }, 2000)
-    } else {
-      registerSuccess.value = false
-      registerMessage.value = result.message
-    }
-  } catch (error: any) {
+    // After 2 seconds, redirect to verify-info page
+    setTimeout(() => {
+      router.push('/verify-info')
+    }, 2000)
+  } catch (error: unknown) {
     registerSuccess.value = false
-    registerMessage.value = error.response?.data || 'Registrering feilet. Vennligst prøv igjen.'
+    console.error('Registration error:', error)
+    const axiosError = error as AxiosError
+
+    // Handle response data properly to fix the TypeScript error
+    if (axiosError.response?.data) {
+      if (typeof axiosError.response.data === 'object') {
+        // Convert object to string if needed
+        registerMessage.value = JSON.stringify(axiosError.response.data)
+      } else {
+        // Use as string
+        registerMessage.value = String(axiosError.response.data)
+      }
+    } else {
+      registerMessage.value = 'Registrering feilet. Vennligst prøv igjen.'
+    }
   }
 }
 </script>
 
 <style scoped>
 .login-register-container {
-  max-width: 480px;
-  margin: 40px auto;
-  padding: 24px;
-  background-color: white;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .tab-selector {
   display: flex;
-  margin-bottom: 24px;
-  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .tab-selector button {
   flex: 1;
-  padding: 12px;
+  padding: 10px;
   background: none;
   border: none;
   font-size: 16px;
-  font-weight: 500;
-  color: #666;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
 }
 
 .tab-selector button.active {
-  color: #333;
-  border-bottom: 2px solid #333;
+  border-bottom: 2px solid #4f46e5;
+  color: #4f46e5;
+  font-weight: bold;
+}
+
+.form-container {
+  padding: 10px 0;
 }
 
 h2 {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   color: #333;
-  text-align: center;
+  font-size: 1.5rem;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 15px;
 }
 
 label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #333;
+  margin-bottom: 5px;
+  color: #555;
 }
 
 input {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 16px;
 }
 
-input:focus {
-  border-color: #333;
-  outline: none;
-}
-
-.forgot-password {
-  text-align: right;
-  margin-bottom: 16px;
-}
-
-.forgot-password a {
-  color: #666;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.forgot-password a:hover {
-  text-decoration: underline;
-}
-
-.submit-button {
+.submit-btn {
   width: 100%;
   padding: 12px;
-  background-color: #333;
+  background: #4f46e5;
   color: white;
   border: none;
   border-radius: 4px;
   font-size: 16px;
-  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background 0.3s;
 }
 
-.submit-button:hover {
-  background-color: #444;
+.submit-btn:hover {
+  background: #4338ca;
 }
 
-.error {
-  margin-top: 16px;
-  padding: 12px;
-  background-color: #ffebee;
-  color: #c62828;
-  border-radius: 4px;
+.error-message {
+  color: #ef4444;
+  margin-bottom: 15px;
 }
 
 .message {
-  margin-top: 16px;
-  padding: 12px;
+  padding: 10px;
   border-radius: 4px;
+  margin-top: 15px;
 }
 
 .success {
-  background-color: #e6f7e6;
-  color: #2e7d32;
+  background-color: #dcfce7;
+  color: #166534;
 }
 
 .error {
-  background-color: #ffebee;
-  color: #c62828;
+  background-color: #fee2e2;
+  color: #b91c1c;
 }
 </style>
