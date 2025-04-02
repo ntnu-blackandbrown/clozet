@@ -6,6 +6,7 @@ on:
       - develop
       - main
       - 'feature/**'
+      - 'task/**'
   pull_request:
     branches:
       - develop
