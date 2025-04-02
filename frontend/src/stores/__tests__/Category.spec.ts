@@ -66,7 +66,7 @@ describe('CategoryStore', () => {
     expect(store.loading).toBe(false)
   })
 
-  it('creates a category sucessfully', async () => {
+  it('creates a category successfully', async () => {
     const category = { id: 2, name: 'Category 2' }
     mockedAxios.post.mockResolvedValueOnce({ data: category })
 
