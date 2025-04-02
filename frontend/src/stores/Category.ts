@@ -13,7 +13,6 @@ interface Category {
   parentName?: string
 }
 
-
 export const useCategoryStore = defineStore('categories', () => {
   const categories = ref<Category[]>([])
   const loading = ref(false)
@@ -56,7 +55,7 @@ export const useCategoryStore = defineStore('categories', () => {
     }
   }
 
-  const getTopFiveCategories = async() => {
+  const getTopFiveCategories = async () => {
     try {
       const response = await axios.get('/api/categories/top-five')
       return response.data
