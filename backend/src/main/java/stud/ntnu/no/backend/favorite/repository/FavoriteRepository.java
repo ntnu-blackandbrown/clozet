@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     List<Favorite> findByUserId(String userId);
-    List<Favorite> findByItemIdAndItemType(Long itemId, String itemType);
+    List<Favorite> findByItemId(Long itemId);  // Changed from findByItemIdAndItemType
+    boolean existsByUserIdAndItemId(String userId, Long itemId);
 }

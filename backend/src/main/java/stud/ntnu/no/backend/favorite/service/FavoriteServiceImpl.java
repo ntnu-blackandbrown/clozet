@@ -38,6 +38,16 @@ public class FavoriteServiceImpl implements FavoriteService {
                 .map(favoriteMapper::toDTO)
                 .collect(Collectors.toList());
     }
+    
+    public List<FavoriteDTO> getFavoritesByItemId(Long itemId) {
+        return favoriteRepository.findByItemId(itemId).stream()
+                .map(favoriteMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public boolean isFavorite(String userId, Long itemId) {
+        return favoriteRepository.existsByUserIdAndItemId(userId, itemId);
+    }
 
     @Override
     public FavoriteDTO getFavoriteById(Long id) {
@@ -58,7 +68,6 @@ public class FavoriteServiceImpl implements FavoriteService {
         Favorite favorite = favoriteRepository.findById(id)
                 .orElseThrow(() -> new FavoriteNotFoundException(id));
 
-        favoriteMapper.updateEntityFromRequest(favorite, request);
         Favorite updatedFavorite = favoriteRepository.save(favorite);
         return favoriteMapper.toDTO(updatedFavorite);
     }

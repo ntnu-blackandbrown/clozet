@@ -60,6 +60,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/users/**", "/api/users/verify", "/api/password/**", "/api/prod-test/verification").permitAll()
                 // Evt. /api/auth/** og H2 console
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/test-image/upload").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
             )

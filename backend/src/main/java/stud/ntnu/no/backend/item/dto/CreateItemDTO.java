@@ -3,6 +3,9 @@ package stud.ntnu.no.backend.item.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import stud.ntnu.no.backend.itemimage.dto.CreateItemImageDTO;
+
+import java.util.List;
 
 public class CreateItemDTO {
     @NotBlank(message = "Title is required")
@@ -46,14 +49,17 @@ public class CreateItemDTO {
     private String color;
     
     private boolean isVippsPaymentEnabled;
+
+    private List<CreateItemImageDTO> images;
     
     // Constructors
     public CreateItemDTO() {
     }
-    
-    public CreateItemDTO(String title, String shortDescription, String longDescription, double price, 
-                        Long categoryId, Long locationId, Long shippingOptionId, double latitude, double longitude, 
-                        String condition, String size, String brand, String color, boolean isVippsPaymentEnabled) {
+
+    public CreateItemDTO(String title, String shortDescription, String longDescription, double price,
+                         Long categoryId, Long locationId, Long shippingOptionId, double latitude, double longitude,
+                         String condition, String size, String brand, String color, boolean isVippsPaymentEnabled,
+                         List<CreateItemImageDTO> images) {
         this.title = title;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
@@ -68,8 +74,18 @@ public class CreateItemDTO {
         this.brand = brand;
         this.color = color;
         this.isVippsPaymentEnabled = isVippsPaymentEnabled;
+        this.images = images;
     }
-    
+
+    // Add getter and setter for images
+    public List<CreateItemImageDTO> getImages() {
+        return images;
+    }
+
+    public void setImages(List<CreateItemImageDTO> images) {
+        this.images = images;
+    }
+
     // Getters and setters
     public String getTitle() {
         return title;

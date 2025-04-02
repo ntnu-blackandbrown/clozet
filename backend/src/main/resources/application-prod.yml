@@ -7,10 +7,22 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 app:
   email:
     from: postmaster@sandbox25f0009567d5425391596f541e2cc221.mailgun.org
-    base-url: https://clozet.netlify.app/ # ← bytt til frontend-produksjonsdomene
+    base-url: https://clozet.netlify.app/
     verification-expiry-hours: 24
     password-reset-expiry-hours: 1
+  upload:
+    dir: uploads
+  storage:
+    use-cloudinary: true
+  cloudinary:
+    cloud-name: ${CLOUDINARY_CLOUD_NAME}
+    api-key: ${CLOUDINARY_API_KEY}
+    api-secret: ${CLOUDINARY_API_SECRET}
