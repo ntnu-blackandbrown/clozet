@@ -10,4 +10,6 @@ public interface CategoryService {
     CategoryDTO createCategory(CategoryDTO categoryDTO);
     CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO);
     void deleteCategory(Long id);
+    // Add to CategoryService.java
+    List<CategoryDTO> getTopFiveCategories();
 }

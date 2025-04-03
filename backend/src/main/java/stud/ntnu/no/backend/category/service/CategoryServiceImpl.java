@@ -1,5 +1,7 @@
 package stud.ntnu.no.backend.category.service;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stud.ntnu.no.backend.category.dto.CategoryDTO;
@@ -31,6 +33,13 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(id)
             .map(categoryMapper::toDto)
             .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: " + id));
+    }
+
+    @Override
+    public List<CategoryDTO> getTopFiveCategories() {
+        Pageable topFive = PageRequest.of(0, 5);
+        List<Category> topCategories = categoryRepository.findTopCategoriesByFavoriteCount(topFive);
+        return categoryMapper.toDtoList(topCategories);
     }
 
     @Override
