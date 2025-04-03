@@ -40,7 +40,7 @@ public class SecurityConfig {
         logger.info("Configuring security filter chain");
 
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOriginPatterns(Arrays.asList("http://localhost:*"));
+        corsConfig.setAllowedOriginPatterns(Arrays.asList("http://localhost:*", "ws://localhost:*"));
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         corsConfig.setAllowedHeaders(Arrays.asList("*"));
         corsConfig.setAllowCredentials(true);
@@ -62,6 +62,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/test-image/upload").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers("/ws/**").permitAll()
                 .requestMatchers("/api/**").permitAll()
                 .anyRequest().authenticated()
             )
