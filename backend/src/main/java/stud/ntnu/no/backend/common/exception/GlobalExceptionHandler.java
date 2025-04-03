@@ -2,11 +2,11 @@ package stud.ntnu.no.backend.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import stud.ntnu.no.backend.item.exception.ItemNotFoundException;
 import stud.ntnu.no.backend.item.exception.ItemValidationException;
 import stud.ntnu.no.backend.category.exception.CategoryNotFoundException;
@@ -43,6 +43,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReviewValidationException.class)
     public ResponseEntity<Object> handleReviewValidationException(ReviewValidationException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    // Add to your GlobalExceptionHandler class
+    @MessageExceptionHandler
+    public String handleException(Throwable exception) {
+        return exception.getMessage();
     }
 
     // Category exception handlers
