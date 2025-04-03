@@ -14,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-@ActiveProfiles("test")
-@Import(TestDatabaseInitializer.class)  // Eksplisitt import av testinitializeren
+@ActiveProfiles("admin-user-test")
+@Import(AdminUserTestInitializer.class)
 public class TestDatabaseInitializerTest {
 
     @Autowired
