@@ -15,8 +15,22 @@ describe('MessagesSidebar.vue', () => {
       receiverName: 'Alice',
       itemId: 101,
       listOfMessages: [
-        { id: 1, content: 'Hello', createdAt: '2022-01-01T10:00:00Z', senderId: 2, receiverId: 1, conversationId: 1 },
-        { id: 2, content: 'How are you?', createdAt: '2022-01-01T11:00:00Z', senderId: 1, receiverId: 2, conversationId: 1 },
+        {
+          id: 1,
+          content: 'Hello',
+          createdAt: '2022-01-01T10:00:00Z',
+          senderId: 2,
+          receiverId: 1,
+          conversationId: 1,
+        },
+        {
+          id: 2,
+          content: 'How are you?',
+          createdAt: '2022-01-01T11:00:00Z',
+          senderId: 1,
+          receiverId: 2,
+          conversationId: 1,
+        },
       ],
       latestMessageTimestamp: '2022-01-01T11:00:00Z',
     },
@@ -84,16 +98,16 @@ describe('MessagesSidebar.vue', () => {
     expect(chatItems.length).toBe(conversations.length)
 
     // For Alice (conversation id 1): expect active class and correct latest message
-    const aliceItem = chatItems.find(item => item.text().includes('Alice'))
+    const aliceItem = chatItems.find((item) => item.text().includes('Alice'))
     expect(aliceItem).toBeTruthy()
-    expect(aliceItem.classes()).toContain('active')
+    expect(aliceItem?.classes()).toContain('active')
     // Latest message should be "How are you?" (since it’s the newest)
-    expect(aliceItem.text()).toContain('How are you?')
+    expect(aliceItem?.text()).toContain('How are you?')
 
     // For Bob (conversation id 2): no messages so should display fallback text
-    const bobItem = chatItems.find(item => item.text().includes('Bob'))
+    const bobItem = chatItems.find((item) => item.text().includes('Bob'))
     expect(bobItem).toBeTruthy()
-    expect(bobItem.text()).toContain('No messages yet')
+    expect(bobItem?.text()).toContain('No messages yet')
   })
 
   it('fetches item images and renders avatar when available', async () => {
@@ -109,17 +123,17 @@ describe('MessagesSidebar.vue', () => {
     await flushPromises()
 
     // For Alice (itemId 101), axios returns an image – check for an <img> element with correct src
-    const aliceItem = wrapper.findAll('.chat-item').find(item => item.text().includes('Alice'))
+    const aliceItem = wrapper.findAll('.chat-item').find((item) => item.text().includes('Alice'))
     expect(aliceItem).toBeTruthy()
     const img = aliceItem?.find('img')
-    expect(img.exists()).toBe(true)
-    expect(img.attributes('src')).toBe('http://example.com/101.jpg')
+    expect(img?.exists()).toBe(true)
+    expect(img?.attributes('src')).toBe('http://example.com/101.jpg')
 
     // For Bob (itemId 102), no images should be rendered
-    const bobItem = wrapper.findAll('.chat-item').find(item => item.text().includes('Bob'))
+    const bobItem = wrapper.findAll('.chat-item').find((item) => item.text().includes('Bob'))
     expect(bobItem).toBeTruthy()
     const imgBob = bobItem?.find('img')
-    expect(imgBob.exists()).toBe(false)
+    expect(imgBob?.exists()).toBe(false)
   })
 
   it('emits "select-chat" event with correct id when a chat item is clicked', async () => {
@@ -135,7 +149,7 @@ describe('MessagesSidebar.vue', () => {
     await flushPromises()
     const chatItems = wrapper.findAll('.chat-item')
     // Click on Bob’s chat item (id 2)
-    const bobItem = chatItems.find(item => item.text().includes('Bob'))
+    const bobItem = chatItems.find((item) => item.text().includes('Bob'))
     expect(bobItem).toBeTruthy()
     await bobItem?.trigger('click')
     // Verify the "select-chat" event is emitted with conversation id 2
@@ -144,7 +158,7 @@ describe('MessagesSidebar.vue', () => {
     expect(emitted[0]).toEqual([2])
   })
 
-/*  it('opens and closes ProductDisplayModal when openProductModal is called', async () => {
+  /*  it('opens and closes ProductDisplayModal when openProductModal is called', async () => {
     // For testing the modal, ensure your component exposes openProductModal via defineExpose({ openProductModal })
     const wrapper = mount(MessagesSidebar, {
       props: { conversations, activeConversationId },
