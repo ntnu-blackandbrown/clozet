@@ -47,8 +47,13 @@ public class GlobalExceptionHandler {
 
     // Add to your GlobalExceptionHandler class
     @MessageExceptionHandler
-    public String handleException(Throwable exception) {
-        return exception.getMessage();
+    public ResponseEntity<ErrorResponse> handleException(Throwable exception) {
+        ErrorResponse errorResponse = new ErrorResponse(
+            "An unexpected error occurred. Please try again later.",
+            LocalDateTime.now(),
+            HttpStatus.INTERNAL_SERVER_ERROR.value()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // Category exception handlers
