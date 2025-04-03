@@ -23,24 +23,23 @@ const LoginRegisterModalStub = {
   template: '<div class="login-modal-stub">Login Modal</div>',
 }
 
-describe('App.vue (normal Pinia)', () => {
+describe('AppLayout.vue (normal Pinia)', () => {
   let pinia: ReturnType<typeof createPinia>
   let authStore: ReturnType<typeof useAuthStore>
   const fakeUser = {
     firstName: 'John',
     username: 'johndoe',
+    // add other properties if needed
   }
 
   beforeEach(() => {
     pinia = createPinia()
     setActivePinia(pinia)
     authStore = useAuthStore()
-    // Patch the store state and provide mock implementations.
+    // For logged-in state, set user to fakeUser.
     authStore.$patch({
-      isLoggedIn: true,
-      userDetails: fakeUser,
+      user: fakeUser,
     })
-    // Return fakeUser from fetchUserInfo so state isn't lost.
     authStore.fetchUserInfo = vi.fn().mockResolvedValue(fakeUser)
     authStore.logout = vi.fn()
     vi.clearAllMocks()
@@ -82,7 +81,8 @@ describe('App.vue (normal Pinia)', () => {
     expect(header.text()).toContain('Messages')
   })
 
-  /*it('shows user info when logged in and allows logout', async () => {
+  it('shows user info when logged in and allows logout', async () => {
+    // The store is patched to be logged in with fakeUser.
     const wrapper = mount(App, {
       global: {
         plugins: [pinia],
@@ -96,8 +96,6 @@ describe('App.vue (normal Pinia)', () => {
     })
     await flushPromises()
     await nextTick()
-    // Ensure the store state is still logged in
-    expect(authStore.isLoggedIn).toBe(true)
     const welcomeMsg = wrapper.find('.welcome-msg')
     expect(welcomeMsg.exists()).toBe(true)
     expect(welcomeMsg.text()).toContain('Hei, John')
@@ -105,13 +103,12 @@ describe('App.vue (normal Pinia)', () => {
     expect(logoutBtn.exists()).toBe(true)
     await logoutBtn.trigger('click')
     expect(authStore.logout).toHaveBeenCalled()
-  })*/
+  })
 
   it('shows login/register button when not logged in and toggles modal', async () => {
-    // Update store state to simulate logged-out user.
+    // Simulate logged-out state by setting user to null.
     authStore.$patch({
-      isLoggedIn: false,
-      userDetails: {},
+      user: null,
     })
     const wrapper = mount(App, {
       global: {
