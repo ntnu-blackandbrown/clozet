@@ -1,7 +1,74 @@
+<script setup lang="ts">
+import { computed, ref, onMounted } from 'vue'
+import axios from 'axios'
+
+interface Conversation {
+  id: number
+  receiverName: string
+  itemId: number
+  listOfMessages: Message[]
+  latestMessageTimestamp: string
+}
+
+interface Message {
+  id: number
+  content: string
+  createdAt: string
+  senderId: number
+  receiverId: number
+  conversationId: number
+}
+
+interface ItemDTO {
+  id: number
+  images: { imageUrl: string }[]
+}
+
+const props = defineProps<{
+  conversations: Conversation[]
+  activeConversationId: number
+}>()
+
+const emit = defineEmits(['select-chat'])
+
+const itemImages = ref<Map<number, string>>(new Map())
+
+const activeConversation = computed(() => {
+  return props.conversations.find((conversation) => conversation.id === props.activeConversationId)
+})
+
+const getLatestMessage = (conversation: Conversation) => {
+  if (!conversation.listOfMessages || conversation.listOfMessages.length === 0) {
+    return 'No messages yet'
+  }
+  // Sort messages by createdAt in descending order and get the first one
+  const sortedMessages = [...conversation.listOfMessages].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  )
+  return sortedMessages[0].content
+}
+
+onMounted(async () => {
+  // Fetch images for all items in conversations
+  for (const conversation of props.conversations) {
+    try {
+      const response = await axios.get<ItemDTO>(`/api/items/${conversation.itemId}`)
+      if (response.data.images && response.data.images.length > 0) {
+        itemImages.value.set(conversation.itemId, response.data.images[0].imageUrl)
+      }
+    } catch (error) {
+      console.error(`Failed to fetch images for item ${conversation.itemId}:`, error)
+    }
+  }
+})
+</script>
+
 <template>
   <div class="messages-sidebar">
     <div class="messages-header">
-      <h1>Messages <span class="message-count">29</span></h1>
+      <h1>
+        Messages <span class="message-count">{{ conversations.length }}</span>
+      </h1>
       <button class="new-message-btn">
         <i class="fas fa-pen"></i>
       </button>
@@ -14,40 +81,30 @@
 
     <div class="messages-list">
       <div
-        v-for="chat in chats"
-        :key="chat.id"
+        v-for="conversation in conversations"
+        :key="conversation.id"
         class="chat-item"
-        :class="{ active: chat.id === activeId }"
-        @click="$emit('select-chat', chat.id)"
+        :class="{ active: conversation.id === activeConversationId }"
+        @click="$emit('select-chat', conversation.id)"
       >
-        <div class="chat-avatar"></div>
+        <div class="chat-avatar">
+          <img
+            v-if="itemImages.get(conversation.itemId)"
+            :src="itemImages.get(conversation.itemId)"
+            :alt="conversation.receiverName"
+          />
+        </div>
         <div class="chat-info">
-          <div class="chat-name">{{ chat.name }}</div>
-          <div class="chat-preview">Enter your message description here...</div>
+          <div class="chat-name">{{ conversation.receiverName }}</div>
+          <div class="chat-preview">{{ getLatestMessage(conversation) }}</div>
         </div>
         <div class="chat-meta">
-          <div class="chat-time">12:25</div>
-          <div v-if="chat.unread" class="unread-badge">{{ chat.unread }}</div>
+          <div class="chat-time">{{ conversation.latestMessageTimestamp }}</div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<script setup>
-defineProps({
-  chats: {
-    type: Array,
-    required: true,
-  },
-  activeId: {
-    type: Number,
-    default: null,
-  },
-})
-
-defineEmits(['select-chat'])
-</script>
 
 <style scoped>
 .messages-sidebar {
@@ -145,6 +202,13 @@ defineEmits(['select-chat'])
   height: 48px;
   border-radius: 50%;
   background: #e5e7eb;
+  overflow: hidden;
+}
+
+.chat-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .chat-info {
@@ -159,6 +223,10 @@ defineEmits(['select-chat'])
 .chat-preview {
   font-size: 14px;
   color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }
 
 .chat-meta {
