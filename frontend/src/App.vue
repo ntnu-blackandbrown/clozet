@@ -21,7 +21,6 @@ onMounted(async () => {
 async function logout() {
   await authStore.logout()
 }
-
 </script>
 
 <template>
@@ -34,7 +33,7 @@ async function logout() {
             <h1 class="logo">Clozet</h1>
           </RouterLink>
           <nav class="main-nav">
-            <RouterLink  to="/profile">Profile</RouterLink>
+            <RouterLink to="/profile">Profile</RouterLink>
             <RouterLink to="/messages">Messages</RouterLink>
           </nav>
         </div>
@@ -42,7 +41,9 @@ async function logout() {
         <div class="auth-section">
           <!-- User info when logged in -->
           <div v-if="isLoggedIn" class="user-info">
-            <span class="welcome-msg">Hei, {{ userDetails?.firstName || userDetails?.username }}!</span>
+            <span class="welcome-msg"
+              >Hei, {{ userDetails?.firstName || userDetails?.username }}!</span
+            >
             <button @click="logout" class="logout-button">Log Out</button>
           </div>
 
