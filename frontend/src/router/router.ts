@@ -15,16 +15,9 @@ const router = createRouter({
       component: () => import('@/views/CreateProductView.vue'),
     },
     {
-      path: '/messages',
+      path: '/messages/:chatId?',
       name: 'messages',
       component: MessagesView,
-      children: [
-        {
-          path: ':chatId',
-          name: 'chat',
-          component: MessagesView,
-        },
-      ],
     },
     {
       path: '/profile',

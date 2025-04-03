@@ -4,28 +4,24 @@ import MessageInput from './MessageInput.vue'
 import type { Message, Conversation } from '@/types/messaging'
 
 const props = defineProps<{
-  activeConversationId: number
-  conversations: Conversation[]
+  activeChat: number | null
+  messages: Message[]
+  contact: Conversation | undefined
 }>()
 
 const emit = defineEmits(['send-message'])
 
-const activeConversation = computed(() => {
-  return props.conversations.find((conversation) => conversation.id === props.activeConversationId)
-})
-
 const handleSendMessage = (text: string) => {
-  if (!activeConversation.value) return
+  if (!props.activeChat || !props.contact) return
 
   emit('send-message', {
-    conversationId: props.activeConversationId,
+    chatId: props.activeChat,
     message: {
       content: text,
-      createdAt: new Date().toISOString(),
       senderId: 1, // This should be replaced with actual user ID
-      receiverId: activeConversation.value.id,
-      conversationId: props.activeConversationId,
-    },
+      receiverId: props.contact.receiverId,
+      timestamp: new Date().toISOString()
+    }
   })
 }
 </script>
@@ -36,18 +32,18 @@ const handleSendMessage = (text: string) => {
       <div class="chat-contact">
         <div class="contact-avatar"></div>
         <div class="contact-info">
-          <div class="contact-name">{{ activeConversation?.receiverName || 'Select a chat' }}</div>
+          <div class="contact-name">{{ contact?.receiverName || 'Select a chat' }}</div>
         </div>
       </div>
-      <div class="chat-actions" v-if="activeConversation">
+      <div class="chat-actions" v-if="contact">
         <button class="action-btn">
           <i class="fas fa-ellipsis-v"></i>
         </button>
       </div>
     </div>
 
-    <div class="chat-messages" v-if="activeConversation?.listOfMessages">
-      <template v-for="(message, index) in activeConversation.listOfMessages" :key="message.id">
+    <div class="chat-messages" v-if="messages">
+      <template v-for="(message, index) in messages" :key="message.id">
         <!-- Add date divider if it's the first message or if the date changes -->
         <div v-if="index === 0" class="date-divider">Today</div>
 
@@ -62,7 +58,7 @@ const handleSendMessage = (text: string) => {
 
           <div class="message-time">
             {{
-              new Date(message.createdAt).toLocaleTimeString('en-US', {
+              new Date(message.timestamp).toLocaleTimeString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: false,
@@ -75,7 +71,7 @@ const handleSendMessage = (text: string) => {
     </div>
     <div v-else class="no-chat-selected">Select a chat to start messaging</div>
 
-    <MessageInput v-if="activeConversation" @send-message="handleSendMessage" />
+    <MessageInput v-if="activeChat" @send-message="handleSendMessage" />
   </div>
 </template>
 
