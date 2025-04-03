@@ -33,6 +33,17 @@ public class User {
   private String verificationToken;
   private LocalDateTime verificationTokenExpiry;
 
+  private String profilePictureUrl;
+
+  // Getters and setters
+  public String getProfilePictureUrl() {
+    return profilePictureUrl;
+  }
+
+  public void setProfilePictureUrl(String profilePictureUrl) {
+    this.profilePictureUrl = profilePictureUrl;
+  }
+
   public Long getId() {
     return id;
   }
