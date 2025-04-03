@@ -9,39 +9,48 @@ const router = useRouter()
 <template>
   <div class="home-container">
     <div class="content-section">
-      <h1>Welcome to Clozet!</h1>
-      <h3>The new way to shop for clothes</h3>
+      <div class="hero-section">
+        <h1>Welcome to Clozet!</h1>
+        <h3>The new way to shop for clothes</h3>
 
-      <!--get the five categories with the most products from the database -->
-      <div class="badge-container">
-        <Badge type="category" name="Tops" />
-        <Badge type="category" name="Bottoms" />
-        <Badge type="category" name="Dresses" />
-        <Badge type="category" name="Accessories" />
-        <Badge type="category" name="Shoes" />
-      </div>
-      <div class="search-wrapper">
-        <input class="search-bar" type="text" placeholder="Search for a product..." />
-        <!-- Inline SVG icon -->
-        <svg
-          class="search-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-      </div>
-      <div class="create-post-btn">
-        <button @click="router.push('/create-product')">Create a post!</button>
+        <div class="search-create-container">
+          <div class="search-wrapper">
+            <input class="search-bar" type="text" placeholder="Search for a product..." />
+            <!-- Inline SVG icon -->
+            <svg
+              class="search-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </div>
+          <div class="create-post-btn">
+            <button @click="router.push('/create-product')">Create a post!</button>
+          </div>
+        </div>
       </div>
 
-      <div class="featured-products">
-        <ProductList />
+      <div class="categories-section">
+        <h4>Popular Categories</h4>
+        <div class="badge-container">
+          <Badge type="category" name="Tops" />
+          <Badge type="category" name="Bottoms" />
+          <Badge type="category" name="Dresses" />
+          <Badge type="category" name="Accessories" />
+        </div>
+      </div>
+
+      <div class="featured-section">
+        <h4>Featured Products</h4>
+        <div class="featured-products">
+          <ProductList />
+        </div>
       </div>
     </div>
     <div class="image-section">
@@ -57,11 +66,15 @@ const router = useRouter()
   align-items: flex-start;
   max-width: 1400px;
   margin: 0 auto;
+  padding: var(--spacing-xl);
 }
 
 .content-section {
   flex: 1;
   max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
 }
 
 .image-section {
@@ -69,55 +82,96 @@ const router = useRouter()
   position: sticky;
   top: var(--spacing-xl);
   padding-top: var(--spacing-xl);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 500px;
 }
 
 .homepage-image {
   width: 100%;
   height: auto;
-  max-height: 80vh;
+  max-height: 600px;
   object-fit: contain;
   border-radius: var(--border-radius-lg);
 }
 
+.hero-section {
+  text-align: left;
+  margin-bottom: var(--spacing-xl);
+}
+
+.search-create-container {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+  align-items: center;
+}
+
+.categories-section {
+  background-color: var(--color-white);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--box-shadow-light);
+}
+
+.categories-section h4 {
+  color: var(--color-limed-spruce);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: var(--spacing-md);
+}
+
+.featured-section {
+  padding: var(--spacing-lg) 0;
+}
+
+.featured-section h4 {
+  color: var(--color-limed-spruce);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: var(--spacing-lg);
+  padding: 0 var(--spacing-lg);
+}
+
+.featured-products {
+  width: 100%;
+}
+
 h1 {
   color: var(--color-limed-spruce);
-  font-size: 2.5rem;
-  font-weight: 600;
+  font-size: 3rem;
+  font-weight: 700;
   margin-bottom: var(--spacing-sm);
   letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 h3 {
   color: var(--color-limed-spruce);
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 400;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
   opacity: 0.8;
+  line-height: 1.4;
 }
 
 .badge-container {
   display: flex;
   gap: var(--spacing-sm);
   flex-wrap: wrap;
-  margin-bottom: var(--spacing-xl);
-}
-
-.featured-products {
-  width: 100%;
-  margin-top: var(--spacing-xl);
 }
 
 .search-wrapper {
+  flex: 1;
   position: relative;
-  display: inline-block;
-  margin-right: var(--spacing-md);
 }
 
 .search-bar {
-  width: 300px;
-  padding: var(--spacing-sm) var(--spacing-lg);
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
   padding-right: 40px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   border: 2px solid #2D353F;
   border-radius: var(--border-radius-lg);
   background-color: var(--color-white);
@@ -156,16 +210,14 @@ h3 {
   background-color: #2D353F;
   color: var(--color-white);
   border: none;
-  padding: var(--spacing-sm) var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-xl);
   border-radius: var(--border-radius-lg);
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: var(--transition-bounce);
   box-shadow: var(--box-shadow-light);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
+  white-space: nowrap;
 }
 
 .create-post-btn button:hover {
@@ -183,13 +235,36 @@ h3 {
 @media (max-width: 1024px) {
   .home-container {
     flex-direction: column;
+    padding: var(--spacing-md);
+  }
+
+  .content-section {
+    gap: var(--spacing-lg);
+  }
+
+  .hero-section {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .search-create-container {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .search-wrapper {
+    width: 100%;
+  }
+
+  .create-post-btn {
+    width: 100%;
   }
 
   .image-section {
     position: static;
     order: -1;
     padding-top: 0;
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
   }
 
   .homepage-image {
@@ -198,24 +273,17 @@ h3 {
 }
 
 @media (max-width: 768px) {
-  .search-wrapper {
-    display: block;
-    margin-right: 0;
-    margin-bottom: var(--spacing-md);
+  h1 {
+    font-size: 2.5rem;
   }
 
-  .search-bar {
-    width: 100%;
+  h3 {
+    font-size: 1.25rem;
   }
 
-  .create-post-btn {
-    display: block;
-    width: 100%;
-  }
-
-  .create-post-btn button {
-    width: 100%;
-    justify-content: center;
+  .categories-section,
+  .featured-section {
+    padding: var(--spacing-md);
   }
 }
 </style>

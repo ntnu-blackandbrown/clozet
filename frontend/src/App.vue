@@ -303,10 +303,10 @@ body {
 }
 
 .login-button {
-  background-color: #F1E7CA;
+  background-color: var(--color-white);
   color: var(--color-limed-spruce);
   padding: var(--spacing-sm) var(--spacing-lg);
-  border: none;
+  border: 2px solid var(--color-limed-spruce);
   border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.95rem;
@@ -315,8 +315,8 @@ body {
 }
 
 .login-button:hover {
-  background-color: #E8DDB8; /* Slightly darker shade */
-  color: var(--color-limed-spruce);
+  background-color: var(--color-limed-spruce);
+  color: var(--color-white);
   transform: translateY(-2px);
   box-shadow: var(--box-shadow-medium);
 }
