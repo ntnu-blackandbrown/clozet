@@ -36,6 +36,7 @@ public class TestDatabaseInitializer {
                                        PasswordEncoder passwordEncoder) {
         return args -> {
             // Clear existing data
+            // Ensure the deletion order respects foreign key constraints
             favoriteRepository.deleteAll();
             itemRepository.deleteAll();
             categoryRepository.deleteAll();
