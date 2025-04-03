@@ -74,9 +74,9 @@ public class MessageServiceImpl implements MessageService {
             throw new MessageNotFoundException(id);
         }
         
-        // Broadcast deletion before actually deleting
-        webSocketService.notifyMessageDeleted(id);
-        
         messageRepository.deleteById(id);
+        
+        // Broadcast deletion after actually deleting
+        webSocketService.notifyMessageDeleted(id);
     }
 }
