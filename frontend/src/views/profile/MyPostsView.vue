@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import axios from '@/api/axios.ts'
 import type { Product } from '@/types/product'
+import ProductList from '@/components/product/ProductList.vue'
 
 const items = ref<Product[]>([])
 
