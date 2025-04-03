@@ -1,87 +1,60 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import { vi, describe, it, expect } from 'vitest'
-import MessageChatArea from '@/components/messaging/ChatArea.vue' // adjust path if needed
+import { describe, it, expect } from 'vitest'
+import ChatArea from '@/components/messaging/ChatArea.vue'
+import type { Message, Conversation } from '@/types/messaging'
 
-describe('MessageChatArea.vue', () => {
-  // Define two sample conversations
-  const conversationActive = {
-    id: 100,
-    receiverName: 'Test Receiver',
-    itemId: 200,
-    listOfMessages: [
-      {
-        id: 1,
-        content: 'First message',
-        createdAt: '2022-01-01T10:00:00Z',
-        senderId: 2,
-        receiverId: 1,
-        conversationId: 100,
-      },
-      {
-        id: 2,
-        content: 'Second message',
-        createdAt: '2022-01-01T11:00:00Z',
-        senderId: 1,
-        receiverId: 2,
-        conversationId: 100,
-      },
-    ],
-    latestMessageTimestamp: '2022-01-01T11:00:00Z',
-  }
+// Sample test data
+const sampleMessage: Message = {
+  id: 1,
+  content: 'Hello there!',
+  createdAt: '2022-01-01T10:00:00Z',
+  senderId: 2,
+  receiverId: 1,
+  conversationId: 123,
+}
 
-  const conversationInactive = {
-    id: 101,
-    receiverName: 'Another Receiver',
-    itemId: 201,
-    listOfMessages: [],
-    latestMessageTimestamp: '2022-01-02T09:00:00Z',
-  }
+const sampleConversation: Conversation = {
+  id: 123,
+  receiverName: 'Alice',
+  itemId: 10,
+  listOfMessages: [sampleMessage],
+  latestMessageTimestamp: '2022-01-01T10:00:00Z',
+}
 
-  const conversations = [conversationActive, conversationInactive]
+// Create a stub for MessageInput that emits "send-message" with a test text when its button is clicked.
+const MessageInputStub = {
+  name: 'MessageInput',
+  template: `<button class="stub-button" @click="$emit('send-message', 'Test message')">Send</button>`,
+}
 
-  it('renders "Select a chat to start messaging" when no active conversation', async () => {
-    const wrapper = mount(MessageChatArea, {
+describe('ChatArea.vue', () => {
+  it('renders header with "Select a chat" when no active chat/contact is provided', async () => {
+    // When activeChat is null and contact is undefined, the header should show "Select a chat"
+    const wrapper = mount(ChatArea, {
       props: {
-        activeConversationId: 999, // No conversation matches
-        conversations,
+        activeChat: null,
+        messages: [],
+        contact: undefined,
       },
       global: {
         stubs: {
+          // MessageInput is not rendered if activeChat is falsy.
           MessageInput: true,
         },
       },
     })
-
-    // The no-chat-selected block should be rendered
-    const noChat = wrapper.find('.no-chat-selected')
-    expect(noChat.exists()).toBe(true)
-    expect(noChat.text()).toContain('Select a chat to start messaging')
-  })
-
-  it('renders active conversation header with receiver name', async () => {
-    const wrapper = mount(MessageChatArea, {
-      props: {
-        activeConversationId: 100,
-        conversations,
-      },
-      global: {
-        stubs: {
-          MessageInput: true,
-        },
-      },
-    })
-
-    // Check that the header displays the active conversation's receiverName
+    // Check the header's contact-name text.
     const contactName = wrapper.find('.contact-name')
     expect(contactName.exists()).toBe(true)
-    expect(contactName.text()).toBe('Test Receiver')
+    expect(contactName.text()).toBe('Select a chat')
   })
 
-  it('renders chat messages with a date divider and proper message details', async () => {
-    const wrapper = mount(MessageChatArea, {
+  it('renders header with contact name when activeChat and contact are provided', async () => {
+    const wrapper = mount(ChatArea, {
       props: {
-        activeConversationId: 100,
-        conversations,
+        activeChat: 123,
+        messages: [sampleMessage],
+        contact: sampleConversation,
       },
       global: {
         stubs: {
@@ -89,47 +62,72 @@ describe('MessageChatArea.vue', () => {
         },
       },
     })
+    const contactName = wrapper.find('.contact-name')
+    expect(contactName.exists()).toBe(true)
+    expect(contactName.text()).toBe('Alice')
+  })
 
+  it('renders messages with a date divider and correct message classes', async () => {
+    const wrapper = mount(ChatArea, {
+      props: {
+        activeChat: 123,
+        messages: [sampleMessage],
+        contact: sampleConversation,
+      },
+      global: {
+        stubs: {
+          MessageInput: true,
+        },
+      },
+    })
     await flushPromises()
-
-    // Check that the chat messages container exists
-    const chatMessages = wrapper.find('.chat-messages')
-    expect(chatMessages.exists()).toBe(true)
-
-    // The first message should render a date divider "Today"
-    const divider = chatMessages.find('.date-divider')
+    const divider = wrapper.find('.date-divider')
     expect(divider.exists()).toBe(true)
     expect(divider.text()).toBe('Today')
 
-    // Check that both messages are rendered
-    const messageDivs = chatMessages.findAll('.message')
-    expect(messageDivs.length).toBe(conversationActive.listOfMessages.length)
-
-    // First message: senderId is 2 → should have class "received"
-    const firstMessage = messageDivs[0]
-    expect(firstMessage.classes()).toContain('received')
-    expect(firstMessage.text()).toContain('First message')
-
-    // Second message: senderId is 1 → should have class "sent" and show a status "Sent"
-    const secondMessage = messageDivs[1]
-    expect(secondMessage.classes()).toContain('sent')
-    expect(secondMessage.text()).toContain('Second message')
-    const status = secondMessage.find('.message-status')
-    expect(status.exists()).toBe(true)
-    expect(status.text()).toBe('Sent')
+    const messageDivs = wrapper.findAll('.message')
+    expect(messageDivs.length).toBe(1)
+    const messageDiv = messageDivs[0]
+    // Since sampleMessage.senderId is 2 (not 1), it should have the "received" class.
+    expect(messageDiv.classes()).toContain('received')
+    expect(messageDiv.text()).toContain('Hello there!')
   })
 
-  it('emits "send-message" event when MessageInput emits a send event', async () => {
-    // Stub MessageInput with a button that emits a "send-message" event with a test message
-    const MessageInputStub = {
-      name: 'MessageInput',
-      template: `<button class="stub-message-input" @click="$emit('send-message', 'Hello Chat')">Send</button>`,
-    }
-
-    const wrapper = mount(MessageChatArea, {
+  it('emits "send-message" event with correct payload when MessageInput emits send', async () => {
+    const wrapper = mount(ChatArea, {
       props: {
-        activeConversationId: 100,
-        conversations,
+        activeChat: 123,
+        messages: [],
+        contact: sampleConversation,
+      },
+      global: {
+        stubs: {
+          // Use our custom stub for MessageInput.
+          MessageInput: MessageInputStub,
+        },
+      },
+    })
+    const inputStub = wrapper.findComponent({ name: 'MessageInput' })
+    expect(inputStub.exists()).toBe(true)
+    await inputStub.trigger('click')
+    await flushPromises()
+    const emitted = wrapper.emitted('send-message')
+    expect(emitted).toBeTruthy()
+    const payload = emitted![0][0] as { chatId: number; message: { content: string; senderId: number; receiverId: number; timestamp: string } }
+    expect(payload.chatId).toBe(123)
+    expect(payload.message.content).toBe('Test message')
+    expect(payload.message.senderId).toBe(1)
+    expect(payload.message.receiverId).toBe(sampleConversation.id)
+    expect(typeof payload.message.timestamp).toBe('string')
+  })
+
+  it('does not emit "send-message" when activeChat or contact is missing', async () => {
+    // Case 1: activeChat is null → MessageInput is not rendered.
+    const wrapper1 = mount(ChatArea, {
+      props: {
+        activeChat: null,
+        messages: [],
+        contact: sampleConversation,
       },
       global: {
         stubs: {
@@ -137,26 +135,26 @@ describe('MessageChatArea.vue', () => {
         },
       },
     })
+    expect(wrapper1.findComponent({ name: 'MessageInput' }).exists()).toBe(false)
+    expect(wrapper1.emitted('send-message')).toBeFalsy()
 
-    // Simulate clicking the MessageInput stub to send a message
-    const btn = wrapper.find('.stub-message-input')
-    await btn.trigger('click')
-
-    // The component should emit a "send-message" event with the correct payload
-    const emitted = wrapper.emitted('send-message')
-    expect(emitted).toBeTruthy()
-    const payload = emitted?.[0]?.[0]
-    expect(payload).toEqual(
-      expect.objectContaining({
-        conversationId: 100,
-        message: expect.objectContaining({
-          content: 'Hello Chat',
-          senderId: 1,
-          receiverId: 100, // Based on handleSendMessage: receiverId is set to activeConversation.id
-          conversationId: 100,
-          createdAt: expect.any(String),
-        }),
-      }),
-    )
+    // Case 2: contact is undefined → even if activeChat is provided, handleSendMessage returns early.
+    const wrapper2 = mount(ChatArea, {
+      props: {
+        activeChat: 123,
+        messages: [],
+        contact: undefined,
+      },
+      global: {
+        stubs: {
+          MessageInput: MessageInputStub,
+        },
+      },
+    })
+    const inputStub2 = wrapper2.findComponent({ name: 'MessageInput' })
+    expect(inputStub2.exists()).toBe(true)
+    await inputStub2.trigger('click')
+    await flushPromises()
+    expect(wrapper2.emitted('send-message')).toBeFalsy()
   })
 })

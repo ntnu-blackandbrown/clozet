@@ -52,7 +52,14 @@ const sampleConversations = [
     receiverName: 'Alice',
     itemId: 101,
     listOfMessages: [
-      { id: 1, content: 'Hi', createdAt: '2022-01-01T10:00:00Z', senderId: 2, receiverId: 1, conversationId: 1 },
+      {
+        id: 1,
+        content: 'Hi',
+        createdAt: '2022-01-01T10:00:00Z',
+        senderId: 2,
+        receiverId: 1,
+        conversationId: 1,
+      },
     ],
     latestMessageTimestamp: '2022-01-01T10:00:00Z',
   },
@@ -61,7 +68,14 @@ const sampleConversations = [
     receiverName: 'Bob',
     itemId: 102,
     listOfMessages: [
-      { id: 2, content: 'Hello Bob', createdAt: '2022-01-02T11:00:00Z', senderId: 1, receiverId: 2, conversationId: 2 },
+      {
+        id: 2,
+        content: 'Hello Bob',
+        createdAt: '2022-01-02T11:00:00Z',
+        senderId: 1,
+        receiverId: 2,
+        conversationId: 2,
+      },
     ],
     latestMessageTimestamp: '2022-01-02T11:00:00Z',
   },
@@ -143,7 +157,7 @@ describe('MessagingContainer.vue', () => {
     })
 
     await flushPromises()
-    await new Promise(resolve => setTimeout(resolve, 10))
+    await new Promise((resolve) => setTimeout(resolve, 10))
     expect(replaceSpy).toHaveBeenCalledWith(`/messages/${sampleConversations[0].id}`)
   })
 
@@ -191,12 +205,15 @@ describe('MessagingContainer.vue', () => {
     await flushPromises()
 
     // Expect axios.post to have been called with the correct payload
-    expect(mockedAxios.post).toHaveBeenCalledWith('/api/messages', expect.objectContaining({
-      senderId: '1',
-      receiverId: '2',
-      content: 'New message',
-      timestamp: expect.any(String),
-    }))
+    expect(mockedAxios.post).toHaveBeenCalledWith(
+      '/api/messages',
+      expect.objectContaining({
+        senderId: '1',
+        receiverId: '2',
+        content: 'New message',
+        timestamp: expect.any(String),
+      }),
+    )
 
     // Then axios.get should have been called to fetch messages for chat 2
     expect(mockedAxios.get).toHaveBeenCalledWith(`/api/messages/2`)
