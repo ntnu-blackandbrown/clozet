@@ -1,7 +1,10 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
+import { useAuthStore } from '@/stores/AuthStore'
+import axios from '@/api/axios'
+const authStore = useAuthStore()
 
 // Define validation schema
 const schema = yup.object({
@@ -12,7 +15,7 @@ const schema = yup.object({
   phoneNumber: yup.string().matches(/^\+?[\d\s-]+$/, 'Invalid phone number format'),
 })
 
-const { handleSubmit, errors, resetForm } = useForm({
+const { handleSubmit, errors, resetForm, setValues } = useForm({
   validationSchema: schema,
 })
 
@@ -26,6 +29,29 @@ const { value: phoneNumber, errorMessage: phoneNumberError } = useField('phoneNu
 const isSubmitting = ref(false)
 const statusMessage = ref('')
 const statusType = ref('')
+
+// Load user data when component mounts
+onMounted(async () => {
+  if (authStore.user) {
+    setUserValues()
+  } else {
+    // If user data is not in store, fetch it
+    await authStore.fetchUserInfo()
+    if (authStore.user) {
+      setUserValues()
+    }
+  }
+})
+
+const setUserValues = () => {
+  setValues({
+    firstName: authStore.user.firstName || '',
+    lastName: authStore.user.lastName || '',
+    username: authStore.user.username || '',
+    email: authStore.user.email || '',
+    phoneNumber: authStore.user.phoneNumber || '',
+  })
+}
 
 const isFormValid = computed(() => {
   return (
@@ -48,6 +74,9 @@ const handleSaveChanges = handleSubmit(async (values) => {
   try {
     // TODO: Implement API call to save changes
     console.log('Saving changes:', values)
+    await axios.put(`/api/users/${authStore.user.id}`, values)
+    await authStore.fetchUserInfo()
+    setUserValues()
 
     statusMessage.value = 'Changes saved successfully!'
     statusType.value = 'success'
