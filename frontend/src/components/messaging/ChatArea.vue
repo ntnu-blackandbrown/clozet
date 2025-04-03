@@ -19,9 +19,9 @@ const handleSendMessage = (text: string) => {
     message: {
       content: text,
       senderId: 1, // This should be replaced with actual user ID
-      receiverId: props.contact.receiverId,
-      timestamp: new Date().toISOString()
-    }
+      receiverId: props.contact.id,
+      timestamp: new Date().toISOString(),
+    },
   })
 }
 </script>
@@ -58,7 +58,7 @@ const handleSendMessage = (text: string) => {
 
           <div class="message-time">
             {{
-              new Date(message.timestamp).toLocaleTimeString('en-US', {
+              new Date(message.createdAt).toLocaleTimeString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: false,
