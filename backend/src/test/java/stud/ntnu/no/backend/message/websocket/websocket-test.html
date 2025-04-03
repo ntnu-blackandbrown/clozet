@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket STOMP Client</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #log { height: 400px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll; background-color: #f5f5f5; }
+        .controls { margin-top: 20px; }
+        button { padding: 8px 15px; margin-right: 10px; cursor: pointer; }
+        input, textarea { padding: 8px; margin-bottom: 10px; width: 100%; box-sizing: border-box; }
+        .form-group { margin-bottom: 15px; }
+        .message-received { color: green; }
+        .message-sent { color: blue; }
+        .error { color: red; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: #333; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>WebSocket Message Tester</h1>
+    <div class="connection-info">
+        <div class="form-group">
+            <label>Server URL (Bruk http/https, ikke ws):</label>
+            <input id="serverUrl" value="http://localhost:8080/ws" />
+            <p><small>SockJS trenger HTTP/HTTPS-URL, ikke WebSocket (ws) direkte</small></p>
+        </div>
+        <div>
+            <button id="connect">Koble til</button>
+            <button id="disconnect" disabled>Koble fra</button>
+        </div>
+    </div>
+
+    <h2>Meldinger</h2>
+    <div id="log"></div>
+
+    <div class="controls">
+        <h3>Send melding</h3>
+        <div class="form-group">
+            <label>Avsender ID:</label>
+            <input id="sender" placeholder="Avsender ID" value="buyer1" />
+        </div>
+        <div class="form-group">
+            <label>Mottaker ID:</label>
+            <input id="receiver" placeholder="Mottaker ID" value="seller1" />
+        </div>
+        <div class="form-group">
+            <label>Melding:</label>
+            <textarea id="message" placeholder="Skriv melding her"></textarea>
+        </div>
+        <button id="send" disabled>Send melding</button>
+    </div>
+</div>
+
+<script>
+    let stompClient = null;
+    let connected = false;
+    let messageCount = 0;
+    const logElement = document.getElementById('log');
+
+    function log(message, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        const msgDiv = document.createElement('div');
+        msgDiv.className = type;
+        msgDiv.innerHTML = `[${timestamp}] ${message}`;
+        logElement.appendChild(msgDiv);
+        logElement.scrollTop = logElement.scrollHeight;
+    }
+
+    function connect() {
+        const serverUrl = document.getElementById('serverUrl').value;
+        log(`Kobler til ${serverUrl}...`);
+
+        try {
+            // Bruk SockJS for kompatibilitet
+            const socket = new SockJS(serverUrl);
+            stompClient = Stomp.over(socket);
+
+            // Detaljert logging i konsoll
+            stompClient.debug = function(str) {
+                console.log(str);
+            };
+
+            stompClient.connect({},
+                function(frame) { // Suksess-callback
+                    connected = true;
+                    log(`Tilkoblet: ${frame}`, 'message-received');
+                    document.getElementById('connect').disabled = true;
+                    document.getElementById('disconnect').disabled = false;
+                    document.getElementById('send').disabled = false;
+
+                    // Abonner på meldings-topicen
+                    stompClient.subscribe('/topic/messages', function(messageOutput) {
+                        try {
+                            const message = JSON.parse(messageOutput.body);
+                            messageCount++;
+
+                            log(`<strong>Mottok melding #${messageCount}:</strong><br>
+                                    ID: ${message.id}<br>
+                                    Fra: ${message.senderId}<br>
+                                    Til: ${message.receiverId}<br>
+                                    Innhold: ${message.content}<br>
+                                    Tid: ${message.createdAt}`, 'message-received');
+                        } catch (e) {
+                            log(`Feil ved parsing av melding: ${e.message}`, 'error');
+                            console.error("Raw message body:", messageOutput.body);
+                        }
+                    });
+                },
+                function(error) { // Feil-callback
+                    connected = false;
+                    log(`Tilkoblingsfeil: ${error}`, 'error');
+                    document.getElementById('connect').disabled = false;
+                    document.getElementById('disconnect').disabled = true;
+                    document.getElementById('send').disabled = true;
+                }
+            );
+        } catch (e) {
+            log(`Feil ved oppretting av tilkobling: ${e.message}`, 'error');
+            console.error(e);
+        }
+    }
+
+    function disconnect() {
+        if (stompClient && connected) {
+            stompClient.disconnect(function() {
+                log('Koblet fra WebSocket-server');
+                connected = false;
+                document.getElementById('connect').disabled = false;
+                document.getElementById('disconnect').disabled = true;
+                document.getElementById('send').disabled = true;
+            });
+        } else {
+            log('Ingen aktiv tilkobling å koble fra');
+        }
+    }
+
+    function sendMessage() {
+        if (!connected || !stompClient) {
+            log('Ikke tilkoblet. Koble til først.', 'error');
+            return;
+        }
+
+        const sender = document.getElementById('sender').value;
+        const receiver = document.getElementById('receiver').value;
+        const content = document.getElementById('message').value;
+
+        if (!content || !sender || !receiver) {
+            log('Fyll ut alle feltene', 'error');
+            return;
+        }
+
+        const message = {
+            senderId: sender,
+            receiverId: receiver,
+            content: content,
+            createdAt: new Date().toISOString()
+        };
+
+        try {
+            log(`<strong>Sender melding:</strong><br>
+                    Fra: ${message.senderId}<br>
+                    Til: ${message.receiverId}<br>
+                    Innhold: ${message.content}`, 'message-sent');
+
+            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(message));
+            document.getElementById('message').value = '';
+        } catch (e) {
+            log(`Feil ved sending av melding: ${e.message}`, 'error');
+            console.error(e);
+        }
+    }
+
+    // Sett opp event-lyttere
+    document.getElementById('connect').addEventListener('click', connect);
+    document.getElementById('disconnect').addEventListener('click', disconnect);
+    document.getElementById('send').addEventListener('click', sendMessage);
+
+    // Også tillat sending av melding med Enter-tasten
+    document.getElementById('message').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (!document.getElementById('send').disabled) {
+                sendMessage();
+            }
+        }
+    });
+
+    // Logging av eventuelle feil
+    window.onerror = function(message, source, lineno, colno, error) {
+        log(`Global feil: ${message}`, 'error');
+        return false;
+    };
+</script>
+</body>
+</html>

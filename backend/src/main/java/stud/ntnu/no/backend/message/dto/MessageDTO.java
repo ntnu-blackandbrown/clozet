@@ -10,6 +10,10 @@ public class MessageDTO {
     private LocalDateTime createdAt;
     private boolean isRead;
 
+    // No-args constructor for Jackson deserialization
+    public MessageDTO() {
+    }
+    
     // Constructor
     public MessageDTO(Long id, String senderId, String receiverId, String content, LocalDateTime createdAt, boolean isRead) {
         this.id = id;

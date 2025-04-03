@@ -18,11 +18,13 @@ public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
+    private final WebSocketService webSocketService;
 
     @Autowired
-    public MessageServiceImpl(MessageRepository messageRepository, MessageMapper messageMapper) {
+    public MessageServiceImpl(MessageRepository messageRepository, MessageMapper messageMapper, WebSocketService webSocketService) {
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
+        this.webSocketService = webSocketService;
     }
 
     @Override
@@ -43,7 +45,12 @@ public class MessageServiceImpl implements MessageService {
     public MessageDTO createMessage(CreateMessageRequest request) {
         Message message = messageMapper.toEntity(request);
         Message savedMessage = messageRepository.save(message);
-        return messageMapper.toDTO(savedMessage);
+        MessageDTO messageDTO = messageMapper.toDTO(savedMessage);
+        
+        // Broadcast via WebSocket
+        webSocketService.notifyMessageCreated(messageDTO);
+        
+        return messageDTO;
     }
 
     @Override
@@ -53,7 +60,12 @@ public class MessageServiceImpl implements MessageService {
         
         messageMapper.updateEntityFromRequest(message, request);
         Message updatedMessage = messageRepository.save(message);
-        return messageMapper.toDTO(updatedMessage);
+        MessageDTO messageDTO = messageMapper.toDTO(updatedMessage);
+        
+        // Broadcast via WebSocket
+        webSocketService.notifyMessageUpdated(messageDTO);
+        
+        return messageDTO;
     }
 
     @Override
@@ -61,6 +73,10 @@ public class MessageServiceImpl implements MessageService {
         if (!messageRepository.existsById(id)) {
             throw new MessageNotFoundException(id);
         }
+        
         messageRepository.deleteById(id);
+        
+        // Broadcast deletion after actually deleting
+        webSocketService.notifyMessageDeleted(id);
     }
 }
