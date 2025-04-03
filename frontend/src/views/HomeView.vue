@@ -75,17 +75,18 @@ const router = useRouter()
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
+  padding-top: var(--spacing-xl);
 }
 
 .image-section {
   flex: 1;
   position: sticky;
   top: var(--spacing-xl);
-  padding-top: var(--spacing-xl);
   display: flex;
   justify-content: center;
   align-items: flex-start;
   max-width: 500px;
+  padding-top: var(--spacing-xl);
 }
 
 .homepage-image {
@@ -240,6 +241,7 @@ h3 {
 
   .content-section {
     gap: var(--spacing-lg);
+    padding-top: 0;
   }
 
   .hero-section {
