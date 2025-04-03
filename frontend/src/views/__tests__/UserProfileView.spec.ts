@@ -36,7 +36,11 @@ describe('UserProfileView.vue', () => {
 
     // Check that the link text for "Profile Settings" has the active class
     const settingsLink = navLinks.find((link) => link.text().includes('Profile Settings'))
-    expect(settingsLink.classes()).toContain('active')
+    if (settingsLink) {
+      expect(settingsLink.classes()).toContain('active')
+    } else {
+      throw new Error('Settings link not found')
+    }
   })
 
   it('conditionally renders ProductDisplayModal when openProductModal is called', async () => {
