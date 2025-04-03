@@ -69,23 +69,25 @@ onMounted(async () => {
 <template>
   <div class="messages-container">
     <!-- Left sidebar with messages list -->
-    <MessagesSidebar :conversations="chats" :activeConversationId="activeChat" @select-chat="handleChatSelect" />
+    <MessagesSidebar
+      :conversations="chats"
+      :activeConversationId="activeChat"
+      @select-chat="handleChatSelect"
+    />
     <!-- Right chat area -->
     <ChatArea
       :active-chat="activeChat"
-      :messages="chatMessages[activeChat]"
+      :messages="chatMessages[activeChat] || []"
       :contact="chats.find((chat) => chat.id === activeChat)"
       @send-message="handleNewMessage"
     />
   </div>
 </template>
 
-
-
 <style scoped>
 .messages-container {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 64px); /* Subtract header height */
   background: #ffffff;
 }
 </style>
