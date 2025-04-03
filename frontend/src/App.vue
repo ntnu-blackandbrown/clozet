@@ -29,7 +29,7 @@ async function logout() {
       <div class="header-content">
         <div class="header-left">
           <RouterLink to="/" class="logo-container">
-            <img src="@/assets/logo.png" alt="Clozet Logo" class="logo-image" />
+            <img src="@/assets/light-green.png" alt="Clozet Logo" class="logo-image" />
             <h1 class="logo">Clozet</h1>
           </RouterLink>
           <nav class="main-nav">
@@ -234,13 +234,13 @@ body {
 }
 
 .logo-image {
-  width: 32px;
-  height: 32px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
 }
 
 .logo {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   font-weight: 600;
   color: var(--color-white);
   margin: 0;
