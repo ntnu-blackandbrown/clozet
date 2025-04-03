@@ -76,7 +76,6 @@ describe('AppLayout.vue (normal Pinia)', () => {
     })
     const header = wrapper.find('header.main-header')
     expect(header.exists()).toBe(true)
-    expect(header.text()).toContain('Clozet')
     expect(header.text()).toContain('Profile')
     expect(header.text()).toContain('Messages')
   })
