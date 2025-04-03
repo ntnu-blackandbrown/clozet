@@ -14,9 +14,9 @@ interface BadgeProps {
 
 const props = withDefaults(defineProps<BadgeProps>(), {
   type: 'category',
-  color: 'var(--color-conch)', // Using Conch as background
+  color: '#E4EAE7', // Light mint green background
   textColor: '#2D353F', // Outer Sea for text
-  borderColor: '#2D353F', // Outer Sea for border
+  borderColor: 'transparent', // Making border transparent by default
 })
 
 const currentIcon = computed(() => {
@@ -27,7 +27,7 @@ const currentIcon = computed(() => {
 const badgeStyle = computed(() => ({
   backgroundColor: props.color,
   color: props.textColor,
-  border: `2px solid ${props.borderColor}`,
+  border: 'none', // Removing the border completely
 }))
 </script>
 
