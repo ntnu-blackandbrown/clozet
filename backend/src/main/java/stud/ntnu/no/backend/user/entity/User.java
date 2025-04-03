@@ -22,7 +22,6 @@ public class User {
   private String role;
   private String firstName;
   private String lastName;
-  private String phoneNumber;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
@@ -32,6 +31,17 @@ public class User {
   // Felter for e-postverifisering:
   private String verificationToken;
   private LocalDateTime verificationTokenExpiry;
+
+  private String profilePictureUrl;
+
+  // Getters and setters
+  public String getProfilePictureUrl() {
+    return profilePictureUrl;
+  }
+
+  public void setProfilePictureUrl(String profilePictureUrl) {
+    this.profilePictureUrl = profilePictureUrl;
+  }
 
   public Long getId() {
     return id;
@@ -87,14 +97,6 @@ public class User {
 
   public void setLastName(String lastName) {
     this.lastName = lastName;
-  }
-
-  public String getPhoneNumber() {
-    return phoneNumber;
-  }
-
-  public void setPhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
   }
 
   public LocalDateTime getCreatedAt() {
