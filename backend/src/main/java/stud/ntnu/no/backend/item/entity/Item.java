@@ -3,6 +3,7 @@ package stud.ntnu.no.backend.item.entity;
 import jakarta.persistence.*;
 import stud.ntnu.no.backend.category.entity.Category;
 import stud.ntnu.no.backend.favorite.entity.Favorite;
+import stud.ntnu.no.backend.history.entity.History;
 import stud.ntnu.no.backend.itemimage.entity.ItemImage;
 import stud.ntnu.no.backend.location.entity.Location;
 import stud.ntnu.no.backend.message.entity.Message;
@@ -88,8 +89,12 @@ public class Item {
   @OneToMany(mappedBy = "item")
   private Set<Favorite> favorites = new HashSet<>();
 
-  @OneToMany(mappedBy = "item")
+  @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ItemImage> images;
+
+  // Similarly for history relationships:
+  @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<History> histories;
 
   @OneToMany(mappedBy = "item")
   private List<Transaction> transactions;

@@ -1,5 +1,6 @@
 package stud.ntnu.no.backend.common.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -35,6 +36,17 @@ import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        String message = "Database integrity constraint violated. Make sure to delete dependent records first.";
+        return buildErrorResponse(message, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(DataIntegrityException.class)
+    public ResponseEntity<Object> handleCustomDataIntegrityException(DataIntegrityException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 
     // Review exception handlers
     @ExceptionHandler(ReviewNotFoundException.class)
