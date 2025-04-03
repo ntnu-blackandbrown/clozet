@@ -1,13 +1,15 @@
 package stud.ntnu.no.backend.common.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.validation.FieldError;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import stud.ntnu.no.backend.history.exception.HistoryNotFoundException;
+import stud.ntnu.no.backend.history.exception.HistoryValidationException;
 import stud.ntnu.no.backend.item.exception.ItemNotFoundException;
 import stud.ntnu.no.backend.item.exception.ItemValidationException;
 import stud.ntnu.no.backend.category.exception.CategoryNotFoundException;
@@ -35,6 +37,17 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        String message = "Database integrity constraint violated. Make sure to delete dependent records first.";
+        return buildErrorResponse(message, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(DataIntegrityException.class)
+    public ResponseEntity<Object> handleCustomDataIntegrityException(DataIntegrityException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
     // Review exception handlers
     @ExceptionHandler(ReviewNotFoundException.class)
     public ResponseEntity<Object> handleReviewNotFoundException(ReviewNotFoundException ex) {
@@ -46,16 +59,6 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @MessageExceptionHandler
-    public ResponseEntity<ApiErrorResponse> handleException(Throwable exception) {
-        ApiErrorResponse errorResponse = new ApiErrorResponse(
-            "An unexpected error occurred. Please try again later.",
-            LocalDateTime.now(),
-            HttpStatus.INTERNAL_SERVER_ERROR.value()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
     // Category exception handlers
     @ExceptionHandler(CategoryNotFoundException.class)
     public ResponseEntity<Object> handleCategoryNotFoundException(CategoryNotFoundException ex) {
@@ -64,6 +67,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CategoryValidationException.class)
     public ResponseEntity<Object> handleCategoryValidationException(CategoryValidationException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    // History exception handlers
+    @ExceptionHandler(HistoryNotFoundException.class)
+    public ResponseEntity<Object> handleHistoryNotFoundException(HistoryNotFoundException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(HistoryValidationException.class)
+    public ResponseEntity<Object> handleHistoryValidationException(HistoryValidationException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
