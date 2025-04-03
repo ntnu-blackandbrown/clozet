@@ -36,6 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryDTO> getTopFiveCategories() {
         Pageable topFive = PageRequest.of(0, 5);
         List<Category> topCategories = categoryRepository.findTopCategoriesByFavoriteCount(topFive);
