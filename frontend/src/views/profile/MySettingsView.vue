@@ -1,65 +1,132 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useField, useForm } from 'vee-validate'
+import * as yup from 'yup'
 
-const formData = ref({
-  firstName: '',
-  lastName: '',
-  username: '',
-  password: '',
-  email: '',
-  phoneNumber: '',
+// Define validation schema
+const schema = yup.object({
+  firstName: yup.string().required('First name is required'),
+  lastName: yup.string().required('Last name is required'),
+  username: yup.string().required('Username is required'),
+  email: yup.string().email('Invalid email').required('Email is required'),
+  phoneNumber: yup.string().matches(/^\+?[\d\s-]+$/, 'Invalid phone number format'),
 })
 
-const handleSaveChanges = () => {
-  // TODO: Implement save changes functionality
-  console.log('Saving changes:', formData.value)
-}
+const { handleSubmit, errors, resetForm } = useForm({
+  validationSchema: schema,
+})
 
-const handleDeleteAccount = () => {
-  // TODO: Implement delete account functionality
-  console.log('Deleting account')
+// Define form fields using useField
+const { value: firstName, errorMessage: firstNameError } = useField('firstName')
+const { value: lastName, errorMessage: lastNameError } = useField('lastName')
+const { value: username, errorMessage: usernameError } = useField('username')
+const { value: email, errorMessage: emailError } = useField('email')
+const { value: phoneNumber, errorMessage: phoneNumberError } = useField('phoneNumber')
+
+const isSubmitting = ref(false)
+const statusMessage = ref('')
+const statusType = ref('')
+
+const isFormValid = computed(() => {
+  return (
+    !errors.value.firstName &&
+    !errors.value.lastName &&
+    !errors.value.username &&
+    !errors.value.email &&
+    firstName.value &&
+    lastName.value &&
+    username.value &&
+    email.value
+  )
+})
+
+const handleSaveChanges = handleSubmit(async (values) => {
+  isSubmitting.value = true
+  statusMessage.value = 'Saving changes...'
+  statusType.value = 'info'
+
+  try {
+    // TODO: Implement API call to save changes
+    console.log('Saving changes:', values)
+
+    statusMessage.value = 'Changes saved successfully!'
+    statusType.value = 'success'
+  } catch (error) {
+    console.error('Error saving changes:', error)
+    statusMessage.value = 'Failed to save changes'
+    statusType.value = 'error'
+  } finally {
+    isSubmitting.value = false
+  }
+})
+
+const handleDeleteAccount = async () => {
+  if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+    return
+  }
+
+  try {
+    // TODO: Implement API call to delete account
+    console.log('Deleting account')
+  } catch (error) {
+    console.error('Error deleting account:', error)
+  }
 }
 </script>
 
 <template>
   <div class="profile-settings-container">
     <h2>Profile Settings</h2>
-    <div class="profile-form">
+    <form @submit.prevent="handleSaveChanges" class="profile-form">
       <div class="name-fields">
         <div class="form-group">
           <label>First Name</label>
-          <input type="text" placeholder="Your first name" v-model="formData.firstName" />
+          <input type="text" placeholder="Your first name" v-model="firstName" />
+          <span class="error" v-if="firstNameError">{{ firstNameError }}</span>
         </div>
         <div class="form-group">
           <label>Last Name</label>
-          <input type="text" placeholder="Your last name" v-model="formData.lastName" />
+          <input type="text" placeholder="Your last name" v-model="lastName" />
+          <span class="error" v-if="lastNameError">{{ lastNameError }}</span>
         </div>
       </div>
       <div class="credentials-fields">
         <div class="form-group">
           <label>Username</label>
-          <input type="text" placeholder="Your username" v-model="formData.username" />
+          <input type="text" placeholder="Your username" v-model="username" />
+          <span class="error" v-if="usernameError">{{ usernameError }}</span>
         </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" placeholder="Your password" v-model="formData.password" />
-        </div>
-      </div>
-      <div class="contact-fields">
         <div class="form-group">
           <label>Email</label>
-          <input type="email" placeholder="Your email" v-model="formData.email" />
+          <input type="email" placeholder="Your email" v-model="email" />
+          <span class="error" v-if="emailError">{{ emailError }}</span>
         </div>
+      </div>
+      <div class="phone-field">
         <div class="form-group">
           <label>Phone Number</label>
-          <input type="tel" placeholder="Your phone number" v-model="formData.phoneNumber" />
+          <input type="tel" placeholder="Your phone number" v-model="phoneNumber" />
+          <span class="error" v-if="phoneNumberError">{{ phoneNumberError }}</span>
         </div>
       </div>
-      <div class="form-actions">
-        <button class="save-button" @click="handleSaveChanges">Save Changes</button>
-        <button class="delete-button" @click="handleDeleteAccount">Delete Account</button>
+
+      <!-- Status Message -->
+      <div v-if="statusMessage" class="status-message" :class="statusType">
+        {{ statusMessage }}
       </div>
-    </div>
+
+      <div class="form-actions">
+        <button type="submit" class="save-button" :disabled="!isFormValid || isSubmitting">
+          <span v-if="isSubmitting">
+            <span class="spinner"></span>
+          </span>
+          <span v-else>Save Changes</span>
+        </button>
+        <button type="button" class="delete-button" @click="handleDeleteAccount" :disabled="isSubmitting">
+          Delete Account
+        </button>
+      </div>
+    </form>
   </div>
 </template>
 
@@ -81,18 +148,24 @@ const handleDeleteAccount = () => {
 }
 
 .name-fields,
-.credentials-fields,
-.contact-fields {
+.credentials-fields {
   display: flex;
   gap: 4rem;
   margin-bottom: 1.5rem;
 }
 
 .name-fields .form-group,
-.credentials-fields .form-group,
-.contact-fields .form-group {
+.credentials-fields .form-group {
   flex: 1;
   margin-bottom: 0;
+}
+
+.phone-field {
+  margin-bottom: 1.5rem;
+}
+
+.phone-field .form-group {
+  max-width: calc(50% - 2rem);
 }
 
 .form-group {
@@ -163,10 +236,65 @@ const handleDeleteAccount = () => {
   }
 
   .name-fields,
-  .credentials-fields,
-  .contact-fields {
+  .credentials-fields {
     flex-direction: column;
     gap: 1rem;
   }
+
+  .phone-field .form-group {
+    max-width: 100%;
+  }
+}
+
+.error {
+  display: block;
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin: 0.25rem 0 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.status-message {
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.status-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.status-message.info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s linear infinite;
+  margin-right: 5px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
+
