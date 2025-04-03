@@ -69,8 +69,7 @@ onMounted(async () => {
 <template>
   <div class="messages-container">
     <!-- Left sidebar with messages list -->
-    <MessagesSidebar :chats="chats" :active-id="activeChat" @select-chat="handleChatSelect" />
-
+    <MessagesSidebar :conversations="chats" :activeConversationId="activeChat" @select-chat="handleChatSelect" />
     <!-- Right chat area -->
     <ChatArea
       :active-chat="activeChat"
