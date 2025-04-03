@@ -1,7 +1,9 @@
 package stud.ntnu.no.backend.favorite.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import stud.ntnu.no.backend.favorite.dto.CreateFavoriteRequest;
 import stud.ntnu.no.backend.favorite.dto.FavoriteDTO;
 import stud.ntnu.no.backend.favorite.entity.Favorite;
@@ -10,47 +12,54 @@ import stud.ntnu.no.backend.item.repository.ItemRepository;
 import stud.ntnu.no.backend.user.entity.User;
 import stud.ntnu.no.backend.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 /**
  * Mapper-klasse for å konvertere mellom Favorite-entitet og DTO-objekter.
  */
-@Component
-public class FavoriteMapper {
-
-    private final UserRepository userRepository;
-    private final ItemRepository itemRepository;
+@Mapper(componentModel = "spring")
+public abstract class FavoriteMapper {
 
     @Autowired
-    public FavoriteMapper(UserRepository userRepository, ItemRepository itemRepository) {
-        this.userRepository = userRepository;
-        this.itemRepository = itemRepository;
-    }
+    protected UserRepository userRepository;
+
+    @Autowired
+    protected ItemRepository itemRepository;
 
     /**
-     * Konverterer en Favorite-entitet til en FavoriteDTO.
+     * Mapper en Favorite-entitet til en FavoriteDTO.
      *
-     * @param favorite Favorite-entiteten som skal konverteres
-     * @return Et FavoriteDTO-objekt basert på entiteten
+     * @param favorite Favorite-entiteten som skal mappes
+     * @return Et FavoriteDTO-objekt med data fra entiteten
      */
-    public FavoriteDTO toDTO(Favorite favorite) {
-        return new FavoriteDTO(
-            favorite.getId(),
-            favorite.getUserId(),
-            favorite.getItemId(),
-            favorite.isActive(),
-            favorite.getCreatedAt(),
-            favorite.getCreatedAt() // Bruker createdAt som updatedAt siden det ikke er implementert ennå
-        );
-    }
+    @Mapping(target = "userId", expression = "java(favorite.getUserId())")
+    @Mapping(target = "itemId", expression = "java(favorite.getItemId())")
+    @Mapping(target = "updatedAt", expression = "java(favorite.getCreatedAt())")
+    public abstract FavoriteDTO toDTO(Favorite favorite);
 
     /**
-     * Konverterer en CreateFavoriteRequest til en Favorite-entitet.
+     * Mapper en liste med Favorite-entiteter til en liste med FavoriteDTO-objekter.
      *
-     * @param request Forespørselen som skal konverteres til entitet
-     * @return En Favorite-entitet basert på forespørselen
-     * @throws RuntimeException hvis brukeren eller elementet ikke finnes
+     * @param favorites Listen med Favorite-entiteter
+     * @return En liste med FavoriteDTO-objekter
+     */
+    public abstract List<FavoriteDTO> toDTOList(List<Favorite> favorites);
+
+    /**
+     * Mapper en CreateFavoriteRequest til en Favorite-entitet.
+     * Henter bruker og item fra respektive repositories.
+     *
+     * @param request CreateFavoriteRequest-objektet som skal mappes
+     * @return En Favorite-entitet
+     * @throws RuntimeException hvis bruker eller item ikke finnes
      */
     public Favorite toEntity(CreateFavoriteRequest request) {
-        // Konverter String userId til Long for repository-oppslag
+        if (request == null) {
+            return null;
+        }
+
+        // Convert String userId to Long for repository lookup
         Long userIdLong = Long.parseLong(request.getUserId());
 
         User user = userRepository.findById(userIdLong)
@@ -62,18 +71,21 @@ public class FavoriteMapper {
         Favorite favorite = new Favorite();
         favorite.setUser(user);
         favorite.setItem(item);
-        favorite.setCreatedAt(java.time.LocalDateTime.now());
+        favorite.setCreatedAt(LocalDateTime.now());
         favorite.setActive(request.getActive());
         return favorite;
     }
 
     /**
-     * Oppdaterer en eksisterende Favorite-entitet basert på en CreateFavoriteRequest.
+     * Oppdaterer en eksisterende Favorite-entitet basert på data fra en CreateFavoriteRequest.
      *
      * @param favorite Favorite-entiteten som skal oppdateres
-     * @param request Forespørselen med nye data
+     * @param request CreateFavoriteRequest med oppdaterte data
      */
     public void updateEntity(Favorite favorite, CreateFavoriteRequest request) {
+        if (request == null) {
+            return;
+        }
         favorite.setActive(request.getActive());
     }
 }

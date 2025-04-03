@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import stud.ntnu.no.backend.favorite.dto.CreateFavoriteRequest;
 import stud.ntnu.no.backend.favorite.dto.FavoriteDTO;
@@ -15,6 +16,8 @@ import stud.ntnu.no.backend.user.entity.User;
 import stud.ntnu.no.backend.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,8 +36,10 @@ class FavoriteMapperTest {
     @Mock
     private ItemRepository itemRepository;
     
+    // Siden FavoriteMapper nå er abstrakt, må vi bruke @Spy med en konkret implementasjon
+    @Spy
     @InjectMocks
-    private FavoriteMapper favoriteMapper;
+    private FavoriteMapperImpl favoriteMapper;
     
     private User testUser;
     private Item testItem;
@@ -79,6 +84,33 @@ class FavoriteMapperTest {
         // For updatedAt bruker vi createdAt siden det ikke er implementert updatedAt i entity ennå
         assertEquals(testFavorite.getCreatedAt(), result.getUpdatedAt());
     }
+
+    /**
+     * Tester at toDTOList mapper en liste med Favorite-entiteter korrekt.
+     */
+    @Test
+    void toDTOList_shouldMapCorrectly() {
+        // Arrange
+        Favorite favorite2 = new Favorite();
+        favorite2.setId(2L);
+        favorite2.setUser(testUser);
+        favorite2.setItem(testItem);
+        favorite2.setActive(false);
+        favorite2.setCreatedAt(now.minusDays(1));
+        
+        List<Favorite> favorites = Arrays.asList(testFavorite, favorite2);
+        
+        // Act
+        List<FavoriteDTO> result = favoriteMapper.toDTOList(favorites);
+        
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(1L, result.get(0).getId());
+        assertEquals(2L, result.get(1).getId());
+        assertTrue(result.get(0).isActive());
+        assertFalse(result.get(1).isActive());
+    }
     
     /**
      * Tester at toEntity mapper en CreateFavoriteRequest korrekt til en Favorite-entitet.
@@ -106,6 +138,19 @@ class FavoriteMapperTest {
         
         verify(userRepository).findById(testUser.getId());
         verify(itemRepository).findById(testItem.getId());
+    }
+    
+    /**
+     * Tester at toEntity returner null når request er null.
+     */
+    @Test
+    void toEntity_withNullRequest_shouldReturnNull() {
+        // Act
+        Favorite result = favoriteMapper.toEntity(null);
+        
+        // Assert
+        assertNull(result);
+        verifyNoInteractions(userRepository, itemRepository);
     }
     
     /**
@@ -174,6 +219,28 @@ class FavoriteMapperTest {
         // Assert
         assertEquals(false, favorite.isActive());
         // Andre felt skal ikke endres
+        assertEquals(testUser, favorite.getUser());
+        assertEquals(testItem, favorite.getItem());
+        assertEquals(now, favorite.getCreatedAt());
+    }
+    
+    /**
+     * Tester at updateEntity ikke gjør noe når request er null.
+     */
+    @Test
+    void updateEntity_withNullRequest_shouldDoNothing() {
+        // Arrange
+        Favorite favorite = new Favorite();
+        favorite.setUser(testUser);
+        favorite.setItem(testItem);
+        favorite.setActive(true);
+        favorite.setCreatedAt(now);
+        
+        // Act
+        favoriteMapper.updateEntity(favorite, null);
+        
+        // Assert - Ingenting skal være endret
+        assertEquals(true, favorite.isActive());
         assertEquals(testUser, favorite.getUser());
         assertEquals(testItem, favorite.getItem());
         assertEquals(now, favorite.getCreatedAt());

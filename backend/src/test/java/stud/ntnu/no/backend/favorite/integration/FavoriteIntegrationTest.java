@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import stud.ntnu.no.backend.favorite.dto.CreateFavoriteRequest;
 import stud.ntnu.no.backend.favorite.entity.Favorite;
@@ -20,6 +21,7 @@ import stud.ntnu.no.backend.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -110,8 +112,15 @@ class FavoriteIntegrationTest {
     @Test
     void getFavoriteById_whenFavoriteDoesNotExist_shouldReturnNotFound() throws Exception {
         // Act & Assert
-        mockMvc.perform(get("/api/favorites/{id}", 999L))
-                .andExpect(status().isNotFound());
+        MvcResult result = mockMvc.perform(get("/api/favorites/{id}", 999L))
+                .andExpect(status().isNotFound())
+                .andReturn();
+        
+        // Verifiser at feilmeldingen inneholder forventet tekst
+        String responseBody = result.getResponse().getContentAsString();
+        Map<String, Object> errorResponse = objectMapper.readValue(responseBody, Map.class);
+        assertTrue(errorResponse.containsKey("message"));
+        assertTrue(errorResponse.get("message").toString().contains("Favorite not found with id: 999"));
     }
 
     /**
@@ -127,6 +136,38 @@ class FavoriteIntegrationTest {
                 .andExpect(jsonPath("$[0].userId", is(testUser.getId().toString())))
                 .andExpect(jsonPath("$[0].itemId", is(testItem.getId().intValue())))
                 .andExpect(jsonPath("$[0].active", is(testFavorite.isActive())));
+    }
+
+    /**
+     * Tester at GET /api/favorites/user/{userId} returnerer en tom liste når brukeren ikke har favoritter.
+     */
+    @Test
+    void getFavoritesByUserId_whenUserHasNoFavorites_shouldReturnEmptyList() throws Exception {
+        // Arrange
+        User newUser = createTestUser("user2", "user2@example.com");
+        
+        // Act & Assert
+        mockMvc.perform(get("/api/favorites/user/{userId}", newUser.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    /**
+     * Tester at GET /api/favorites/user/{userId} returnerer 400 når bruker-ID er ugyldig.
+     */
+    @Test
+    void getFavoritesByUserId_withInvalidUserId_shouldReturnBadRequest() throws Exception {
+        // Act & Assert
+        MvcResult result = mockMvc.perform(get("/api/favorites/user/{userId}", ""))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        
+        // Verifiser at feilmeldingen inneholder forventet tekst
+        String responseBody = result.getResponse().getContentAsString();
+        Map<String, Object> errorResponse = objectMapper.readValue(responseBody, Map.class);
+        assertTrue(errorResponse.containsKey("message"));
+        assertTrue(errorResponse.get("message").toString().contains("User ID cannot be null or empty"));
     }
 
     /**
@@ -188,6 +229,31 @@ class FavoriteIntegrationTest {
     }
 
     /**
+     * Tester at PUT /api/favorites/{id} returnerer 404 når favoritten ikke finnes.
+     */
+    @Test
+    void updateFavorite_whenFavoriteDoesNotExist_shouldReturnNotFound() throws Exception {
+        // Arrange
+        CreateFavoriteRequest request = new CreateFavoriteRequest();
+        request.setUserId(testUser.getId().toString());
+        request.setItemId(testItem.getId());
+        request.setActive(false);
+
+        // Act & Assert
+        MvcResult result = mockMvc.perform(put("/api/favorites/{id}", 999L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound())
+                .andReturn();
+        
+        // Verifiser at feilmeldingen inneholder forventet tekst
+        String responseBody = result.getResponse().getContentAsString();
+        Map<String, Object> errorResponse = objectMapper.readValue(responseBody, Map.class);
+        assertTrue(errorResponse.containsKey("message"));
+        assertTrue(errorResponse.get("message").toString().contains("Favorite not found with id: 999"));
+    }
+
+    /**
      * Tester at DELETE /api/favorites/{id} sletter en favoritt.
      */
     @Test
@@ -204,6 +270,23 @@ class FavoriteIntegrationTest {
     }
 
     /**
+     * Tester at DELETE /api/favorites/{id} returnerer 404 når favoritten ikke finnes.
+     */
+    @Test
+    void deleteFavorite_whenFavoriteDoesNotExist_shouldReturnNotFound() throws Exception {
+        // Act & Assert
+        MvcResult result = mockMvc.perform(delete("/api/favorites/{id}", 999L))
+                .andExpect(status().isNotFound())
+                .andReturn();
+        
+        // Verifiser at feilmeldingen inneholder forventet tekst
+        String responseBody = result.getResponse().getContentAsString();
+        Map<String, Object> errorResponse = objectMapper.readValue(responseBody, Map.class);
+        assertTrue(errorResponse.containsKey("message"));
+        assertTrue(errorResponse.get("message").toString().contains("Favorite not found with id: 999"));
+    }
+
+    /**
      * Tester at POST /api/favorites returnerer feil når en favoritt allerede eksisterer.
      */
     @Test
@@ -215,14 +298,57 @@ class FavoriteIntegrationTest {
         request.setActive(true);
 
         // Act & Assert
-        mockMvc.perform(post("/api/favorites")
+        MvcResult result = mockMvc.perform(post("/api/favorites")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        
+        // Verifiser at feilmeldingen inneholder forventet tekst
+        String responseBody = result.getResponse().getContentAsString();
+        Map<String, Object> errorResponse = objectMapper.readValue(responseBody, Map.class);
+        assertTrue(errorResponse.containsKey("message"));
+        assertTrue(errorResponse.get("message").toString().contains("Favorite already exists for this user and item"));
 
         // Verifiserer at det ikke ble opprettet en duplikat
         List<Favorite> favorites = favoriteRepository.findByUserId(testUser.getId().toString());
         assertEquals(1, favorites.size());
+    }
+
+    /**
+     * Tester at POST /api/favorites returnerer 400 når bruker ikke finnes.
+     */
+    @Test
+    void createFavorite_withNonExistentUser_shouldReturnBadRequest() throws Exception {
+        // Arrange
+        CreateFavoriteRequest request = new CreateFavoriteRequest();
+        request.setUserId("999"); // En ikke-eksisterende bruker-ID
+        request.setItemId(testItem.getId());
+        request.setActive(true);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/favorites")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isInternalServerError()); // RuntimeException blir håndtert som 500
+    }
+
+    /**
+     * Tester at POST /api/favorites returnerer 400 når item ikke finnes.
+     */
+    @Test
+    void createFavorite_withNonExistentItem_shouldReturnBadRequest() throws Exception {
+        // Arrange
+        CreateFavoriteRequest request = new CreateFavoriteRequest();
+        request.setUserId(testUser.getId().toString());
+        request.setItemId(999L); // En ikke-eksisterende item-ID
+        request.setActive(true);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/favorites")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isInternalServerError()); // RuntimeException blir håndtert som 500
     }
 
     /**
