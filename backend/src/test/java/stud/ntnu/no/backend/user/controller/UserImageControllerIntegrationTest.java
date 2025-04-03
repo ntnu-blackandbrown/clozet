@@ -26,6 +26,9 @@ public class UserImageControllerIntegrationTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -37,15 +40,13 @@ public class UserImageControllerIntegrationTest {
     void uploadAndRetrieveProfileImage() throws Exception {
         // Create test user first
         // This assumes you have a UserRepository or UserService available
-        @Autowired
-        private UserRepository userRepository;
-
-        // In setUp() or beginning of test:
+        
+        // Create test user
         User testUser = new User();
         testUser.setEmail("test@example.com");
         testUser.setUsername("testuser");
         testUser.setPasswordHash("hashedpassword");
-        testUser.setIsActive(true);
+        testUser.setActive(true);
         testUser = userRepository.save(testUser);
 
         Long userId = testUser.getId();
