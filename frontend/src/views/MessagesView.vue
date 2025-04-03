@@ -18,6 +18,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import MessagesSidebar from '../components/messaging/MessagesSidebar.vue'
 import ChatArea from '../components/messaging/ChatArea.vue'
+import axios from '@/api/axios'
 
 const router = useRouter()
 const route = useRoute()
@@ -222,41 +223,53 @@ const handleChatSelect = (chatId) => {
   router.push(`/messages/${chatId}`)
 }
 
-const handleNewMessage = ({ chatId, message }) => {
+const handleNewMessage = async ({ chatId, message }) => {
   if (!chatMessages.value[chatId]) {
     chatMessages.value[chatId] = []
   }
 
-  // Add an id to the message
-  message.id = chatMessages.value[chatId].length + 1
+  try {
+    // Send message to backend
+    const response = await axios.post('/api/messages', {
+      senderId: message.senderId.toString(),
+      receiverId: message.receiverId.toString(),
+      content: message.content,
+      timestamp: new Date().toISOString()
+    })
 
-  // Add the message to the chat
-  chatMessages.value[chatId].push(message)
+    // If successful, add message to local state
+    const savedMessage = response.data
+    message.id = savedMessage.id || chatMessages.value[chatId].length + 1
+    chatMessages.value[chatId].push(message)
 
-  // Simulate a response after 1 second
-  setTimeout(() => {
-    const responses = [
-      'Thanks for your message!',
-      'I will get back to you soon.',
-      'Got it, working on it!',
-      'Interesting point!',
-      'Let me check that for you.',
-    ]
+    // Simulate a response after 1 second
+    setTimeout(() => {
+      const responses = [
+        'Thanks for your message!',
+        'I will get back to you soon.',
+        'Got it, working on it!',
+        'Interesting point!',
+        'Let me check that for you.',
+      ]
 
-    const response = {
-      id: chatMessages.value[chatId].length + 1,
-      type: 'text',
-      content: responses[Math.floor(Math.random() * responses.length)],
-      time: new Date().toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      }),
-      sent: false,
-    }
+      const response = {
+        id: chatMessages.value[chatId].length + 1,
+        type: 'text',
+        content: responses[Math.floor(Math.random() * responses.length)],
+        time: new Date().toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }),
+        sent: false,
+      }
 
-    chatMessages.value[chatId].push(response)
-  }, 1000)
+      chatMessages.value[chatId].push(response)
+    }, 1000)
+  } catch (error) {
+    console.error('Failed to send message:', error)
+    // You might want to show an error notification to the user here
+  }
 }
 
 // Set initial chat if none selected
