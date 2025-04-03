@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     @Query("SELECT f FROM Favorite f WHERE f.user.id = :userId")
-    List<Favorite> findByUserId(@Param("userId") Long userId);
+    List<Favorite> findByUserId(@Param("userId") String userId);
     @Query("SELECT f FROM Favorite f WHERE f.item.id = :itemId")
     List<Favorite> findByItemId(@Param("itemId") Long itemId);
     
