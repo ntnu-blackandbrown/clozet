@@ -57,6 +57,13 @@ public class FavoriteServiceImpl implements FavoriteService {
             throw new FavoriteValidationException("User ID cannot be null or empty");
         }
         
+        // Validate that userId is numeric
+        try {
+            Long.parseLong(userId);
+        } catch (NumberFormatException e) {
+            throw new FavoriteValidationException("Invalid user ID format");
+        }
+        
         return favoriteRepository.findByUserId(userId).stream()
             .map(favoriteMapper::toDTO)
             .collect(Collectors.toList());

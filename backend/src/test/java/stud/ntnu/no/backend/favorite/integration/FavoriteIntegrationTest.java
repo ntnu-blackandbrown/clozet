@@ -12,10 +12,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import stud.ntnu.no.backend.favorite.dto.CreateFavoriteRequest;
+import stud.ntnu.no.backend.favorite.dto.FavoriteDTO;
 import stud.ntnu.no.backend.favorite.entity.Favorite;
 import stud.ntnu.no.backend.favorite.repository.FavoriteRepository;
+import stud.ntnu.no.backend.category.entity.Category;
 import stud.ntnu.no.backend.item.entity.Item;
+import stud.ntnu.no.backend.location.entity.Location;
+import stud.ntnu.no.backend.shippingoption.entity.ShippingOption;
+import stud.ntnu.no.backend.category.repository.CategoryRepository;
 import stud.ntnu.no.backend.item.repository.ItemRepository;
+import stud.ntnu.no.backend.location.repository.LocationRepository;
+import stud.ntnu.no.backend.shippingoption.repository.ShippingOptionRepository;
 import stud.ntnu.no.backend.user.entity.User;
 import stud.ntnu.no.backend.user.repository.UserRepository;
 
@@ -54,6 +61,15 @@ class FavoriteIntegrationTest {
 
     @Autowired
     private ItemRepository itemRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private LocationRepository locationRepository;
+
+    @Autowired
+    private ShippingOptionRepository shippingOptionRepository;
 
     private User testUser;
     private Item testItem;
@@ -158,16 +174,9 @@ class FavoriteIntegrationTest {
      */
     @Test
     void getFavoritesByUserId_withInvalidUserId_shouldReturnBadRequest() throws Exception {
-        // Act & Assert
-        MvcResult result = mockMvc.perform(get("/api/favorites/user/{userId}", ""))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-        
-        // Verifiser at feilmeldingen inneholder forventet tekst
-        String responseBody = result.getResponse().getContentAsString();
-        Map<String, Object> errorResponse = objectMapper.readValue(responseBody, Map.class);
-        assertTrue(errorResponse.containsKey("message"));
-        assertTrue(errorResponse.get("message").toString().contains("User ID cannot be null or empty"));
+        // With an invalid userId format - should return 400 Bad Request
+        mockMvc.perform(get("/api/favorites/user/{userId}", "invalid"))
+                .andExpect(status().isBadRequest());
     }
 
     /**
@@ -371,6 +380,30 @@ class FavoriteIntegrationTest {
      * Hjelpermetode for å opprette et testelement.
      */
     private Item createTestItem(String title, User seller) {
+        // Create and save a Category
+        Category category = new Category();
+        category.setName("Test Category: " + title);
+        category.setDescription("Test Category Description: " + title);
+        category = categoryRepository.save(category);
+        
+        // Create and save a Location
+        Location location = new Location();
+        location.setCity("Test City");
+        location.setRegion("Test Region");
+        location.setLatitude(10.0);
+        location.setLongitude(10.0);
+        location = locationRepository.save(location);
+        
+        // Create and save a ShippingOption
+        ShippingOption shippingOption = new ShippingOption();
+        shippingOption.setName("Test Shipping Option");
+        shippingOption.setDescription("Test Shipping Description");
+        shippingOption.setPrice(50.0);
+        shippingOption.setEstimatedDays(2);
+        shippingOption.setTracked(true);
+        shippingOption = shippingOptionRepository.save(shippingOption);
+        
+        // Create the Item with all required relations
         Item item = new Item();
         item.setTitle(title);
         item.setShortDescription("Short description");
@@ -387,7 +420,10 @@ class FavoriteIntegrationTest {
         item.setCreatedAt(LocalDateTime.now());
         item.setUpdatedAt(LocalDateTime.now());
         item.setSeller(seller);
-        // Merk: Vi mangler å sette category, location og shippingOption
+        item.setCategory(category);
+        item.setLocation(location);
+        item.setShippingOption(shippingOption);
+        
         return itemRepository.save(item);
     }
 

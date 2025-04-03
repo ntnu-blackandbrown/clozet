@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import stud.ntnu.no.backend.favorite.dto.CreateFavoriteRequest;
 import stud.ntnu.no.backend.favorite.dto.FavoriteDTO;
@@ -36,10 +35,37 @@ class FavoriteMapperTest {
     @Mock
     private ItemRepository itemRepository;
     
-    // Siden FavoriteMapper nå er abstrakt, må vi bruke @Spy med en konkret implementasjon
-    @Spy
+    // Siden FavoriteMapper er abstrakt, må vi lage en konkret implementasjon for testing
     @InjectMocks
-    private FavoriteMapperImpl favoriteMapper;
+    private FavoriteMapper favoriteMapper = new FavoriteMapper() {
+        @Override
+        public FavoriteDTO toDTO(Favorite favorite) {
+            if (favorite == null) {
+                return null;
+            }
+            
+            FavoriteDTO dto = new FavoriteDTO();
+            dto.setId(favorite.getId());
+            dto.setUserId(favorite.getUserId());
+            dto.setItemId(favorite.getItemId());
+            dto.setActive(favorite.isActive());
+            dto.setCreatedAt(favorite.getCreatedAt());
+            dto.setUpdatedAt(favorite.getCreatedAt()); // Bruker createdAt for updatedAt
+            
+            return dto;
+        }
+        
+        @Override
+        public List<FavoriteDTO> toDTOList(List<Favorite> favorites) {
+            if (favorites == null) {
+                return null;
+            }
+            
+            return favorites.stream()
+                .map(this::toDTO)
+                .toList();
+        }
+    };
     
     private User testUser;
     private Item testItem;

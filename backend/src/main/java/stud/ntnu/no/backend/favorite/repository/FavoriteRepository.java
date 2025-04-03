@@ -1,12 +1,19 @@
 package stud.ntnu.no.backend.favorite.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import stud.ntnu.no.backend.favorite.entity.Favorite;
 
 import java.util.List;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
-    List<Favorite> findByUserId(String userId);
-    List<Favorite> findByItemId(Long itemId);  // Changed from findByItemIdAndItemType
-    boolean existsByUserIdAndItemId(String userId, Long itemId);
+    @Query("SELECT f FROM Favorite f WHERE f.user.id = :userId")
+    List<Favorite> findByUserId(@Param("userId") String userId);
+    
+    @Query("SELECT f FROM Favorite f WHERE f.item.id = :itemId")
+    List<Favorite> findByItemId(@Param("itemId") Long itemId);
+    
+    @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Favorite f WHERE f.user.id = :userId AND f.item.id = :itemId")
+    boolean existsByUserIdAndItemId(@Param("userId") String userId, @Param("itemId") Long itemId);
 }

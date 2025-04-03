@@ -6,13 +6,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import stud.ntnu.no.backend.favorite.dto.CreateFavoriteRequest;
 import stud.ntnu.no.backend.favorite.dto.FavoriteDTO;
 import stud.ntnu.no.backend.favorite.exception.FavoriteNotFoundException;
 import stud.ntnu.no.backend.favorite.exception.FavoriteValidationException;
 import stud.ntnu.no.backend.favorite.service.FavoriteService;
+import stud.ntnu.no.backend.favorite.controller.FavoriteController;
+import stud.ntnu.no.backend.favorite.config.TestSecurityConfig;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -29,7 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Controller-tester for favoritt-API.
  * Tester at endepunktene fungerer som forventet og returnerer korrekte statuskoder og data.
  */
-@WebMvcTest(FavoriteController.class)
+@WebMvcTest(controllers = FavoriteController.class)
+@Import(TestSecurityConfig.class)
 class FavoriteControllerTest {
 
     @Autowired
@@ -65,6 +70,7 @@ class FavoriteControllerTest {
      * Tester at getAllFavorites returnerer en liste med favoritter og status 200 OK.
      */
     @Test
+    @WithMockUser
     void getAllFavorites_shouldReturnListOfFavorites() throws Exception {
         // Arrange
         List<FavoriteDTO> favorites = Arrays.asList(testFavoriteDTO);
@@ -87,6 +93,7 @@ class FavoriteControllerTest {
      * Tester at getFavoriteById returnerer en favoritt og status 200 OK når favoritten finnes.
      */
     @Test
+    @WithMockUser
     void getFavoriteById_whenFavoriteExists_shouldReturnFavorite() throws Exception {
         // Arrange
         Long favoriteId = 1L;
@@ -108,6 +115,7 @@ class FavoriteControllerTest {
      * Tester at getFavoriteById returnerer status 404 NOT FOUND når favoritten ikke finnes.
      */
     @Test
+    @WithMockUser
     void getFavoriteById_whenFavoriteDoesNotExist_shouldReturnNotFound() throws Exception {
         // Arrange
         Long favoriteId = 999L;
@@ -125,6 +133,7 @@ class FavoriteControllerTest {
      * Tester at getFavoritesByUserId returnerer en liste med favoritter og status 200 OK.
      */
     @Test
+    @WithMockUser
     void getFavoritesByUserId_shouldReturnUserFavorites() throws Exception {
         // Arrange
         String userId = "1";
@@ -148,11 +157,12 @@ class FavoriteControllerTest {
      * Tester at getFavoritesByUserId returnerer status 400 BAD REQUEST når bruker-ID er ugyldig.
      */
     @Test
+    @WithMockUser
     void getFavoritesByUserId_withInvalidUserId_shouldReturnBadRequest() throws Exception {
         // Arrange
-        String userId = "";
+        String userId = "invalid";
         when(favoriteService.getFavoritesByUserId(userId))
-                .thenThrow(new FavoriteValidationException("User ID cannot be null or empty"));
+                .thenThrow(new FavoriteValidationException("Invalid user ID format"));
 
         // Act & Assert
         mockMvc.perform(get("/api/favorites/user/{userId}", userId))
@@ -165,6 +175,7 @@ class FavoriteControllerTest {
      * Tester at createFavorite oppretter en ny favoritt og returnerer status 201 CREATED.
      */
     @Test
+    @WithMockUser
     void createFavorite_withValidRequest_shouldCreateFavorite() throws Exception {
         // Arrange
         when(favoriteService.createFavorite(any(CreateFavoriteRequest.class))).thenReturn(testFavoriteDTO);
@@ -187,6 +198,7 @@ class FavoriteControllerTest {
      * Tester at createFavorite returnerer status 400 BAD REQUEST når forespørselen er ugyldig.
      */
     @Test
+    @WithMockUser
     void createFavorite_withInvalidRequest_shouldReturnBadRequest() throws Exception {
         // Arrange
         when(favoriteService.createFavorite(any(CreateFavoriteRequest.class)))
@@ -205,6 +217,7 @@ class FavoriteControllerTest {
      * Tester at updateFavorite oppdaterer en favoritt og returnerer status 200 OK.
      */
     @Test
+    @WithMockUser
     void updateFavorite_withValidRequest_shouldUpdateFavorite() throws Exception {
         // Arrange
         Long favoriteId = 1L;
@@ -229,6 +242,7 @@ class FavoriteControllerTest {
      * Tester at updateFavorite returnerer status 404 NOT FOUND når favoritten ikke finnes.
      */
     @Test
+    @WithMockUser
     void updateFavorite_whenFavoriteDoesNotExist_shouldReturnNotFound() throws Exception {
         // Arrange
         Long favoriteId = 999L;
@@ -248,6 +262,7 @@ class FavoriteControllerTest {
      * Tester at deleteFavorite sletter en favoritt og returnerer status 204 NO CONTENT.
      */
     @Test
+    @WithMockUser
     void deleteFavorite_whenFavoriteExists_shouldDeleteFavorite() throws Exception {
         // Arrange
         Long favoriteId = 1L;
@@ -264,6 +279,7 @@ class FavoriteControllerTest {
      * Tester at deleteFavorite returnerer status 404 NOT FOUND når favoritten ikke finnes.
      */
     @Test
+    @WithMockUser
     void deleteFavorite_whenFavoriteDoesNotExist_shouldReturnNotFound() throws Exception {
         // Arrange
         Long favoriteId = 999L;

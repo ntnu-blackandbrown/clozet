@@ -7,6 +7,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import stud.ntnu.no.backend.favorite.entity.Favorite;
 import stud.ntnu.no.backend.item.entity.Item;
 import stud.ntnu.no.backend.user.entity.User;
+import stud.ntnu.no.backend.category.entity.Category;
+import stud.ntnu.no.backend.location.entity.Location;
+import stud.ntnu.no.backend.shippingoption.entity.ShippingOption;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,8 +36,8 @@ class FavoriteRepositoryTest {
     void testFindByUserId_whenUserHasFavorites_shouldReturnFavoritesList() {
         // Arrange
         User user = createTestUser("user1");
-        Item item1 = createTestItem("Item 1");
-        Item item2 = createTestItem("Item 2");
+        Item item1 = createTestItem("Item 1", user);
+        Item item2 = createTestItem("Item 2", user);
         
         Favorite favorite1 = createTestFavorite(user, item1, true);
         Favorite favorite2 = createTestFavorite(user, item2, false);
@@ -74,7 +77,7 @@ class FavoriteRepositoryTest {
         // Arrange
         User user1 = createTestUser("user3");
         User user2 = createTestUser("user4");
-        Item item = createTestItem("Item 3");
+        Item item = createTestItem("Item 3", user1);
         
         Favorite favorite1 = createTestFavorite(user1, item, true);
         Favorite favorite2 = createTestFavorite(user2, item, true);
@@ -97,7 +100,7 @@ class FavoriteRepositoryTest {
     void testExistsByUserIdAndItemId_whenFavoriteExists_shouldReturnTrue() {
         // Arrange
         User user = createTestUser("user5");
-        Item item = createTestItem("Item 4");
+        Item item = createTestItem("Item 4", user);
         
         Favorite favorite = createTestFavorite(user, item, true);
         
@@ -117,7 +120,7 @@ class FavoriteRepositoryTest {
     void testExistsByUserIdAndItemId_whenFavoriteDoesNotExist_shouldReturnFalse() {
         // Arrange
         User user = createTestUser("user6");
-        Item item = createTestItem("Item 5");
+        Item item = createTestItem("Item 5", user);
         
         entityManager.flush();
         
@@ -145,7 +148,29 @@ class FavoriteRepositoryTest {
     /**
      * Hjelpermetode for å opprette et testelement.
      */
-    private Item createTestItem(String title) {
+    private Item createTestItem(String title, User seller) {
+        // Create required entities with unique values
+        Category category = new Category();
+        category.setName("Test Category: " + title);
+        category.setDescription("Test Category Description: " + title);
+        category = entityManager.persist(category);
+        
+        Location location = new Location();
+        location.setCity("Test City");
+        location.setRegion("Test Region");
+        location.setLatitude(10.0);
+        location.setLongitude(10.0);
+        location = entityManager.persist(location);
+        
+        ShippingOption shippingOption = new ShippingOption();
+        shippingOption.setName("Test Shipping");
+        shippingOption.setDescription("Test Shipping Description");
+        shippingOption.setPrice(50.0);
+        shippingOption.setEstimatedDays(2);
+        shippingOption.setTracked(true);
+        shippingOption = entityManager.persist(shippingOption);
+        
+        // Create item with required fields
         Item item = new Item();
         item.setTitle(title);
         item.setShortDescription("Short description");
@@ -161,9 +186,12 @@ class FavoriteRepositoryTest {
         item.setVippsPaymentEnabled(true);
         item.setCreatedAt(LocalDateTime.now());
         item.setUpdatedAt(LocalDateTime.now());
+        item.setSeller(seller);
         
-        // Merk: Vi mangler å sette seller, category, location og shippingOption
-        // Dette kan medføre feil, men for denne testen er det nok
+        // Set the required relationships
+        item.setCategory(category);
+        item.setLocation(location);
+        item.setShippingOption(shippingOption);
         
         return entityManager.persist(item);
     }
