@@ -10,9 +10,15 @@ import stud.ntnu.no.backend.favorite.service.FavoriteService;
 
 import java.util.List;
 
+/**
+ * REST-kontroller for å håndtere favoritt-operasjoner.
+ * Eksponerer endepunkter for å hente, opprette, oppdatere og slette favoritter.
+ */
 @RestController
 @RequestMapping("/api/favorites")
+@CrossOrigin(origins = "*")
 public class FavoriteController {
+
     private final FavoriteService favoriteService;
 
     @Autowired
@@ -20,26 +26,72 @@ public class FavoriteController {
         this.favoriteService = favoriteService;
     }
 
+    /**
+     * Henter alle favoritter.
+     *
+     * @return Liste med alle favoritter
+     */
     @GetMapping
     public ResponseEntity<List<FavoriteDTO>> getAllFavorites() {
-        return ResponseEntity.ok(favoriteService.getAllFavorites());
+        List<FavoriteDTO> favorites = favoriteService.getAllFavorites();
+        return ResponseEntity.ok(favorites);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<FavoriteDTO>> getFavoritesByUserId(@PathVariable String userId) {
-        return ResponseEntity.ok(favoriteService.getFavoritesByUserId(userId));
-    }
-
+    /**
+     * Henter en spesifikk favoritt basert på ID.
+     *
+     * @param id Favorittens ID
+     * @return Favoritten med angitt ID
+     */
     @GetMapping("/{id}")
     public ResponseEntity<FavoriteDTO> getFavoriteById(@PathVariable Long id) {
-        return ResponseEntity.ok(favoriteService.getFavoriteById(id));
+        FavoriteDTO favorite = favoriteService.getFavoriteById(id);
+        return ResponseEntity.ok(favorite);
     }
 
+    /**
+     * Henter alle favoritter for en spesifikk bruker.
+     *
+     * @param userId Brukerens ID
+     * @return Liste med brukerens favoritter
+     */
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<FavoriteDTO>> getFavoritesByUserId(@PathVariable String userId) {
+        List<FavoriteDTO> favorites = favoriteService.getFavoritesByUserId(userId);
+        return ResponseEntity.ok(favorites);
+    }
+
+    /**
+     * Oppretter en ny favoritt.
+     *
+     * @param request Data for å opprette en ny favoritt
+     * @return Den nyopprettede favoritten
+     */
     @PostMapping
     public ResponseEntity<FavoriteDTO> createFavorite(@RequestBody CreateFavoriteRequest request) {
-        return new ResponseEntity<>(favoriteService.createFavorite(request), HttpStatus.CREATED);
+        FavoriteDTO createdFavorite = favoriteService.createFavorite(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdFavorite);
     }
 
+    /**
+     * Oppdaterer en eksisterende favoritt.
+     *
+     * @param id Favorittens ID
+     * @param request Data for å oppdatere favoritten
+     * @return Den oppdaterte favoritten
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<FavoriteDTO> updateFavorite(@PathVariable Long id, @RequestBody CreateFavoriteRequest request) {
+        FavoriteDTO updatedFavorite = favoriteService.updateFavorite(id, request);
+        return ResponseEntity.ok(updatedFavorite);
+    }
+
+    /**
+     * Sletter en favoritt.
+     *
+     * @param id Favorittens ID
+     * @return Tomt svar med statusen NO_CONTENT
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFavorite(@PathVariable Long id) {
         favoriteService.deleteFavorite(id);
