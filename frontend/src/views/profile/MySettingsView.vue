@@ -151,7 +151,12 @@ const handleDeleteAccount = async () => {
           </span>
           <span v-else>Save Changes</span>
         </button>
-        <button type="button" class="delete-button" @click="handleDeleteAccount" :disabled="isSubmitting">
+        <button
+          type="button"
+          class="delete-button"
+          @click="handleDeleteAccount"
+          :disabled="isSubmitting"
+        >
           Delete Account
         </button>
       </div>
@@ -326,4 +331,3 @@ const handleDeleteAccount = async () => {
   }
 }
 </style>
-

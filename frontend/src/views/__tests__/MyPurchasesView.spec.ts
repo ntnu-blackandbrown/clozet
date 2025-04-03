@@ -22,7 +22,7 @@ describe('MyPurchasesView.vue', () => {
       created_at: '2024-01-15',
       updated_at: '2024-01-16',
       isAvailable: false,
-    }
+    },
   ]
 
   beforeEach(() => {
@@ -39,9 +39,9 @@ describe('MyPurchasesView.vue', () => {
             name: 'ProductList',
             props: ['items'],
             template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     await flushPromises()
@@ -61,9 +61,9 @@ describe('MyPurchasesView.vue', () => {
             name: 'ProductList',
             props: ['items'],
             template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     await flushPromises()
@@ -81,9 +81,9 @@ describe('MyPurchasesView.vue', () => {
             name: 'ProductList',
             props: ['items'],
             template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     await flushPromises()

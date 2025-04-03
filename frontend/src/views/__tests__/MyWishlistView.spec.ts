@@ -22,7 +22,7 @@ describe('MyWishlistView.vue', () => {
       created_at: '2024-03-10',
       updated_at: '2024-03-11',
       isAvailable: true,
-    }
+    },
   ]
 
   beforeEach(() => {
@@ -39,9 +39,9 @@ describe('MyWishlistView.vue', () => {
             name: 'ProductList',
             props: ['items'],
             template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     await flushPromises()
@@ -61,9 +61,9 @@ describe('MyWishlistView.vue', () => {
             name: 'ProductList',
             props: ['items'],
             template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     await flushPromises()
@@ -81,9 +81,9 @@ describe('MyWishlistView.vue', () => {
             name: 'ProductList',
             props: ['items'],
             template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     await flushPromises()

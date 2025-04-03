@@ -41,9 +41,9 @@ describe('MyPostsView.vue', () => {
             name: 'ProductList',
             props: ['items'],
             template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     await flushPromises()
@@ -64,9 +64,9 @@ describe('MyPostsView.vue', () => {
             name: 'ProductList',
             props: ['items'],
             template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     await flushPromises()
@@ -85,9 +85,9 @@ describe('MyPostsView.vue', () => {
             name: 'ProductList',
             props: ['items'],
             template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     await flushPromises()
