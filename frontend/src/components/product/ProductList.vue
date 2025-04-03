@@ -9,8 +9,13 @@ const items = ref<Product[]>([])
 const selectedProductId = ref<number | null>(null)
 
 onMounted(async () => {
-  const response = await axios.get('api/items')
-  items.value = response.data
+  try {
+    const response = await axios.get('api/items')
+    items.value = response.data
+  } catch (error) {
+    console.error('Failed to fetch items:', error)
+    // Optionally, you can set an error state or show a user-friendly message
+  }
 })
 
 const showProductModal = ref(false)
