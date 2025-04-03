@@ -1,23 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
 import axios from 'axios'
-
-interface Conversation {
-  id: number
-  receiverName: string
-  itemId: number
-  listOfMessages: Message[]
-  latestMessageTimestamp: string
-}
-
-interface Message {
-  id: number
-  content: string
-  createdAt: string
-  senderId: number
-  receiverId: number
-  conversationId: number
-}
+import type { Message, Conversation } from '@/types/messaging'
 
 interface ItemDTO {
   id: number

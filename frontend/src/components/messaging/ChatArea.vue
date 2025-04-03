@@ -1,23 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import MessageInput from './MessageInput.vue'
-
-interface Message {
-  id: number
-  content: string
-  createdAt: string
-  senderId: number
-  receiverId: number
-  conversationId: number
-}
-
-interface Conversation {
-  id: number
-  receiverName: string
-  itemId: number
-  listOfMessages: Message[]
-  latestMessageTimestamp: string
-}
+import type { Message, Conversation } from '@/types/messaging'
 
 const props = defineProps<{
   activeConversationId: number
@@ -40,7 +24,7 @@ const handleSendMessage = (text: string) => {
       createdAt: new Date().toISOString(),
       senderId: 1, // This should be replaced with actual user ID
       receiverId: activeConversation.value.id,
-      conversationId: props.activeConversationId
+      conversationId: props.activeConversationId,
     },
   })
 }
@@ -67,17 +51,24 @@ const handleSendMessage = (text: string) => {
         <!-- Add date divider if it's the first message or if the date changes -->
         <div v-if="index === 0" class="date-divider">Today</div>
 
-        <div class="message" :class="{ sent: message.senderId === 1, received: message.senderId !== 1 }">
+        <div
+          class="message"
+          :class="{ sent: message.senderId === 1, received: message.senderId !== 1 }"
+        >
           <!-- Text message -->
           <div class="message-content">
             {{ message.content }}
           </div>
 
-          <div class="message-time">{{ new Date(message.createdAt).toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-          }) }}</div>
+          <div class="message-time">
+            {{
+              new Date(message.createdAt).toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+              })
+            }}
+          </div>
           <div v-if="message.senderId === 1" class="message-status">Sent</div>
         </div>
       </template>
@@ -87,7 +78,6 @@ const handleSendMessage = (text: string) => {
     <MessageInput v-if="activeConversation" @send-message="handleSendMessage" />
   </div>
 </template>
-
 
 <style scoped>
 .chat-area {
