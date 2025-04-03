@@ -1,7 +1,7 @@
 <script setup>
-import ProductList from '@/views/ProductListView.vue'
 import Badge from '@/components/utils/Badge.vue'
 import { useRouter } from 'vue-router'
+import ProductListView from '@/views/ProductListView.vue'
 
 const router = useRouter()
 </script>
@@ -49,7 +49,7 @@ const router = useRouter()
       <div class="featured-section">
         <h4>Featured Products</h4>
         <div class="featured-products">
-          <ProductList />
+          <ProductListView />
         </div>
       </div>
     </div>

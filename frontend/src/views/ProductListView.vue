@@ -2,12 +2,13 @@
 import { ref, onMounted } from 'vue'
 import axios from '@/api/axios.ts'
 import type { Product } from '@/types/product'
+import ProductList from '@/components/product/ProductList.vue'
 
 const items = ref<Product[]>([])
 
 onMounted(async () => {
   try {
-    const response = await axios.get('api/items')
+    const response = await axios.get('api/marketplace/items')
     items.value = response.data
   } catch (error) {
     console.error('Failed to fetch items:', error)
