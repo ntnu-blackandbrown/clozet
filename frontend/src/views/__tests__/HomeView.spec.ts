@@ -34,7 +34,7 @@ describe('HomePage.vue', () => {
     expect(wrapper.text()).toContain('The new way to shop for clothes')
   })
 
-  it('renders five Badge components with correct names', () => {
+  it('renders four Badge components with correct names', () => {
     // Provide a custom stub to capture props for Badge
     const BadgeStub = {
       name: 'Badge',
@@ -50,9 +50,9 @@ describe('HomePage.vue', () => {
       },
     })
     const badges = wrapper.findAllComponents({ name: 'Badge' })
-    expect(badges.length).toBe(5)
+    expect(badges.length).toBe(4)
     const badgeNames = badges.map(badge => badge.text())
-    expect(badgeNames).toEqual(['Tops', 'Bottoms', 'Dresses', 'Accessories', 'Shoes'])
+    expect(badgeNames).toEqual(['Tops', 'Bottoms', 'Dresses', 'Accessories'])
   })
 
   it('renders search input with correct placeholder and icon', () => {

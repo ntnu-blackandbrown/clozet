@@ -11,9 +11,9 @@ describe('Badge', () => {
   test('correct application of default props', () => {
     expect(wrapper.props().name).toBe('Test Badge')
     expect(wrapper.props().type).toBe('category')
-    expect(wrapper.props().color).toBe('#e2e8f0')
-    expect(wrapper.props().textColor).toBe('#214b89')
-    expect(wrapper.props().borderColor).toBe('#214b89')
+    expect(wrapper.props().color).toBe('#E4EAE7')
+    expect(wrapper.props().textColor).toBe('#2D353F')
+    expect(wrapper.props().borderColor).toBe('transparent')
     expect(wrapper.find('svg').exists()).toBe(true)
   })
 
