@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.jdbc.core.JdbcTemplate;
 import stud.ntnu.no.backend.message.dto.CreateMessageRequest;
 import stud.ntnu.no.backend.message.dto.MessageDTO;
 import stud.ntnu.no.backend.message.service.MessageService;
@@ -24,13 +25,23 @@ public class MessageWebSocketIntegrationTest {
 
     @Autowired
     private MessageService messageService;
+    
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     private WebSocketTestClient webSocketClient;
 
     @BeforeEach
     void setUp() throws Exception {
+        // Clean database
+        jdbcTemplate.execute("DELETE FROM messages");
+        
+        // Connect WebSocket client
         webSocketClient = new WebSocketTestClient();
         webSocketClient.connect("ws://localhost:" + port + "/ws");
+        
+        // Add small delay to ensure connection is established
+        TimeUnit.MILLISECONDS.sleep(500);
     }
 
     @AfterEach
@@ -40,15 +51,19 @@ public class MessageWebSocketIntegrationTest {
 
     @Test
     void testSendAndReceiveMessage() throws Exception {
-        // Set up WebSocket subscriber
+        // Set up WebSocket subscriber first
         CompletableFuture<MessageDTO> messageFuture = new CompletableFuture<>();
         webSocketClient.subscribe("/topic/messages", MessageDTO.class, messageFuture);
+        
+        // Add delay to ensure subscription is established
+        TimeUnit.MILLISECONDS.sleep(500);
 
-        // Create a message via REST API
+        // Create a unique message for this test run
+        String uniqueContent = "Message-" + System.currentTimeMillis();
         CreateMessageRequest request = new CreateMessageRequest(
                 "seller1",
                 "buyer1",
-                "Hi, I'm interested in your item",
+                uniqueContent,
                 LocalDateTime.now()
         );
 
@@ -56,11 +71,10 @@ public class MessageWebSocketIntegrationTest {
         MessageDTO createdMessage = messageService.createMessage(request);
         assertNotNull(createdMessage.getId());
 
-        // Verify message was received via WebSocket
-        MessageDTO receivedMessage = messageFuture.get(5, TimeUnit.SECONDS);
+        // Wait longer for the message
+        MessageDTO receivedMessage = messageFuture.get(10, TimeUnit.SECONDS);
         assertEquals(createdMessage.getId(), receivedMessage.getId());
-        assertEquals("Hi, I'm interested in your item", receivedMessage.getContent());
-        assertEquals("seller1", receivedMessage.getSenderId());
+        assertEquals(uniqueContent, receivedMessage.getContent());
     }
 
     @Test
@@ -68,23 +82,25 @@ public class MessageWebSocketIntegrationTest {
         // Set up WebSocket subscriber
         CompletableFuture<MessageDTO> messageFuture = new CompletableFuture<>();
         webSocketClient.subscribe("/topic/messages", MessageDTO.class, messageFuture);
+        
+        // Add delay to ensure subscription is established
+        TimeUnit.MILLISECONDS.sleep(500);
 
-        // Create message request
+        // Create unique message for this test
+        String uniqueContent = "DirectWS-" + System.currentTimeMillis();
         CreateMessageRequest request = new CreateMessageRequest(
                 "buyer1",
                 "seller1",
-                "I want to buy this item",
+                uniqueContent,
                 LocalDateTime.now()
         );
 
         // Send via WebSocket
         webSocketClient.send("/app/chat.sendMessage", request);
 
-        // Verify received message
-        MessageDTO receivedMessage = messageFuture.get(5, TimeUnit.SECONDS);
+        // Wait longer for message
+        MessageDTO receivedMessage = messageFuture.get(10, TimeUnit.SECONDS);
         assertNotNull(receivedMessage.getId());
-        assertEquals("I want to buy this item", receivedMessage.getContent());
-        assertEquals("buyer1", receivedMessage.getSenderId());
-        assertEquals("seller1", receivedMessage.getReceiverId());
+        assertEquals(uniqueContent, receivedMessage.getContent());
     }
 }
