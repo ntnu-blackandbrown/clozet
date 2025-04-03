@@ -7,43 +7,78 @@ const router = useRouter()
 </script>
 
 <template>
-  <h1>Welcome to Clozet!</h1>
-  <h3>The new way to shop for clothes</h3>
+  <div class="home-container">
+    <div class="content-section">
+      <h1>Welcome to Clozet!</h1>
+      <h3>The new way to shop for clothes</h3>
 
-  <!--get the five categories with the most products from the database -->
-  <div class="badge-container">
-    <Badge type="category" name="Tops" />
-    <Badge type="category" name="Bottoms" />
-    <Badge type="category" name="Dresses" />
-    <Badge type="category" name="Accessories" />
-    <Badge type="category" name="Shoes" />
-  </div>
-  <div class="search-wrapper">
-    <input class="search-bar" type="text" placeholder="Search for a product..." />
-    <!-- Inline SVG icon -->
-    <svg
-      class="search-icon"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  </div>
-  <div class="create-post-btn">
-    <button @click="router.push('/create-product')">Create a post!</button>
-  </div>
+      <!--get the five categories with the most products from the database -->
+      <div class="badge-container">
+        <Badge type="category" name="Tops" />
+        <Badge type="category" name="Bottoms" />
+        <Badge type="category" name="Dresses" />
+        <Badge type="category" name="Accessories" />
+        <Badge type="category" name="Shoes" />
+      </div>
+      <div class="search-wrapper">
+        <input class="search-bar" type="text" placeholder="Search for a product..." />
+        <!-- Inline SVG icon -->
+        <svg
+          class="search-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+      </div>
+      <div class="create-post-btn">
+        <button @click="router.push('/create-product')">Create a post!</button>
+      </div>
 
-  <div class="featured-products">
-    <ProductList />
+      <div class="featured-products">
+        <ProductList />
+      </div>
+    </div>
+    <div class="image-section">
+      <img src="@/assets/images/homepage.png" alt="Clozet Homepage" class="homepage-image" />
+    </div>
   </div>
 </template>
 
 <style scoped>
+.home-container {
+  display: flex;
+  gap: var(--spacing-xl);
+  align-items: flex-start;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.content-section {
+  flex: 1;
+  max-width: 800px;
+}
+
+.image-section {
+  flex: 1;
+  position: sticky;
+  top: var(--spacing-xl);
+  padding-top: var(--spacing-xl);
+}
+
+.homepage-image {
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: var(--border-radius-lg);
+}
+
 h1 {
   color: var(--color-limed-spruce);
   font-size: 2.5rem;
@@ -143,6 +178,23 @@ h3 {
   transform: translateY(0);
   background-color: #262D36;
   box-shadow: var(--box-shadow-light);
+}
+
+@media (max-width: 1024px) {
+  .home-container {
+    flex-direction: column;
+  }
+
+  .image-section {
+    position: static;
+    order: -1;
+    padding-top: 0;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .homepage-image {
+    max-height: 50vh;
+  }
 }
 
 @media (max-width: 768px) {
