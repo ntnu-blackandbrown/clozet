@@ -29,7 +29,6 @@ const openProductModal = (productId: number) => {
 
 <template>
   <div class="product-list">
-    <h2>Featured Products</h2>
     <div class="products-grid">
       <ProductCard
         v-for="item in items"
