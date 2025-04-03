@@ -14,10 +14,13 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
-const emit = defineEmits(['send-message'])
+const emit = defineEmits<{
+  (e: 'send-message', text: string): void
+}>()
+
 const messageText = ref('')
 
 const handleSend = () => {
