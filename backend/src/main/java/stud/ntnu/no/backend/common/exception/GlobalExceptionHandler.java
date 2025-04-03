@@ -7,6 +7,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import stud.ntnu.no.backend.history.exception.HistoryNotFoundException;
+import stud.ntnu.no.backend.history.exception.HistoryValidationException;
 import stud.ntnu.no.backend.item.exception.ItemNotFoundException;
 import stud.ntnu.no.backend.item.exception.ItemValidationException;
 import stud.ntnu.no.backend.category.exception.CategoryNotFoundException;
@@ -53,6 +55,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CategoryValidationException.class)
     public ResponseEntity<Object> handleCategoryValidationException(CategoryValidationException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    // History exception handlers
+    @ExceptionHandler(HistoryNotFoundException.class)
+    public ResponseEntity<Object> handleHistoryNotFoundException(HistoryNotFoundException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(HistoryValidationException.class)
+    public ResponseEntity<Object> handleHistoryValidationException(HistoryValidationException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
