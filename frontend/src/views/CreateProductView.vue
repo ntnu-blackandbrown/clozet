@@ -1,11 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/UserStore'
+import { useAuthStore } from '@/stores/AuthStore'
 import ProductDisplay from '@/components/product/ProductDisplay.vue'
 
 const router = useRouter()
-const userStore = useUserStore()
+const userStore = useAuthStore()
 
 // Form data
 const formData = ref({
