@@ -5,7 +5,7 @@ import java.util.Objects;
 public class CreateFavoriteRequest {
     private String userId;
     private Long itemId;
-    private boolean isActive;
+    private Boolean isActive; // Wrapper type for å tillate null
 
     public CreateFavoriteRequest() {
     }
@@ -32,12 +32,14 @@ public class CreateFavoriteRequest {
         this.itemId = itemId;
     }
 
-    public boolean isActive() {
+    // Endret fra boolean isActive() til Boolean getIsActive()
+    public Boolean getIsActive() {
         return isActive;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
+    // Setter kan beholdes som den er, eller endres til å bruke Boolean om du ønsker konsistens
+    public void setIsActive(Boolean active) {
+        this.isActive = active;
     }
 
     @Override
@@ -45,9 +47,9 @@ public class CreateFavoriteRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CreateFavoriteRequest that = (CreateFavoriteRequest) o;
-        return isActive == that.isActive &&
-            Objects.equals(userId, that.userId) &&
-            Objects.equals(itemId, that.itemId);
+        return Objects.equals(userId, that.userId) &&
+            Objects.equals(itemId, that.itemId) &&
+            Objects.equals(isActive, that.isActive);
     }
 
     @Override
