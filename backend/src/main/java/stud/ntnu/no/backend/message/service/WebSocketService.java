@@ -7,6 +7,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import stud.ntnu.no.backend.message.dto.MessageDTO;
 
+import java.util.Map;
+
 @Service
 public class WebSocketService {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketService.class);
@@ -45,6 +47,27 @@ public class WebSocketService {
             messagingTemplate.convertAndSend("/topic/messages.delete", messageId);
         } catch (Exception e) {
             logger.error("Error broadcasting message deletion: {}", e.getMessage(), e);
+        }
+    }
+
+    // Add these methods to your existing WebSocketService class
+
+    public void notifyConversationArchived(String conversationId, String userId) {
+        try {
+            logger.info("Broadcasting conversation archive: {}", conversationId);
+            messagingTemplate.convertAndSend("/topic/conversations.archive",
+                Map.of("conversationId", conversationId, "userId", userId));
+        } catch (Exception e) {
+            logger.error("Error broadcasting conversation archive: {}", e.getMessage(), e);
+        }
+    }
+
+    public void notifyConversationDeleted(String conversationId) {
+        try {
+            logger.info("Broadcasting conversation deletion: {}", conversationId);
+            messagingTemplate.convertAndSend("/topic/conversations.delete", conversationId);
+        } catch (Exception e) {
+            logger.error("Error broadcasting conversation deletion: {}", e.getMessage(), e);
         }
     }
 }
