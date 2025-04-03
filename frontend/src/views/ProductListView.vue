@@ -6,8 +6,13 @@ import type { Product } from '@/types/product'
 const items = ref<Product[]>([])
 
 onMounted(async () => {
-  const response = await axios.get('api/items')
-  items.value = response.data
+  try {
+    const response = await axios.get('api/items')
+    items.value = response.data
+  } catch (error) {
+    console.error('Failed to fetch items:', error)
+    items.value = [] // fallback to empty list
+  }
 })
 </script>
 
