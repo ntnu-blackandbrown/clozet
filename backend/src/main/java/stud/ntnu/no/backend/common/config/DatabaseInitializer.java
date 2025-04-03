@@ -330,6 +330,7 @@ public class DatabaseInitializer {
         favorite.setUser(user);  // Set the actual User object
         favorite.setItem(item);  // Set the actual Item object
         favorite.setCreatedAt(LocalDateTime.now());
+        favorite.setActive(true); // Add this line to set a default value
 
         favoriteRepository.save(favorite);
         logger.debug("Created favorite for user {} on item {}", user.getUsername(), item.getTitle());
