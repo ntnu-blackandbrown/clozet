@@ -70,7 +70,7 @@ describe('ProductListView.vue (real ProductList)', () => {
     await flushPromises()
 
     const productList = wrapper.findComponent(ProductList)
-    expect(productList.props('items')).toEqual([])
+    expect((productList.props() as { items: any[] }).items).toEqual([])
   })
 
   it('renders with empty items if API fails', async () => {
@@ -85,6 +85,6 @@ describe('ProductListView.vue (real ProductList)', () => {
     await flushPromises()
 
     const productList = wrapper.findComponent(ProductList)
-    expect(productList.props('items')).toEqual([])
+    expect((productList.props() as { items: any[] }).items).toEqual([])
   })
 })
