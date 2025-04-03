@@ -101,23 +101,29 @@ public class DatabaseInitializer {
   protected void cleanDatabase() {
     logger.info("Cleaning database - removing existing records");
 
-    // Delete favorites first
-    logger.info("Deleting favorites");
-    favoriteRepository.deleteAll();
+    try {
+      // Delete favorites first
+      logger.info("Deleting favorites");
+      // Use a custom JPQL delete query instead of deleteAll() to avoid loading entities
+      favoriteRepository.deleteAllInBatch();
 
-    // Delete dependent entities to avoid foreign key constraints
-    logger.info("Deleting items");
-    itemRepository.deleteAll();
-    
-    logger.info("Deleting verification tokens");
-    verificationTokenRepository.deleteAll();
+      // Delete dependent entities to avoid foreign key constraints
+      logger.info("Deleting items");
+      itemRepository.deleteAllInBatch();
+      
+      logger.info("Deleting verification tokens");
+      verificationTokenRepository.deleteAllInBatch();
 
-    logger.info("Deleting password reset tokens");
-    passwordResetTokenRepository.deleteAll();
+      logger.info("Deleting password reset tokens");
+      passwordResetTokenRepository.deleteAllInBatch();
 
-    // Then delete users
-    logger.info("Deleting users");
-    userRepository.deleteAll();
+      // Then delete users
+      logger.info("Deleting users");
+      userRepository.deleteAllInBatch();
+    } catch (Exception e) {
+      logger.error("Error cleaning database", e);
+      // Continue with initialization despite cleanup errors
+    }
   }
 
   @Transactional
@@ -330,7 +336,7 @@ public class DatabaseInitializer {
         favorite.setUser(user);  // Set the actual User object
         favorite.setItem(item);  // Set the actual Item object
         favorite.setCreatedAt(LocalDateTime.now());
-        favorite.setActive(true); // Add this line to set a default value
+        favorite.setActive(true); // Explicitly set active to true to avoid null value assignment
 
         favoriteRepository.save(favorite);
         logger.debug("Created favorite for user {} on item {}", user.getUsername(), item.getTitle());

@@ -27,7 +27,7 @@ public class Favorite {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "active", nullable = false)
+    @Column(name = "active", nullable = false, columnDefinition = "boolean default false")
     private boolean active;
 
     /**
