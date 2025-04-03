@@ -207,6 +207,7 @@ public class DatabaseInitializer {
       user.setActive(true);
       user.setCreatedAt(LocalDateTime.now());
       user.setUpdatedAt(LocalDateTime.now());
+      user.setProfilePictureUrl("https://res.cloudinary.com/dmoe4eqt4/image/upload/v1743716695/items/366/fvzxobi9bepgcxl7xv3f.png");
       
       users.add(userRepository.save(user));
     }
