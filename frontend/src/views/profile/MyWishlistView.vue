@@ -1,52 +1,26 @@
-<script setup>
-import { ref } from 'vue'
-import ProductCard from '@/components/product/ProductCard.vue'
-import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import axios from '@/api/axios.ts'
+import ProductList from '@/components/product/ProductList.vue'
+import type { Product } from '@/types/product'
 
-const showProductModal = ref(false)
-const selectedProductId = ref('')
+const items = ref<Product[]>([])
 
-const wishlistItems = [
-  {
-    id: 'wish-1',
-    title: 'Leather Wallet',
-    price: 450,
-    category: 'Accessories',
-    image: '/src/assets/images/image-3.png',
-  },
-  {
-    id: 'wish-2',
-    title: 'Smart Watch',
-    price: 2500,
-    category: 'Electronics',
-    image: '/src/assets/images/Screenshot 2025-03-26 at 17.26.14.png',
-  },
-]
-
-const openProductModal = (productId) => {
-  selectedProductId.value = productId
-  showProductModal.value = true
-}
+onMounted(async () => {
+  try {
+    const response = await axios.get('api/items/wishlist')
+    items.value = response.data
+  } catch (error) {
+    console.error('Failed to fetch wishlist:', error)
+    items.value = [] // fallback to empty list
+  }
+})
 </script>
 
 <template>
   <div class="my-wishlist-container">
     <h2>My Wishlist</h2>
-    <div class="wishlist-grid">
-      <ProductCard
-        v-for="item in wishlistItems"
-        :key="item.id"
-        v-bind="item"
-        @click="openProductModal(item.id)"
-      />
-    </div>
-
-    <!-- Product Display Modal -->
-    <ProductDisplayModal
-      v-if="showProductModal"
-      :productId="selectedProductId"
-      @close="showProductModal = false"
-    />
+    <ProductList :items="items" />
   </div>
 </template>
 
@@ -59,12 +33,6 @@ const openProductModal = (productId) => {
   margin-bottom: 2rem;
   color: #333;
   font-size: 1.5rem;
-}
-
-.wishlist-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
 }
 
 @media (max-width: 768px) {

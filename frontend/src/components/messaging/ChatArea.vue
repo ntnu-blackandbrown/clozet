@@ -1,10 +1,38 @@
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import MessageInput from './MessageInput.vue'
+import type { Message, Conversation } from '@/types/messaging'
+
+const props = defineProps<{
+  activeChat: number | null
+  messages: Message[]
+  contact: Conversation | undefined
+}>()
+
+const emit = defineEmits(['send-message'])
+
+const handleSendMessage = (text: string) => {
+  if (!props.activeChat || !props.contact) return
+
+  emit('send-message', {
+    chatId: props.activeChat,
+    message: {
+      content: text,
+      senderId: 1, // This should be replaced with actual user ID
+      receiverId: props.contact.id,
+      timestamp: new Date().toISOString(),
+    },
+  })
+}
+</script>
+
 <template>
   <div class="chat-area">
     <div class="chat-header">
       <div class="chat-contact">
         <div class="contact-avatar"></div>
         <div class="contact-info">
-          <div class="contact-name">{{ contact?.name || 'Select a chat' }}</div>
+          <div class="contact-name">{{ contact?.receiverName || 'Select a chat' }}</div>
         </div>
       </div>
       <div class="chat-actions" v-if="contact">
@@ -19,78 +47,33 @@
         <!-- Add date divider if it's the first message or if the date changes -->
         <div v-if="index === 0" class="date-divider">Today</div>
 
-        <div class="message" :class="{ sent: message.sent, received: !message.sent }">
+        <div
+          class="message"
+          :class="{ sent: message.senderId === 1, received: message.senderId !== 1 }"
+        >
           <!-- Text message -->
-          <div v-if="message.type === 'text'" class="message-content">
+          <div class="message-content">
             {{ message.content }}
           </div>
 
-          <!-- File message -->
-          <div v-else-if="message.type === 'file'" class="message-file">
-            <i class="far fa-file-word"></i>
-            <div class="file-info">
-              <div class="file-name">{{ message.fileName }}</div>
-              <div class="file-size">{{ message.fileSize }}</div>
-            </div>
+          <div class="message-time">
+            {{
+              new Date(message.createdAt).toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+              })
+            }}
           </div>
-
-          <!-- Audio message -->
-          <div v-else-if="message.type === 'audio'" class="message-audio">
-            <button class="play-btn">
-              <i class="fas fa-play"></i>
-            </button>
-            <div class="audio-wave"></div>
-            <div class="audio-duration">{{ message.duration }}</div>
-          </div>
-
-          <div class="message-time">{{ message.time }}</div>
-          <div v-if="message.sent" class="message-status">Sent</div>
+          <div v-if="message.senderId === 1" class="message-status">Sent</div>
         </div>
       </template>
     </div>
     <div v-else class="no-chat-selected">Select a chat to start messaging</div>
 
-    <MessageInput v-if="contact" @send-message="handleSendMessage" />
+    <MessageInput v-if="activeChat" @send-message="handleSendMessage" />
   </div>
 </template>
-
-<script setup>
-import { ref } from 'vue'
-import MessageInput from './MessageInput.vue'
-
-const props = defineProps({
-  activeChat: {
-    type: Number,
-    required: true,
-  },
-  messages: {
-    type: Array,
-    default: () => [],
-  },
-  contact: {
-    type: Object,
-    default: null,
-  },
-})
-
-const emit = defineEmits(['send-message'])
-
-const handleSendMessage = (text) => {
-  emit('send-message', {
-    chatId: props.activeChat,
-    message: {
-      type: 'text',
-      content: text,
-      time: new Date().toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      }),
-      sent: true,
-    },
-  })
-}
-</script>
 
 <style scoped>
 .chat-area {

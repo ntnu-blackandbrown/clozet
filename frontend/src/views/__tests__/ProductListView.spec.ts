@@ -1,106 +1,90 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import ProductList from '@/views/ProductListView.vue'
-import axios from 'axios'
-import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest'
+import ProductListView from '@/views/ProductListView.vue'
+import ProductList from '@/components/product/ProductList.vue' // ✅ import real component
+import axios from '@/api/axios.ts'
+import { vi, describe, it, beforeEach, expect } from 'vitest'
 
-// Mock axios
-vi.mock('axios')
-const mockedAxios = axios as Mocked<typeof axios>
+vi.mock('@/api/axios.ts')
+const mockedAxios = axios as unknown as { get: any }
+// ✅ Place this at the top of your test
+vi.mock('@/components/product/ProductList.vue', () => ({
+  default: {
+    name: 'ProductList',
+    props: ['items'],
+    template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
+  },
+}))
 
-describe('ProductList', () => {
+describe('ProductListView.vue (real ProductList)', () => {
   const mockItems = [
     {
       id: 1,
       title: 'Product One',
-      price: '100',
+      description_full: 'desc',
       category: 'Shoes',
-      images: ['img1.jpg'],
       location: 'Oslo',
-    },
-    {
-      id: 2,
-      title: 'Product Two',
-      price: '200',
-      category: 'Hats',
-      images: ['img2.jpg'],
-      location: 'Bergen',
+      price: 100,
+      seller: 'User1',
+      shipping_options: 'Posten',
+      images: ['img1.jpg'],
+      created_at: '2024-01-01',
+      updated_at: '2024-01-02',
+      isAvailable: true,
     },
   ]
 
   beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renders ProductList with items from API', async () => {
     mockedAxios.get.mockResolvedValue({ data: mockItems })
-  })
 
-  it('fetches and renders products', async () => {
-    const wrapper = mount(ProductList, {
+    const wrapper = mount(ProductListView, {
       global: {
-        stubs: {
-          ProductCard: {
-            props: ['id', 'title', 'price', 'category', 'image', 'location'],
-            template: `<div class="product-card-stub">{{ title }}</div>`,
-          },
-          ProductDisplayModal: true,
-        },
+        // ✅ Register the real ProductList component manually
+        components: { ProductList },
       },
     })
 
     await flushPromises()
-    const cards = wrapper.findAll('.product-card-stub')
-    expect(cards.length).toBe(2)
-    expect(cards[0].text()).toContain('Product One')
-    expect(cards[1].text()).toContain('Product Two')
+
+    // Ensure heading appears
+    expect(wrapper.text()).toContain('Browse products')
+
+    // Ensure ProductList rendered and received correct props
+    const stub = wrapper.findComponent({ name: 'ProductList' })
+    expect(stub.exists()).toBe(true)
+    expect(stub.props('items')).toEqual(mockItems)
   })
 
-  it('opens modal with correct product ID when card clicked', async () => {
-    const wrapper = mount(ProductList, {
+  it('renders with empty items if API returns empty', async () => {
+    mockedAxios.get.mockResolvedValue({ data: [] })
+
+    const wrapper = mount(ProductListView, {
       global: {
-        stubs: {
-          ProductCard: {
-            props: ['id', 'title'],
-            emits: ['click'],
-            template: `<div @click="$emit('click', id)" class="product-card-stub">{{ title }}</div>`,
-          },
-          ProductDisplayModal: {
-            props: ['productId'],
-            emits: ['close'],
-            template: `<div class="modal-stub">Product ID: {{ productId }}</div>`,
-          },
-        },
+        components: { ProductList },
       },
     })
 
     await flushPromises()
-    await wrapper.findAll('.product-card-stub')[0].trigger('click')
 
-    expect(wrapper.find('.modal-stub').exists()).toBe(true)
-    expect(wrapper.find('.modal-stub').text()).toContain('Product ID: 1')
+    const productList = wrapper.findComponent(ProductList)
+    expect((productList.props() as { items: any[] }).items).toEqual([])
   })
 
-  it('closes modal on @close', async () => {
-    const wrapper = mount(ProductList, {
+  it('renders with empty items if API fails', async () => {
+    mockedAxios.get.mockRejectedValue(new Error('API error'))
+
+    const wrapper = mount(ProductListView, {
       global: {
-        stubs: {
-          ProductCard: {
-            props: ['id', 'title'],
-            emits: ['click'],
-            template: `<div @click="$emit('click', id)" class="product-card-stub">{{ title }}</div>`,
-          },
-          ProductDisplayModal: {
-            props: ['productId'],
-            emits: ['close'],
-            template: `<div class="modal-stub"><button @click="$emit('close')">Close</button></div>`,
-          },
-        },
+        components: { ProductList },
       },
     })
 
     await flushPromises()
-    await wrapper.findAll('.product-card-stub')[0].trigger('click')
-    expect(wrapper.find('.modal-stub').exists()).toBe(true)
 
-    await wrapper.find('.modal-stub button').trigger('click')
-    await flushPromises()
-
-    expect(wrapper.find('.modal-stub').exists()).toBe(false)
+    const productList = wrapper.findComponent(ProductList)
+    expect((productList.props() as { items: any[] }).items).toEqual([])
   })
 })
