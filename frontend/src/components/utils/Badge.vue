@@ -14,9 +14,9 @@ interface BadgeProps {
 
 const props = withDefaults(defineProps<BadgeProps>(), {
   type: 'category',
-  color: '#e2e8f0',
-  textColor: '#214b89',
-  borderColor: '#214b89',
+  color: 'var(--color-conch)', // Using Conch as background
+  textColor: '#2D353F', // Outer Sea for text
+  borderColor: '#2D353F', // Outer Sea for border
 })
 
 const currentIcon = computed(() => {
@@ -55,18 +55,35 @@ const badgeStyle = computed(() => ({
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.5rem 0.75rem;
-  border-radius: 9999px;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--border-radius-lg);
   font-size: 0.875rem;
   font-weight: 500;
-  margin-right: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-right: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+  transition: var(--transition-smooth);
+  cursor: pointer;
+  box-shadow: var(--box-shadow-light);
+}
+
+.badge:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--box-shadow-medium);
+  background-color: var(--color-conch-light) !important;
+  border-color: #2D353F !important;
+  color: #2D353F !important;
+}
+
+.badge:active {
+  transform: translateY(0);
+  background-color: var(--color-conch-dark) !important;
 }
 
 .badge-icon {
   width: 1rem;
   height: 1rem;
-  margin-right: 0.375rem;
+  margin-right: var(--spacing-xs);
+  stroke: #2D353F;
 }
 
 .badge-text {

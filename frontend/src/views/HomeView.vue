@@ -44,34 +44,72 @@ const router = useRouter()
 </template>
 
 <style scoped>
+h1 {
+  color: var(--color-limed-spruce);
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+  letter-spacing: -0.02em;
+}
+
+h3 {
+  color: var(--color-limed-spruce);
+  font-size: 1.25rem;
+  font-weight: 400;
+  margin-bottom: var(--spacing-xl);
+  opacity: 0.8;
+}
+
+.badge-container {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-xl);
+}
+
 .featured-products {
   width: 100%;
+  margin-top: var(--spacing-xl);
 }
 
 .search-wrapper {
   position: relative;
   display: inline-block;
-  margin-right: 10px;
+  margin-right: var(--spacing-md);
 }
 
 .search-bar {
   width: 300px;
-  padding: 8px 12px;
-  font-size: 16px;
-  border: 2px solid black;
-  border-radius: 24px;
+  padding: var(--spacing-sm) var(--spacing-lg);
   padding-right: 40px;
+  font-size: 0.95rem;
+  border: 2px solid #2D353F;
+  border-radius: var(--border-radius-lg);
+  background-color: var(--color-white);
+  transition: var(--transition-smooth);
+  color: var(--color-limed-spruce);
+}
+
+.search-bar:focus {
+  outline: none;
+  border-color: #2D353F;
+  box-shadow: 0 0 0 3px rgba(45, 53, 63, 0.2);
+}
+
+.search-bar::placeholder {
+  color: #9CA3AF;
 }
 
 .search-icon {
   position: absolute;
-  right: 10px;
+  right: var(--spacing-md);
   top: 50%;
   width: 20px;
   height: 20px;
   transform: translateY(-50%);
   pointer-events: none;
-  stroke: black;
+  stroke: #2D353F;
+  transition: var(--transition-smooth);
 }
 
 .create-post-btn {
@@ -80,25 +118,52 @@ const router = useRouter()
 }
 
 .create-post-btn button {
-  background-color: gray;
-  color: white;
+  background-color: #2D353F;
+  color: var(--color-white);
   border: none;
-  padding: 10px 20px;
-  border-radius: 24px;
-  font-size: 16px;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  font-size: 0.95rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: var(--transition-bounce);
+  box-shadow: var(--box-shadow-light);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
 .create-post-btn button:hover {
-  background-color: black;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #343D48;
+  transform: translateY(-2px);
+  box-shadow: var(--box-shadow-medium);
 }
 
 .create-post-btn button:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #262D36;
+  box-shadow: var(--box-shadow-light);
+}
+
+@media (max-width: 768px) {
+  .search-wrapper {
+    display: block;
+    margin-right: 0;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .search-bar {
+    width: 100%;
+  }
+
+  .create-post-btn {
+    display: block;
+    width: 100%;
+  }
+
+  .create-post-btn button {
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>
