@@ -16,7 +16,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import MessagesSidebar from '../components/MessagesSidebar.vue'
+import MessagesSidebar from '../components/messaging/MessagesSidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
 
 const router = useRouter()
