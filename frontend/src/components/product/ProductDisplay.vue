@@ -133,6 +133,9 @@ onMounted(async () => {
 <style>
 .product-display {
   display: flex;
+  background-color: #EFF7F3;
+  padding: 2rem;
+  border-radius: 8px;
 }
 
 .product-image-container {
@@ -242,7 +245,8 @@ onMounted(async () => {
 .product-details-list {
   margin: 1rem 0;
   padding: 1rem;
-  background-color: #f8f9fa;
+  /*background-color: #f8f9fa;*/
+  background-color: white;
   border-radius: 8px;
 }
 
