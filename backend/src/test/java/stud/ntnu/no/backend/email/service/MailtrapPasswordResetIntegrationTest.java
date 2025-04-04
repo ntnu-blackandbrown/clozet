@@ -1,5 +1,7 @@
 package stud.ntnu.no.backend.email.service;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,9 +26,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("dev") // Use dev profile with Mailtrap configuration
+@ActiveProfiles("test") // Changed to test profile to align with other tests
+@Tag("mailtrap")
+@Disabled("Run manually when testing email integration")
 public class MailtrapPasswordResetIntegrationTest {
 
     @Autowired
@@ -43,9 +48,20 @@ public class MailtrapPasswordResetIntegrationTest {
     
     @Autowired
     private EmailService emailService;
+    
+    private boolean isMailtrapConfigured() {
+        // Check if Mailtrap is configured properly
+        return emailConfig != null && 
+               emailConfig.getBaseUrl() != null && 
+               emailConfig.getEmailFrom() != null &&
+               System.getProperty("runMailtrapTests") != null;
+    }
 
     @Test
     void testPasswordResetEmailDelivery() {
+        // Skip test if Mailtrap is not configured
+        assumeTrue(isMailtrapConfigured(), "Mailtrap is not configured properly or tests not explicitly enabled");
+        
         // Arrange
         String testEmail = "test@example.com";
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -106,6 +122,9 @@ public class MailtrapPasswordResetIntegrationTest {
 
     @Test
     void testCompletePasswordResetFlow() {
+        // Skip test if Mailtrap is not configured
+        assumeTrue(isMailtrapConfigured(), "Mailtrap is not configured properly or tests not explicitly enabled");
+        
         // Arrange
         String testEmail = "test@example.com";
         String oldPassword = "oldpassword";
