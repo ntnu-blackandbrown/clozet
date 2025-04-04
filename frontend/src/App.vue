@@ -32,8 +32,8 @@ async function logout() {
             <img src="@/assets/light-green.png" alt="Clozet Logo" class="logo-image" />
           </RouterLink>
           <nav class="main-nav">
-            <RouterLink to="/profile">Profile</RouterLink>
-            <RouterLink to="/messages">Messages</RouterLink>
+            <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
+            <RouterLink v-if="isLoggedIn" to="/messages">Messages</RouterLink>
           </nav>
         </div>
 

@@ -2,8 +2,21 @@
 import Badge from '@/components/utils/Badge.vue'
 import { useRouter } from 'vue-router'
 import ProductListView from '@/views/ProductListView.vue'
+import { useAuthStore } from '@/stores/AuthStore'
+import LoginRegisterModal from '@/views/LoginRegisterView.vue'
+import { ref } from 'vue'
 
 const router = useRouter()
+const authStore = useAuthStore()
+const showLoginModal = ref(false)
+
+const handleCreatePost = () => {
+  if (authStore.isLoggedIn) {
+    router.push('/create-product')
+  } else {
+    showLoginModal.value = true
+  }
+}
 </script>
 
 <template>
@@ -31,7 +44,7 @@ const router = useRouter()
             </svg>
           </div>
           <div class="create-post-btn">
-            <button @click="router.push('/create-product')">Create a post!</button>
+            <button @click="handleCreatePost">Create a post!</button>
           </div>
         </div>
       </div>
@@ -51,10 +64,15 @@ const router = useRouter()
     </div>
   </div>
   <div class="featured-section">
-        <div class="featured-products">
-          <ProductListView />
-        </div>
-      </div>
+    <div class="featured-products">
+      <ProductListView />
+    </div>
+  </div>
+  <LoginRegisterModal
+    v-if="showLoginModal"
+    @close="showLoginModal = false"
+    :customTitle="'Please login to create a post'"
+  />
 </template>
 
 <style scoped>

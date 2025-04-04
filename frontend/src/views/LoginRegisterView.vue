@@ -7,13 +7,24 @@ import BaseModal from '@/components/modals/BaseModal.vue'
 
 const authStore = useAuthStore()
 const emit = defineEmits(['close'])
+const props = defineProps({
+  customTitle: {
+    type: String,
+    default: ''
+  }
+})
 const isLogin = ref(true)
 const isSubmitting = ref(false)
 const statusMessage = ref('')
 const statusType = ref('')
 const debugInfo = ref('')
 
-const formTitle = computed(() => (isLogin.value ? 'Login' : 'Register'))
+const formTitle = computed(() => {
+  if (props.customTitle) {
+    return isLogin.value ? props.customTitle : props.customTitle.replace('login', 'register')
+  }
+  return isLogin.value ? 'Login' : 'Register'
+})
 const toggleText = computed(() =>
   isLogin.value ? 'Need an account? Register' : 'Already have an account? Login',
 )
