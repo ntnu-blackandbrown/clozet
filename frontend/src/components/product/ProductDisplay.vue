@@ -70,7 +70,12 @@ onMounted(async () => {
         <p>{{ item.longDescription }}</p>
         <Badge :name="item.categoryName || 'N/A'" type="category" />
         <Badge :name="item.locationName || 'N/A'" type="location" />
-        <Badge :name="item.price.toString()|| 'N/A'" :currency="item.currency || 'NOK'" type="price" />
+        <Badge
+          :name="item.price.toString()|| 'N/A'"
+          :currency="item.currency || 'NOK'"
+          type="price"
+          :borderColor="item.price ? '#3A4951' : undefined"
+        />
       </div>
       <div id="seller-info">
         <Badge :name="item.sellerName || 'N/A'" type="seller" />
@@ -81,13 +86,23 @@ onMounted(async () => {
         <button class="contact-button">Contact Seller</button>
         <WishlistButton :product-id="item.id" :purchased="item.purchased" />
       </div>
-      <div>
-        <p>
-          {{ item.brand }}
+      <div class="product-details-list">
+        <p class="detail-item">
+          <span class="detail-label">Brand:</span>
+          <span class="detail-value">{{ item.brand }}</span>
         </p>
-        <p>{{ item.color }}</p>
-        <p>{{ item.condition }}</p>
-        <p>{{ item.size }}</p>
+        <p class="detail-item">
+          <span class="detail-label">Color:</span>
+          <span class="detail-value">{{ item.color }}</span>
+        </p>
+        <p class="detail-item">
+          <span class="detail-label">Condition:</span>
+          <span class="detail-value">{{ item.condition }}</span>
+        </p>
+        <p class="detail-item">
+          <span class="detail-label">Size:</span>
+          <span class="detail-value">{{ item.size }}</span>
+        </p>
         <img v-if="item.vippsPaymentEnabled" src="@/assets/images/vipps.png" alt="Vipps Payment Available" class="vipps-image" />
       </div>
       <div id="product-info">
@@ -211,5 +226,29 @@ onMounted(async () => {
   max-width: 100px;
   height: auto;
   margin-top: 10px;
+}
+
+.product-details-list {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  color: #3A4951;
+}
+
+.detail-label {
+  font-weight: 600;
+  min-width: 100px;
+  color: #64748b;
+}
+
+.detail-value {
+  color: #3A4951;
 }
 </style>
