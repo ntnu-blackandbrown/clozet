@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
 import { RouterView, useRouter } from 'vue-router'
 import { useAuthStore } from './stores/AuthStore'
+import Footer from '@/components/layout/Footer.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
