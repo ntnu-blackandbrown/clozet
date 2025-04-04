@@ -18,6 +18,17 @@ const location = ref<any>(null)
 
 const item = ref<any>(null)
 
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
 onMounted(async () => {
   item.value = await getItemById()
   location.value = item.value.latitude + ',' + item.value.longitude
@@ -108,11 +119,11 @@ onMounted(async () => {
       <div id="product-info">
         <div class="info-item">
           <span class="info-label">Posted:</span>
-          <span class="info-value">{{ item.createdAt }}</span>
+          <span class="info-value">{{ formatDate(item.createdAt) }}</span>
         </div>
         <div class="info-item">
           <span class="info-label">Updated:</span>
-          <span class="info-value">{{ item.updatedAt }}</span>
+          <span class="info-value">{{ formatDate(item.updatedAt) }}</span>
         </div>
       </div>
     </div>
