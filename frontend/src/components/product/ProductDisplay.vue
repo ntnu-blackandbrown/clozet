@@ -25,12 +25,12 @@ onMounted(async () => {
   <div v-if="item" class="product-display">
     <div class="product-image-container">
       <div class="gallery-container">
-        <div v-for="(image, index) in item.images" :key="index" class="gallery-item">
+        <div v-for="(image, index) in item.images || []" :key="index" class="gallery-item">
           <img :src="image" :alt="'Product image ' + (index + 1)" class="gallery-image" />
         </div>
       </div>
       <div class="main-image-container">
-        <img :src="item.images[0]" :alt="'Main product image'" class="main-image" />
+        <img :src="item.images?.[0] || '/default-product-image.jpg'" :alt="'Main product image'" class="main-image" />
       </div>
     </div>
 
