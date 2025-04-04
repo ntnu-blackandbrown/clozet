@@ -37,12 +37,17 @@ public class TestDatabaseInitializer {
         return args -> {
             // Clear existing data
             // Ensure the deletion order respects foreign key constraints
-            favoriteRepository.deleteAll();
-            itemRepository.deleteAll();
-            categoryRepository.deleteAll();
-            locationRepository.deleteAll();
-            shippingOptionRepository.deleteAll();
-            userRepository.deleteAll();
+            try {
+                favoriteRepository.deleteAllInBatch();
+                itemRepository.deleteAllInBatch();
+                categoryRepository.deleteAllInBatch();
+                locationRepository.deleteAllInBatch();
+                shippingOptionRepository.deleteAllInBatch();
+                userRepository.deleteAllInBatch();
+            } catch (Exception e) {
+                // Log error but continue with test data setup
+                System.err.println("Error cleaning database: " + e.getMessage());
+            }
 
             // Create admin user
             User admin = new User();
@@ -142,6 +147,7 @@ public class TestDatabaseInitializer {
             favorite.setItem(item);
             favorite.setUser(user);
             favorite.setCreatedAt(LocalDateTime.now());
+            favorite.setActive(true);
             favoriteRepository.save(favorite);
         }
     }
