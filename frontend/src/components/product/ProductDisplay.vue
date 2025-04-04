@@ -18,6 +18,7 @@ const item = ref<any>(null)
 
 onMounted(async () => {
   item.value = await getItemById()
+  console.log(item.value)
 })
 </script>
 
@@ -40,14 +41,14 @@ onMounted(async () => {
       </div>
       <div id="product-description">
         <p>{{ item.description_full }}</p>
-        <Badge :name="item.category" type="category" />
-        <Badge :name="item.location" type="location" />
-        <Badge :name="item.price" type="price" />
+        <Badge :name="item.category || 'N/A'" type="category" />
+        <Badge :name="item.location || 'N/A'" type="location" />
+        <Badge :name="item.price?.toString() || 'N/A'" type="price" />
       </div>
       <div id="seller-info">
-        <Badge :name="item.seller" type="seller" />
-        <Badge :name="item.shipping_options" type="shipping" />
-        <Badge :name="item.status" type="availability" />
+        <Badge :name="item.seller || 'N/A'" type="seller" />
+        <Badge :name="item.shipping_options || 'N/A'" type="shipping" />
+        <Badge :name="item.status || 'N/A'" type="availability" />
       </div>
       <div class="action-buttons">
         <button class="contact-button">Contact Seller</button>
