@@ -3,7 +3,7 @@ spring:
     host: smtp.mailgun.org
     port: 587
     username: postmaster@sandbox25f0009567d5425391596f541e2cc221.mailgun.org
-    password: ${MAILGUN_SMTP_PASSWORD}
+    password: dc4a621abcbd772108d5c62b04ccdca0-24bda9c7-b7d3e2b1
     properties:
       mail:
         smtp:
