@@ -366,6 +366,9 @@ public class AuthController {
         // Delete the token
         passwordResetTokenRepository.delete(resetToken);
 
+        // Send confirmation email
+        emailService.sendPasswordResetConfirmationEmail(user.getEmail());
+
         return ResponseEntity.ok(new MessageResponse("Password has been reset successfully"));
     }
 

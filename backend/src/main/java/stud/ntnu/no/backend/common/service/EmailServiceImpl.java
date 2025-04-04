@@ -242,6 +242,53 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    public void sendPasswordResetConfirmationEmail(String email) {
+        String loginLink = emailConfig.getBaseUrl() + "/login";
+        String subject = "Passord tilbakestilt på Clozet";
+
+        String htmlContent = """
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background-color: #333; padding: 10px; text-align: center; }
+                .header h1 { color: white; margin: 0; }
+                .content { padding: 20px; border: 1px solid #ddd; border-top: none; }
+                .button { display: inline-block; background-color: #333; color: white; text-decoration: none; 
+                          padding: 10px 20px; border-radius: 5px; margin-top: 20px; }
+                .footer { margin-top: 20px; font-size: 12px; color: #777; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Clozet</h1>
+                </div>
+                <div class="content">
+                    <h2>Passord tilbakestilt</h2>
+                    <p>Hei!</p>
+                    <p>Passordet ditt er nå tilbakestilt.</p>
+                    <p>Hvis dette var deg, kan du logge inn med ditt nye passord:</p>
+                    <a href="%s" class="button">Logg inn</a>
+                    <p>Hvis dette <strong>ikke</strong> var deg, vennligst ta kontakt med oss umiddelbart ved å svare på denne e-posten.</p>
+                </div>
+                <div class="footer">
+                    <p>© %d Clozet. Alle rettigheter reservert.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """.formatted(
+            loginLink,
+            java.time.Year.now().getValue()
+        );
+
+        sendHtmlEmail(email, subject, htmlContent);
+        logger.info("Password reset confirmation email sent to: {}", email);
+    }
+
+    @Override
     public void sendHtmlEmail(String toEmail, String subject, String htmlContent) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
