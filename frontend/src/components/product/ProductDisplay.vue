@@ -18,7 +18,31 @@ const item = ref<any>(null)
 
 onMounted(async () => {
   item.value = await getItemById()
-  console.log(item.value)
+  console.log('=== FULL ITEM DATA ===')
+  console.log('ID:', item.value.id)
+  console.log('Title:', item.value.title)
+  console.log('Available:', item.value.available)
+  console.log('Brand:', item.value.brand)
+  console.log('Category ID:', item.value.categoryId)
+  console.log('Category Name:', item.value.categoryName)
+  console.log('Color:', item.value.color)
+  console.log('Condition:', item.value.condition)
+  console.log('Created At:', item.value.createdAt)
+  console.log('Images:', item.value.images)
+  console.log('Latitude:', item.value.latitude)
+  console.log('Location ID:', item.value.locationId)
+  console.log('Location Name:', item.value.locationName)
+  console.log('Longitude:', item.value.longitude)
+  console.log('Long Description:', item.value.longDescription)
+  console.log('Price:', item.value.price)
+  console.log('Seller ID:', item.value.sellerId)
+  console.log('Seller Name:', item.value.sellerName)
+  console.log('Shipping Option ID:', item.value.shippingOptionId)
+  console.log('Shipping Option Name:', item.value.shippingOptionName)
+  console.log('Short Description:', item.value.shortDescription)
+  console.log('Size:', item.value.size)
+  console.log('Updated At:', item.value.updatedAt)
+  console.log('=====================')
 })
 </script>
 
@@ -40,15 +64,15 @@ onMounted(async () => {
         <h3>{{ item.title }}</h3>
       </div>
       <div id="product-description">
-        <p>{{ item.description_full }}</p>
-        <Badge :name="item.category || 'N/A'" type="category" />
-        <Badge :name="item.location || 'N/A'" type="location" />
-        <Badge :name="item.price?.toString() || 'N/A'" type="price" />
+        <p>{{ item.longDescription }}</p>
+        <Badge :name="item.categoryName || 'N/A'" type="category" />
+        <Badge :name="item.locationName || 'N/A'" type="location" />
+        <Badge :name="item.price.toString()|| 'N/A'" :currency="item.currency || 'NOK'" type="price" />
       </div>
       <div id="seller-info">
-        <Badge :name="item.seller || 'N/A'" type="seller" />
-        <Badge :name="item.shipping_options || 'N/A'" type="shipping" />
-        <Badge :name="item.status || 'N/A'" type="availability" />
+        <Badge :name="item.sellerName || 'N/A'" type="seller" />
+        <Badge :name="item.shippingOptionName || 'N/A'" type="shipping" />
+        <Badge :name="item.available ? 'Available' : 'Not Available'" type="availability" />
       </div>
       <div class="action-buttons">
         <button class="contact-button">Contact Seller</button>
@@ -57,11 +81,11 @@ onMounted(async () => {
       <div id="product-info">
         <div class="info-item">
           <span class="info-label">Posted:</span>
-          <span class="info-value">{{ item.created_at }}</span>
+          <span class="info-value">{{ item.createdAt }}</span>
         </div>
         <div class="info-item">
           <span class="info-label">Updated:</span>
-          <span class="info-value">{{ item.updated_at }}</span>
+          <span class="info-value">{{ item.updatedAt }}</span>
         </div>
       </div>
     </div>
