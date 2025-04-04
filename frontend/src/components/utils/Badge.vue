@@ -131,11 +131,18 @@ const handleMouseUp = () => {
 
 .price-badge {
   cursor: default;
+  padding: var(--spacing-xs) var(--spacing-md);
+  box-shadow: none;
+  border: none !important;
+  background-color: white !important;
+  margin-right: var(--spacing-md);
+  margin-bottom: calc(var(--spacing-xs) + 5px);
+  border-radius: var(--border-radius-lg);
 }
 
 .price-badge:hover {
   transform: none;
-  box-shadow: var(--box-shadow-light);
+  box-shadow: none;
 }
 
 .price-badge:active {
