@@ -14,10 +14,13 @@ const getItemById = async () => {
   return item.data
 }
 
+const location = ref<any>(null)
+
 const item = ref<any>(null)
 
 onMounted(async () => {
   item.value = await getItemById()
+  location.value = item.value.latitude + ',' + item.value.longitude
   console.log('=== FULL ITEM DATA ===')
   console.log('ID:', item.value.id)
   console.log('Title:', item.value.title)
@@ -77,6 +80,15 @@ onMounted(async () => {
       <div class="action-buttons">
         <button class="contact-button">Contact Seller</button>
         <WishlistButton :product-id="item.id" :purchased="item.purchased" />
+      </div>
+      <div>
+        <p>
+          {{ item.brand }}
+        </p>
+        <p>{{ item.color }}</p>
+        <p>{{ item.condition }}</p>
+        <p>{{ item.size }}</p>
+        <p>{{ item.vippsPaymentEnabled }}</p>
       </div>
       <div id="product-info">
         <div class="info-item">
