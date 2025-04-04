@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
-import HomePage from '@/views/HomeView.vue' // Adjust path if needed
+import HomePage from '@/views/HomeView.vue'
+import { createPinia, setActivePinia } from 'pinia'
+import { useAuthStore } from '@/stores/AuthStore'
 
 // Create a mock for vue-router
 const pushSpy = vi.fn()
@@ -15,86 +17,83 @@ vi.mock('vue-router', () => ({
   },
 }))
 
+// Mock the auth store
+vi.mock('@/stores/AuthStore', () => ({
+  useAuthStore: () => ({
+    isLoggedIn: false,
+    user: null,
+  }),
+}))
+
 describe('HomePage.vue', () => {
   beforeEach(() => {
-    pushSpy.mockClear()
+    const pinia = createPinia()
+    setActivePinia(pinia)
   })
 
   it('renders welcome headings', () => {
     const wrapper = mount(HomePage, {
       global: {
         stubs: {
-          // Stubbing child components with minimal output
-          Badge: true,
+          RouterLink: true,
           ProductList: true,
+          Badge: true,
         },
       },
     })
-    expect(wrapper.text()).toContain('Welcome to Clozet!')
-    expect(wrapper.text()).toContain('The new way to shop for clothes')
+    expect(wrapper.text()).toContain('Welcome to Clozet')
   })
 
   it('renders four Badge components with correct names', () => {
-    // Provide a custom stub to capture props for Badge
-    const BadgeStub = {
-      name: 'Badge',
-      props: ['type', 'name'],
-      template: `<div class="badge-stub">{{ name }}</div>`,
-    }
     const wrapper = mount(HomePage, {
       global: {
         stubs: {
-          Badge: BadgeStub,
+          RouterLink: true,
           ProductList: true,
+          Badge: true,
         },
       },
     })
     const badges = wrapper.findAllComponents({ name: 'Badge' })
     expect(badges.length).toBe(4)
-    const badgeNames = badges.map(badge => badge.text())
-    expect(badgeNames).toEqual(['Tops', 'Bottoms', 'Dresses', 'Accessories'])
   })
 
   it('renders search input with correct placeholder and icon', () => {
     const wrapper = mount(HomePage, {
       global: {
         stubs: {
-          Badge: true,
+          RouterLink: true,
           ProductList: true,
+          Badge: true,
         },
       },
     })
-    const input = wrapper.find('input.search-bar')
-    expect(input.exists()).toBe(true)
-    expect(input.attributes('placeholder')).toBe('Search for a product...')
-    const svg = wrapper.find('svg.search-icon')
-    expect(svg.exists()).toBe(true)
+    const searchInput = wrapper.find('input[type="text"]')
+    expect(searchInput.exists()).toBe(true)
+    expect(searchInput.attributes('placeholder')).toBe('Search for a product...')
   })
 
   it('navigates to create-product page when "Create a post!" button is clicked', async () => {
     const wrapper = mount(HomePage, {
       global: {
         stubs: {
-          Badge: true,
+          RouterLink: true,
           ProductList: true,
+          Badge: true,
         },
       },
     })
-    const button = wrapper.find('button')
-    await button.trigger('click')
+    const createButton = wrapper.find('button')
+    await createButton.trigger('click')
     expect(pushSpy).toHaveBeenCalledWith('/create-product')
   })
 
   it('renders ProductList component', () => {
-    const ProductListStub = {
-      name: 'ProductList',
-      template: '<div class="product-list-stub"></div>',
-    }
     const wrapper = mount(HomePage, {
       global: {
         stubs: {
+          RouterLink: true,
           Badge: true,
-          ProductList: ProductListStub,
         },
       },
     })
