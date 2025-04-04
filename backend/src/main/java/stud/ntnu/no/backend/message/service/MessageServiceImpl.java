@@ -69,6 +69,26 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public MessageDTO markAsRead(Long id) {
+        Message message = messageRepository.findById(id)
+            .orElseThrow(() -> new MessageNotFoundException(id));
+
+        // Only update if not already read
+        if (!message.isRead()) {
+            message.setRead(true);
+            Message updatedMessage = messageRepository.save(message);
+            MessageDTO messageDTO = messageMapper.toDTO(updatedMessage);
+
+            // Notify via WebSocket
+            webSocketService.notifyMessageRead(messageDTO);
+
+            return messageDTO;
+        }
+
+        return messageMapper.toDTO(message);
+    }
+
+    @Override
     public void deleteMessage(Long id) {
         if (!messageRepository.existsById(id)) {
             throw new MessageNotFoundException(id);

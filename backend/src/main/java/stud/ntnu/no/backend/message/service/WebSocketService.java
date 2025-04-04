@@ -32,6 +32,15 @@ public class WebSocketService {
         }
     }
 
+    public void notifyMessageRead(MessageDTO message) {
+        try {
+            logger.info("Broadcasting message marked as read with ID: {}", message.getId());
+            messagingTemplate.convertAndSend("/topic/messages.read", message);
+        } catch (Exception e) {
+            logger.error("Error broadcasting message read status: {}", e.getMessage(), e);
+        }
+    }
+
     public void notifyMessageUpdated(MessageDTO message) {
         try {
             logger.info("Broadcasting message update with ID: {}", message.getId());

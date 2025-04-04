@@ -12,4 +12,6 @@ public interface MessageService {
     MessageDTO createMessage(CreateMessageRequest request);
     MessageDTO updateMessage(Long id, UpdateMessageRequest request);
     void deleteMessage(Long id);
+
+    MessageDTO markAsRead(Long messageId);
 }
