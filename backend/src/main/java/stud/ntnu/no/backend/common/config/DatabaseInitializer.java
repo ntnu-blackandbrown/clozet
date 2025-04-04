@@ -139,7 +139,7 @@ public class DatabaseInitializer {
     User admin = new User();
     admin.setUsername("Admin");
     admin.setPasswordHash(passwordEncoder.encode("Admin1234"));
-    admin.setEmail("admin@example.com");
+    admin.setEmail("kevindmazali@gmail.com");
     admin.setFirstName("Admin");
     admin.setLastName("Administrator");
     admin.setRole("ADMIN");
