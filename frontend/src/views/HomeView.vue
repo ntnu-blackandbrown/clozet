@@ -45,18 +45,16 @@ const router = useRouter()
           <Badge type="category" name="Accessories" />
         </div>
       </div>
-
-      <div class="featured-section">
-        <h4>Featured Products</h4>
-        <div class="featured-products">
-          <ProductListView />
-        </div>
-      </div>
     </div>
     <div class="image-section">
       <img src="@/assets/images/homepage.png" alt="Clozet Homepage" class="homepage-image" />
     </div>
   </div>
+  <div class="featured-section">
+        <div class="featured-products">
+          <ProductListView />
+        </div>
+      </div>
 </template>
 
 <style scoped>
