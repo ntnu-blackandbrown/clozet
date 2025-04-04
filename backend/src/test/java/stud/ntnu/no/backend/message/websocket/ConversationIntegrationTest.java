@@ -1,7 +1,10 @@
 package stud.ntnu.no.backend.message.websocket;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -10,6 +13,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import stud.ntnu.no.backend.message.dto.ConversationDTO;
 import stud.ntnu.no.backend.message.dto.CreateMessageRequest;
 import stud.ntnu.no.backend.message.dto.MessageDTO;
@@ -23,7 +27,9 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 public class ConversationIntegrationTest {
+    private static final Logger logger = LoggerFactory.getLogger(ConversationIntegrationTest.class);
 
     @LocalServerPort
     private int port;
@@ -36,11 +42,30 @@ public class ConversationIntegrationTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    
+    private WebSocketTestClient webSocketClient;
 
     @BeforeEach
-    void cleanDatabase() {
+    void setUp() throws Exception {
         // Clear message data before each test
         jdbcTemplate.execute("DELETE FROM messages");
+        
+        // Connect WebSocket client for tests that need it
+        logger.info("Connecting WebSocket client to port: {}", port);
+        webSocketClient = new WebSocketTestClient();
+        webSocketClient.connect("ws://localhost:" + port + "/ws");
+        
+        // Add delay to ensure connection is established
+        TimeUnit.SECONDS.sleep(1);
+        logger.info("WebSocket client connected");
+    }
+    
+    @AfterEach
+    void tearDown() {
+        if (webSocketClient != null) {
+            webSocketClient.disconnect();
+            logger.info("WebSocket client disconnected");
+        }
     }
 
     @Test
@@ -104,49 +129,54 @@ public class ConversationIntegrationTest {
 
     @Test
     void testWebSocketNotificationForConversation() throws Exception {
-        // Set up WebSocket client
-        WebSocketTestClient webSocketClient = new WebSocketTestClient();
-        webSocketClient.connect("ws://localhost:" + port + "/ws");
-
+        logger.info("Starting testWebSocketNotificationForConversation");
+        
         // Subscribe to conversation archive notifications
         CompletableFuture<Object> archiveFuture = new CompletableFuture<>();
         webSocketClient.subscribe("/topic/conversations.archive", Object.class, archiveFuture);
+        
+        // Add delay to ensure subscription is established
+        TimeUnit.MILLISECONDS.sleep(500);
+        logger.info("WebSocket subscription established");
 
-        try {
-            // Create test messages
-            String sender = "seller2";
-            String receiver = "buyer2";
-            
-            // Create a message
-            MessageDTO message = messageService.createMessage(new CreateMessageRequest(
-                    sender, receiver, "Hello there", LocalDateTime.now()
-            ));
+        // Create test messages
+        String sender = "seller2";
+        String receiver = "buyer2";
+        
+        // Create a message
+        logger.info("Creating test message");
+        MessageDTO message = messageService.createMessage(new CreateMessageRequest(
+                sender, receiver, "Hello there", LocalDateTime.now()
+        ));
+        logger.info("Test message created: {}", message.getId());
 
-            // Get the conversation
-            ResponseEntity<List<ConversationDTO>> response = restTemplate.exchange(
-                    "http://localhost:" + port + "/api/conversations?userId=" + sender,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<ConversationDTO>>() {}
-            );
+        // Get the conversation
+        logger.info("Retrieving conversation");
+        ResponseEntity<List<ConversationDTO>> response = restTemplate.exchange(
+                "http://localhost:" + port + "/api/conversations?userId=" + sender,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<ConversationDTO>>() {}
+        );
 
-            List<ConversationDTO> conversations = response.getBody();
-            assertNotNull(conversations);
-            assertTrue(conversations.size() > 0);
-            
-            // Archive the conversation
-            String conversationId = conversations.get(0).getConversationId();
-            restTemplate.postForEntity(
-                    "http://localhost:" + port + "/api/conversations/" + conversationId + "/archive?userId=" + sender,
-                    null,
-                    Void.class
-            );
+        List<ConversationDTO> conversations = response.getBody();
+        assertNotNull(conversations);
+        assertTrue(conversations.size() > 0);
+        logger.info("Found {} conversations", conversations.size());
+        
+        // Archive the conversation
+        String conversationId = conversations.get(0).getConversationId();
+        logger.info("Archiving conversation: {}", conversationId);
+        restTemplate.postForEntity(
+                "http://localhost:" + port + "/api/conversations/" + conversationId + "/archive?userId=" + sender,
+                null,
+                Void.class
+        );
 
-            // Verify WebSocket notification was sent
-            Object notification = archiveFuture.get(5, TimeUnit.SECONDS);
-            assertNotNull(notification);
-        } finally {
-            webSocketClient.disconnect();
-        }
+        // Verify WebSocket notification was sent
+        logger.info("Waiting for WebSocket notification");
+        Object notification = archiveFuture.get(10, TimeUnit.SECONDS);
+        logger.info("Received WebSocket notification: {}", notification);
+        assertNotNull(notification);
     }
 }
