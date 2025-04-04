@@ -88,7 +88,7 @@ onMounted(async () => {
         <p>{{ item.color }}</p>
         <p>{{ item.condition }}</p>
         <p>{{ item.size }}</p>
-        <p>{{ item.vippsPaymentEnabled }}</p>
+        <img v-if="item.vippsPaymentEnabled" src="@/assets/images/vipps.png" alt="Vipps Payment Available" class="vipps-image" />
       </div>
       <div id="product-info">
         <div class="info-item">
@@ -205,5 +205,11 @@ onMounted(async () => {
 
 .info-value {
   color: #64748b;
+}
+
+.vipps-image {
+  max-width: 100px;
+  height: auto;
+  margin-top: 10px;
 }
 </style>
