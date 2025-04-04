@@ -52,9 +52,61 @@
         </div>
         <button id="send" disabled>Send melding</button>
     </div>
+    <div class="controls">
+        <h3>Mark Message as Read</h3>
+        <div class="form-group">
+            <label>Message ID:</label>
+            <input id="readMessageId" placeholder="Message ID to mark as read" type="number" />
+        </div>
+        <button id="markAsRead" disabled>Mark as Read</button>
+    </div>
 </div>
 
 <script>
+    // Add this in the connect function, after subscribing to /topic/messages
+    stompClient.subscribe('/topic/messages.read', function(messageOutput) {
+        try {
+            const message = JSON.parse(messageOutput.body);
+            log(`<strong>Message marked as read:</strong><br>
+                ID: ${message.id}<br>
+                From: ${message.senderId}<br>
+                To: ${message.receiverId}<br>
+                Read: ${message.read}`, 'message-received');
+        } catch (e) {
+            log(`Error parsing read status message: ${e.message}`, 'error');
+        }
+    });
+
+    // Add this function
+    function markMessageAsRead() {
+        if (!connected || !stompClient) {
+            log('Not connected. Connect first.', 'error');
+            return;
+        }
+
+        const messageId = document.getElementById('readMessageId').value;
+        if (!messageId) {
+            log('Enter a message ID', 'error');
+            return;
+        }
+
+        try {
+            log(`Marking message ${messageId} as read`, 'message-sent');
+            stompClient.send("/app/chat.markRead", {}, messageId);
+        } catch (e) {
+            log(`Error marking message as read: ${e.message}`, 'error');
+        }
+    }
+
+    // Add this event listener
+    document.getElementById('markAsRead').addEventListener('click', markMessageAsRead);
+
+    // Update this in the connect function to enable the markAsRead button
+    document.getElementById('markAsRead').disabled = false;
+
+    // Update this in the disconnect function to disable the markAsRead button
+    document.getElementById('markAsRead').disabled = true;
+
     let stompClient = null;
     let connected = false;
     let messageCount = 0;
@@ -172,6 +224,8 @@
             console.error(e);
         }
     }
+
+
 
     // Sett opp event-lyttere
     document.getElementById('connect').addEventListener('click', connect);
