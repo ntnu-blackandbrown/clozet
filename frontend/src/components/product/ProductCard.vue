@@ -35,18 +35,12 @@ const handleClick = () => {
       <h3>{{ title }}</h3>
       <Badge
         :name="props.price.toString()"
-        :category="'price'"
+        type="price"
         :currency="'NOK'"
-        :color="'white'"
-        :textColor="'black'"
-        :borderColor="'black'"
       />
       <Badge
         :name="props.category"
-        :category="'category'"
-        :color="'white'"
-        :textColor="'black'"
-        :borderColor="'black'"
+        type="category"
       />
       <button class="view-details">View Details</button>
     </div>
