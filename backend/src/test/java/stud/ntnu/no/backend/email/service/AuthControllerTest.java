@@ -8,7 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import stud.ntnu.no.backend.common.controller.MessageResponse; // <-- Pass på å importere klassen
+import org.springframework.test.context.ActiveProfiles;
+import stud.ntnu.no.backend.common.controller.MessageResponse;
 import stud.ntnu.no.backend.common.security.controller.AuthController;
 import stud.ntnu.no.backend.common.security.util.JwtUtils;
 import stud.ntnu.no.backend.user.entity.User;
@@ -23,6 +24,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ActiveProfiles("test")
 class AuthControllerTest {
 
     @Mock
@@ -85,9 +87,6 @@ class AuthControllerTest {
         // Act
         ResponseEntity<?> result = authController.verifyEmail(token, response);
 
-        // Debug: se hva som faktisk kommer ut (klasse og hash)
-        System.out.println("RESPONSE BODY: " + result.getBody());
-
         // Assert
         // Verifiser at brukeren er aktivert
         verify(userRepository, times(1)).save(dummyUser);
@@ -103,12 +102,11 @@ class AuthControllerTest {
         assertTrue(foundAccess, "Access token cookie ble ikke satt.");
         assertTrue(foundRefresh, "Refresh token cookie ble ikke satt.");
 
-        // **** ENDRINGEN: Cast til MessageResponse og sjekk getMessage() ****
+        // Cast til MessageResponse og sjekk getMessage()
         MessageResponse messageResponse = (MessageResponse) result.getBody();
         assertNotNull(messageResponse, "Forventet at body er et MessageResponse-objekt.");
 
         // Sjekk at meldingen inneholder "Email verified successfully"
-        // (eller bruk equals hvis du forventer nøyaktig match)
         assertTrue(
             messageResponse.getMessage().contains("Email verified successfully"),
             "Forventet suksessmelding i responsen."
@@ -124,12 +122,11 @@ class AuthControllerTest {
 
         // Act
         ResponseEntity<?> result = authController.verifyEmail(token, response);
-        System.out.println("RESPONSE BODY: " + result.getBody());
 
         // Assert
         assertEquals(400, result.getStatusCodeValue());
 
-        // **** ENDRINGEN: Cast til MessageResponse og sjekk getMessage() ****
+        // Cast til MessageResponse og sjekk getMessage()
         MessageResponse messageResponse = (MessageResponse) result.getBody();
         assertNotNull(messageResponse, "Forventet at body er et MessageResponse-objekt.");
 
@@ -155,12 +152,11 @@ class AuthControllerTest {
 
         // Act
         ResponseEntity<?> result = authController.verifyEmail(token, response);
-        System.out.println("RESPONSE BODY: " + result.getBody());
 
         // Assert
         assertEquals(400, result.getStatusCodeValue());
 
-        // **** ENDRINGEN: Cast til MessageResponse og sjekk getMessage() ****
+        // Cast til MessageResponse og sjekk getMessage()
         MessageResponse messageResponse = (MessageResponse) result.getBody();
         assertNotNull(messageResponse, "Forventet at body er et MessageResponse-objekt.");
 

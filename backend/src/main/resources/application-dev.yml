@@ -17,8 +17,6 @@ spring:
 app:
   email:
     base-url: ${FRONTEND_BASE_URL:http://localhost:5173}
-  upload:
-    dir: uploads
   storage:
     use-cloudinary: true
   cloudinary:

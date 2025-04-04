@@ -1,6 +1,24 @@
 spring:
   profiles:
     active: dev
+  application:
+    name: backend
+  datasource:
+    url: jdbc:h2:file:../data/clozet;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
   mail:
     default-encoding: UTF-8
     properties:
@@ -16,6 +34,13 @@ spring:
 
 # Application-specific settings
 app:
+  jwt:
+    secret: AZTwI6sasm/p1KfaPZiSyGzIwDsEe70xTWG4H4TXatDcrqSOgWgACv1z05zhJnBIBGNWOUGuNZUnkwt86V2cqg==
+    expiration: 900000
+    cookie-max-age: 900
+    refresh-expiration: 604800000
+    refresh-cookie-max-age: 604800
+    secure-cookie: false
   email:
     from: noreply@clozet.com
     verification-expiry-hours: 24
@@ -24,11 +49,7 @@ app:
   upload:
     dir: uploads
   storage:
-    use-cloudinary: true
-  cloudinary:
-    cloud-name: dmoe4eqt4
-    api-key: 298875699675921
-    api-secret: 1kAWETGi8leIYAugHlCtvH7rBAg
+    use-cloudinary: false
 
 logging:
   level:

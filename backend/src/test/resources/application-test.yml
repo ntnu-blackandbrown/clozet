@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL
+    driverClassName: org.h2.Driver
+    username: sa
+    password: 
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  main:
+    allow-bean-definition-overriding: true
+  mail:
+    host: localhost
+    port: 25
+    username: no-reply@clozet.local
+    password: 
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls.enable: false
+
+app:
+  storage:
+    use-cloudinary: false
+  email:
+    from: test@example.com
+    base-url: http://localhost:5173
+    verification-expiry-hours: 24
+    password-reset-expiry-hours: 1
+  jwt:
+    secret: test-jwt-secret-key-for-testing-purposes-only-not-for-production
+    expiration: 900000
+    cookie-max-age: 900
+    refresh-expiration: 604800000
+    refresh-cookie-max-age: 604800
+    secure-cookie: false
+  upload:
+    dir: uploads-test 
