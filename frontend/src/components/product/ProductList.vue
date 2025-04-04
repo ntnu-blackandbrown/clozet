@@ -5,18 +5,11 @@ import ProductCard from '@/components/product/ProductCard.vue'
 import axios from 'axios'
 import type { Product } from '@/types/product'
 
-const items = ref<Product[]>([])
-const selectedProductId = ref<number | null>(null)
+const props = defineProps<{
+  items: Product[]
+}>()
 
-onMounted(async () => {
-  try {
-    const response = await axios.get('api/items')
-    items.value = response.data
-  } catch (error) {
-    console.error('Failed to fetch items:', error)
-    // Optionally, you can set an error state or show a user-friendly message
-  }
-})
+const selectedProductId = ref<number | null>(null)
 
 const showProductModal = ref(false)
 const productModalRef = ref(null)
@@ -29,7 +22,8 @@ const openProductModal = (productId: number) => {
 
 <template>
   <div class="product-list">
-    <div class="products-grid">
+    <div v-if="items.length === 0" class="no-items">No items available</div>
+    <div v-else class="products-grid">
       <ProductCard
         v-for="item in items"
         :key="item.id"
@@ -37,10 +31,10 @@ const openProductModal = (productId: number) => {
         :title="item.title"
         :price="Number(item.price)"
         :category="item.category"
-        :image="item.images[0]"
+        :image="item.image || '/default-product-image.jpg'"
         :location="item.location"
-        :isVippsPaymentEnabled="true"
-        :isWishlisted="false"
+        :isVippsPaymentEnabled="item.vippsPaymentEnabled"
+        :isWishlisted="item.wishlisted"
         @click="openProductModal(item.id)"
       />
     </div>
@@ -62,5 +56,11 @@ const openProductModal = (productId: number) => {
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1.5rem;
   margin-top: 1.5rem;
+}
+
+.no-items {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
 }
 </style>

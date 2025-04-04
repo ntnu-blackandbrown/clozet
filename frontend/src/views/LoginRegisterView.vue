@@ -7,13 +7,24 @@ import BaseModal from '@/components/modals/BaseModal.vue'
 
 const authStore = useAuthStore()
 const emit = defineEmits(['close'])
+const props = defineProps({
+  customTitle: {
+    type: String,
+    default: '',
+  },
+})
 const isLogin = ref(true)
 const isSubmitting = ref(false)
 const statusMessage = ref('')
 const statusType = ref('')
 const debugInfo = ref('')
 
-const formTitle = computed(() => (isLogin.value ? 'Login' : 'Register'))
+const formTitle = computed(() => {
+  if (props.customTitle) {
+    return isLogin.value ? props.customTitle : props.customTitle.replace('login', 'register')
+  }
+  return isLogin.value ? 'Login' : 'Register'
+})
 const toggleText = computed(() =>
   isLogin.value ? 'Need an account? Register' : 'Already have an account? Login',
 )
@@ -251,11 +262,11 @@ input:focus {
 }
 
 input::placeholder {
-  color: #9CA3AF;
+  color: #9ca3af;
 }
 
 .error {
-  color: #EF4444;
+  color: #ef4444;
   font-size: 0.875rem;
   margin-top: calc(var(--spacing-xs) * -1);
   margin-bottom: var(--spacing-xs);
@@ -286,7 +297,7 @@ button[type='submit']:hover:not(:disabled) {
 }
 
 button[type='submit']:disabled {
-  background-color: #D1D5DB;
+  background-color: #d1d5db;
   cursor: not-allowed;
   transform: none;
 }
@@ -309,7 +320,7 @@ button[type='submit']:disabled {
 }
 
 .toggle-form:disabled {
-  color: #9CA3AF;
+  color: #9ca3af;
   cursor: not-allowed;
 }
 
@@ -327,8 +338,8 @@ button[type='submit']:disabled {
 }
 
 .status-message.error {
-  background-color: #FEE2E2;
-  color: #DC2626;
+  background-color: #fee2e2;
+  color: #dc2626;
 }
 
 .status-message.info {
@@ -340,8 +351,8 @@ button[type='submit']:disabled {
   font-family: monospace;
   font-size: 0.875rem;
   padding: var(--spacing-sm);
-  background-color: #1F2937;
-  color: #F3F4F6;
+  background-color: #1f2937;
+  color: #f3f4f6;
   border-radius: var(--border-radius-sm);
   margin-top: var(--spacing-sm);
   white-space: pre-wrap;

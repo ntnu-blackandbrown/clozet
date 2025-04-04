@@ -33,21 +33,8 @@ const handleClick = () => {
     </div>
     <div class="product-info">
       <h3>{{ title }}</h3>
-      <Badge
-        :name="props.price.toString()"
-        :category="'price'"
-        :currency="'NOK'"
-        :color="'white'"
-        :textColor="'black'"
-        :borderColor="'black'"
-      />
-      <Badge
-        :name="props.category"
-        :category="'category'"
-        :color="'white'"
-        :textColor="'black'"
-        :borderColor="'black'"
-      />
+      <Badge :name="props.price.toString()" type="price" :currency="'NOK'" />
+      <Badge :name="props.category" type="category" />
       <button class="view-details">View Details</button>
     </div>
   </div>
@@ -62,6 +49,7 @@ const handleClick = () => {
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
+  background-color: #3a4951;
 }
 
 .product-card:hover {
@@ -88,11 +76,13 @@ const handleClick = () => {
 
 .product-info {
   padding: 1rem;
+  color: #c3d7cc;
 }
 
 .product-info h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
+  color: white;
 }
 
 .price {
@@ -110,8 +100,8 @@ const handleClick = () => {
 .view-details {
   width: 100%;
   padding: 0.5rem;
-  background-color: #3b82f6;
-  color: white;
+  background-color: #f1e7ca;
+  color: #3a4951;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -119,7 +109,7 @@ const handleClick = () => {
 }
 
 .view-details:hover {
-  background-color: #2563eb;
+  background-color: #e5d9b8;
 }
 
 .wishlist-container {

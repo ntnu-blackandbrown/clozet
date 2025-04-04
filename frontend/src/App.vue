@@ -1,9 +1,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
-import { RouterView } from 'vue-router'
+import { RouterView, useRouter } from 'vue-router'
 import { useAuthStore } from './stores/AuthStore'
+import Footer from '@/components/layout/Footer.vue'
 
+const router = useRouter()
 const authStore = useAuthStore()
 const showLoginModal = ref(false)
 const statusMessage = ref('')
@@ -20,6 +22,7 @@ onMounted(async () => {
 
 async function logout() {
   await authStore.logout()
+  router.push('/')
 }
 </script>
 
@@ -32,8 +35,8 @@ async function logout() {
             <img src="@/assets/light-green.png" alt="Clozet Logo" class="logo-image" />
           </RouterLink>
           <nav class="main-nav">
-            <RouterLink to="/profile">Profile</RouterLink>
-            <RouterLink to="/messages">Messages</RouterLink>
+            <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
+            <RouterLink v-if="isLoggedIn" to="/messages">Messages</RouterLink>
           </nav>
         </div>
 
@@ -65,21 +68,21 @@ async function logout() {
 <style>
 /* Global styles */
 :root {
-  --color-conch: #C3D7CC;
-  --color-limed-spruce: #3A4951;
-  --color-summer-green: #96BB7C;
-  --color-smalt-blue: #507DBC;
-  --color-white: #FFFFFF;
+  --color-conch: #c3d7cc;
+  --color-limed-spruce: #3a4951;
+  --color-summer-green: #96bb7c;
+  --color-smalt-blue: #507dbc;
+  --color-white: #ffffff;
 
   /* Secondary shades */
-  --color-conch-light: #D1E1D8;
-  --color-conch-dark: #B4C7BE;
-  --color-limed-spruce-light: #485A64;
-  --color-limed-spruce-dark: #2C383E;
-  --color-summer-green-light: #A7C791;
-  --color-summer-green-dark: #85A96D;
-  --color-smalt-blue-light: #6B8FC5;
-  --color-smalt-blue-dark: #456BA3;
+  --color-conch-light: #d1e1d8;
+  --color-conch-dark: #b4c7be;
+  --color-limed-spruce-light: #485a64;
+  --color-limed-spruce-dark: #2c383e;
+  --color-summer-green-light: #a7c791;
+  --color-summer-green-dark: #85a96d;
+  --color-smalt-blue-light: #6b8fc5;
+  --color-smalt-blue-dark: #456ba3;
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -109,7 +112,13 @@ async function logout() {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   color: var(--color-limed-spruce);
   background-color: var(--color-conch);
   line-height: 1.6;
@@ -321,7 +330,7 @@ body {
 }
 
 .logout-button {
-  background-color: #F1E7CA;
+  background-color: #f1e7ca;
   color: var(--color-limed-spruce);
   padding: var(--spacing-sm) var(--spacing-lg);
   border: none;
@@ -333,7 +342,7 @@ body {
 }
 
 .logout-button:hover {
-  background-color: #E8DDB8; /* Slightly darker shade */
+  background-color: #e8ddb8; /* Slightly darker shade */
   color: var(--color-limed-spruce);
   transform: translateY(-2px);
   box-shadow: var(--box-shadow-medium);
@@ -372,19 +381,41 @@ main {
   user-select: none;
 }
 
-.text-center { text-align: center; }
-.text-right { text-align: right; }
-.text-left { text-align: left; }
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+.text-left {
+  text-align: left;
+}
 
-.mt-1 { margin-top: var(--spacing-sm); }
-.mt-2 { margin-top: var(--spacing-md); }
-.mt-3 { margin-top: var(--spacing-lg); }
-.mt-4 { margin-top: var(--spacing-xl); }
+.mt-1 {
+  margin-top: var(--spacing-sm);
+}
+.mt-2 {
+  margin-top: var(--spacing-md);
+}
+.mt-3 {
+  margin-top: var(--spacing-lg);
+}
+.mt-4 {
+  margin-top: var(--spacing-xl);
+}
 
-.mb-1 { margin-bottom: var(--spacing-sm); }
-.mb-2 { margin-bottom: var(--spacing-md); }
-.mb-3 { margin-bottom: var(--spacing-lg); }
-.mb-4 { margin-bottom: var(--spacing-xl); }
+.mb-1 {
+  margin-bottom: var(--spacing-sm);
+}
+.mb-2 {
+  margin-bottom: var(--spacing-md);
+}
+.mb-3 {
+  margin-bottom: var(--spacing-lg);
+}
+.mb-4 {
+  margin-bottom: var(--spacing-xl);
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {

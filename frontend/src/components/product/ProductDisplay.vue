@@ -14,10 +14,26 @@ const getItemById = async () => {
   return item.data
 }
 
+const location = ref<any>(null)
+const sellerId = ref<number>(0)
+
 const item = ref<any>(null)
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
 
 onMounted(async () => {
   item.value = await getItemById()
+  location.value = item.value.latitude + ',' + item.value.longitude
+  sellerId.value = item.value.sellerId
 })
 </script>
 
@@ -25,12 +41,16 @@ onMounted(async () => {
   <div v-if="item" class="product-display">
     <div class="product-image-container">
       <div class="gallery-container">
-        <div v-for="(image, index) in item.images" :key="index" class="gallery-item">
+        <div v-for="(image, index) in item.images || []" :key="index" class="gallery-item">
           <img :src="image" :alt="'Product image ' + (index + 1)" class="gallery-image" />
         </div>
       </div>
       <div class="main-image-container">
-        <img :src="item.images[0]" :alt="'Main product image'" class="main-image" />
+        <img
+          :src="item.images?.[0] || '/default-product-image.jpg'"
+          :alt="'Main product image'"
+          class="main-image"
+        />
       </div>
     </div>
 
@@ -39,28 +59,57 @@ onMounted(async () => {
         <h3>{{ item.title }}</h3>
       </div>
       <div id="product-description">
-        <p>{{ item.description_full }}</p>
-        <Badge :name="item.category" type="category" />
-        <Badge :name="item.location" type="location" />
-        <Badge :name="item.price" type="price" />
+        <p>{{ item.longDescription }}</p>
+        <Badge :name="item.categoryName || 'N/A'" type="category" />
+        <Badge :name="item.locationName || 'N/A'" type="location" />
+        <Badge
+          :name="item.price.toString() || 'N/A'"
+          :currency="item.currency || 'NOK'"
+          type="price"
+          :borderColor="item.price ? '#3A4951' : undefined"
+        />
       </div>
       <div id="seller-info">
-        <Badge :name="item.seller" type="seller" />
-        <Badge :name="item.shipping_options" type="shipping" />
-        <Badge :name="item.status" type="availability" />
+        <Badge :name="item.sellerName || 'N/A'" type="seller" />
+        <Badge :name="item.shippingOptionName || 'N/A'" type="shipping" />
+        <Badge :name="item.available ? 'Available' : 'Not Available'" type="availability" />
       </div>
       <div class="action-buttons">
         <button class="contact-button">Contact Seller</button>
         <WishlistButton :product-id="item.id" :purchased="item.purchased" />
       </div>
+      <div class="product-details-list">
+        <p class="detail-item">
+          <span class="detail-label">Brand:</span>
+          <span class="detail-value">{{ item.brand }}</span>
+        </p>
+        <p class="detail-item">
+          <span class="detail-label">Color:</span>
+          <span class="detail-value">{{ item.color }}</span>
+        </p>
+        <p class="detail-item">
+          <span class="detail-label">Condition:</span>
+          <span class="detail-value">{{ item.condition }}</span>
+        </p>
+        <p class="detail-item">
+          <span class="detail-label">Size:</span>
+          <span class="detail-value">{{ item.size }}</span>
+        </p>
+        <img
+          v-if="item.vippsPaymentEnabled"
+          src="@/assets/images/vipps.png"
+          alt="Vipps Payment Available"
+          class="vipps-image"
+        />
+      </div>
       <div id="product-info">
         <div class="info-item">
           <span class="info-label">Posted:</span>
-          <span class="info-value">{{ item.created_at }}</span>
+          <span class="info-value">{{ formatDate(item.createdAt) }}</span>
         </div>
         <div class="info-item">
           <span class="info-label">Updated:</span>
-          <span class="info-value">{{ item.updated_at }}</span>
+          <span class="info-value">{{ formatDate(item.updatedAt) }}</span>
         </div>
       </div>
     </div>
@@ -70,6 +119,9 @@ onMounted(async () => {
 <style>
 .product-display {
   display: flex;
+  background-color: #eff7f3;
+  padding: 2rem;
+  border-radius: 8px;
 }
 
 .product-image-container {
@@ -131,7 +183,7 @@ onMounted(async () => {
 }
 
 .contact-button {
-  background-color: #3b82f6;
+  background-color: #6B5B95;
   color: white;
   border: none;
   border-radius: 0.375rem;
@@ -143,7 +195,7 @@ onMounted(async () => {
 }
 
 .contact-button:hover {
-  background-color: #2563eb;
+  background-color: #5A4B7D;
 }
 
 #product-info {
@@ -168,5 +220,36 @@ onMounted(async () => {
 
 .info-value {
   color: #64748b;
+}
+
+.vipps-image {
+  max-width: 100px;
+  height: auto;
+  margin-top: 10px;
+}
+
+.product-details-list {
+  margin: 1rem 0;
+  padding: 1rem;
+  /*background-color: #f8f9fa;*/
+  background-color: white;
+  border-radius: 8px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  color: #3a4951;
+}
+
+.detail-label {
+  font-weight: 600;
+  min-width: 100px;
+  color: #64748b;
+}
+
+.detail-value {
+  color: #3a4951;
 }
 </style>

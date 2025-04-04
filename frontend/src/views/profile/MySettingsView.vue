@@ -12,7 +12,6 @@ const schema = yup.object({
   lastName: yup.string().required('Last name is required'),
   username: yup.string().required('Username is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
-  phoneNumber: yup.string().matches(/^\+?[\d\s-]+$/, 'Invalid phone number format'),
 })
 
 const { handleSubmit, errors, resetForm, setValues } = useForm({
@@ -24,7 +23,6 @@ const { value: firstName, errorMessage: firstNameError } = useField('firstName')
 const { value: lastName, errorMessage: lastNameError } = useField('lastName')
 const { value: username, errorMessage: usernameError } = useField('username')
 const { value: email, errorMessage: emailError } = useField('email')
-const { value: phoneNumber, errorMessage: phoneNumberError } = useField('phoneNumber')
 
 const isSubmitting = ref(false)
 const statusMessage = ref('')
@@ -49,7 +47,6 @@ const setUserValues = () => {
     lastName: authStore.user.lastName || '',
     username: authStore.user.username || '',
     email: authStore.user.email || '',
-    phoneNumber: authStore.user.phoneNumber || '',
   })
 }
 
@@ -129,13 +126,6 @@ const handleDeleteAccount = async () => {
           <label>Email</label>
           <input type="email" placeholder="Your email" v-model="email" />
           <span class="error" v-if="emailError">{{ emailError }}</span>
-        </div>
-      </div>
-      <div class="phone-field">
-        <div class="form-group">
-          <label>Phone Number</label>
-          <input type="tel" placeholder="Your phone number" v-model="phoneNumber" />
-          <span class="error" v-if="phoneNumberError">{{ phoneNumberError }}</span>
         </div>
       </div>
 

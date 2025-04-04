@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { PropType } from 'vue'
-import { badgeIcons, type BadgeType } from '@/components/utils/BadgeIcons'
+import { badgeIcons } from '@/components/utils/BadgeIcons'
+import { badgeColors, type BadgeType } from '@/components/utils/BadgeColors'
 
 interface BadgeProps {
   name: string
@@ -14,25 +15,84 @@ interface BadgeProps {
 
 const props = withDefaults(defineProps<BadgeProps>(), {
   type: 'category',
-  color: '#E4EAE7', // Light mint green background
-  textColor: '#2D353F', // Outer Sea for text
-  borderColor: 'transparent', // Making border transparent by default
+  color: undefined,
+  textColor: undefined,
+  borderColor: undefined,
 })
+
+const isHovered = ref(false)
+const isActive = ref(false)
 
 const currentIcon = computed(() => {
   if (props.type === 'price') return ''
   return badgeIcons[props.type] || ''
 })
 
-const badgeStyle = computed(() => ({
-  backgroundColor: props.color,
-  color: props.textColor,
-  border: 'none', // Removing the border completely
-}))
+const badgeStyle = computed(() => {
+  const defaultColors = badgeColors[props.type]
+
+  if (isActive.value && props.type !== 'price') {
+    return {
+      backgroundColor: props.color || defaultColors.activeColor,
+      color: props.textColor || defaultColors.activeTextColor,
+      border: props.borderColor
+        ? `1px solid ${props.borderColor}`
+        : `1px solid ${defaultColors.activeBorderColor}`,
+    }
+  } else if (isHovered.value && props.type !== 'price') {
+    return {
+      backgroundColor: props.color || defaultColors.hoverColor,
+      color: props.textColor || defaultColors.hoverTextColor,
+      border: props.borderColor
+        ? `1px solid ${props.borderColor}`
+        : `1px solid ${defaultColors.hoverBorderColor}`,
+    }
+  } else {
+    return {
+      backgroundColor: props.color || defaultColors.color,
+      color: props.textColor || defaultColors.textColor,
+      border: props.borderColor
+        ? `1px solid ${props.borderColor}`
+        : `1px solid ${defaultColors.borderColor}`,
+    }
+  }
+})
+
+const handleMouseEnter = () => {
+  if (props.type !== 'price') {
+    isHovered.value = true
+  }
+}
+
+const handleMouseLeave = () => {
+  if (props.type !== 'price') {
+    isHovered.value = false
+  }
+}
+
+const handleMouseDown = () => {
+  if (props.type !== 'price') {
+    isActive.value = true
+  }
+}
+
+const handleMouseUp = () => {
+  if (props.type !== 'price') {
+    isActive.value = false
+  }
+}
 </script>
 
 <template>
-  <div class="badge" :style="badgeStyle">
+  <div
+    class="badge"
+    :class="{ 'price-badge': type === 'price' }"
+    :style="badgeStyle"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
+    @mousedown="handleMouseDown"
+    @mouseup="handleMouseUp"
+  >
     <svg
       v-if="currentIcon"
       class="badge-icon"
@@ -61,7 +121,7 @@ const badgeStyle = computed(() => ({
   font-weight: 500;
   margin-right: var(--spacing-xs);
   margin-bottom: var(--spacing-xs);
-  transition: var(--transition-smooth);
+  transition: all 0.2s ease;
   cursor: pointer;
   box-shadow: var(--box-shadow-light);
 }
@@ -69,21 +129,35 @@ const badgeStyle = computed(() => ({
 .badge:hover {
   transform: translateY(-1px);
   box-shadow: var(--box-shadow-medium);
-  background-color: var(--color-conch-light) !important;
-  border-color: #2D353F !important;
-  color: #2D353F !important;
 }
 
 .badge:active {
   transform: translateY(0);
-  background-color: var(--color-conch-dark) !important;
+}
+
+.price-badge {
+  cursor: default;
+  padding: var(--spacing-xs) var(--spacing-md);
+  box-shadow: none;
+  background-color: white !important;
+  margin-right: var(--spacing-md);
+  margin-bottom: calc(var(--spacing-xs) + 5px);
+  border-radius: var(--border-radius-lg);
+}
+
+.price-badge:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.price-badge:active {
+  transform: none;
 }
 
 .badge-icon {
   width: 1rem;
   height: 1rem;
   margin-right: var(--spacing-xs);
-  stroke: #2D353F;
 }
 
 .badge-text {

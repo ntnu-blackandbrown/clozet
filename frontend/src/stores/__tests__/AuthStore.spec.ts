@@ -8,8 +8,8 @@ vi.mock('@/api/axios')
 
 // Add proper typing for mocked axios
 const mockedAxios = axios as unknown as {
-  get: Mock;
-  post: Mock;
+  get: Mock
+  post: Mock
 }
 
 describe('AuthStore', () => {
@@ -88,7 +88,13 @@ describe('AuthStore', () => {
 
     expect(result.success).toBe(false)
     expect(result.message).toBe('Logout failed')
-    expect(store.user).toEqual({ id: 99, username: 'logoutUser', email: '', active: true, role: 'USER' })
+    expect(store.user).toEqual({
+      id: 99,
+      username: 'logoutUser',
+      email: '',
+      active: true,
+      role: 'USER',
+    })
   })
 
   it('registers a new user successfully', async () => {

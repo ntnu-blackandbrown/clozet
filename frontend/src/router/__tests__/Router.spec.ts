@@ -1,9 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import router from '@/router/router'
 import { describe, it, expect, beforeEach } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
+import { useAuthStore } from '@/stores/AuthStore'
+import { vi } from 'vitest'
+
+// Mock the auth store
+vi.mock('@/stores/AuthStore', () => ({
+  useAuthStore: () => ({
+    isLoggedIn: false,
+    user: null,
+  }),
+}))
 
 describe('Router', () => {
   beforeEach(async () => {
+    const pinia = createPinia()
+    setActivePinia(pinia)
     // Reset router to a known state before each test.
     router.push('/')
     await router.isReady()

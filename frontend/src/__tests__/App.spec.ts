@@ -4,6 +4,22 @@ import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { nextTick } from 'vue'
 import App from '@/App.vue' // adjust path if needed
 import { useAuthStore } from '@/stores/AuthStore'
+import { createRouter, createWebHistory } from 'vue-router'
+
+// Mock router
+const mockRouter = {
+  push: vi.fn(),
+  currentRoute: { value: { path: '/' } },
+}
+
+// Mock useRouter
+vi.mock('vue-router', async () => {
+  const actual = await vi.importActual('vue-router')
+  return {
+    ...actual,
+    useRouter: () => mockRouter,
+  }
+})
 
 // Stub child components for testing
 const RouterLinkStub = {
@@ -41,7 +57,7 @@ describe('AppLayout.vue (normal Pinia)', () => {
       user: fakeUser,
     })
     authStore.fetchUserInfo = vi.fn().mockResolvedValue(fakeUser)
-    authStore.logout = vi.fn()
+    authStore.logout = vi.fn().mockResolvedValue({ success: true })
     vi.clearAllMocks()
   })
 
@@ -149,5 +165,32 @@ describe('AppLayout.vue (normal Pinia)', () => {
     })
     expect(wrapper.find('.router-view-stub').exists()).toBe(true)
     expect(wrapper.find('.footer-stub').exists()).toBe(true)
+  })
+
+  it('redirects to home page after logout', async () => {
+    const wrapper = mount(App, {
+      global: {
+        plugins: [pinia],
+        stubs: {
+          RouterLink: RouterLinkStub,
+          RouterView: RouterViewStub,
+          Footer: FooterStub,
+          LoginRegisterModal: LoginRegisterModalStub,
+        },
+      },
+    })
+
+    // Find and click the logout button
+    const logoutButton = wrapper.find('.logout-button')
+    await logoutButton.trigger('click')
+
+    // Wait for promises to resolve
+    await flushPromises()
+
+    // Verify that authStore.logout was called
+    expect(authStore.logout).toHaveBeenCalled()
+
+    // Verify that router.push was called with '/'
+    expect(mockRouter.push).toHaveBeenCalledWith('/')
   })
 })

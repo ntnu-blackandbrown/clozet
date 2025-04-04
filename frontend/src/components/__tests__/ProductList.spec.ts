@@ -1,42 +1,50 @@
-import { mount, flushPromises } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import ProductList from '@/components/product/ProductList.vue'
-import axios from 'axios'
-import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest'
-
-// Mock axios
-vi.mock('axios')
-const mockedAxios = axios as Mocked<typeof axios>
+import { describe, it, expect } from 'vitest'
+import type { Product } from '@/types/product'
 
 describe('ProductList', () => {
-  const mockItems = [
+  const mockItems: Product[] = [
     {
       id: 1,
       title: 'Product One',
-      price: '100',
+      price: 100,
       category: 'Shoes',
-      images: ['img1.jpg'],
+      image: 'img1.jpg',
       location: 'Oslo',
+      vippsPaymentEnabled: true,
+      wishlisted: false,
     },
     {
       id: 2,
       title: 'Product Two',
-      price: '200',
+      price: 200,
       category: 'Hats',
-      images: ['img2.jpg'],
+      image: 'img2.jpg',
       location: 'Bergen',
+      vippsPaymentEnabled: false,
+      wishlisted: true,
     },
   ]
 
-  beforeEach(() => {
-    mockedAxios.get.mockResolvedValue({ data: mockItems })
-  })
-
-  it('fetches and renders products', async () => {
+  it('renders products when items are provided', () => {
     const wrapper = mount(ProductList, {
+      props: {
+        items: mockItems,
+      },
       global: {
         stubs: {
           ProductCard: {
-            props: ['id', 'title', 'price', 'category', 'image', 'location'],
+            props: [
+              'id',
+              'title',
+              'price',
+              'category',
+              'image',
+              'location',
+              'isVippsPaymentEnabled',
+              'isWishlisted',
+            ],
             template: `<div class="product-card-stub">{{ title }}</div>`,
           },
           ProductDisplayModal: true,
@@ -44,15 +52,28 @@ describe('ProductList', () => {
       },
     })
 
-    await flushPromises()
     const cards = wrapper.findAll('.product-card-stub')
     expect(cards.length).toBe(2)
     expect(cards[0].text()).toContain('Product One')
     expect(cards[1].text()).toContain('Product Two')
   })
 
+  it('shows no items message when items array is empty', () => {
+    const wrapper = mount(ProductList, {
+      props: {
+        items: [],
+      },
+    })
+
+    expect(wrapper.find('.no-items').exists()).toBe(true)
+    expect(wrapper.find('.no-items').text()).toContain('No items available')
+  })
+
   it('opens modal with correct product ID when card clicked', async () => {
     const wrapper = mount(ProductList, {
+      props: {
+        items: mockItems,
+      },
       global: {
         stubs: {
           ProductCard: {
@@ -69,7 +90,6 @@ describe('ProductList', () => {
       },
     })
 
-    await flushPromises()
     await wrapper.findAll('.product-card-stub')[0].trigger('click')
 
     expect(wrapper.find('.modal-stub').exists()).toBe(true)
@@ -78,6 +98,9 @@ describe('ProductList', () => {
 
   it('closes modal on @close', async () => {
     const wrapper = mount(ProductList, {
+      props: {
+        items: mockItems,
+      },
       global: {
         stubs: {
           ProductCard: {
@@ -94,12 +117,10 @@ describe('ProductList', () => {
       },
     })
 
-    await flushPromises()
     await wrapper.findAll('.product-card-stub')[0].trigger('click')
     expect(wrapper.find('.modal-stub').exists()).toBe(true)
 
     await wrapper.find('.modal-stub button').trigger('click')
-    await flushPromises()
 
     expect(wrapper.find('.modal-stub').exists()).toBe(false)
   })

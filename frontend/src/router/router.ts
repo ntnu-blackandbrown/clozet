@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MessagesView from '../views/MessagesView.vue'
+import { useAuthStore } from '@/stores/AuthStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,11 +19,13 @@ const router = createRouter({
       path: '/messages/:chatId?',
       name: 'messages',
       component: MessagesView,
+      meta: { requiresAuth: true },
     },
     {
       path: '/profile',
       name: 'profile',
       component: () => import('@/views/UserProfileView.vue'),
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
@@ -51,6 +54,18 @@ const router = createRouter({
       ],
     },
   ],
+})
+
+// Navigation guard
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+
+  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
+    // Redirect to home page if trying to access protected route while not logged in
+    next('/')
+  } else {
+    next()
+  }
 })
 
 export default router

@@ -13,16 +13,25 @@ describe('ProductDisplay', () => {
     id: 1,
     title: 'Test Product',
     images: ['string', 'string'],
-    description_full: 'Detailed description here',
-    category: 'Shoes',
-    location: 'Oslo',
-    price: '1200',
-    seller: 'Alice',
-    shipping_options: 'Posten',
-    status: 'Available',
-    created_at: '2024-01-01',
-    updated_at: '2024-02-01',
+    longDescription: 'Detailed description here',
+    categoryName: 'Shoes',
+    locationName: 'Oslo',
+    price: 1200,
+    currency: 'NOK',
+    sellerName: 'Alice',
+    shippingOptionName: 'Posten',
+    available: true,
+    brand: 'Test Brand',
+    color: 'Blue',
+    condition: 'New',
+    size: 'M',
+    vippsPaymentEnabled: true,
+    createdAt: '2024-01-01T10:00:00Z',
+    updatedAt: '2024-02-01T10:00:00Z',
     purchased: false,
+    latitude: 59.913868,
+    longitude: 10.752245,
+    sellerId: 123,
   }
 
   beforeEach(() => {
@@ -50,7 +59,7 @@ describe('ProductDisplay', () => {
     expect(wrapper.find('.product-display').exists()).toBe(true)
 
     expect(wrapper.text()).toContain(mockItem.title)
-    expect(wrapper.text()).toContain(mockItem.description_full)
+    expect(wrapper.text()).toContain(mockItem.longDescription)
     expect(wrapper.findAll('.gallery-image').length).toBe(2)
   })
 
@@ -81,7 +90,8 @@ describe('ProductDisplay', () => {
     })
 
     await flushPromises()
-    expect(wrapper.text()).toContain('2024-01-01')
-    expect(wrapper.text()).toContain('2024-02-01')
+    // The component formats dates as "January 1, 2024, 10:00 AM"
+    expect(wrapper.text()).toContain('January 1, 2024')
+    expect(wrapper.text()).toContain('February 1, 2024')
   })
 })
