@@ -8,7 +8,7 @@ export const badgeColors = {
     hoverBorderColor: '#3A4951',
     activeColor: '#F1E7CA',
     activeTextColor: '#3A4951',
-    activeBorderColor: '#3A4951'
+    activeBorderColor: '#3A4951',
   },
   category: {
     color: '#C3D7CC',
@@ -19,7 +19,7 @@ export const badgeColors = {
     hoverBorderColor: '#3A4951',
     activeColor: '#A3B7AC',
     activeTextColor: '#3A4951',
-    activeBorderColor: '#3A4951'
+    activeBorderColor: '#3A4951',
   },
   location: {
     color: '#E4EAE7',
@@ -30,7 +30,7 @@ export const badgeColors = {
     hoverBorderColor: '#2D353F',
     activeColor: '#C4CAE7',
     activeTextColor: '#2D353F',
-    activeBorderColor: '#2D353F'
+    activeBorderColor: '#2D353F',
   },
   seller: {
     color: '#F1E7CA',
@@ -41,7 +41,7 @@ export const badgeColors = {
     hoverBorderColor: '#3A4951',
     activeColor: '#D9CAA6',
     activeTextColor: '#3A4951',
-    activeBorderColor: '#3A4951'
+    activeBorderColor: '#3A4951',
   },
   shipping: {
     color: '#C3D7CC',
@@ -52,7 +52,7 @@ export const badgeColors = {
     hoverBorderColor: '#3A4951',
     activeColor: '#A3B7AC',
     activeTextColor: '#3A4951',
-    activeBorderColor: '#3A4951'
+    activeBorderColor: '#3A4951',
   },
   availability: {
     color: '#E4EAE7',
@@ -63,8 +63,8 @@ export const badgeColors = {
     hoverBorderColor: '#2D353F',
     activeColor: '#C4CAE7',
     activeTextColor: '#2D353F',
-    activeBorderColor: '#2D353F'
-  }
+    activeBorderColor: '#2D353F',
+  },
 } as const
 
 export type BadgeType = keyof typeof badgeColors

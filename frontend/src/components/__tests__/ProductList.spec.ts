@@ -13,7 +13,7 @@ describe('ProductList', () => {
       image: 'img1.jpg',
       location: 'Oslo',
       vippsPaymentEnabled: true,
-      wishlisted: false
+      wishlisted: false,
     },
     {
       id: 2,
@@ -23,19 +23,28 @@ describe('ProductList', () => {
       image: 'img2.jpg',
       location: 'Bergen',
       vippsPaymentEnabled: false,
-      wishlisted: true
+      wishlisted: true,
     },
   ]
 
   it('renders products when items are provided', () => {
     const wrapper = mount(ProductList, {
       props: {
-        items: mockItems
+        items: mockItems,
       },
       global: {
         stubs: {
           ProductCard: {
-            props: ['id', 'title', 'price', 'category', 'image', 'location', 'isVippsPaymentEnabled', 'isWishlisted'],
+            props: [
+              'id',
+              'title',
+              'price',
+              'category',
+              'image',
+              'location',
+              'isVippsPaymentEnabled',
+              'isWishlisted',
+            ],
             template: `<div class="product-card-stub">{{ title }}</div>`,
           },
           ProductDisplayModal: true,
@@ -52,8 +61,8 @@ describe('ProductList', () => {
   it('shows no items message when items array is empty', () => {
     const wrapper = mount(ProductList, {
       props: {
-        items: []
-      }
+        items: [],
+      },
     })
 
     expect(wrapper.find('.no-items').exists()).toBe(true)
@@ -63,7 +72,7 @@ describe('ProductList', () => {
   it('opens modal with correct product ID when card clicked', async () => {
     const wrapper = mount(ProductList, {
       props: {
-        items: mockItems
+        items: mockItems,
       },
       global: {
         stubs: {
@@ -90,7 +99,7 @@ describe('ProductList', () => {
   it('closes modal on @close', async () => {
     const wrapper = mount(ProductList, {
       props: {
-        items: mockItems
+        items: mockItems,
       },
       global: {
         stubs: {

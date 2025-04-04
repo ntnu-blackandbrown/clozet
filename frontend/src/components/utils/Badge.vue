@@ -35,19 +35,25 @@ const badgeStyle = computed(() => {
     return {
       backgroundColor: props.color || defaultColors.activeColor,
       color: props.textColor || defaultColors.activeTextColor,
-      border: props.borderColor ? `1px solid ${props.borderColor}` : `1px solid ${defaultColors.activeBorderColor}`,
+      border: props.borderColor
+        ? `1px solid ${props.borderColor}`
+        : `1px solid ${defaultColors.activeBorderColor}`,
     }
   } else if (isHovered.value && props.type !== 'price') {
     return {
       backgroundColor: props.color || defaultColors.hoverColor,
       color: props.textColor || defaultColors.hoverTextColor,
-      border: props.borderColor ? `1px solid ${props.borderColor}` : `1px solid ${defaultColors.hoverBorderColor}`,
+      border: props.borderColor
+        ? `1px solid ${props.borderColor}`
+        : `1px solid ${defaultColors.hoverBorderColor}`,
     }
   } else {
     return {
       backgroundColor: props.color || defaultColors.color,
       color: props.textColor || defaultColors.textColor,
-      border: props.borderColor ? `1px solid ${props.borderColor}` : `1px solid ${defaultColors.borderColor}`,
+      border: props.borderColor
+        ? `1px solid ${props.borderColor}`
+        : `1px solid ${defaultColors.borderColor}`,
     }
   }
 })

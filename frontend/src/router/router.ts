@@ -19,7 +19,7 @@ const router = createRouter({
       path: '/messages/:chatId?',
       name: 'messages',
       component: MessagesView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/profile',

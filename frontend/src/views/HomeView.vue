@@ -189,7 +189,7 @@ h3 {
   padding: var(--spacing-md) var(--spacing-lg);
   padding-right: 40px;
   font-size: 1rem;
-  border: 2px solid #2D353F;
+  border: 2px solid #2d353f;
   border-radius: var(--border-radius-lg);
   background-color: var(--color-white);
   transition: var(--transition-smooth);
@@ -198,12 +198,12 @@ h3 {
 
 .search-bar:focus {
   outline: none;
-  border-color: #2D353F;
+  border-color: #2d353f;
   box-shadow: 0 0 0 3px rgba(45, 53, 63, 0.2);
 }
 
 .search-bar::placeholder {
-  color: #9CA3AF;
+  color: #9ca3af;
 }
 
 .search-icon {
@@ -214,7 +214,7 @@ h3 {
   height: 20px;
   transform: translateY(-50%);
   pointer-events: none;
-  stroke: #2D353F;
+  stroke: #2d353f;
   transition: var(--transition-smooth);
 }
 
@@ -224,7 +224,7 @@ h3 {
 }
 
 .create-post-btn button {
-  background-color: #2D353F;
+  background-color: #2d353f;
   color: var(--color-white);
   border: none;
   padding: var(--spacing-md) var(--spacing-xl);
@@ -238,14 +238,14 @@ h3 {
 }
 
 .create-post-btn button:hover {
-  background-color: #343D48;
+  background-color: #343d48;
   transform: translateY(-2px);
   box-shadow: var(--box-shadow-medium);
 }
 
 .create-post-btn button:active {
   transform: translateY(0);
-  background-color: #262D36;
+  background-color: #262d36;
   box-shadow: var(--box-shadow-light);
 }
 

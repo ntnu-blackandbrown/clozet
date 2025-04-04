@@ -113,7 +113,10 @@ describe('ChatArea.vue', () => {
     await flushPromises()
     const emitted = wrapper.emitted('send-message')
     expect(emitted).toBeTruthy()
-    const payload = emitted![0][0] as { chatId: number; message: { content: string; senderId: number; receiverId: number; timestamp: string } }
+    const payload = emitted![0][0] as {
+      chatId: number
+      message: { content: string; senderId: number; receiverId: number; timestamp: string }
+    }
     expect(payload.chatId).toBe(123)
     expect(payload.message.content).toBe('Test message')
     expect(payload.message.senderId).toBe(1)

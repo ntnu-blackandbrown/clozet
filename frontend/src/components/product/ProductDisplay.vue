@@ -26,7 +26,7 @@ const formatDate = (dateString: string) => {
     month: 'long',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   })
 }
 
@@ -46,7 +46,11 @@ onMounted(async () => {
         </div>
       </div>
       <div class="main-image-container">
-        <img :src="item.images?.[0] || '/default-product-image.jpg'" :alt="'Main product image'" class="main-image" />
+        <img
+          :src="item.images?.[0] || '/default-product-image.jpg'"
+          :alt="'Main product image'"
+          class="main-image"
+        />
       </div>
     </div>
 
@@ -59,7 +63,7 @@ onMounted(async () => {
         <Badge :name="item.categoryName || 'N/A'" type="category" />
         <Badge :name="item.locationName || 'N/A'" type="location" />
         <Badge
-          :name="item.price.toString()|| 'N/A'"
+          :name="item.price.toString() || 'N/A'"
           :currency="item.currency || 'NOK'"
           type="price"
           :borderColor="item.price ? '#3A4951' : undefined"
@@ -91,7 +95,12 @@ onMounted(async () => {
           <span class="detail-label">Size:</span>
           <span class="detail-value">{{ item.size }}</span>
         </p>
-        <img v-if="item.vippsPaymentEnabled" src="@/assets/images/vipps.png" alt="Vipps Payment Available" class="vipps-image" />
+        <img
+          v-if="item.vippsPaymentEnabled"
+          src="@/assets/images/vipps.png"
+          alt="Vipps Payment Available"
+          class="vipps-image"
+        />
       </div>
       <div id="product-info">
         <div class="info-item">
@@ -110,7 +119,7 @@ onMounted(async () => {
 <style>
 .product-display {
   display: flex;
-  background-color: #EFF7F3;
+  background-color: #eff7f3;
   padding: 2rem;
   border-radius: 8px;
 }
@@ -231,7 +240,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   margin-bottom: 0.5rem;
-  color: #3A4951;
+  color: #3a4951;
 }
 
 .detail-label {
@@ -241,6 +250,6 @@ onMounted(async () => {
 }
 
 .detail-value {
-  color: #3A4951;
+  color: #3a4951;
 }
 </style>

@@ -31,7 +31,7 @@ const handleNewMessage = async ({ chatId, message }) => {
       senderId: message.senderId.toString(),
       receiverId: message.receiverId.toString(),
       content: message.content,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     })
 
     //after a successful message, update the chat by fetching the latest messages

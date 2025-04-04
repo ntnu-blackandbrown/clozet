@@ -31,7 +31,7 @@ describe('ProductDisplay', () => {
     purchased: false,
     latitude: 59.913868,
     longitude: 10.752245,
-    sellerId: 123
+    sellerId: 123,
   }
 
   beforeEach(() => {
