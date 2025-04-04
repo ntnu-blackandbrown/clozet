@@ -62,6 +62,7 @@ const handleClick = () => {
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
+  background-color: #3A4951;
 }
 
 .product-card:hover {
@@ -88,11 +89,13 @@ const handleClick = () => {
 
 .product-info {
   padding: 1rem;
+  color: #C3D7CC;
 }
 
 .product-info h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
+  color: white;
 }
 
 .price {
@@ -110,8 +113,8 @@ const handleClick = () => {
 .view-details {
   width: 100%;
   padding: 0.5rem;
-  background-color: #3b82f6;
-  color: white;
+  background-color: #F1E7CA;
+  color: #3A4951;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -119,7 +122,7 @@ const handleClick = () => {
 }
 
 .view-details:hover {
-  background-color: #2563eb;
+  background-color: #E5D9B8;
 }
 
 .wishlist-container {
