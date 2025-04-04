@@ -6,4 +6,5 @@ public interface EmailService {
     void sendTextEmail(String toEmail, String subject, String message);
     void sendHtmlEmail(String toEmail, String subject, String htmlContent);
     void sendMessageNotification(String toEmail, String senderName);
+    void sendPasswordChangeConfirmationEmail(String email);
 }

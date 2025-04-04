@@ -200,17 +200,19 @@ public class UserServiceImpl extends UserService {
     @Override
     public void changePassword(String username, ChangePasswordDTO changePasswordDTO) {
         System.out.println("UserServiceImpl.changePassword - Username: " + username);
-        System.out.println("UserServiceImpl.changePassword - Current Password: " + (changePasswordDTO.getCurrentPassword() != null ? "******" : "null"));
-        System.out.println("UserServiceImpl.changePassword - New Password: " + (changePasswordDTO.getNewPassword() != null ? "******" : "null"));
-        
+        System.out.println("UserServiceImpl.changePassword - Current Password: " +
+            (changePasswordDTO.getCurrentPassword() != null ? "******" : "null"));
+        System.out.println("UserServiceImpl.changePassword - New Password: " +
+            (changePasswordDTO.getNewPassword() != null ? "******" : "null"));
+
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("Username " + username + " not found"));
+            .orElseThrow(() -> new UserNotFoundException("Username " + username + " not found"));
         System.out.println("UserServiceImpl.changePassword - User found: " + user.getId());
 
         // Verify current password
         boolean passwordMatches = passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), user.getPasswordHash());
         System.out.println("UserServiceImpl.changePassword - Password matches: " + passwordMatches);
-        
+
         if (!passwordMatches) {
             throw new BadCredentialsException("Current password is incorrect");
         }
@@ -218,10 +220,13 @@ public class UserServiceImpl extends UserService {
         // Update password
         String newPasswordHash = passwordEncoder.encode(changePasswordDTO.getNewPassword());
         System.out.println("UserServiceImpl.changePassword - New password hash generated");
-        
+
         user.setPasswordHash(newPasswordHash);
         user.setUpdatedAt(LocalDateTime.now());
         User savedUser = userRepository.save(user);
         System.out.println("UserServiceImpl.changePassword - Password updated, user ID: " + savedUser.getId());
+
+        // Send confirmation email
+        emailService.sendPasswordChangeConfirmationEmail(user.getEmail());
     }
 }
