@@ -15,6 +15,7 @@ const getItemById = async () => {
 }
 
 const location = ref<any>(null)
+const sellerId = ref<number>(0)
 
 const item = ref<any>(null)
 
@@ -32,6 +33,7 @@ const formatDate = (dateString: string) => {
 onMounted(async () => {
   item.value = await getItemById()
   location.value = item.value.latitude + ',' + item.value.longitude
+  sellerId.value = item.value.sellerId
 })
 </script>
 
