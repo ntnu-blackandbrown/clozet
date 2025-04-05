@@ -4,17 +4,18 @@
       <h1>Change Password</h1>
       <p class="description">Enter your current password and choose a new password.</p>
 
-      <form @submit.prevent="handleSubmit" class="forgot-password-form">
+      <form @submit.prevent="submit" class="forgot-password-form">
         <div class="form-group">
           <label for="currentPassword">Current Password</label>
           <input
             type="password"
             id="currentPassword"
             v-model="currentPassword"
-            required
             placeholder="Enter your current password"
             class="form-control"
+            :class="{ 'error-input': currentPasswordError }"
           />
+          <span class="error" v-if="currentPasswordError">{{ currentPasswordError }}</span>
         </div>
 
         <div class="form-group">
@@ -23,10 +24,11 @@
             type="password"
             id="newPassword"
             v-model="newPassword"
-            required
             placeholder="Enter your new password"
             class="form-control"
+            :class="{ 'error-input': newPasswordError }"
           />
+          <span class="error" v-if="newPasswordError">{{ newPasswordError }}</span>
         </div>
 
         <div class="form-group">
@@ -35,18 +37,22 @@
             type="password"
             id="confirmPassword"
             v-model="confirmPassword"
-            required
             placeholder="Confirm your new password"
             class="form-control"
+            :class="{ 'error-input': confirmPasswordError }"
           />
+          <span class="error" v-if="confirmPasswordError">{{ confirmPasswordError }}</span>
         </div>
 
         <div class="message" :class="{ 'error': error, 'success': success }">
           {{ message }}
         </div>
 
-        <button type="submit" class="submit-button" :disabled="isLoading">
-          {{ isLoading ? 'Updating...' : 'Update Password' }}
+        <button type="submit" class="submit-button" :disabled="!isFormValid || isLoading">
+          <span v-if="isLoading">
+            <span class="spinner"></span>
+          </span>
+          <span v-else>Update Password</span>
         </button>
 
         <div class="links">
@@ -58,25 +64,57 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useField, useForm } from 'vee-validate'
+import * as yup from 'yup'
 
 const router = useRouter()
-const currentPassword = ref('')
-const newPassword = ref('')
-const confirmPassword = ref('')
 const isLoading = ref(false)
 const error = ref(false)
 const success = ref(false)
 const message = ref('')
 
-const handleSubmit = async () => {
-  if (newPassword.value !== confirmPassword.value) {
-    error.value = true
-    message.value = 'New passwords do not match.'
-    return
-  }
+// Define validation schema
+const schema = yup.object({
+  currentPassword: yup.string().required('Current password is required'),
+  newPassword: yup
+    .string()
+    .required('New password is required')
+    .min(8, 'Password must be at least 8 characters')
+    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .matches(/[0-9]/, 'Password must contain at least one number'),
+  confirmPassword: yup
+    .string()
+    .required('Please confirm your password')
+    .oneOf([yup.ref('newPassword')], 'Passwords must match'),
+})
 
+// Setup form validation
+const { handleSubmit, errors, resetForm } = useForm({
+  validationSchema: schema,
+})
+
+// Setup fields with validation
+const { value: currentPassword, errorMessage: currentPasswordError } = useField('currentPassword')
+const { value: newPassword, errorMessage: newPasswordError } = useField('newPassword')
+const { value: confirmPassword, errorMessage: confirmPasswordError } = useField('confirmPassword')
+
+// Check if form is valid
+const isFormValid = computed(() => {
+  return (
+    !errors.value.currentPassword &&
+    !errors.value.newPassword &&
+    !errors.value.confirmPassword &&
+    currentPassword.value &&
+    newPassword.value &&
+    confirmPassword.value
+  )
+})
+
+// Handle form submission
+const submit = handleSubmit(async (values) => {
   isLoading.value = true
   error.value = false
   success.value = false
@@ -85,8 +123,8 @@ const handleSubmit = async () => {
   try {
     // TODO: Implement the API call to your backend
     // const response = await api.post('/auth/change-password', {
-    //   currentPassword: currentPassword.value,
-    //   newPassword: newPassword.value
+    //   currentPassword: values.currentPassword,
+    //   newPassword: values.newPassword
     // })
 
     // Simulating API call for now
@@ -105,7 +143,7 @@ const handleSubmit = async () => {
   } finally {
     isLoading.value = false
   }
-}
+})
 </script>
 
 <style scoped>
@@ -157,6 +195,17 @@ label {
   font-size: 1rem;
 }
 
+.error-input {
+  border-color: #ef4444;
+}
+
+.error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
 .submit-button {
   width: 100%;
   padding: 0.75rem;
@@ -167,9 +216,13 @@ label {
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.submit-button:hover {
+.submit-button:hover:not(:disabled) {
   background-color: #45a049;
 }
 
@@ -207,5 +260,21 @@ label {
 
 .back-to-login:hover {
   text-decoration: underline;
+}
+
+.spinner {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--color-white);
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
