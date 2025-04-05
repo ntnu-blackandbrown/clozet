@@ -156,7 +156,7 @@ public class AuthController {
      * Verify a user's email using token
      */
     @GetMapping("/verify")
-    public ResponseEntity<?> verifyEmail(@RequestParam("token") String token, HttpServletResponse response) {
+    public ResponseEntity<?> verifyUser(@RequestParam String token, HttpServletResponse response) {
         Optional<VerificationToken> verificationTokenOpt = verificationTokenRepository.findByToken(token);
         
         if (verificationTokenOpt.isEmpty()) {
@@ -178,11 +178,7 @@ public class AuthController {
         verificationTokenRepository.delete(verificationToken);
         
         // Auto-login the user
-        UserDetails userDetails = org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
-                .password(user.getPasswordHash())
-                .authorities("ROLE_USER")
-                .build();
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         
         // Generate access-token and refresh-token
         String accessToken = jwtUtils.generateJwtToken(userDetails);

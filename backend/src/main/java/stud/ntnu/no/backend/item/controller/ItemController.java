@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import stud.ntnu.no.backend.common.security.model.CustomUserDetails;
 import stud.ntnu.no.backend.item.service.ItemService;
 import stud.ntnu.no.backend.item.dto.CreateItemDTO;
 import stud.ntnu.no.backend.item.dto.ItemDTO;
@@ -57,21 +58,24 @@ public class ItemController {
     @PostMapping
     public ResponseEntity<ItemDTO> createItem(@Valid @RequestBody CreateItemDTO itemDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) auth.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        User user = userDetails.getUser();
         return new ResponseEntity<>(itemService.createItem(itemDTO, user.getId()), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ItemDTO> updateItem(@PathVariable Long id, @Valid @RequestBody CreateItemDTO itemDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) auth.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        User user = userDetails.getUser();
         return ResponseEntity.ok(itemService.updateItem(id, itemDTO, user.getId()));
     }
 
     @PatchMapping("/{id}/deactivate")
     public ResponseEntity<Void> deactivateItem(@PathVariable Long id) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) auth.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        User user = userDetails.getUser();
         itemService.deactivateItem(id, user.getId());
         return ResponseEntity.noContent().build();
     }
@@ -79,7 +83,8 @@ public class ItemController {
     @PatchMapping("/{id}/activate")
     public ResponseEntity<Void> activateItem(@PathVariable Long id) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) auth.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        User user = userDetails.getUser();
         itemService.activateItem(id, user.getId());
         return ResponseEntity.noContent().build();
     }
@@ -87,7 +92,8 @@ public class ItemController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) auth.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        User user = userDetails.getUser();
         itemService.deleteItem(id, user.getId());
         return ResponseEntity.noContent().build();
     }
