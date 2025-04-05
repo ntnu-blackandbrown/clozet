@@ -5,6 +5,7 @@ import * as yup from 'yup'
 import { useAuthStore } from '@/stores/AuthStore'
 import BaseModal from '@/components/modals/BaseModal.vue'
 import { useRouter } from 'vue-router'
+import axios from '@/api/axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -19,6 +20,7 @@ const props = defineProps({
     default: 'login',
   },
 })
+
 const isLogin = ref(props.initialMode === 'login')
 const isSubmitting = ref(false)
 const statusMessage = ref('')
@@ -36,6 +38,7 @@ const formTitle = computed(() => {
   }
   return isLogin.value ? 'Login' : 'Register'
 })
+
 const toggleText = computed(() =>
   isLogin.value ? 'Need an account? Register' : 'Already have an account? Login',
 )
@@ -71,6 +74,14 @@ const { handleSubmit, errors, resetForm } = useForm({
   validationSchema: currentSchema,
 })
 
+// Define form fields with validation
+const { value: username, errorMessage: usernameError } = useField('username')
+const { value: password, errorMessage: passwordError } = useField('password')
+const { value: confirmPassword, errorMessage: confirmPasswordError } = useField('confirmPassword')
+const { value: firstName, errorMessage: firstNameError } = useField('firstName')
+const { value: lastName, errorMessage: lastNameError } = useField('lastName')
+const { value: email, errorMessage: emailError } = useField('email')
+
 const isFormValid = computed(() => {
   if (isLogin.value) {
     return !errors.value.username && !errors.value.password && username.value && password.value
@@ -91,13 +102,6 @@ const isFormValid = computed(() => {
     )
   }
 })
-
-const { value: username, errorMessage: usernameError } = useField('username')
-const { value: password, errorMessage: passwordError } = useField('password')
-const { value: confirmPassword, errorMessage: confirmPasswordError } = useField('confirmPassword')
-const { value: firstName, errorMessage: firstNameError } = useField('firstName')
-const { value: lastName, errorMessage: lastNameError } = useField('lastName')
-const { value: email, errorMessage: emailError } = useField('email')
 
 const toggleForm = () => {
   isLogin.value = !isLogin.value
@@ -138,6 +142,7 @@ const submit = handleSubmit(async (values) => {
       }
     } else {
       // Direct registration with correct endpoint
+      console.log("Registering now")
       const userData = {
         username: values.username,
         email: values.email,
@@ -146,26 +151,15 @@ const submit = handleSubmit(async (values) => {
         lastName: values.lastName,
         role: 'USER',
       }
+      console.log("userData", userData)
+      console.log("Sending request now")
 
-      debugInfo.value = `POST til /api/users/register med ${JSON.stringify(userData)}`
+      debugInfo.value = `POST til /api/auth/register med ${JSON.stringify(userData)}`
 
-      const response = await (values.username,
-      values.password,
-      values.email,
-      values.firstName,
-      values.lastName)
+      const response = await authStore.register(userData.username, userData.password, userData.email, userData.firstName, userData.lastName)
 
-      if (response.data) {
-        statusMessage.value = `Registrering vellykket! Velkommen, ${response.data.username}`
-        statusType.value = 'success'
-
-        // Auto-login with new credentials
-        const loginResult = await authStore.login(values.username, values.password)
-        if (loginResult.success) {
-          setTimeout(() => {
-            emit('close')
-          }, 1500)
-        }
+      if (response.success) {
+        statusMessage.value = `Registeration sucessful! Please check your email for verification`
       }
     }
   } catch (error: any) {
@@ -248,9 +242,9 @@ const submit = handleSubmit(async (values) => {
 
 <style scoped>
 h2 {
-  color: var(--color-outer-space);
+  color: #333;
   font-size: 1.8rem;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: 1.5rem;
   font-weight: 600;
   text-align: center;
   letter-spacing: -0.02em;
@@ -259,23 +253,23 @@ h2 {
 form {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 0.5rem;
 }
 
 input {
   width: 100%;
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: 0.75rem 1rem;
   font-size: 0.95rem;
-  border: 1px solid var(--color-wheatfield-dark);
-  border-radius: var(--border-radius);
-  background-color: var(--color-white);
-  transition: var(--transition-smooth);
-  color: var(--color-outer-space);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  transition: all 0.2s ease;
+  color: #333;
 }
 
 input:focus {
   outline: none;
-  border-color: var(--color-summer-green);
+  border-color: #4CAF50;
   box-shadow: 0 0 0 3px rgba(150, 187, 124, 0.2);
 }
 
@@ -286,32 +280,32 @@ input::placeholder {
 .error {
   color: #ef4444;
   font-size: 0.875rem;
-  margin-top: calc(var(--spacing-xs) * -1);
-  margin-bottom: var(--spacing-xs);
+  margin-top: -0.25rem;
+  margin-bottom: 0.25rem;
 }
 
 button[type='submit'] {
   width: 100%;
-  padding: var(--spacing-md);
-  margin-top: var(--spacing-md);
-  background-color: var(--color-summer-green);
-  color: var(--color-white);
+  padding: 0.75rem;
+  margin-top: 1rem;
+  background-color: #4CAF50;
+  color: white;
   border: none;
-  border-radius: var(--border-radius);
+  border-radius: 4px;
   font-weight: 500;
   font-size: 1rem;
   cursor: pointer;
-  transition: var(--transition-bounce);
+  transition: all 0.2s ease;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: 0.5rem;
 }
 
 button[type='submit']:hover:not(:disabled) {
-  background-color: var(--color-summer-green-dark);
+  background-color: #45a049;
   transform: translateY(-2px);
-  box-shadow: var(--box-shadow-medium);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 button[type='submit']:disabled {
@@ -323,17 +317,17 @@ button[type='submit']:disabled {
 .toggle-form {
   background: none;
   border: none;
-  color: var(--color-smalt-blue);
+  color: #2196F3;
   font-size: 0.95rem;
-  margin-top: var(--spacing-lg);
+  margin-top: 1.5rem;
   cursor: pointer;
-  transition: var(--transition-smooth);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--border-radius-sm);
+  transition: all 0.2s ease;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
 }
 
 .toggle-form:hover:not(:disabled) {
-  color: var(--color-smalt-blue-dark);
+  color: #1976D2;
   background-color: rgba(80, 125, 188, 0.1);
 }
 
@@ -344,15 +338,15 @@ button[type='submit']:disabled {
 
 .status-message {
   text-align: center;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius);
-  margin: var(--spacing-sm) 0;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin: 0.5rem 0;
   font-size: 0.95rem;
 }
 
 .status-message.success {
-  background-color: var(--color-summer-green-light);
-  color: var(--color-summer-green-dark);
+  background-color: #e8f5e9;
+  color: #2e7d32;
 }
 
 .status-message.error {
@@ -361,18 +355,18 @@ button[type='submit']:disabled {
 }
 
 .status-message.info {
-  background-color: var(--color-wheatfield-light);
-  color: var(--color-outer-space);
+  background-color: #f3f4f6;
+  color: #333;
 }
 
 .debug-info {
   font-family: monospace;
   font-size: 0.875rem;
-  padding: var(--spacing-sm);
+  padding: 0.5rem;
   background-color: #1f2937;
   color: #f3f4f6;
-  border-radius: var(--border-radius-sm);
-  margin-top: var(--spacing-sm);
+  border-radius: 4px;
+  margin-top: 0.5rem;
   white-space: pre-wrap;
   word-break: break-all;
 }
@@ -381,7 +375,7 @@ button[type='submit']:disabled {
   display: inline-block;
   width: 1.25rem;
   height: 1.25rem;
-  border: 2px solid var(--color-white);
+  border: 2px solid #ffffff;
   border-radius: 50%;
   border-top-color: transparent;
   animation: spin 0.8s linear infinite;

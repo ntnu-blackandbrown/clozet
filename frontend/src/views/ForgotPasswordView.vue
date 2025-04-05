@@ -68,7 +68,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
-
+import axios from '@/api/axios'
 const router = useRouter()
 const isLoading = ref(false)
 const error = ref(false)
@@ -128,7 +128,10 @@ const submit = handleSubmit(async (values) => {
     // })
 
     // Simulating API call for now
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await axios.post('/api/me/change-password', {
+      currentPassword: values.currentPassword,
+      newPassword: values.newPassword
+    })
 
     success.value = true
     message.value = 'Password has been updated successfully.'
