@@ -30,7 +30,7 @@ public class JwtUtils {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userDetails.getUsername());
     }
-    
+
     public String generateRefreshToken(UserDetails userDetails) {
         logger.info("Generating refresh token for user: {}", userDetails.getUsername());
         Map<String, Object> claims = new HashMap<>();
@@ -83,7 +83,7 @@ public class JwtUtils {
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
-    
+
     private String createRefreshToken(Map<String, Object> claims, String subject) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtRefreshExpirationMs);
