@@ -16,101 +16,79 @@
         .error { color: red; }
         .container { max-width: 800px; margin: 0 auto; }
         h1 { color: #333; }
+        #connection-status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .connected {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+        }
+        .disconnected {
+            background-color: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
+        }
+        .connecting {
+            background-color: #fcf8e3;
+            color: #8a6d3b;
+            border: 1px solid #faebcc;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>WebSocket Message Tester</h1>
+    <div id="connection-status" class="disconnected">Status: Disconnected</div>
     <div class="connection-info">
         <div class="form-group">
-            <label>Server URL (Bruk http/https, ikke ws):</label>
+            <label>Server URL:</label>
             <input id="serverUrl" value="http://localhost:8080/ws" />
-            <p><small>SockJS trenger HTTP/HTTPS-URL, ikke WebSocket (ws) direkte</small></p>
+            <p><small>Use HTTP/HTTPS URL, not WebSocket (ws) directly</small></p>
         </div>
         <div>
-            <button id="connect">Koble til</button>
-            <button id="disconnect" disabled>Koble fra</button>
+            <button id="connect">Connect</button>
+            <button id="disconnect" disabled>Disconnect</button>
+            <button id="checkConnection">Check Connection</button>
         </div>
     </div>
 
-    <h2>Meldinger</h2>
+    <h2>Messages</h2>
     <div id="log"></div>
 
     <div class="controls">
-        <h3>Send melding</h3>
+        <h3>Send Message</h3>
         <div class="form-group">
-            <label>Avsender ID:</label>
-            <input id="sender" placeholder="Avsender ID" value="buyer1" />
+            <label>Sender ID:</label>
+            <input id="sender" placeholder="Sender ID" value="buyer1" />
         </div>
         <div class="form-group">
-            <label>Mottaker ID:</label>
-            <input id="receiver" placeholder="Mottaker ID" value="seller1" />
+            <label>Receiver ID:</label>
+            <input id="receiver" placeholder="Receiver ID" value="seller1" />
         </div>
         <div class="form-group">
-            <label>Melding:</label>
-            <textarea id="message" placeholder="Skriv melding her"></textarea>
+            <label>Message:</label>
+            <textarea id="message" placeholder="Write message here"></textarea>
         </div>
-        <button id="send" disabled>Send melding</button>
-    </div>
-    <div class="controls">
-        <h3>Mark Message as Read</h3>
-        <div class="form-group">
-            <label>Message ID:</label>
-            <input id="readMessageId" placeholder="Message ID to mark as read" type="number" />
-        </div>
-        <button id="markAsRead" disabled>Mark as Read</button>
+        <button id="send" disabled>Send Message</button>
+        <button id="ping" disabled>Ping Server</button>
     </div>
 </div>
 
 <script>
-    // Add this in the connect function, after subscribing to /topic/messages
-    stompClient.subscribe('/topic/messages.read', function(messageOutput) {
-        try {
-            const message = JSON.parse(messageOutput.body);
-            log(`<strong>Message marked as read:</strong><br>
-                ID: ${message.id}<br>
-                From: ${message.senderId}<br>
-                To: ${message.receiverId}<br>
-                Read: ${message.read}`, 'message-received');
-        } catch (e) {
-            log(`Error parsing read status message: ${e.message}`, 'error');
-        }
-    });
-
-    // Add this function
-    function markMessageAsRead() {
-        if (!connected || !stompClient) {
-            log('Not connected. Connect first.', 'error');
-            return;
-        }
-
-        const messageId = document.getElementById('readMessageId').value;
-        if (!messageId) {
-            log('Enter a message ID', 'error');
-            return;
-        }
-
-        try {
-            log(`Marking message ${messageId} as read`, 'message-sent');
-            stompClient.send("/app/chat.markRead", {}, messageId);
-        } catch (e) {
-            log(`Error marking message as read: ${e.message}`, 'error');
-        }
-    }
-
-    // Add this event listener
-    document.getElementById('markAsRead').addEventListener('click', markMessageAsRead);
-
-    // Update this in the connect function to enable the markAsRead button
-    document.getElementById('markAsRead').disabled = false;
-
-    // Update this in the disconnect function to disable the markAsRead button
-    document.getElementById('markAsRead').disabled = true;
-
     let stompClient = null;
     let connected = false;
     let messageCount = 0;
     const logElement = document.getElementById('log');
+    const connectionStatus = document.getElementById('connection-status');
+
+    function updateConnectionStatus(status, message) {
+        connectionStatus.className = status;
+        connectionStatus.textContent = `Status: ${message}`;
+    }
 
     function log(message, type = 'info') {
         const timestamp = new Date().toLocaleTimeString();
@@ -123,75 +101,122 @@
 
     function connect() {
         const serverUrl = document.getElementById('serverUrl').value;
-        log(`Kobler til ${serverUrl}...`);
+        updateConnectionStatus('connecting', 'Connecting...');
+        log(`Attempting to connect to ${serverUrl}...`);
 
         try {
-            // Bruk SockJS for kompatibilitet
             const socket = new SockJS(serverUrl);
             stompClient = Stomp.over(socket);
 
-            // Detaljert logging i konsoll
+            // Enable STOMP debug logging
             stompClient.debug = function(str) {
                 console.log(str);
+                log(`STOMP Debug: ${str}`, 'info');
             };
 
             stompClient.connect({},
-                function(frame) { // Suksess-callback
+                function(frame) { // Success callback
                     connected = true;
-                    log(`Tilkoblet: ${frame}`, 'message-received');
+                    updateConnectionStatus('connected', 'Connected');
+                    log(`Connected successfully: ${frame}`, 'message-received');
+                    
                     document.getElementById('connect').disabled = true;
                     document.getElementById('disconnect').disabled = false;
                     document.getElementById('send').disabled = false;
+                    document.getElementById('ping').disabled = false;
 
-                    // Abonner på meldings-topicen
-                    stompClient.subscribe('/topic/messages', function(messageOutput) {
-                        try {
-                            const message = JSON.parse(messageOutput.body);
-                            messageCount++;
-
-                            log(`<strong>Mottok melding #${messageCount}:</strong><br>
-                                    ID: ${message.id}<br>
-                                    Fra: ${message.senderId}<br>
-                                    Til: ${message.receiverId}<br>
-                                    Innhold: ${message.content}<br>
-                                    Tid: ${message.createdAt}`, 'message-received');
-                        } catch (e) {
-                            log(`Feil ved parsing av melding: ${e.message}`, 'error');
-                            console.error("Raw message body:", messageOutput.body);
-                        }
-                    });
+                    // Subscribe to various topics
+                    subscribeToTopics();
                 },
-                function(error) { // Feil-callback
+                function(error) { // Error callback
                     connected = false;
-                    log(`Tilkoblingsfeil: ${error}`, 'error');
-                    document.getElementById('connect').disabled = false;
-                    document.getElementById('disconnect').disabled = true;
-                    document.getElementById('send').disabled = true;
+                    updateConnectionStatus('disconnected', 'Connection Failed');
+                    log(`Connection error: ${error}`, 'error');
+                    resetButtons();
                 }
             );
+
+            // Add connection heartbeat
+            stompClient.heartbeat.outgoing = 20000; // Send heartbeat every 20 seconds
+            stompClient.heartbeat.incoming = 20000; // Expect heartbeat every 20 seconds
+
         } catch (e) {
-            log(`Feil ved oppretting av tilkobling: ${e.message}`, 'error');
+            log(`Connection error: ${e.message}`, 'error');
+            updateConnectionStatus('disconnected', 'Connection Error');
             console.error(e);
+            resetButtons();
         }
+    }
+
+    function subscribeToTopics() {
+        // Subscribe to main message topic
+        stompClient.subscribe('/topic/messages', function(messageOutput) {
+            try {
+                const message = JSON.parse(messageOutput.body);
+                messageCount++;
+                log(`Received message #${messageCount}:<br>
+                    ID: ${message.id}<br>
+                    From: ${message.senderId}<br>
+                    To: ${message.receiverId}<br>
+                    Content: ${message.content}<br>
+                    Time: ${message.createdAt}`, 'message-received');
+            } catch (e) {
+                log(`Error parsing message: ${e.message}`, 'error');
+                console.error("Raw message:", messageOutput.body);
+            }
+        });
+
+        // Subscribe to read status updates
+        stompClient.subscribe('/topic/messages.read', function(messageOutput) {
+            try {
+                const message = JSON.parse(messageOutput.body);
+                log(`Message marked as read:<br>
+                    ID: ${message.id}<br>
+                    Read: ${message.read}`, 'message-received');
+            } catch (e) {
+                log(`Error parsing read status: ${e.message}`, 'error');
+            }
+        });
+
+        // Subscribe to message updates
+        stompClient.subscribe('/topic/messages.update', function(messageOutput) {
+            try {
+                const message = JSON.parse(messageOutput.body);
+                log(`Message updated:<br>
+                    ID: ${message.id}<br>
+                    Content: ${message.content}`, 'message-received');
+            } catch (e) {
+                log(`Error parsing update: ${e.message}`, 'error');
+            }
+        });
     }
 
     function disconnect() {
         if (stompClient && connected) {
-            stompClient.disconnect(function() {
-                log('Koblet fra WebSocket-server');
-                connected = false;
-                document.getElementById('connect').disabled = false;
-                document.getElementById('disconnect').disabled = true;
-                document.getElementById('send').disabled = true;
-            });
-        } else {
-            log('Ingen aktiv tilkobling å koble fra');
+            try {
+                stompClient.disconnect(function() {
+                    log('Disconnected from WebSocket server');
+                    updateConnectionStatus('disconnected', 'Disconnected');
+                    resetButtons();
+                });
+            } catch (e) {
+                log(`Disconnect error: ${e.message}`, 'error');
+            }
         }
+        connected = false;
+    }
+
+    function resetButtons() {
+        connected = false;
+        document.getElementById('connect').disabled = false;
+        document.getElementById('disconnect').disabled = true;
+        document.getElementById('send').disabled = true;
+        document.getElementById('ping').disabled = true;
     }
 
     function sendMessage() {
         if (!connected || !stompClient) {
-            log('Ikke tilkoblet. Koble til først.', 'error');
+            log('Not connected. Please connect first.', 'error');
             return;
         }
 
@@ -200,7 +225,7 @@
         const content = document.getElementById('message').value;
 
         if (!content || !sender || !receiver) {
-            log('Fyll ut alle feltene', 'error');
+            log('Please fill in all fields', 'error');
             return;
         }
 
@@ -212,27 +237,57 @@
         };
 
         try {
-            log(`<strong>Sender melding:</strong><br>
-                    Fra: ${message.senderId}<br>
-                    Til: ${message.receiverId}<br>
-                    Innhold: ${message.content}`, 'message-sent');
+            log(`Sending message:<br>
+                From: ${message.senderId}<br>
+                To: ${message.receiverId}<br>
+                Content: ${message.content}`, 'message-sent');
 
             stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(message));
             document.getElementById('message').value = '';
         } catch (e) {
-            log(`Feil ved sending av melding: ${e.message}`, 'error');
+            log(`Send error: ${e.message}`, 'error');
             console.error(e);
         }
     }
 
+    function pingServer() {
+        if (!connected || !stompClient) {
+            log('Not connected. Please connect first.', 'error');
+            return;
+        }
 
+        try {
+            stompClient.send("/app/chat.ping", {}, "");
+            log('Ping sent to server', 'message-sent');
+        } catch (e) {
+            log(`Ping error: ${e.message}`, 'error');
+        }
+    }
 
-    // Sett opp event-lyttere
+    function checkConnection() {
+        if (stompClient && connected) {
+            try {
+                stompClient.send("/app/chat.ping", {}, "");
+                log('Connection check: Active', 'message-received');
+            } catch (e) {
+                log('Connection check: Failed', 'error');
+                resetButtons();
+                updateConnectionStatus('disconnected', 'Connection Lost');
+            }
+        } else {
+            log('Connection check: Not connected', 'error');
+            resetButtons();
+            updateConnectionStatus('disconnected', 'Not Connected');
+        }
+    }
+
+    // Event Listeners
     document.getElementById('connect').addEventListener('click', connect);
     document.getElementById('disconnect').addEventListener('click', disconnect);
     document.getElementById('send').addEventListener('click', sendMessage);
+    document.getElementById('ping').addEventListener('click', pingServer);
+    document.getElementById('checkConnection').addEventListener('click', checkConnection);
 
-    // Også tillat sending av melding med Enter-tasten
     document.getElementById('message').addEventListener('keypress', function(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -242,9 +297,9 @@
         }
     });
 
-    // Logging av eventuelle feil
+    // Global error handler
     window.onerror = function(message, source, lineno, colno, error) {
-        log(`Global feil: ${message}`, 'error');
+        log(`Global error: ${message}`, 'error');
         return false;
     };
 </script>
