@@ -10,22 +10,55 @@ const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 const showLoginModal = ref(false)
+const initialAuthMode = ref('login') // Default to login mode
+
+// Check if we should show the login/register modal based on the route
+onMounted(() => {
+  if (route.path === '/login' || route.path === '/register') {
+    showLoginModal.value = true
+    initialAuthMode.value = route.path === '/login' ? 'login' : 'register'
+  }
+})
+
+// Watch for route changes to handle login/register routes
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath === '/login' || newPath === '/register') {
+      showLoginModal.value = true
+      initialAuthMode.value = newPath === '/login' ? 'login' : 'register'
+    } else {
+      showLoginModal.value = false
+    }
+  },
+)
 
 const handleCreatePost = () => {
   if (authStore.isLoggedIn) {
     router.push('/create-product')
   } else {
     showLoginModal.value = true
+    initialAuthMode.value = 'login'
+    router.replace('/login')
   }
 }
 
+const handleCloseAuthModal = () => {
+  showLoginModal.value = false
+  router.replace('/')
+}
+
 // Watch for changes in the route to handle product ID
-watch(() => route.params.id, (newId) => {
-  if (newId) {
-    // If there's a product ID in the URL, we'll handle it in the ProductListView
-    // The ProductListView will show the modal for this product
-  }
-}, { immediate: true })
+watch(
+  () => route.params.id,
+  (newId) => {
+    if (newId) {
+      // If there's a product ID in the URL, we'll handle it in the ProductListView
+      // The ProductListView will show the modal for this product
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -79,8 +112,9 @@ watch(() => route.params.id, (newId) => {
   </div>
   <LoginRegisterModal
     v-if="showLoginModal"
-    @close="showLoginModal = false"
+    @close="handleCloseAuthModal"
     :customTitle="'Please login to create a post'"
+    :initialMode="initialAuthMode"
   />
 </template>
 
