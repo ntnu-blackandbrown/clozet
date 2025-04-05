@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
 import ProductDisplay from '@/components/product/ProductDisplay.vue'
 import axios from 'axios'
-import testImage from '@/assets/images/image-1.png'
 
 const router = useRouter()
 const userStore = useAuthStore()
@@ -172,15 +171,12 @@ const sendTestData = async () => {
   try {
     testResult.value = 'Sending test data...'
 
-    // Create FormData object for multipart/form-data
-    const formData = new FormData()
 
     // Create mock data based on the CreateItemDTO expected by the backend
     const mockData = {
-      title: 'Test Product with Image',
-      shortDescription: 'This is a test product with an image',
-      longDescription:
-        'This is a longer description for the test product. It contains more details about the product and includes an image from the assets folder.',
+      title: 'Test Product',
+      shortDescription: 'This is a test product',
+      longDescription: 'This is a longer description for the test product. It contains more details about the product.',
       price: 299.99,
       categoryId: 1,
       locationId: 1,
@@ -191,36 +187,14 @@ const sendTestData = async () => {
       size: 'M',
       brand: 'Test Brand',
       color: 'Blue',
-      isVippsPaymentEnabled: true,
+      isVippsPaymentEnabled: true
     }
 
-    // Append all mock data fields to FormData
-    Object.keys(mockData).forEach((key) => {
-      formData.append(key, mockData[key])
-    })
+    // Send the request to the backend
+    const response = await axios.post('/api/items', mockData)
 
-    // Fetch the image from assets and convert it to a File object
-    try {
-      const response = await fetch(testImage)
-      const blob = await response.blob()
-      const file = new File([blob], 'test-image.png', { type: 'image/png' })
-
-      // Append the image file to FormData
-      formData.append('images[0]', file)
-
-      // Send the request to the backend
-      const apiResponse = await axios.post('/api/items', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-
-      testResult.value = `Success! Item created with ID: ${apiResponse.data.id}`
-      console.log('Test data sent successfully:', apiResponse.data)
-    } catch (imageError) {
-      console.error('Error processing image:', imageError)
-      testResult.value = `Error processing image: ${imageError.message}`
-    }
+    testResult.value = `Success! Item created with ID: ${response.data.id}`
+    console.log('Test data sent successfully:', response.data)
   } catch (error) {
     testResult.value = `Error: ${error.message}`
     console.error('Error sending test data:', error)
@@ -235,13 +209,9 @@ const sendTestData = async () => {
     <!-- Test Button Section -->
     <div class="test-section">
       <h2>Test API Connection</h2>
-      <p>Click the button below to send test data with an image to the backend:</p>
-      <button @click="sendTestData" class="test-button">Send Test Data with Image</button>
-      <div
-        v-if="testResult"
-        class="test-result"
-        :class="{ success: testResult.includes('Success') }"
-      >
+      <p>Click the button below to send test data to the backend:</p>
+      <button @click="sendTestData" class="test-button">Send Test Data</button>
+      <div v-if="testResult" class="test-result" :class="{ 'success': testResult.includes('Success') }">
         {{ testResult }}
       </div>
     </div>
