@@ -26,7 +26,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendVerificationEmail(String toEmail, String token) {
-        String verificationLink = emailConfig.getBaseUrl() + "/verify?token=" + token;
+        String verificationLink = emailConfig.getBaseUrl() + "verify?token=" + token;
         String subject = "Bekreft din konto på Clozet";
         
         String htmlContent = """
