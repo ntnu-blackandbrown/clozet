@@ -1,12 +1,13 @@
 <script setup>
 import Badge from '@/components/utils/Badge.vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import ProductListView from '@/views/ProductListView.vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 const showLoginModal = ref(false)
 
@@ -17,6 +18,14 @@ const handleCreatePost = () => {
     showLoginModal.value = true
   }
 }
+
+// Watch for changes in the route to handle product ID
+watch(() => route.params.id, (newId) => {
+  if (newId) {
+    // If there's a product ID in the URL, we'll handle it in the ProductListView
+    // The ProductListView will show the modal for this product
+  }
+}, { immediate: true })
 </script>
 
 <template>

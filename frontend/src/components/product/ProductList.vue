@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { ref, nextTick, onMounted } from 'vue'
+import { ref, nextTick, onMounted, watch } from 'vue'
 import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
 import ProductCard from '@/components/product/ProductCard.vue'
 import axios from 'axios'
 import type { Product } from '@/types/product'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const props = defineProps<{
   items: Product[]
+  initialProductId?: number | null
 }>()
 
 const selectedProductId = ref<number | null>(null)
@@ -17,7 +20,20 @@ const productModalRef = ref(null)
 const openProductModal = (productId: number) => {
   selectedProductId.value = productId
   showProductModal.value = true
+
+  // Update the URL without navigating away from the current page
+  router.replace(`/products/${productId}`)
 }
+
+// Watch for changes in the initialProductId prop
+watch(() => props.initialProductId, (newId) => {
+  if (newId) {
+    selectedProductId.value = newId
+    showProductModal.value = true
+  } else {
+    showProductModal.value = false
+  }
+}, { immediate: true })
 </script>
 
 <template>
