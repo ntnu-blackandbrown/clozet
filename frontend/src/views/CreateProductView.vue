@@ -1,11 +1,15 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
 import ProductDisplay from '@/components/product/ProductDisplay.vue'
-
+import { useCategoryStore } from '@/stores/Category'
+import { useShippingOptionStore } from '@/stores/ShippingOption'
+import axios from '@/api/axios'
 const router = useRouter()
 const userStore = useAuthStore()
+const categoryStore = useCategoryStore()
+const shippingOptionStore = useShippingOptionStore()
 
 // Form data
 const formData = ref({
@@ -25,7 +29,6 @@ const formData = ref({
   isVippsPaymentEnabled: false,
   images: [], // Array to store image files
 })
-
 // Image upload state
 const imageFiles = ref([])
 const imagePreviews = ref([])
@@ -37,13 +40,10 @@ const errors = ref({})
 const isSubmitting = ref(false)
 
 // Categories (to be fetched from backend)
-const categories = ref([
-  { id: 1, name: 'Tops' },
-  { id: 2, name: 'Bottoms' },
-  { id: 3, name: 'Dresses' },
-  { id: 4, name: 'Accessories' },
-  { id: 5, name: 'Shoes' },
-])
+const categories = ref([])
+// Shipping options (to be fetched from backend)
+const shippingOptions = ref([])
+
 
 // Locations (to be fetched from backend)
 const locations = ref([
@@ -52,13 +52,14 @@ const locations = ref([
   { id: 3, name: 'Trondheim' },
 ])
 
-// Shipping options (to be fetched from backend)
-const shippingOptions = ref([
-  { id: 1, name: 'Standard Shipping' },
-  { id: 2, name: 'Express Shipping' },
-  { id: 3, name: 'Local Pickup' },
-])
 
+//on mount, fetch categories
+onMounted(async () => {
+  await categoryStore.fetchCategories()
+  categories.value = categoryStore.categories
+  await shippingOptionStore.fetchShippingOptions()
+  shippingOptions.value = shippingOptionStore.shippingOptions
+})
 // Condition options
 const conditions = ref(['New', 'Like New', 'Good', 'Fair', 'Poor'])
 
@@ -149,6 +150,7 @@ const handleSubmit = async () => {
 
     // TODO: Implement API call to create product
     // const response = await createProduct(submitData)
+    const response = await axios.post('/api/items', submitData )
     console.log('Form submitted:', Object.fromEntries(submitData))
 
     // Redirect to the product view or home page
