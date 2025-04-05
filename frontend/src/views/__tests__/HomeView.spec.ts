@@ -10,6 +10,10 @@ vi.mock('vue-router', () => ({
   useRouter: () => ({
     push: pushSpy,
   }),
+  useRoute: () => ({
+    params: {},
+    query: {},
+  }),
   // Optionally stub RouterLink if used
   RouterLink: {
     name: 'RouterLink',
