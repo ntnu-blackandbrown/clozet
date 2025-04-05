@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
 import ProductDisplay from '@/components/product/ProductDisplay.vue'
-import axios from 'axios'
+import axios from '@/api/axios'
 
 const router = useRouter()
 const userStore = useAuthStore()
@@ -130,37 +130,57 @@ const removeImage = (index) => {
 }
 
 const handleSubmit = async () => {
+  console.log('handleSubmit')
   if (!validateForm()) return
 
   isSubmitting.value = true
-  try {
-    // Create FormData object for multipart/form-data
-    const submitData = new FormData()
+  testResult.value = 'Submitting product...'
 
-    // Append all form fields
-    Object.keys(formData.value).forEach((key) => {
-      if (key === 'images') {
-        // Append each image file
-        imageFiles.value.forEach((file, index) => {
-          submitData.append(`images[${index}]`, file)
-        })
-      } else {
-        submitData.append(key, formData.value[key])
-      }
+  try {
+    console.log('payload')
+    const payload = {
+      title: formData.value.title,
+      shortDescription: formData.value.shortDescription,
+      longDescription: formData.value.longDescription,
+      price: parseFloat(formData.value.price),
+      categoryId: parseInt(formData.value.categoryId),
+      locationId: parseInt(formData.value.locationId),
+      shippingOptionId: parseInt(formData.value.shippingOptionId),
+      latitude: formData.value.latitude ? parseFloat(formData.value.latitude) : null,
+      longitude: formData.value.longitude ? parseFloat(formData.value.longitude) : null,
+      condition: formData.value.condition,
+      size: formData.value.size,
+      brand: formData.value.brand,
+      color: formData.value.color,
+      isVippsPaymentEnabled: formData.value.isVippsPaymentEnabled,
+    }
+
+    console.log('payload', payload)
+
+    const response = await axios.post('/api/items', payload, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
 
-    // TODO: Implement API call to create product
-    // const response = await createProduct(submitData)
-    console.log('Form submitted:', Object.fromEntries(submitData))
+    console.log('response', response)
 
-    // Redirect to the product view or home page
-    router.push('/')
+    testResult.value = `Success! Item created with ID: ${response.data.id}`
+    console.log('Product created:', response.data)
+
+    // Optional: redirect after a short delay
+    setTimeout(() => {
+      router.push('/')
+    }, 1000)
   } catch (error) {
+    testResult.value = `Error: ${error.response?.data?.message || error.message}`
     console.error('Error creating product:', error)
   } finally {
     isSubmitting.value = false
   }
 }
+
+
 
 const handlePreview = () => {
   showPreview.value = true
