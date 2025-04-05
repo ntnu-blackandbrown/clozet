@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stud.ntnu.no.backend.common.security.model.CustomUserDetails;
 import stud.ntnu.no.backend.common.service.EmailService;
 import stud.ntnu.no.backend.user.dto.ChangePasswordDTO;
 import stud.ntnu.no.backend.user.dto.LoginDTO;
@@ -59,6 +60,10 @@ public class UserServiceImpl extends UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new RuntimeException("No authenticated user found");
+        }
+
+        if (authentication.getPrincipal() instanceof CustomUserDetails) {
+            return ((CustomUserDetails) authentication.getPrincipal()).getUser();
         }
 
         String username = authentication.getName();
