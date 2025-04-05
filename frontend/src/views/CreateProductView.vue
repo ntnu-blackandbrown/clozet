@@ -2,7 +2,6 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
-import ProductDisplay from '@/components/product/ProductDisplay.vue'
 import { useCategoryStore } from '@/stores/Category'
 import { useShippingOptionStore } from '@/stores/ShippingOption'
 import axios from '@/api/axios'
@@ -88,9 +87,6 @@ const conditions = ref(['New', 'Like New', 'Good', 'Fair', 'Poor'])
 
 // Size options
 const sizes = ref(['XS', 'S', 'M', 'L', 'XL', 'XXL'])
-
-// Add preview modal state
-const showPreview = ref(false)
 
 // Validation schema
 const schema = yup.object({
@@ -252,13 +248,6 @@ const onSubmit = handleSubmit(async (values) => {
     isSubmitting.value = false
   }
 })
-
-const handlePreview = () => {
-  showPreview.value = true
-}
-
-// For preview purposes, create a temporary ID
-const previewId = ref(0)
 </script>
 
 <template>
@@ -466,36 +455,11 @@ const previewId = ref(0)
 
       <div class="form-actions">
         <button type="button" @click="router.back()" class="cancel-button">Cancel</button>
-        <button type="button" class="preview-button" @click="handlePreview">Preview Product</button>
         <button type="submit" class="submit-button" :disabled="!isFormValid">
           {{ isSubmitting ? 'Creating...' : 'Create Product' }}
         </button>
       </div>
     </form>
-
-    <!-- Preview Modal -->
-    <div v-if="showPreview" class="preview-modal">
-      <div class="preview-modal-content">
-        <button class="close-button" @click="showPreview = false">×</button>
-        <ProductDisplay
-          :id="previewId"
-          :images="imagePreviews"
-          :title="title"
-          :description_full="longDescription"
-          :category="categories.find((c) => c.id === Number(categoryId))?.name || ''"
-          :location="locations.find((l) => l.id === Number(locationId))?.name || ''"
-          :price="Number(price)"
-          :seller="userStore.user?.username || 'Current User'"
-          :shipping_options="
-            shippingOptions.find((s) => s.id === Number(shippingOptionId))?.name || ''
-          "
-          :status="'Available'"
-          :created_at="new Date().toLocaleDateString()"
-          :updated_at="new Date().toLocaleDateString()"
-          :purchased="false"
-        />
-      </div>
-    </div>
   </div>
 </template>
 
@@ -727,59 +691,5 @@ textarea:focus {
   .image-previews {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
-}
-
-.preview-button {
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  border-radius: 0.375rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.preview-button:hover {
-  background-color: #357abd;
-}
-
-.preview-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.preview-modal-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  max-width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-}
-
-.close-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #666;
-}
-
-.close-button:hover {
-  color: #333;
 }
 </style>
