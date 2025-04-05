@@ -6,6 +6,19 @@ import { vi, describe, it, beforeEach, expect } from 'vitest'
 
 vi.mock('@/api/axios.ts')
 const mockedAxios = axios as unknown as { get: any }
+
+// Add vue-router mock
+vi.mock('vue-router', () => ({
+  useRoute: () => ({
+    params: { id: null },
+    query: {},
+  }),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+  }),
+}))
+
 // ✅ Place this at the top of your test
 vi.mock('@/components/product/ProductList.vue', () => ({
   default: {
