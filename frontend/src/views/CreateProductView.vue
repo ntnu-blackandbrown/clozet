@@ -1,14 +1,45 @@
-<script setup>
-import { ref, computed } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
-import ProductDisplay from '@/components/product/ProductDisplay.vue'
+import { useCategoryStore } from '@/stores/Category'
+import { useShippingOptionStore } from '@/stores/ShippingOption'
 import axios from '@/api/axios'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 
+// Define interfaces for TypeScript
+interface Category {
+  id: number
+  name: string
+}
+
+interface ShippingOption {
+  id: number
+  name: string
+}
+
+interface Location {
+  id: number
+  name: string
+}
+
+interface User {
+  id: number
+  username: string
+  email: string
+  firstName?: string
+  lastName?: string
+  active: boolean
+  role: string
+  phoneNumber?: string
+  name?: string
+}
+
 const router = useRouter()
 const userStore = useAuthStore()
+const categoryStore = useCategoryStore()
+const shippingOptionStore = useShippingOptionStore()
 
 // Form validation schema
 const productSchema = yup.object({
@@ -50,8 +81,8 @@ const formData = ref({
 })
 
 // Image upload state
-const imageFiles = ref([])
-const imagePreviews = ref([])
+const imageFiles = ref<File[]>([])
+const imagePreviews = ref<string[]>([])
 const isDragging = ref(false)
 const maxImages = 5
 
@@ -60,27 +91,24 @@ const isSubmitting = ref(false)
 const testResult = ref('')
 
 // Categories (to be fetched from backend)
-const categories = ref([
-  { id: 1, name: 'Tops' },
-  { id: 2, name: 'Bottoms' },
-  { id: 3, name: 'Dresses' },
-  { id: 4, name: 'Accessories' },
-  { id: 5, name: 'Shoes' },
-])
+const categories = ref<Category[]>([])
+// Shipping options (to be fetched from backend)
+const shippingOptions = ref<ShippingOption[]>([])
 
 // Locations (to be fetched from backend)
-const locations = ref([
+const locations = ref<Location[]>([
   { id: 1, name: 'Oslo' },
   { id: 2, name: 'Bergen' },
   { id: 3, name: 'Trondheim' },
 ])
 
-// Shipping options (to be fetched from backend)
-const shippingOptions = ref([
-  { id: 1, name: 'Standard Shipping' },
-  { id: 2, name: 'Express Shipping' },
-  { id: 3, name: 'Local Pickup' },
-])
+//on mount, fetch categories
+onMounted(async () => {
+  await categoryStore.fetchCategories()
+  categories.value = categoryStore.categories
+  await shippingOptionStore.fetchShippingOptions()
+  shippingOptions.value = shippingOptionStore.shippingOptions
+})
 
 // Condition options
 const conditions = ref(['New', 'Like New', 'Good', 'Fair', 'Poor'])
@@ -96,19 +124,19 @@ const { handleSubmit, errors, resetForm } = useForm({
   validationSchema: productSchema,
 })
 
-// Setup form fields
-const { value: title, errorMessage: titleError } = useField('title')
-const { value: shortDescription, errorMessage: shortDescriptionError } = useField('shortDescription')
-const { value: longDescription, errorMessage: longDescriptionError } = useField('longDescription')
-const { value: price, errorMessage: priceError } = useField('price')
-const { value: categoryId, errorMessage: categoryIdError } = useField('categoryId')
-const { value: locationId, errorMessage: locationIdError } = useField('locationId')
-const { value: shippingOptionId, errorMessage: shippingOptionIdError } = useField('shippingOptionId')
-const { value: condition, errorMessage: conditionError } = useField('condition')
-const { value: size, errorMessage: sizeError } = useField('size')
-const { value: brand, errorMessage: brandError } = useField('brand')
-const { value: color, errorMessage: colorError } = useField('color')
-const { value: isVippsPaymentEnabled } = useField('isVippsPaymentEnabled')
+// Setup form fields with proper typing
+const { value: title, errorMessage: titleError } = useField<string>('title')
+const { value: shortDescription, errorMessage: shortDescriptionError } = useField<string>('shortDescription')
+const { value: longDescription, errorMessage: longDescriptionError } = useField<string>('longDescription')
+const { value: price, errorMessage: priceError } = useField<string>('price')
+const { value: categoryId, errorMessage: categoryIdError } = useField<string>('categoryId')
+const { value: locationId, errorMessage: locationIdError } = useField<string>('locationId')
+const { value: shippingOptionId, errorMessage: shippingOptionIdError } = useField<string>('shippingOptionId')
+const { value: condition, errorMessage: conditionError } = useField<string>('condition')
+const { value: size, errorMessage: sizeError } = useField<string>('size')
+const { value: brand, errorMessage: brandError } = useField<string>('brand')
+const { value: color, errorMessage: colorError } = useField<string>('color')
+const { value: isVippsPaymentEnabled } = useField<boolean>('isVippsPaymentEnabled')
 
 // Computed property to check if form is valid
 const isFormValid = computed(() => {
@@ -139,20 +167,23 @@ const isFormValid = computed(() => {
   )
 })
 
-const handleImageUpload = (event) => {
-  const files = Array.from(event.target.files)
-  addImages(files)
+const handleImageUpload = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  if (input.files) {
+    const files = Array.from(input.files)
+    addImages(files)
+  }
 }
 
-const handleDrop = (event) => {
+const handleDrop = (event: DragEvent) => {
   event.preventDefault()
   isDragging.value = false
 
-  const files = Array.from(event.dataTransfer.files)
+  const files = Array.from(event.dataTransfer?.files || [])
   addImages(files)
 }
 
-const addImages = (files) => {
+const addImages = (files: File[]) => {
   const validFiles = files.filter((file) => file.type.startsWith('image/'))
 
   if (validFiles.length + imageFiles.value.length > maxImages) {
@@ -165,14 +196,14 @@ const addImages = (files) => {
       imageFiles.value.push(file)
       const reader = new FileReader()
       reader.onload = (e) => {
-        imagePreviews.value.push(e.target.result)
+        imagePreviews.value.push(e.target?.result as string)
       }
       reader.readAsDataURL(file)
     }
   })
 }
 
-const removeImage = (index) => {
+const removeImage = (index: number  ) => {
   imageFiles.value.splice(index, 1)
   imagePreviews.value.splice(index, 1)
 }
@@ -215,7 +246,7 @@ const onSubmit = handleSubmit(async (values) => {
     setTimeout(() => {
       router.push('/')
     }, 1000)
-  } catch (error) {
+  } catch (error: any) {
     testResult.value = `Error: ${error.response?.data?.message || error.message}`
     console.error('Error creating product:', error)
   } finally {
@@ -255,7 +286,7 @@ const sendTestData = async () => {
 
     testResult.value = `Success! Item created with ID: ${response.data.id}`
     console.log('Test data sent successfully:', response.data)
-  } catch (error) {
+  } catch (error: any) {
     testResult.value = `Error: ${error.message}`
     console.error('Error sending test data:', error)
   }
@@ -486,12 +517,12 @@ const sendTestData = async () => {
           :images="imagePreviews"
           :title="title"
           :description_full="longDescription"
-          :category="categories.find((c) => c.id === categoryId)?.name || ''"
-          :location="locations.find((l) => l.id === locationId)?.name || ''"
+          :category="categories.find((c: Category) => c.id === parseInt(categoryId))?.name || ''"
+          :location="locations.find((l: Location) => l.id === parseInt(locationId))?.name || ''"
           :price="Number(price)"
-          :seller="userStore.user?.name || 'Current User'"
+          :seller="userStore.user?.firstName || userStore.user?.username || 'Current User'"
           :shipping_options="
-            shippingOptions.find((s) => s.id === shippingOptionId)?.name || ''
+            shippingOptions.find((s: ShippingOption) => s.id === parseInt(shippingOptionId))?.name || ''
           "
           :status="'Available'"
           :created_at="new Date().toLocaleDateString()"
