@@ -24,4 +24,8 @@ public class CategoryController {
     public List<CategoryDTO> getTopFiveCategories() {
         return categoryService.getTopFiveCategories();
     }
+    @GetMapping
+    public List<CategoryDTO> getAllCategories() {
+        return categoryService.getAllCategories();
+    }
 }

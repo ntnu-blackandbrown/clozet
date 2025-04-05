@@ -12,6 +12,18 @@ interface FormData {
   confirmPassword?: string
 }
 
+// Mock the router
+const replaceSpy = vi.fn()
+vi.mock('vue-router', () => ({
+  useRouter: () => ({
+    replace: replaceSpy,
+  }),
+  useRoute: () => ({
+    params: {},
+    query: {},
+  }),
+}))
+
 // Mock the external dependencies
 vi.mock('@/components/modals/BaseModal.vue', () => ({
   default: {

@@ -171,6 +171,7 @@ const sendTestData = async () => {
   try {
     testResult.value = 'Sending test data...'
 
+
     // Create mock data based on the CreateItemDTO expected by the backend
     const mockData = {
       title: 'Test Product',

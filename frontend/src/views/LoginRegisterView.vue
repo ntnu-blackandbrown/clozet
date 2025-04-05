@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useAuthStore } from '@/stores/AuthStore'
 import BaseModal from '@/components/modals/BaseModal.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const authStore = useAuthStore()
 const emit = defineEmits(['close'])
 const props = defineProps({
@@ -12,12 +14,21 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  initialMode: {
+    type: String,
+    default: 'login',
+  },
 })
-const isLogin = ref(true)
+const isLogin = ref(props.initialMode === 'login')
 const isSubmitting = ref(false)
 const statusMessage = ref('')
 const statusType = ref('')
 const debugInfo = ref('')
+
+// Set initial mode based on prop
+onMounted(() => {
+  isLogin.value = props.initialMode === 'login'
+})
 
 const formTitle = computed(() => {
   if (props.customTitle) {
@@ -94,6 +105,13 @@ const toggleForm = () => {
   statusType.value = ''
   debugInfo.value = ''
   resetForm()
+
+  // Update the URL based on the current mode
+  if (isLogin.value) {
+    router.replace('/login')
+  } else {
+    router.replace('/register')
+  }
 }
 
 const submit = handleSubmit(async (values) => {
