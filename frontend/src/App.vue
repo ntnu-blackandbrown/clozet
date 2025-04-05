@@ -1,15 +1,17 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
-import { RouterView, useRouter } from 'vue-router'
+import { RouterView, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from './stores/AuthStore'
 import Footer from '@/components/layout/Footer.vue'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 const showLoginModal = ref(false)
 const statusMessage = ref('')
 const isLoading = ref(false)
+const initialAuthMode = ref('login') // Default to login mode
 
 // Computed properties
 const isLoggedIn = computed(() => authStore.isLoggedIn)
@@ -18,11 +20,41 @@ const userDetails = computed(() => authStore.userDetails)
 // Load user info on app start
 onMounted(async () => {
   await authStore.fetchUserInfo()
+
+  // Check if we should show the login/register modal based on the route
+  if (route.path === '/login' || route.path === '/register') {
+    showLoginModal.value = true
+    initialAuthMode.value = route.path === '/login' ? 'login' : 'register'
+  }
 })
+
+// Watch for route changes to handle login/register routes
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath === '/login' || newPath === '/register') {
+      showLoginModal.value = true
+      initialAuthMode.value = newPath === '/login' ? 'login' : 'register'
+    } else {
+      showLoginModal.value = false
+    }
+  },
+)
 
 async function logout() {
   await authStore.logout()
   router.push('/')
+}
+
+const handleLoginClick = () => {
+  showLoginModal.value = true
+  initialAuthMode.value = 'login'
+  router.replace('/login')
+}
+
+const handleCloseAuthModal = () => {
+  showLoginModal.value = false
+  router.replace('/')
 }
 </script>
 
@@ -51,7 +83,7 @@ async function logout() {
 
           <!-- Login/register buttons when not logged in -->
           <div v-else class="auth-buttons">
-            <button @click="showLoginModal = true" class="login-button">Login / Register</button>
+            <button @click="handleLoginClick" class="login-button">Login / Register</button>
           </div>
         </div>
       </div>
@@ -62,7 +94,11 @@ async function logout() {
     <Footer />
   </div>
 
-  <LoginRegisterModal v-if="showLoginModal" @close="showLoginModal = false" />
+  <LoginRegisterModal
+    v-if="showLoginModal"
+    @close="handleCloseAuthModal"
+    :initialMode="initialAuthMode"
+  />
 </template>
 
 <style>

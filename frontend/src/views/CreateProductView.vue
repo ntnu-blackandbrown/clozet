@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
 import ProductDisplay from '@/components/product/ProductDisplay.vue'
+import axios from 'axios'
 
 const router = useRouter()
 const userStore = useAuthStore()
@@ -35,6 +36,7 @@ const maxImages = 5
 // Form validation
 const errors = ref({})
 const isSubmitting = ref(false)
+const testResult = ref('')
 
 // Categories (to be fetched from backend)
 const categories = ref([
@@ -163,11 +165,56 @@ const handleSubmit = async () => {
 const handlePreview = () => {
   showPreview.value = true
 }
+
+// Function to send test data to the ItemController
+const sendTestData = async () => {
+  try {
+    testResult.value = 'Sending test data...'
+
+
+    // Create mock data based on the CreateItemDTO expected by the backend
+    const mockData = {
+      title: 'Test Product',
+      shortDescription: 'This is a test product',
+      longDescription: 'This is a longer description for the test product. It contains more details about the product.',
+      price: 299.99,
+      categoryId: 1,
+      locationId: 1,
+      shippingOptionId: 1,
+      latitude: 59.913868,
+      longitude: 10.752245,
+      condition: 'New',
+      size: 'M',
+      brand: 'Test Brand',
+      color: 'Blue',
+      isVippsPaymentEnabled: true
+    }
+
+    // Send the request to the backend
+    const response = await axios.post('/api/items', mockData)
+
+    testResult.value = `Success! Item created with ID: ${response.data.id}`
+    console.log('Test data sent successfully:', response.data)
+  } catch (error) {
+    testResult.value = `Error: ${error.message}`
+    console.error('Error sending test data:', error)
+  }
+}
 </script>
 
 <template>
   <div class="create-product-container">
     <h1>Create New Product</h1>
+
+    <!-- Test Button Section -->
+    <div class="test-section">
+      <h2>Test API Connection</h2>
+      <p>Click the button below to send test data to the backend:</p>
+      <button @click="sendTestData" class="test-button">Send Test Data</button>
+      <div v-if="testResult" class="test-result" :class="{ 'success': testResult.includes('Success') }">
+        {{ testResult }}
+      </div>
+    </div>
 
     <form @submit.prevent="handleSubmit" class="product-form">
       <!-- Image Upload Section -->
@@ -412,6 +459,53 @@ const handlePreview = () => {
 .create-product-container h1 {
   margin-bottom: 2rem;
   color: #333;
+}
+
+/* Test Section Styles */
+.test-section {
+  background: #f0f9ff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  border: 1px solid #bae6fd;
+}
+
+.test-section h2 {
+  margin-bottom: 1rem;
+  color: #0369a1;
+  font-size: 1.25rem;
+}
+
+.test-button {
+  background-color: #0ea5e9;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 0.5rem;
+}
+
+.test-button:hover {
+  background-color: #0284c7;
+}
+
+.test-result {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.875rem;
+}
+
+.test-result.success {
+  background-color: #dcfce7;
+  color: #166534;
 }
 
 .form-section {

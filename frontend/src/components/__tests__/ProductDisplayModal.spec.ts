@@ -1,6 +1,13 @@
 import { mount } from '@vue/test-utils'
 import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
+
+// Add vue-router mock
+vi.mock('vue-router', () => ({
+  useRouter: () => ({
+    replace: vi.fn(),
+  }),
+}))
 
 describe('ProductDisplayModal', () => {
   const factory = () =>

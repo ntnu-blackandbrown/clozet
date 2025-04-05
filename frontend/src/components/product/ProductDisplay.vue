@@ -183,7 +183,7 @@ onMounted(async () => {
 }
 
 .contact-button {
-  background-color: #6B5B95;
+  background-color: #6b5b95;
   color: white;
   border: none;
   border-radius: 0.375rem;
@@ -195,7 +195,7 @@ onMounted(async () => {
 }
 
 .contact-button:hover {
-  background-color: #5A4B7D;
+  background-color: #5a4b7d;
 }
 
 #product-info {

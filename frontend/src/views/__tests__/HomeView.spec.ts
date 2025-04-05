@@ -6,9 +6,15 @@ import { useAuthStore } from '@/stores/AuthStore'
 
 // Create a mock for vue-router
 const pushSpy = vi.fn()
+const replaceSpy = vi.fn()
 vi.mock('vue-router', () => ({
   useRouter: () => ({
     push: pushSpy,
+    replace: replaceSpy,
+  }),
+  useRoute: () => ({
+    params: {},
+    query: {},
   }),
   // Optionally stub RouterLink if used
   RouterLink: {
@@ -85,7 +91,7 @@ describe('HomePage.vue', () => {
     })
     const createButton = wrapper.find('button')
     await createButton.trigger('click')
-    //expect(pushSpy).toHaveBeenCalledWith('/create-product')
+    expect(replaceSpy).toHaveBeenCalledWith('/login')
   })
 
   it('renders ProductList component', () => {

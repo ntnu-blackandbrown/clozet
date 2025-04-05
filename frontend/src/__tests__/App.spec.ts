@@ -9,15 +9,23 @@ import { createRouter, createWebHistory } from 'vue-router'
 // Mock router
 const mockRouter = {
   push: vi.fn(),
+  replace: vi.fn(),
   currentRoute: { value: { path: '/' } },
 }
 
-// Mock useRouter
+// Mock route
+const mockRoute = {
+  path: '/',
+  params: {},
+}
+
+// Mock useRouter and useRoute
 vi.mock('vue-router', async () => {
   const actual = await vi.importActual('vue-router')
   return {
     ...actual,
     useRouter: () => mockRouter,
+    useRoute: () => mockRoute,
   }
 })
 
@@ -59,6 +67,10 @@ describe('AppLayout.vue (normal Pinia)', () => {
     authStore.fetchUserInfo = vi.fn().mockResolvedValue(fakeUser)
     authStore.logout = vi.fn().mockResolvedValue({ success: true })
     vi.clearAllMocks()
+
+    // Reset route mock
+    mockRoute.path = '/'
+    mockRoute.params = {}
   })
 
   it('calls fetchUserInfo on mount', async () => {
@@ -144,11 +156,13 @@ describe('AppLayout.vue (normal Pinia)', () => {
     await loginBtn.trigger('click')
     await flushPromises()
     expect(wrapper.find('.login-modal-stub').exists()).toBe(true)
+    expect(mockRouter.replace).toHaveBeenCalledWith('/login')
     // Simulate closing the modal.
     const modal = wrapper.findComponent(LoginRegisterModalStub)
     modal.vm.$emit('close')
     await flushPromises()
     expect(wrapper.find('.login-modal-stub').exists()).toBe(false)
+    expect(mockRouter.replace).toHaveBeenCalledWith('/')
   })
 
   it('renders RouterView and Footer', () => {
@@ -192,5 +206,51 @@ describe('AppLayout.vue (normal Pinia)', () => {
 
     // Verify that router.push was called with '/'
     expect(mockRouter.push).toHaveBeenCalledWith('/')
+  })
+
+  it('shows login modal when route is /login', async () => {
+    // Set route to /login
+    mockRoute.path = '/login'
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [pinia],
+        stubs: {
+          RouterLink: RouterLinkStub,
+          RouterView: RouterViewStub,
+          Footer: FooterStub,
+          LoginRegisterModal: LoginRegisterModalStub,
+        },
+      },
+    })
+
+    await flushPromises()
+    await nextTick()
+
+    // Modal should be visible
+    expect(wrapper.find('.login-modal-stub').exists()).toBe(true)
+  })
+
+  it('shows register modal when route is /register', async () => {
+    // Set route to /register
+    mockRoute.path = '/register'
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [pinia],
+        stubs: {
+          RouterLink: RouterLinkStub,
+          RouterView: RouterViewStub,
+          Footer: FooterStub,
+          LoginRegisterModal: LoginRegisterModalStub,
+        },
+      },
+    })
+
+    await flushPromises()
+    await nextTick()
+
+    // Modal should be visible
+    expect(wrapper.find('.login-modal-stub').exists()).toBe(true)
   })
 })
