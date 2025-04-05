@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-
 import stud.ntnu.no.backend.category.entity.Category;
 import stud.ntnu.no.backend.category.repository.CategoryRepository;
 import stud.ntnu.no.backend.favorite.entity.Favorite;
@@ -24,6 +23,9 @@ import stud.ntnu.no.backend.user.entity.User;
 import stud.ntnu.no.backend.user.repository.PasswordResetTokenRepository;
 import stud.ntnu.no.backend.user.repository.UserRepository;
 import stud.ntnu.no.backend.user.repository.VerificationTokenRepository;
+import stud.ntnu.no.backend.message.dto.CreateMessageRequest;
+import stud.ntnu.no.backend.message.dto.MessageDTO;
+import stud.ntnu.no.backend.message.service.MessageService;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,24 +44,28 @@ public class DatabaseInitializer {
 
   @Autowired
   private UserRepository userRepository;
-  
+
   @Autowired
   private ItemRepository itemRepository;
-  
+
   @Autowired
   private CategoryRepository categoryRepository;
-  
+
   @Autowired
   private LocationRepository locationRepository;
-  
+
   @Autowired
   private ShippingOptionRepository shippingOptionRepository;
-  
+
   @Autowired
   private FavoriteRepository favoriteRepository;
 
   @Autowired
   private PasswordEncoder passwordEncoder;
+
+  // For melding/samtale-funksjonalitet
+  @Autowired
+  private MessageService messageService;
 
   @Bean
   @Transactional
@@ -73,21 +79,25 @@ public class DatabaseInitializer {
 
         // Create admin user
         createAdminUser();
-        
-        // Create regular user
+
+        // Create regular user (brukes her som selger)
         User regularUser = createRegularUser();
-        
+
         // Create categories, locations, and shipping options if they don't exist
         createBasicEntities();
-        
+
         // Create 10 items for the regular user
         List<Item> createdItems = createItemsForUser(regularUser, 10);
-        
-        // Create 5 additional users
+
+        // Create 5 additional users (en av disse blir kjøper)
         List<User> additionalUsers = createAdditionalUsers(5);
-        
+
         // Create favorites for the additional users
         createFavoritesForUsers(additionalUsers, createdItems);
+
+        // Opprett en samtale mellom selger (regularUser) og kjøper (første av additionalUsers)
+        // om det første itemet
+        createConversation(regularUser, additionalUsers.get(0), createdItems.get(0));
 
         logger.info("Database initialization completed successfully");
       } catch (Exception e) {
@@ -104,13 +114,12 @@ public class DatabaseInitializer {
     try {
       // Delete favorites first
       logger.info("Deleting favorites");
-      // Use a custom JPQL delete query instead of deleteAll() to avoid loading entities
       favoriteRepository.deleteAllInBatch();
 
       // Delete dependent entities to avoid foreign key constraints
       logger.info("Deleting items");
       itemRepository.deleteAllInBatch();
-      
+
       logger.info("Deleting verification tokens");
       verificationTokenRepository.deleteAllInBatch();
 
@@ -150,17 +159,17 @@ public class DatabaseInitializer {
     userRepository.save(admin);
     logger.info("Admin user created successfully");
   }
-  
+
   @Transactional
   protected User createRegularUser() {
     logger.info("Creating regular user");
-    
+
     Optional<User> existingUser = userRepository.findByEmail("user@example.com");
     if (existingUser.isPresent()) {
       logger.info("Regular user already exists, using existing one");
       return existingUser.get();
     }
-    
+
     User user = new User();
     user.setUsername("user");
     user.setPasswordHash(passwordEncoder.encode("User1234"));
@@ -171,7 +180,7 @@ public class DatabaseInitializer {
     user.setActive(true);
     user.setCreatedAt(LocalDateTime.now());
     user.setUpdatedAt(LocalDateTime.now());
-    
+
     User savedUser = userRepository.save(user);
     logger.info("Regular user created successfully");
     return savedUser;
@@ -180,23 +189,23 @@ public class DatabaseInitializer {
   @Transactional
   protected List<User> createAdditionalUsers(int count) {
     logger.info("Creating {} additional users", count);
-    
+
     List<User> users = new ArrayList<>();
     String[] firstNames = {"John", "Sarah", "Michael", "Emma", "David"};
     String[] lastNames = {"Smith", "Johnson", "Williams", "Jones", "Brown"};
-    
+
     for (int i = 0; i < count; i++) {
       String firstName = firstNames[i % firstNames.length];
       String lastName = lastNames[i % lastNames.length];
       String username = firstName.toLowerCase() + (i + 1);
       String email = username + "@example.com";
-      
+
       Optional<User> existingUser = userRepository.findByEmail(email);
       if (existingUser.isPresent()) {
         users.add(existingUser.get());
         continue;
       }
-      
+
       User user = new User();
       user.setUsername(username);
       user.setPasswordHash(passwordEncoder.encode("Password123"));
@@ -208,10 +217,10 @@ public class DatabaseInitializer {
       user.setCreatedAt(LocalDateTime.now());
       user.setUpdatedAt(LocalDateTime.now());
       user.setProfilePictureUrl("https://res.cloudinary.com/dmoe4eqt4/image/upload/v1743716695/items/366/fvzxobi9bepgcxl7xv3f.png");
-      
+
       users.add(userRepository.save(user));
     }
-    
+
     logger.info("Successfully created {} additional users", users.size());
     return users;
   }
@@ -247,29 +256,29 @@ public class DatabaseInitializer {
       logger.info("Default shipping option created");
     }
   }
-  
+
   @Transactional
   protected List<Item> createItemsForUser(User user, int count) {
     logger.info("Creating {} items for user {}", count, user.getUsername());
-    
+
     List<Item> createdItems = new ArrayList<>();
-    
+
     // Get default entities
     Category category = categoryRepository.findAll().stream().findFirst()
         .orElseThrow(() -> new RuntimeException("No category found"));
-        
+
     Location location = locationRepository.findAll().stream().findFirst()
         .orElseThrow(() -> new RuntimeException("No location found"));
-        
+
     ShippingOption shippingOption = shippingOptionRepository.findAll().stream().findFirst()
         .orElseThrow(() -> new RuntimeException("No shipping option found"));
-    
+
     Random random = new Random();
     String[] conditions = {"New", "Used - like new", "Used - good", "Used - fair"};
     String[] brands = {"Nike", "Adidas", "Puma", "Reebok", "Under Armour"};
     String[] colors = {"Red", "Blue", "Green", "Black", "White", "Yellow"};
     String[] sizes = {"XS", "S", "M", "L", "XL"};
-    
+
     for (int i = 0; i < count; i++) {
       Item item = new Item();
       item.setTitle("Item " + (i + 1));
@@ -290,10 +299,10 @@ public class DatabaseInitializer {
       item.setVippsPaymentEnabled(random.nextBoolean());
       item.setCreatedAt(LocalDateTime.now());
       item.setUpdatedAt(LocalDateTime.now());
-      
+
       createdItems.add(itemRepository.save(item));
     }
-    
+
     logger.info("Successfully created {} items for user {}", count, user.getUsername());
     return createdItems;
   }
@@ -334,10 +343,10 @@ public class DatabaseInitializer {
       // Create favorite entities with proper User and Item relationships
       for (Item item : userFavorites) {
         Favorite favorite = new Favorite();
-        favorite.setUser(user);  // Set the actual User object
-        favorite.setItem(item);  // Set the actual Item object
+        favorite.setUser(user);
+        favorite.setItem(item);
         favorite.setCreatedAt(LocalDateTime.now());
-        favorite.setActive(true); // Explicitly set active to true to avoid null value assignment
+        favorite.setActive(true);
 
         favoriteRepository.save(favorite);
         logger.debug("Created favorite for user {} on item {}", user.getUsername(), item.getTitle());
@@ -347,5 +356,31 @@ public class DatabaseInitializer {
     }
 
     logger.info("Successfully created favorites for all users");
+  }
+
+  @Transactional
+  protected void createConversation(User seller, User buyer, Item item) {
+    logger.info("Creating conversation between seller {} and buyer {} for item {}",
+        seller.getUsername(), buyer.getUsername(), item.getTitle());
+
+    // Første melding: fra kjøper til selger
+    CreateMessageRequest buyerMessageRequest = new CreateMessageRequest(
+        buyer.getId().toString(),
+        seller.getId().toString(),
+        "Hei, jeg er interessert i varen '" + item.getTitle() + "'. Kan du gi mer informasjon?",
+        LocalDateTime.now()
+    );
+    MessageDTO buyerMessage = messageService.createMessage(buyerMessageRequest);
+
+    // Oppfølgingsmelding: fra selger til kjøper, 5 minutter senere
+    CreateMessageRequest sellerMessageRequest = new CreateMessageRequest(
+        seller.getId().toString(),
+        buyer.getId().toString(),
+        "Hei, takk for interessen! Varen er i utmerket stand. Gi beskjed hvis du har flere spørsmål.",
+        LocalDateTime.now().plusMinutes(5)
+    );
+    MessageDTO sellerMessage = messageService.createMessage(sellerMessageRequest);
+
+    logger.info("Conversation created with messages: {} and {}", buyerMessage.getId(), sellerMessage.getId());
   }
 }
