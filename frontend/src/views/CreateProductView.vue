@@ -1,86 +1,66 @@
-<script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+<script setup>
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
-import { useCategoryStore } from '@/stores/Category'
-import { useShippingOptionStore } from '@/stores/ShippingOption'
-import axios from '@/api/axios'
-import { useField, useForm } from 'vee-validate'
-import * as yup from 'yup'
-
-interface Category {
-  id: number
-  name: string
-  description?: string
-  parentId?: number
-  createdAt?: string
-  updatedAt?: string
-  subcategoryIds?: number[]
-  parentName?: string
-}
-
-interface ShippingOption {
-  id: number
-  name: string
-  description: string
-  estimatedDays: number
-  price: number
-  isTracked: boolean
-}
-
-interface Location {
-  id: number
-  name: string
-}
-
-interface FormValues {
-  title: string
-  shortDescription: string
-  longDescription: string
-  price: string
-  categoryId: string
-  locationId: string
-  shippingOptionId: string
-  condition: string
-  size: string
-  brand: string
-  color: string
-  isVippsPaymentEnabled: boolean
-}
+import ProductDisplay from '@/components/product/ProductDisplay.vue'
+import axios from 'axios'
+import testImage from '@/assets/images/image-1.png'
 
 const router = useRouter()
 const userStore = useAuthStore()
-const categoryStore = useCategoryStore()
-const shippingOptionStore = useShippingOptionStore()
+
+// Form data
+const formData = ref({
+  title: '',
+  shortDescription: '',
+  longDescription: '',
+  price: '',
+  categoryId: '',
+  locationId: '',
+  shippingOptionId: '',
+  latitude: '',
+  longitude: '',
+  condition: '',
+  size: '',
+  brand: '',
+  color: '',
+  isVippsPaymentEnabled: false,
+  images: [], // Array to store image files
+})
 
 // Image upload state
-const imageFiles = ref<File[]>([])
-const imagePreviews = ref<string[]>([])
+const imageFiles = ref([])
+const imagePreviews = ref([])
 const isDragging = ref(false)
 const maxImages = 5
 
 // Form validation
+const errors = ref({})
 const isSubmitting = ref(false)
+const testResult = ref('')
 
 // Categories (to be fetched from backend)
-const categories = ref<Category[]>([])
-// Shipping options (to be fetched from backend)
-const shippingOptions = ref<ShippingOption[]>([])
+const categories = ref([
+  { id: 1, name: 'Tops' },
+  { id: 2, name: 'Bottoms' },
+  { id: 3, name: 'Dresses' },
+  { id: 4, name: 'Accessories' },
+  { id: 5, name: 'Shoes' },
+])
 
 // Locations (to be fetched from backend)
-const locations = ref<Location[]>([
+const locations = ref([
   { id: 1, name: 'Oslo' },
   { id: 2, name: 'Bergen' },
   { id: 3, name: 'Trondheim' },
 ])
 
-//on mount, fetch categories
-onMounted(async () => {
-  await categoryStore.fetchCategories()
-  categories.value = categoryStore.categories
-  await shippingOptionStore.fetchShippingOptions()
-  shippingOptions.value = shippingOptionStore.shippingOptions
-})
+// Shipping options (to be fetched from backend)
+const shippingOptions = ref([
+  { id: 1, name: 'Standard Shipping' },
+  { id: 2, name: 'Express Shipping' },
+  { id: 3, name: 'Local Pickup' },
+])
 
 // Condition options
 const conditions = ref(['New', 'Like New', 'Good', 'Fair', 'Poor'])
@@ -88,107 +68,44 @@ const conditions = ref(['New', 'Like New', 'Good', 'Fair', 'Poor'])
 // Size options
 const sizes = ref(['XS', 'S', 'M', 'L', 'XL', 'XXL'])
 
-// Validation schema
-const schema = yup.object({
-  title: yup.string().required('Title is required'),
-  shortDescription: yup.string().required('Short description is required'),
-  longDescription: yup.string().required('Long description is required'),
-  price: yup
-    .number()
-    .required('Price is required')
-    .positive('Price must be positive')
-    .typeError('Price must be a number'),
-  categoryId: yup.number().required('Category is required'),
-  locationId: yup.number().required('Location is required'),
-  shippingOptionId: yup.number().required('Shipping option is required'),
-  condition: yup.string().required('Condition is required'),
-  size: yup.string().required('Size is required'),
-  brand: yup.string().required('Brand is required'),
-  color: yup.string().required('Color is required'),
-  isVippsPaymentEnabled: yup.boolean(),
-})
+// Add preview modal state
+const showPreview = ref(false)
 
-// Initialize form with vee-validate
-const { handleSubmit, errors, resetForm } = useForm<FormValues>({
-  validationSchema: schema,
-  initialValues: {
-    title: '',
-    shortDescription: '',
-    longDescription: '',
-    price: '',
-    categoryId: '',
-    locationId: '',
-    shippingOptionId: '',
-    condition: '',
-    size: '',
-    brand: '',
-    color: '',
-    isVippsPaymentEnabled: false,
-  },
-})
+const validateForm = () => {
+  errors.value = {}
 
-// Form fields
-const { value: title } = useField<string>('title')
-const { value: shortDescription } = useField<string>('shortDescription')
-const { value: longDescription } = useField<string>('longDescription')
-const { value: price } = useField<string>('price')
-const { value: categoryId } = useField<string>('categoryId')
-const { value: locationId } = useField<string>('locationId')
-const { value: shippingOptionId } = useField<string>('shippingOptionId')
-const { value: condition } = useField<string>('condition')
-const { value: size } = useField<string>('size')
-const { value: brand } = useField<string>('brand')
-const { value: color } = useField<string>('color')
-const { value: isVippsPaymentEnabled } = useField<boolean>('isVippsPaymentEnabled')
+  if (!formData.value.title) errors.value.title = 'Title is required'
+  if (!formData.value.shortDescription)
+    errors.value.shortDescription = 'Short description is required'
+  if (!formData.value.longDescription) errors.value.longDescription = 'Long description is required'
+  if (!formData.value.price) errors.value.price = 'Price is required'
+  if (!formData.value.categoryId) errors.value.categoryId = 'Category is required'
+  if (!formData.value.locationId) errors.value.locationId = 'Location is required'
+  if (!formData.value.shippingOptionId)
+    errors.value.shippingOptionId = 'Shipping option is required'
+  if (!formData.value.condition) errors.value.condition = 'Condition is required'
+  if (!formData.value.size) errors.value.size = 'Size is required'
+  if (!formData.value.brand) errors.value.brand = 'Brand is required'
+  if (!formData.value.color) errors.value.color = 'Color is required'
+  if (imageFiles.value.length === 0) errors.value.images = 'At least one image is required'
 
-// Computed property to check if form is valid
-const isFormValid = computed(() => {
-  return (
-    !errors.value.title &&
-    !errors.value.shortDescription &&
-    !errors.value.longDescription &&
-    !errors.value.price &&
-    !errors.value.categoryId &&
-    !errors.value.locationId &&
-    !errors.value.shippingOptionId &&
-    !errors.value.condition &&
-    !errors.value.size &&
-    !errors.value.brand &&
-    !errors.value.color &&
-    title.value &&
-    shortDescription.value &&
-    longDescription.value &&
-    price.value &&
-    categoryId.value &&
-    locationId.value &&
-    shippingOptionId.value &&
-    condition.value &&
-    size.value &&
-    brand.value &&
-    color.value &&
-    imageFiles.value.length > 0
-  )
-})
-
-const handleImageUpload = (event: Event) => {
-  const input = event.target as HTMLInputElement
-  if (input.files) {
-    const files = Array.from(input.files)
-    addImages(files)
-  }
+  return Object.keys(errors.value).length === 0
 }
 
-const handleDrop = (event: DragEvent) => {
+const handleImageUpload = (event) => {
+  const files = Array.from(event.target.files)
+  addImages(files)
+}
+
+const handleDrop = (event) => {
   event.preventDefault()
   isDragging.value = false
 
-  if (event.dataTransfer?.files) {
-    const files = Array.from(event.dataTransfer.files)
-    addImages(files)
-  }
+  const files = Array.from(event.dataTransfer.files)
+  addImages(files)
 }
 
-const addImages = (files: File[]) => {
+const addImages = (files) => {
   const validFiles = files.filter((file) => file.type.startsWith('image/'))
 
   if (validFiles.length + imageFiles.value.length > maxImages) {
@@ -201,25 +118,20 @@ const addImages = (files: File[]) => {
       imageFiles.value.push(file)
       const reader = new FileReader()
       reader.onload = (e) => {
-        if (e.target?.result) {
-          imagePreviews.value.push(e.target.result as string)
-        }
+        imagePreviews.value.push(e.target.result)
       }
       reader.readAsDataURL(file)
     }
   })
 }
 
-const removeImage = (index: number) => {
+const removeImage = (index) => {
   imageFiles.value.splice(index, 1)
   imagePreviews.value.splice(index, 1)
 }
 
-const onSubmit = handleSubmit(async (values) => {
-  if (imageFiles.value.length === 0) {
-    alert('Please upload at least one image')
-    return
-  }
+const handleSubmit = async () => {
+  if (!validateForm()) return
 
   isSubmitting.value = true
   try {
@@ -227,17 +139,19 @@ const onSubmit = handleSubmit(async (values) => {
     const submitData = new FormData()
 
     // Append all form fields
-    Object.keys(values).forEach((key) => {
-      const typedKey = key as keyof FormValues
-      submitData.append(key, String(values[typedKey]))
+    Object.keys(formData.value).forEach((key) => {
+      if (key === 'images') {
+        // Append each image file
+        imageFiles.value.forEach((file, index) => {
+          submitData.append(`images[${index}]`, file)
+        })
+      } else {
+        submitData.append(key, formData.value[key])
+      }
     })
 
-    // Append each image file
-    imageFiles.value.forEach((file, index) => {
-      submitData.append(`images[${index}]`, file)
-    })
-
-    const response = await axios.post('/api/items', submitData)
+    // TODO: Implement API call to create product
+    // const response = await createProduct(submitData)
     console.log('Form submitted:', Object.fromEntries(submitData))
 
     // Redirect to the product view or home page
@@ -247,14 +161,92 @@ const onSubmit = handleSubmit(async (values) => {
   } finally {
     isSubmitting.value = false
   }
-})
+}
+
+const handlePreview = () => {
+  showPreview.value = true
+}
+
+// Function to send test data to the ItemController
+const sendTestData = async () => {
+  try {
+    testResult.value = 'Sending test data...'
+
+    // Create FormData object for multipart/form-data
+    const formData = new FormData()
+
+    // Create mock data based on the CreateItemDTO expected by the backend
+    const mockData = {
+      title: 'Test Product with Image',
+      shortDescription: 'This is a test product with an image',
+      longDescription:
+        'This is a longer description for the test product. It contains more details about the product and includes an image from the assets folder.',
+      price: 299.99,
+      categoryId: 1,
+      locationId: 1,
+      shippingOptionId: 1,
+      latitude: 59.913868,
+      longitude: 10.752245,
+      condition: 'New',
+      size: 'M',
+      brand: 'Test Brand',
+      color: 'Blue',
+      isVippsPaymentEnabled: true,
+    }
+
+    // Append all mock data fields to FormData
+    Object.keys(mockData).forEach((key) => {
+      formData.append(key, mockData[key])
+    })
+
+    // Fetch the image from assets and convert it to a File object
+    try {
+      const response = await fetch(testImage)
+      const blob = await response.blob()
+      const file = new File([blob], 'test-image.png', { type: 'image/png' })
+
+      // Append the image file to FormData
+      formData.append('images[0]', file)
+
+      // Send the request to the backend
+      const apiResponse = await axios.post('/api/items', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+
+      testResult.value = `Success! Item created with ID: ${apiResponse.data.id}`
+      console.log('Test data sent successfully:', apiResponse.data)
+    } catch (imageError) {
+      console.error('Error processing image:', imageError)
+      testResult.value = `Error processing image: ${imageError.message}`
+    }
+  } catch (error) {
+    testResult.value = `Error: ${error.message}`
+    console.error('Error sending test data:', error)
+  }
+}
 </script>
 
 <template>
   <div class="create-product-container">
     <h1>Create New Product</h1>
 
-    <form @submit.prevent="onSubmit" class="product-form">
+    <!-- Test Button Section -->
+    <div class="test-section">
+      <h2>Test API Connection</h2>
+      <p>Click the button below to send test data with an image to the backend:</p>
+      <button @click="sendTestData" class="test-button">Send Test Data with Image</button>
+      <div
+        v-if="testResult"
+        class="test-result"
+        :class="{ success: testResult.includes('Success') }"
+      >
+        {{ testResult }}
+      </div>
+    </div>
+
+    <form @submit.prevent="handleSubmit" class="product-form">
       <!-- Image Upload Section -->
       <section class="form-section">
         <h2>Product Images</h2>
@@ -310,9 +302,7 @@ const onSubmit = handleSubmit(async (values) => {
             </div>
           </div>
         </div>
-        <span class="error-message" v-if="imageFiles.length === 0"
-          >Please upload at least one image</span
-        >
+        <span class="error-message" v-if="errors.images">{{ errors.images }}</span>
       </section>
 
       <!-- Basic Information -->
@@ -321,7 +311,7 @@ const onSubmit = handleSubmit(async (values) => {
 
         <div class="form-group">
           <label for="title">Title</label>
-          <input id="title" v-model="title" type="text" :class="{ error: errors.title }" />
+          <input id="title" v-model="formData.title" type="text" :class="{ error: errors.title }" />
           <span class="error-message" v-if="errors.title">{{ errors.title }}</span>
         </div>
 
@@ -329,7 +319,7 @@ const onSubmit = handleSubmit(async (values) => {
           <label for="shortDescription">Short Description</label>
           <input
             id="shortDescription"
-            v-model="shortDescription"
+            v-model="formData.shortDescription"
             type="text"
             :class="{ error: errors.shortDescription }"
           />
@@ -342,7 +332,7 @@ const onSubmit = handleSubmit(async (values) => {
           <label for="longDescription">Long Description</label>
           <textarea
             id="longDescription"
-            v-model="longDescription"
+            v-model="formData.longDescription"
             rows="4"
             :class="{ error: errors.longDescription }"
           ></textarea>
@@ -355,7 +345,7 @@ const onSubmit = handleSubmit(async (values) => {
           <label for="price">Price (NOK)</label>
           <input
             id="price"
-            v-model="price"
+            v-model="formData.price"
             type="number"
             min="0"
             step="0.01"
@@ -371,7 +361,7 @@ const onSubmit = handleSubmit(async (values) => {
 
         <div class="form-group">
           <label for="category">Category</label>
-          <select id="category" v-model="categoryId" :class="{ error: errors.categoryId }">
+          <select id="category" v-model="formData.categoryId" :class="{ error: errors.categoryId }">
             <option value="">Select a category</option>
             <option v-for="category in categories" :key="category.id" :value="category.id">
               {{ category.name }}
@@ -382,7 +372,7 @@ const onSubmit = handleSubmit(async (values) => {
 
         <div class="form-group">
           <label for="condition">Condition</label>
-          <select id="condition" v-model="condition" :class="{ error: errors.condition }">
+          <select id="condition" v-model="formData.condition" :class="{ error: errors.condition }">
             <option value="">Select condition</option>
             <option v-for="condition in conditions" :key="condition" :value="condition">
               {{ condition }}
@@ -393,7 +383,7 @@ const onSubmit = handleSubmit(async (values) => {
 
         <div class="form-group">
           <label for="size">Size</label>
-          <select id="size" v-model="size" :class="{ error: errors.size }">
+          <select id="size" v-model="formData.size" :class="{ error: errors.size }">
             <option value="">Select size</option>
             <option v-for="size in sizes" :key="size" :value="size">
               {{ size }}
@@ -404,13 +394,13 @@ const onSubmit = handleSubmit(async (values) => {
 
         <div class="form-group">
           <label for="brand">Brand</label>
-          <input id="brand" v-model="brand" type="text" :class="{ error: errors.brand }" />
+          <input id="brand" v-model="formData.brand" type="text" :class="{ error: errors.brand }" />
           <span class="error-message" v-if="errors.brand">{{ errors.brand }}</span>
         </div>
 
         <div class="form-group">
           <label for="color">Color</label>
-          <input id="color" v-model="color" type="text" :class="{ error: errors.color }" />
+          <input id="color" v-model="formData.color" type="text" :class="{ error: errors.color }" />
           <span class="error-message" v-if="errors.color">{{ errors.color }}</span>
         </div>
       </section>
@@ -421,7 +411,7 @@ const onSubmit = handleSubmit(async (values) => {
 
         <div class="form-group">
           <label for="location">Location</label>
-          <select id="location" v-model="locationId" :class="{ error: errors.locationId }">
+          <select id="location" v-model="formData.locationId" :class="{ error: errors.locationId }">
             <option value="">Select location</option>
             <option v-for="location in locations" :key="location.id" :value="location.id">
               {{ location.name }}
@@ -434,7 +424,7 @@ const onSubmit = handleSubmit(async (values) => {
           <label for="shipping">Shipping Option</label>
           <select
             id="shipping"
-            v-model="shippingOptionId"
+            v-model="formData.shippingOptionId"
             :class="{ error: errors.shippingOptionId }"
           >
             <option value="">Select shipping option</option>
@@ -449,7 +439,7 @@ const onSubmit = handleSubmit(async (values) => {
 
         <div class="form-group">
           <label class="checkbox-label">
-            <input type="checkbox" v-model="isVippsPaymentEnabled" />
+            <input type="checkbox" v-model="formData.isVippsPaymentEnabled" />
             Enable Vipps Payment
           </label>
         </div>
@@ -457,11 +447,35 @@ const onSubmit = handleSubmit(async (values) => {
 
       <div class="form-actions">
         <button type="button" @click="router.back()" class="cancel-button">Cancel</button>
-        <button type="submit" class="submit-button" :disabled="!isFormValid">
+        <button type="button" class="preview-button" @click="handlePreview">Preview Product</button>
+        <button type="submit" class="submit-button" :disabled="isSubmitting">
           {{ isSubmitting ? 'Creating...' : 'Create Product' }}
         </button>
       </div>
     </form>
+
+    <!-- Preview Modal -->
+    <div v-if="showPreview" class="preview-modal">
+      <div class="preview-modal-content">
+        <button class="close-button" @click="showPreview = false">×</button>
+        <ProductDisplay
+          :images="imagePreviews"
+          :title="formData.title"
+          :description_full="formData.longDescription"
+          :category="categories.find((c) => c.id === formData.categoryId)?.name || ''"
+          :location="locations.find((l) => l.id === formData.locationId)?.name || ''"
+          :price="Number(formData.price)"
+          :seller="userStore.user?.name || 'Current User'"
+          :shipping_options="
+            shippingOptions.find((s) => s.id === formData.shippingOptionId)?.name || ''
+          "
+          :status="'Available'"
+          :created_at="new Date().toLocaleDateString()"
+          :updated_at="new Date().toLocaleDateString()"
+          :purchased="false"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -475,6 +489,53 @@ const onSubmit = handleSubmit(async (values) => {
 .create-product-container h1 {
   margin-bottom: 2rem;
   color: #333;
+}
+
+/* Test Section Styles */
+.test-section {
+  background: #f0f9ff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  border: 1px solid #bae6fd;
+}
+
+.test-section h2 {
+  margin-bottom: 1rem;
+  color: #0369a1;
+  font-size: 1.25rem;
+}
+
+.test-button {
+  background-color: #0ea5e9;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 0.5rem;
+}
+
+.test-button:hover {
+  background-color: #0284c7;
+}
+
+.test-result {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.875rem;
+}
+
+.test-result.success {
+  background-color: #dcfce7;
+  color: #166534;
 }
 
 .form-section {
@@ -693,5 +754,59 @@ textarea:focus {
   .image-previews {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
+}
+
+.preview-button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.preview-button:hover {
+  background-color: #357abd;
+}
+
+.preview-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.preview-modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+}
+
+.close-button:hover {
+  color: #333;
 }
 </style>

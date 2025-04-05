@@ -1,7 +1,19 @@
 import { mount } from '@vue/test-utils'
+import { describe, it, expect, vi } from 'vitest'
 import ProductList from '@/components/product/ProductList.vue'
-import { describe, it, expect } from 'vitest'
 import type { Product } from '@/types/product'
+
+// Mock the router
+const replaceSpy = vi.fn()
+vi.mock('vue-router', () => ({
+  useRouter: () => ({
+    replace: replaceSpy,
+  }),
+  useRoute: () => ({
+    params: {},
+    query: {},
+  }),
+}))
 
 describe('ProductList', () => {
   const mockItems: Product[] = [
