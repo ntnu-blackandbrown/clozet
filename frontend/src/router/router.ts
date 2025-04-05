@@ -11,6 +11,11 @@ const router = createRouter({
       component: () => import('@/views/HomeView.vue'),
     },
     {
+      path: '/websocket',
+      name: 'websocket',
+      component: () => import('@/views/WebSocket.vue'),
+    },
+    {
       path: '/verify',
       name: 'toker-verifier',
       component: () => import('@/views/TokerVerifier.vue'),
