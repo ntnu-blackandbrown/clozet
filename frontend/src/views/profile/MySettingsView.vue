@@ -3,8 +3,10 @@ import { ref, computed, onMounted } from 'vue'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useAuthStore } from '@/stores/AuthStore'
+import { useRouter } from 'vue-router'
 import axios from '@/api/axios'
 const authStore = useAuthStore()
+const router = useRouter()
 
 // Define validation schema
 const schema = yup.object({
@@ -69,14 +71,16 @@ const handleSaveChanges = handleSubmit(async (values) => {
   statusType.value = 'info'
 
   try {
-    // TODO: Implement API call to save changes
-    console.log('Saving changes:', values)
     await axios.put(`/api/users/${authStore.user.id}`, values)
-    await authStore.fetchUserInfo()
     setUserValues()
+      statusMessage.value = 'Changes saved successfully! Please log in again.'
+      statusType.value = 'success'
+      setTimeout(() => {
+          authStore.logout()
+          router.push('/')
+        }, 1500)
+    // Try to fetch updated user info
 
-    statusMessage.value = 'Changes saved successfully!'
-    statusType.value = 'success'
   } catch (error) {
     console.error('Error saving changes:', error)
     statusMessage.value = 'Failed to save changes'
