@@ -11,6 +11,11 @@ const router = createRouter({
       component: () => import('@/views/HomeView.vue'),
     },
     {
+      path: '/verify',
+      name: 'toker-verifier',
+      component: () => import('@/views/TokerVerifier.vue'),
+    },
+    {
       path: '/products/:id',
       name: 'product-detail',
       component: () => import('@/views/HomeView.vue'),

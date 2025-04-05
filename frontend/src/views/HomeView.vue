@@ -156,6 +156,7 @@ watch(
   border-radius: var(--border-radius-lg);
 }
 
+
 .hero-section {
   text-align: left;
   margin-bottom: var(--spacing-xl);
