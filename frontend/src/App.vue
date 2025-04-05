@@ -69,6 +69,7 @@ const handleCloseAuthModal = () => {
           <nav class="main-nav">
             <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
             <RouterLink v-if="isLoggedIn" to="/messages">Messages</RouterLink>
+            <RouterLink v-if="isLoggedIn" to="/forgot-password">Forgot Password</RouterLink>
           </nav>
         </div>
 

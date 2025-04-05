@@ -77,13 +77,16 @@ export const useAuthStore = defineStore('auth', () => {
     firstName: string,
     lastName: string,
   ) => {
+    console.log("In request register now, sending data to backend")
     try {
       loading.value = true
       await axios.post('/api/auth/register', { username, password, email, firstName, lastName })
       return { success: true, message: 'Registration successful' }
+      console.log("Registration successful")
     } catch (error) {
       console.error('Registration error:', error)
       return { success: false, message: 'Registration failed' }
+      console.log("Registration failed")
     } finally {
       loading.value = false
     }
