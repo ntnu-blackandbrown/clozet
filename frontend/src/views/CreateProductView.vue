@@ -1,12 +1,34 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
 import ProductDisplay from '@/components/product/ProductDisplay.vue'
 import axios from '@/api/axios'
+import { useField, useForm } from 'vee-validate'
+import * as yup from 'yup'
 
 const router = useRouter()
 const userStore = useAuthStore()
+
+// Form validation schema
+const productSchema = yup.object({
+  title: yup.string().required('Title is required'),
+  shortDescription: yup.string().required('Short description is required'),
+  longDescription: yup.string().required('Long description is required'),
+  price: yup
+    .number()
+    .required('Price is required')
+    .positive('Price must be positive')
+    .min(0, 'Price must be at least 0'),
+  categoryId: yup.string().required('Category is required'),
+  locationId: yup.string().required('Location is required'),
+  shippingOptionId: yup.string().required('Shipping option is required'),
+  condition: yup.string().required('Condition is required'),
+  size: yup.string().required('Size is required'),
+  brand: yup.string().required('Brand is required'),
+  color: yup.string().required('Color is required'),
+  isVippsPaymentEnabled: yup.boolean(),
+})
 
 // Form data
 const formData = ref({
@@ -34,7 +56,6 @@ const isDragging = ref(false)
 const maxImages = 5
 
 // Form validation
-const errors = ref({})
 const isSubmitting = ref(false)
 const testResult = ref('')
 
@@ -70,26 +91,53 @@ const sizes = ref(['XS', 'S', 'M', 'L', 'XL', 'XXL'])
 // Add preview modal state
 const showPreview = ref(false)
 
-const validateForm = () => {
-  errors.value = {}
+// Setup form validation
+const { handleSubmit, errors, resetForm } = useForm({
+  validationSchema: productSchema,
+})
 
-  if (!formData.value.title) errors.value.title = 'Title is required'
-  if (!formData.value.shortDescription)
-    errors.value.shortDescription = 'Short description is required'
-  if (!formData.value.longDescription) errors.value.longDescription = 'Long description is required'
-  if (!formData.value.price) errors.value.price = 'Price is required'
-  if (!formData.value.categoryId) errors.value.categoryId = 'Category is required'
-  if (!formData.value.locationId) errors.value.locationId = 'Location is required'
-  if (!formData.value.shippingOptionId)
-    errors.value.shippingOptionId = 'Shipping option is required'
-  if (!formData.value.condition) errors.value.condition = 'Condition is required'
-  if (!formData.value.size) errors.value.size = 'Size is required'
-  if (!formData.value.brand) errors.value.brand = 'Brand is required'
-  if (!formData.value.color) errors.value.color = 'Color is required'
-  if (imageFiles.value.length === 0) errors.value.images = 'At least one image is required'
+// Setup form fields
+const { value: title, errorMessage: titleError } = useField('title')
+const { value: shortDescription, errorMessage: shortDescriptionError } = useField('shortDescription')
+const { value: longDescription, errorMessage: longDescriptionError } = useField('longDescription')
+const { value: price, errorMessage: priceError } = useField('price')
+const { value: categoryId, errorMessage: categoryIdError } = useField('categoryId')
+const { value: locationId, errorMessage: locationIdError } = useField('locationId')
+const { value: shippingOptionId, errorMessage: shippingOptionIdError } = useField('shippingOptionId')
+const { value: condition, errorMessage: conditionError } = useField('condition')
+const { value: size, errorMessage: sizeError } = useField('size')
+const { value: brand, errorMessage: brandError } = useField('brand')
+const { value: color, errorMessage: colorError } = useField('color')
+const { value: isVippsPaymentEnabled } = useField('isVippsPaymentEnabled')
 
-  return Object.keys(errors.value).length === 0
-}
+// Computed property to check if form is valid
+const isFormValid = computed(() => {
+  return (
+    !errors.value.title &&
+    !errors.value.shortDescription &&
+    !errors.value.longDescription &&
+    !errors.value.price &&
+    !errors.value.categoryId &&
+    !errors.value.locationId &&
+    !errors.value.shippingOptionId &&
+    !errors.value.condition &&
+    !errors.value.size &&
+    !errors.value.brand &&
+    !errors.value.color &&
+    title.value &&
+    shortDescription.value &&
+    longDescription.value &&
+    price.value &&
+    categoryId.value &&
+    locationId.value &&
+    shippingOptionId.value &&
+    condition.value &&
+    size.value &&
+    brand.value &&
+    color.value &&
+    imageFiles.value.length > 0
+  )
+})
 
 const handleImageUpload = (event) => {
   const files = Array.from(event.target.files)
@@ -129,41 +177,36 @@ const removeImage = (index) => {
   imagePreviews.value.splice(index, 1)
 }
 
-const handleSubmit = async () => {
-  console.log('handleSubmit')
-  if (!validateForm()) return
+const onSubmit = handleSubmit(async (values) => {
+  if (imageFiles.value.length === 0) {
+    alert('Please upload at least one image')
+    return
+  }
 
   isSubmitting.value = true
   testResult.value = 'Submitting product...'
 
   try {
-    console.log('payload')
     const payload = {
-      title: formData.value.title,
-      shortDescription: formData.value.shortDescription,
-      longDescription: formData.value.longDescription,
-      price: parseFloat(formData.value.price),
-      categoryId: parseInt(formData.value.categoryId),
-      locationId: parseInt(formData.value.locationId),
-      shippingOptionId: parseInt(formData.value.shippingOptionId),
-      latitude: formData.value.latitude ? parseFloat(formData.value.latitude) : null,
-      longitude: formData.value.longitude ? parseFloat(formData.value.longitude) : null,
-      condition: formData.value.condition,
-      size: formData.value.size,
-      brand: formData.value.brand,
-      color: formData.value.color,
-      isVippsPaymentEnabled: formData.value.isVippsPaymentEnabled,
+      title: values.title,
+      shortDescription: values.shortDescription,
+      longDescription: values.longDescription,
+      price: parseFloat(values.price),
+      categoryId: parseInt(values.categoryId),
+      locationId: parseInt(values.locationId),
+      shippingOptionId: parseInt(values.shippingOptionId),
+      condition: values.condition,
+      size: values.size,
+      brand: values.brand,
+      color: values.color,
+      isVippsPaymentEnabled: values.isVippsPaymentEnabled,
     }
-
-    console.log('payload', payload)
 
     const response = await axios.post('/api/items', payload, {
       headers: {
         'Content-Type': 'application/json',
       },
     })
-
-    console.log('response', response)
 
     testResult.value = `Success! Item created with ID: ${response.data.id}`
     console.log('Product created:', response.data)
@@ -178,9 +221,7 @@ const handleSubmit = async () => {
   } finally {
     isSubmitting.value = false
   }
-}
-
-
+})
 
 const handlePreview = () => {
   showPreview.value = true
@@ -190,7 +231,6 @@ const handlePreview = () => {
 const sendTestData = async () => {
   try {
     testResult.value = 'Sending test data...'
-
 
     // Create mock data based on the CreateItemDTO expected by the backend
     const mockData = {
@@ -236,7 +276,7 @@ const sendTestData = async () => {
       </div>
     </div>
 
-    <form @submit.prevent="handleSubmit" class="product-form">
+    <form @submit.prevent="onSubmit" class="product-form">
       <!-- Image Upload Section -->
       <section class="form-section">
         <h2>Product Images</h2>
@@ -292,7 +332,7 @@ const sendTestData = async () => {
             </div>
           </div>
         </div>
-        <span class="error-message" v-if="errors.images">{{ errors.images }}</span>
+        <span class="error-message" v-if="imageFiles.length === 0">At least one image is required</span>
       </section>
 
       <!-- Basic Information -->
@@ -301,47 +341,43 @@ const sendTestData = async () => {
 
         <div class="form-group">
           <label for="title">Title</label>
-          <input id="title" v-model="formData.title" type="text" :class="{ error: errors.title }" />
-          <span class="error-message" v-if="errors.title">{{ errors.title }}</span>
+          <input id="title" v-model="title" type="text" :class="{ error: titleError }" />
+          <span class="error-message" v-if="titleError">{{ titleError }}</span>
         </div>
 
         <div class="form-group">
           <label for="shortDescription">Short Description</label>
           <input
             id="shortDescription"
-            v-model="formData.shortDescription"
+            v-model="shortDescription"
             type="text"
-            :class="{ error: errors.shortDescription }"
+            :class="{ error: shortDescriptionError }"
           />
-          <span class="error-message" v-if="errors.shortDescription">{{
-            errors.shortDescription
-          }}</span>
+          <span class="error-message" v-if="shortDescriptionError">{{ shortDescriptionError }}</span>
         </div>
 
         <div class="form-group">
           <label for="longDescription">Long Description</label>
           <textarea
             id="longDescription"
-            v-model="formData.longDescription"
+            v-model="longDescription"
             rows="4"
-            :class="{ error: errors.longDescription }"
+            :class="{ error: longDescriptionError }"
           ></textarea>
-          <span class="error-message" v-if="errors.longDescription">{{
-            errors.longDescription
-          }}</span>
+          <span class="error-message" v-if="longDescriptionError">{{ longDescriptionError }}</span>
         </div>
 
         <div class="form-group">
           <label for="price">Price (NOK)</label>
           <input
             id="price"
-            v-model="formData.price"
+            v-model="price"
             type="number"
             min="0"
             step="0.01"
-            :class="{ error: errors.price }"
+            :class="{ error: priceError }"
           />
-          <span class="error-message" v-if="errors.price">{{ errors.price }}</span>
+          <span class="error-message" v-if="priceError">{{ priceError }}</span>
         </div>
       </section>
 
@@ -351,47 +387,47 @@ const sendTestData = async () => {
 
         <div class="form-group">
           <label for="category">Category</label>
-          <select id="category" v-model="formData.categoryId" :class="{ error: errors.categoryId }">
+          <select id="category" v-model="categoryId" :class="{ error: categoryIdError }">
             <option value="">Select a category</option>
             <option v-for="category in categories" :key="category.id" :value="category.id">
               {{ category.name }}
             </option>
           </select>
-          <span class="error-message" v-if="errors.categoryId">{{ errors.categoryId }}</span>
+          <span class="error-message" v-if="categoryIdError">{{ categoryIdError }}</span>
         </div>
 
         <div class="form-group">
           <label for="condition">Condition</label>
-          <select id="condition" v-model="formData.condition" :class="{ error: errors.condition }">
+          <select id="condition" v-model="condition" :class="{ error: conditionError }">
             <option value="">Select condition</option>
             <option v-for="condition in conditions" :key="condition" :value="condition">
               {{ condition }}
             </option>
           </select>
-          <span class="error-message" v-if="errors.condition">{{ errors.condition }}</span>
+          <span class="error-message" v-if="conditionError">{{ conditionError }}</span>
         </div>
 
         <div class="form-group">
           <label for="size">Size</label>
-          <select id="size" v-model="formData.size" :class="{ error: errors.size }">
+          <select id="size" v-model="size" :class="{ error: sizeError }">
             <option value="">Select size</option>
             <option v-for="size in sizes" :key="size" :value="size">
               {{ size }}
             </option>
           </select>
-          <span class="error-message" v-if="errors.size">{{ errors.size }}</span>
+          <span class="error-message" v-if="sizeError">{{ sizeError }}</span>
         </div>
 
         <div class="form-group">
           <label for="brand">Brand</label>
-          <input id="brand" v-model="formData.brand" type="text" :class="{ error: errors.brand }" />
-          <span class="error-message" v-if="errors.brand">{{ errors.brand }}</span>
+          <input id="brand" v-model="brand" type="text" :class="{ error: brandError }" />
+          <span class="error-message" v-if="brandError">{{ brandError }}</span>
         </div>
 
         <div class="form-group">
           <label for="color">Color</label>
-          <input id="color" v-model="formData.color" type="text" :class="{ error: errors.color }" />
-          <span class="error-message" v-if="errors.color">{{ errors.color }}</span>
+          <input id="color" v-model="color" type="text" :class="{ error: colorError }" />
+          <span class="error-message" v-if="colorError">{{ colorError }}</span>
         </div>
       </section>
 
@@ -401,35 +437,33 @@ const sendTestData = async () => {
 
         <div class="form-group">
           <label for="location">Location</label>
-          <select id="location" v-model="formData.locationId" :class="{ error: errors.locationId }">
+          <select id="location" v-model="locationId" :class="{ error: locationIdError }">
             <option value="">Select location</option>
             <option v-for="location in locations" :key="location.id" :value="location.id">
               {{ location.name }}
             </option>
           </select>
-          <span class="error-message" v-if="errors.locationId">{{ errors.locationId }}</span>
+          <span class="error-message" v-if="locationIdError">{{ locationIdError }}</span>
         </div>
 
         <div class="form-group">
           <label for="shipping">Shipping Option</label>
           <select
             id="shipping"
-            v-model="formData.shippingOptionId"
-            :class="{ error: errors.shippingOptionId }"
+            v-model="shippingOptionId"
+            :class="{ error: shippingOptionIdError }"
           >
             <option value="">Select shipping option</option>
             <option v-for="option in shippingOptions" :key="option.id" :value="option.id">
               {{ option.name }}
             </option>
           </select>
-          <span class="error-message" v-if="errors.shippingOptionId">{{
-            errors.shippingOptionId
-          }}</span>
+          <span class="error-message" v-if="shippingOptionIdError">{{ shippingOptionIdError }}</span>
         </div>
 
         <div class="form-group">
           <label class="checkbox-label">
-            <input type="checkbox" v-model="formData.isVippsPaymentEnabled" />
+            <input type="checkbox" v-model="isVippsPaymentEnabled" />
             Enable Vipps Payment
           </label>
         </div>
@@ -438,7 +472,7 @@ const sendTestData = async () => {
       <div class="form-actions">
         <button type="button" @click="router.back()" class="cancel-button">Cancel</button>
         <button type="button" class="preview-button" @click="handlePreview">Preview Product</button>
-        <button type="submit" class="submit-button" :disabled="isSubmitting">
+        <button type="submit" class="submit-button" :disabled="!isFormValid || isSubmitting">
           {{ isSubmitting ? 'Creating...' : 'Create Product' }}
         </button>
       </div>
@@ -450,14 +484,14 @@ const sendTestData = async () => {
         <button class="close-button" @click="showPreview = false">×</button>
         <ProductDisplay
           :images="imagePreviews"
-          :title="formData.title"
-          :description_full="formData.longDescription"
-          :category="categories.find((c) => c.id === formData.categoryId)?.name || ''"
-          :location="locations.find((l) => l.id === formData.locationId)?.name || ''"
-          :price="Number(formData.price)"
+          :title="title"
+          :description_full="longDescription"
+          :category="categories.find((c) => c.id === categoryId)?.name || ''"
+          :location="locations.find((l) => l.id === locationId)?.name || ''"
+          :price="Number(price)"
           :seller="userStore.user?.name || 'Current User'"
           :shipping_options="
-            shippingOptions.find((s) => s.id === formData.shippingOptionId)?.name || ''
+            shippingOptions.find((s) => s.id === shippingOptionId)?.name || ''
           "
           :status="'Available'"
           :created_at="new Date().toLocaleDateString()"
