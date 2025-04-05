@@ -28,16 +28,20 @@ onMounted(async () => {
 })
 
 // Watch for changes in the route to handle product ID
-watch(() => route.params.id, (newId) => {
-  if (newId) {
-    const productId = parseInt(newId as string)
-    if (!isNaN(productId)) {
-      initialProductId.value = productId
+watch(
+  () => route.params.id,
+  (newId) => {
+    if (newId) {
+      const productId = parseInt(newId as string)
+      if (!isNaN(productId)) {
+        initialProductId.value = productId
+      }
+    } else {
+      initialProductId.value = null
     }
-  } else {
-    initialProductId.value = null
-  }
-}, { immediate: true })
+  },
+  { immediate: true },
+)
 </script>
 
 <template>

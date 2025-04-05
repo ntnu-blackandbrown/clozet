@@ -17,7 +17,7 @@ const userDetails = computed(() => authStore.userDetails)
 
 // Load user info on app start
 onMounted(async () => {
-    await authStore.fetchUserInfo()
+  await authStore.fetchUserInfo()
 })
 
 async function logout() {

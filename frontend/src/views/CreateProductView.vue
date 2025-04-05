@@ -310,7 +310,9 @@ const onSubmit = handleSubmit(async (values) => {
             </div>
           </div>
         </div>
-        <span class="error-message" v-if="imageFiles.length === 0">Please upload at least one image</span>
+        <span class="error-message" v-if="imageFiles.length === 0"
+          >Please upload at least one image</span
+        >
       </section>
 
       <!-- Basic Information -->

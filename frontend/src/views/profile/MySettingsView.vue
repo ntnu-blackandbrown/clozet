@@ -73,14 +73,13 @@ const handleSaveChanges = handleSubmit(async (values) => {
   try {
     await axios.put(`/api/users/${authStore.user.id}`, values)
     setUserValues()
-      statusMessage.value = 'Changes saved successfully! Please log in again.'
-      statusType.value = 'success'
-      setTimeout(() => {
-          authStore.logout()
-          router.push('/')
-        }, 1500)
+    statusMessage.value = 'Changes saved successfully! Please log in again.'
+    statusType.value = 'success'
+    setTimeout(() => {
+      authStore.logout()
+      router.push('/')
+    }, 1500)
     // Try to fetch updated user info
-
   } catch (error) {
     console.error('Error saving changes:', error)
     statusMessage.value = 'Failed to save changes'

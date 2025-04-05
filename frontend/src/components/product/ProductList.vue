@@ -26,14 +26,18 @@ const openProductModal = (productId: number) => {
 }
 
 // Watch for changes in the initialProductId prop
-watch(() => props.initialProductId, (newId) => {
-  if (newId) {
-    selectedProductId.value = newId
-    showProductModal.value = true
-  } else {
-    showProductModal.value = false
-  }
-}, { immediate: true })
+watch(
+  () => props.initialProductId,
+  (newId) => {
+    if (newId) {
+      selectedProductId.value = newId
+      showProductModal.value = true
+    } else {
+      showProductModal.value = false
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
