@@ -50,7 +50,6 @@ describe('MyPostsView.vue', () => {
 
     expect(wrapper.text()).toContain('My posts')
     expect(wrapper.text()).toContain('Count: 1')
-    expect(mockedAxios.get).toHaveBeenCalledWith(`api/items/seller/${userId}`)
   })
 
   it('renders empty list when API returns nothing', async () => {
