@@ -10,6 +10,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import stud.ntnu.no.backend.common.config.EmailConfig;
+import stud.ntnu.no.backend.common.util.EmailTemplateUtil;
+
+import java.io.IOException;
+import java.util.Map;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -29,51 +33,19 @@ public class EmailServiceImpl implements EmailService {
         String verificationLink = emailConfig.getBaseUrl() + "verify?token=" + token;
         String subject = "Bekreft din konto på Clozet";
         
-        String htmlContent = """
-            <html>
-            <head>
-                <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                    .header { background-color: #333; padding: 10px; text-align: center; }
-                    .header h1 { color: white; margin: 0; }
-                    .content { padding: 20px; border: 1px solid #ddd; border-top: none; }
-                    .button { display: inline-block; background-color: #333; color: white; text-decoration: none; 
-                              padding: 10px 20px; border-radius: 5px; margin-top: 20px; }
-                    .footer { margin-top: 20px; font-size: 12px; color: #777; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="header">
-                        <h1>Clozet</h1>
-                    </div>
-                    <div class="content">
-                        <h2>Bekreft din konto</h2>
-                        <p>Hei!</p>
-                        <p>Takk for at du registrerte deg på Clozet. For å aktivere kontoen din, vennligst klikk på knappen nedenfor:</p>
-                        <a href="%s" class="button">Bekreft min konto</a>
-                        <p>Hvis du ikke kan klikke på knappen, kan du kopiere og lime inn følgende URL i nettleseren din:</p>
-                        <p><a href="%s">%s</a></p>
-                        <p>Denne lenken er gyldig i %d timer.</p>
-                        <p>Hvis du ikke har registrert deg på Clozet, kan du trygt ignorere denne e-posten.</p>
-                    </div>
-                    <div class="footer">
-                        <p>© %d Clozet. Alle rettigheter reservert.</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-            """.formatted(
-                verificationLink, 
-                verificationLink, 
-                verificationLink, 
-                emailConfig.getVerificationExpiryHours(),
-                java.time.Year.now().getValue()
-            );
+        try {
+            String template = EmailTemplateUtil.loadTemplate("verification");
+            Map<String, String> variables = EmailTemplateUtil.createCommonVariables();
+            variables.put("verificationLink", verificationLink);
+            variables.put("expiryHours", String.valueOf(emailConfig.getVerificationExpiryHours()));
             
-        sendHtmlEmail(toEmail, subject, htmlContent);
-        logger.info("Verification email sent to: {}", toEmail);
+            String htmlContent = EmailTemplateUtil.processTemplate(template, variables);
+            sendHtmlEmail(toEmail, subject, htmlContent);
+            logger.info("Verification email sent to: {}", toEmail);
+        } catch (IOException e) {
+            logger.error("Failed to load verification email template: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to send verification email", e);
+        }
     }
 
     @Override
@@ -81,51 +53,19 @@ public class EmailServiceImpl implements EmailService {
         String resetLink = emailConfig.getBaseUrl() + "/reset-password?token=" + token;
         String subject = "Tilbakestill ditt passord på Clozet";
         
-        String htmlContent = """
-            <html>
-            <head>
-                <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                    .header { background-color: #333; padding: 10px; text-align: center; }
-                    .header h1 { color: white; margin: 0; }
-                    .content { padding: 20px; border: 1px solid #ddd; border-top: none; }
-                    .button { display: inline-block; background-color: #333; color: white; text-decoration: none; 
-                              padding: 10px 20px; border-radius: 5px; margin-top: 20px; }
-                    .footer { margin-top: 20px; font-size: 12px; color: #777; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="header">
-                        <h1>Clozet</h1>
-                    </div>
-                    <div class="content">
-                        <h2>Tilbakestill ditt passord</h2>
-                        <p>Hei!</p>
-                        <p>Vi har mottatt en forespørsel om å tilbakestille passordet for din Clozet-konto. Klikk på knappen nedenfor for å sette et nytt passord:</p>
-                        <a href="%s" class="button">Tilbakestill passord</a>
-                        <p>Hvis du ikke kan klikke på knappen, kan du kopiere og lime inn følgende URL i nettleseren din:</p>
-                        <p><a href="%s">%s</a></p>
-                        <p>Denne lenken er gyldig i %d time(r).</p>
-                        <p>Hvis du ikke har bedt om å tilbakestille passordet ditt, kan du trygt ignorere denne e-posten.</p>
-                    </div>
-                    <div class="footer">
-                        <p>© %d Clozet. Alle rettigheter reservert.</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-            """.formatted(
-                resetLink, 
-                resetLink, 
-                resetLink, 
-                emailConfig.getPasswordResetExpiryHours(),
-                java.time.Year.now().getValue()
-            );
+        try {
+            String template = EmailTemplateUtil.loadTemplate("password-reset");
+            Map<String, String> variables = EmailTemplateUtil.createCommonVariables();
+            variables.put("resetLink", resetLink);
+            variables.put("expiryHours", String.valueOf(emailConfig.getPasswordResetExpiryHours()));
             
-        sendHtmlEmail(toEmail, subject, htmlContent);
-        logger.info("Password reset email sent to: {}", toEmail);
+            String htmlContent = EmailTemplateUtil.processTemplate(template, variables);
+            sendHtmlEmail(toEmail, subject, htmlContent);
+            logger.info("Password reset email sent to: {}", toEmail);
+        } catch (IOException e) {
+            logger.error("Failed to load password reset email template: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to send password reset email", e);
+        }
     }
 
     @Override
@@ -133,95 +73,38 @@ public class EmailServiceImpl implements EmailService {
         String loginLink = emailConfig.getBaseUrl() + "/messages";
         String subject = "Ny melding på Clozet";
         
-        String htmlContent = """
-            <html>
-            <head>
-                <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                    .header { background-color: #333; padding: 10px; text-align: center; }
-                    .header h1 { color: white; margin: 0; }
-                    .content { padding: 20px; border: 1px solid #ddd; border-top: none; }
-                    .button { display: inline-block; background-color: #333; color: white; text-decoration: none; 
-                              padding: 10px 20px; border-radius: 5px; margin-top: 20px; }
-                    .footer { margin-top: 20px; font-size: 12px; color: #777; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="header">
-                        <h1>Clozet</h1>
-                    </div>
-                    <div class="content">
-                        <h2>Du har fått en ny melding</h2>
-                        <p>Hei!</p>
-                        <p>Du har mottatt en ny melding fra %s på Clozet.</p>
-                        <p>Logg inn for å lese og svare på meldingen:</p>
-                        <a href="%s" class="button">Se meldingen</a>
-                    </div>
-                    <div class="footer">
-                        <p>© %d Clozet. Alle rettigheter reservert.</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-            """.formatted(
-                senderName, 
-                loginLink,
-                java.time.Year.now().getValue()
-            );
+        try {
+            String template = EmailTemplateUtil.loadTemplate("message-notification");
+            Map<String, String> variables = EmailTemplateUtil.createCommonVariables();
+            variables.put("senderName", senderName);
+            variables.put("loginLink", loginLink);
             
-        sendHtmlEmail(toEmail, subject, htmlContent);
-        logger.info("Message notification email sent to: {}", toEmail);
+            String htmlContent = EmailTemplateUtil.processTemplate(template, variables);
+            sendHtmlEmail(toEmail, subject, htmlContent);
+            logger.info("Message notification email sent to: {}", toEmail);
+        } catch (IOException e) {
+            logger.error("Failed to load message notification email template: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to send message notification email", e);
+        }
     }
-
 
     @Override
     public void sendPasswordChangeConfirmationEmail(String email) {
         String resetLink = emailConfig.getBaseUrl() + "/forgot-password";
         String subject = "Ditt passord er endret på Clozet";
 
-        String htmlContent = """
-        <html>
-        <head>
-            <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background-color: #333; padding: 10px; text-align: center; }
-                .header h1 { color: white; margin: 0; }
-                .content { padding: 20px; border: 1px solid #ddd; border-top: none; }
-                .button { display: inline-block; background-color: #333; color: white; text-decoration: none;
-                          padding: 10px 20px; border-radius: 5px; margin-top: 20px; }
-                .footer { margin-top: 20px; font-size: 12px; color: #777; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1>Clozet</h1>
-                </div>
-                <div class="content">
-                    <h2>Passord endret</h2>
-                    <p>Hei!</p>
-                    <p>Passordet ditt ble nylig endret.</p>
-                    <p>Hvis dette var deg, kan du ignorere denne e-posten.</p>
-                    <p>Hvis dette <strong>ikke</strong> var deg, kan du klikke på knappen nedenfor for å tilbakestille passordet ditt umiddelbart:</p>
-                    <a href="%s" class="button">Tilbakestill passord</a>
-                    <p>Om du har spørsmål eller trenger hjelp, kan du svare på denne e-posten.</p>
-                </div>
-                <div class="footer">
-                    <p>© %d Clozet. Alle rettigheter reservert.</p>
-                </div>
-            </div>
-        </body>
-        </html>
-        """.formatted(
-            resetLink,
-            java.time.Year.now().getValue()
-        );
-
-        sendHtmlEmail(email, subject, htmlContent);
-        logger.info("Password change confirmation email sent to: {}", email);
+        try {
+            String template = EmailTemplateUtil.loadTemplate("password-change-confirmation");
+            Map<String, String> variables = EmailTemplateUtil.createCommonVariables();
+            variables.put("resetLink", resetLink);
+            
+            String htmlContent = EmailTemplateUtil.processTemplate(template, variables);
+            sendHtmlEmail(email, subject, htmlContent);
+            logger.info("Password change confirmation email sent to: {}", email);
+        } catch (IOException e) {
+            logger.error("Failed to load password change confirmation email template: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to send password change confirmation email", e);
+        }
     }
 
     @Override
@@ -246,46 +129,18 @@ public class EmailServiceImpl implements EmailService {
         String loginLink = emailConfig.getBaseUrl() + "/login";
         String subject = "Passord tilbakestilt på Clozet";
 
-        String htmlContent = """
-        <html>
-        <head>
-            <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background-color: #333; padding: 10px; text-align: center; }
-                .header h1 { color: white; margin: 0; }
-                .content { padding: 20px; border: 1px solid #ddd; border-top: none; }
-                .button { display: inline-block; background-color: #333; color: white; text-decoration: none; 
-                          padding: 10px 20px; border-radius: 5px; margin-top: 20px; }
-                .footer { margin-top: 20px; font-size: 12px; color: #777; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1>Clozet</h1>
-                </div>
-                <div class="content">
-                    <h2>Passord tilbakestilt</h2>
-                    <p>Hei!</p>
-                    <p>Passordet ditt er nå tilbakestilt.</p>
-                    <p>Hvis dette var deg, kan du logge inn med ditt nye passord:</p>
-                    <a href="%s" class="button">Logg inn</a>
-                    <p>Hvis dette <strong>ikke</strong> var deg, vennligst ta kontakt med oss umiddelbart ved å svare på denne e-posten.</p>
-                </div>
-                <div class="footer">
-                    <p>© %d Clozet. Alle rettigheter reservert.</p>
-                </div>
-            </div>
-        </body>
-        </html>
-        """.formatted(
-            loginLink,
-            java.time.Year.now().getValue()
-        );
-
-        sendHtmlEmail(email, subject, htmlContent);
-        logger.info("Password reset confirmation email sent to: {}", email);
+        try {
+            String template = EmailTemplateUtil.loadTemplate("password-reset-confirmation");
+            Map<String, String> variables = EmailTemplateUtil.createCommonVariables();
+            variables.put("loginLink", loginLink);
+            
+            String htmlContent = EmailTemplateUtil.processTemplate(template, variables);
+            sendHtmlEmail(email, subject, htmlContent);
+            logger.info("Password reset confirmation email sent to: {}", email);
+        } catch (IOException e) {
+            logger.error("Failed to load password reset confirmation email template: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to send password reset confirmation email", e);
+        }
     }
 
     @Override
