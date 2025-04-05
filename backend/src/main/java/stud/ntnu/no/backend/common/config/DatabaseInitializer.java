@@ -9,15 +9,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-
 import stud.ntnu.no.backend.category.entity.Category;
 import stud.ntnu.no.backend.category.repository.CategoryRepository;
-import stud.ntnu.no.backend.favorite.entity.Favorite;
 import stud.ntnu.no.backend.favorite.repository.FavoriteRepository;
 import stud.ntnu.no.backend.item.entity.Item;
 import stud.ntnu.no.backend.item.repository.ItemRepository;
 import stud.ntnu.no.backend.location.entity.Location;
 import stud.ntnu.no.backend.location.repository.LocationRepository;
+import stud.ntnu.no.backend.message.dto.CreateMessageRequest;
+import stud.ntnu.no.backend.message.dto.MessageDTO;
+import stud.ntnu.no.backend.message.service.MessageService;
 import stud.ntnu.no.backend.shippingoption.entity.ShippingOption;
 import stud.ntnu.no.backend.shippingoption.repository.ShippingOptionRepository;
 import stud.ntnu.no.backend.user.entity.User;
@@ -26,7 +27,10 @@ import stud.ntnu.no.backend.user.repository.UserRepository;
 import stud.ntnu.no.backend.user.repository.VerificationTokenRepository;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 @Configuration
 @Profile("!test")
@@ -42,24 +46,27 @@ public class DatabaseInitializer {
 
   @Autowired
   private UserRepository userRepository;
-  
+
   @Autowired
   private ItemRepository itemRepository;
-  
+
   @Autowired
   private CategoryRepository categoryRepository;
-  
+
   @Autowired
   private LocationRepository locationRepository;
-  
+
   @Autowired
   private ShippingOptionRepository shippingOptionRepository;
-  
+
   @Autowired
   private FavoriteRepository favoriteRepository;
 
   @Autowired
   private PasswordEncoder passwordEncoder;
+
+  @Autowired
+  private MessageService messageService;
 
   @Bean
   @Transactional
@@ -68,26 +75,22 @@ public class DatabaseInitializer {
       logger.info("Starting database initialization...");
 
       try {
-        // Clean database first
+        // Clean the database
         cleanDatabase();
 
-        // Create admin user
+        // Create Admin, Seller, and Buyer users
         createAdminUser();
-        
-        // Create regular user
-        User regularUser = createRegularUser();
-        
-        // Create categories, locations, and shipping options if they don't exist
+        User seller = createSeller();
+        User buyer = createBuyer();
+
+        // Create basic entities (Category, Location, ShippingOption)
         createBasicEntities();
-        
-        // Create 10 items for the regular user
-        List<Item> createdItems = createItemsForUser(regularUser, 10);
-        
-        // Create 5 additional users
-        List<User> additionalUsers = createAdditionalUsers(5);
-        
-        // Create favorites for the additional users
-        createFavoritesForUsers(additionalUsers, createdItems);
+
+        // Create items for the seller
+        List<Item> sellerItems = createItemsForUser(seller, 10);
+
+        // Create a conversation between buyer and seller about the first item
+        createConversation(seller, buyer, sellerItems.get(0));
 
         logger.info("Database initialization completed successfully");
       } catch (Exception e) {
@@ -100,37 +103,21 @@ public class DatabaseInitializer {
   @Transactional
   protected void cleanDatabase() {
     logger.info("Cleaning database - removing existing records");
-
     try {
-      // Delete favorites first
-      logger.info("Deleting favorites");
-      // Use a custom JPQL delete query instead of deleteAll() to avoid loading entities
       favoriteRepository.deleteAllInBatch();
-
-      // Delete dependent entities to avoid foreign key constraints
-      logger.info("Deleting items");
       itemRepository.deleteAllInBatch();
-      
-      logger.info("Deleting verification tokens");
       verificationTokenRepository.deleteAllInBatch();
-
-      logger.info("Deleting password reset tokens");
       passwordResetTokenRepository.deleteAllInBatch();
-
-      // Then delete users
-      logger.info("Deleting users");
       userRepository.deleteAllInBatch();
     } catch (Exception e) {
       logger.error("Error cleaning database", e);
-      // Continue with initialization despite cleanup errors
     }
   }
 
   @Transactional
   protected void createAdminUser() {
     logger.info("Creating admin user");
-
-    Optional<User> existingAdmin = userRepository.findByEmail("admin@example.com");
+    Optional<User> existingAdmin = userRepository.findByEmail("clozet.adm.demo@gmail.com");
     if (existingAdmin.isPresent()) {
       logger.info("Admin user already exists, skipping creation");
       return;
@@ -139,7 +126,7 @@ public class DatabaseInitializer {
     User admin = new User();
     admin.setUsername("Admin");
     admin.setPasswordHash(passwordEncoder.encode("Admin1234"));
-    admin.setEmail("kevindmazali@gmail.com");
+    admin.setEmail("clozet.adm.demo@gmail.com");
     admin.setFirstName("Admin");
     admin.setLastName("Administrator");
     admin.setRole("ADMIN");
@@ -150,75 +137,59 @@ public class DatabaseInitializer {
     userRepository.save(admin);
     logger.info("Admin user created successfully");
   }
-  
+
   @Transactional
-  protected User createRegularUser() {
-    logger.info("Creating regular user");
-    
-    Optional<User> existingUser = userRepository.findByEmail("user@example.com");
-    if (existingUser.isPresent()) {
-      logger.info("Regular user already exists, using existing one");
-      return existingUser.get();
+  protected User createSeller() {
+    logger.info("Creating seller user");
+    Optional<User> existingSeller = userRepository.findByEmail("clozet.Seller.demo@gmail.com");
+    if (existingSeller.isPresent()) {
+      logger.info("Seller user already exists, using existing one");
+      return existingSeller.get();
     }
-    
-    User user = new User();
-    user.setUsername("user");
-    user.setPasswordHash(passwordEncoder.encode("User1234"));
-    user.setEmail("user@example.com");
-    user.setFirstName("Regular");
-    user.setLastName("User");
-    user.setRole("ROLE_USER");
-    user.setActive(true);
-    user.setCreatedAt(LocalDateTime.now());
-    user.setUpdatedAt(LocalDateTime.now());
-    
-    User savedUser = userRepository.save(user);
-    logger.info("Regular user created successfully");
-    return savedUser;
+
+    User seller = new User();
+    seller.setUsername("demoSeller");
+    seller.setPasswordHash(passwordEncoder.encode("Clozet-Seller-Password"));
+    seller.setEmail("clozet.Seller.demo@gmail.com");
+    seller.setFirstName("Demo");
+    seller.setLastName("Seller");
+    seller.setRole("ROLE_USER");
+    seller.setActive(true);
+    seller.setCreatedAt(LocalDateTime.now());
+    seller.setUpdatedAt(LocalDateTime.now());
+
+    User savedSeller = userRepository.save(seller);
+    logger.info("Seller user created successfully");
+    return savedSeller;
   }
 
   @Transactional
-  protected List<User> createAdditionalUsers(int count) {
-    logger.info("Creating {} additional users", count);
-    
-    List<User> users = new ArrayList<>();
-    String[] firstNames = {"John", "Sarah", "Michael", "Emma", "David"};
-    String[] lastNames = {"Smith", "Johnson", "Williams", "Jones", "Brown"};
-    
-    for (int i = 0; i < count; i++) {
-      String firstName = firstNames[i % firstNames.length];
-      String lastName = lastNames[i % lastNames.length];
-      String username = firstName.toLowerCase() + (i + 1);
-      String email = username + "@example.com";
-      
-      Optional<User> existingUser = userRepository.findByEmail(email);
-      if (existingUser.isPresent()) {
-        users.add(existingUser.get());
-        continue;
-      }
-      
-      User user = new User();
-      user.setUsername(username);
-      user.setPasswordHash(passwordEncoder.encode("Password123"));
-      user.setEmail(email);
-      user.setFirstName(firstName);
-      user.setLastName(lastName);
-      user.setRole("ROLE_USER");
-      user.setActive(true);
-      user.setCreatedAt(LocalDateTime.now());
-      user.setUpdatedAt(LocalDateTime.now());
-      user.setProfilePictureUrl("https://res.cloudinary.com/dmoe4eqt4/image/upload/v1743716695/items/366/fvzxobi9bepgcxl7xv3f.png");
-      
-      users.add(userRepository.save(user));
+  protected User createBuyer() {
+    logger.info("Creating buyer user");
+    Optional<User> existingBuyer = userRepository.findByEmail("clozet.buyer.demo@gmail.com");
+    if (existingBuyer.isPresent()) {
+      logger.info("Buyer user already exists, using existing one");
+      return existingBuyer.get();
     }
-    
-    logger.info("Successfully created {} additional users", users.size());
-    return users;
+
+    User buyer = new User();
+    buyer.setUsername("demoBuyer");
+    buyer.setPasswordHash(passwordEncoder.encode("Clozet-Buyer-Password"));
+    buyer.setEmail("clozet.buyer.demo@gmail.com");
+    buyer.setFirstName("Demo");
+    buyer.setLastName("Buyer");
+    buyer.setRole("ROLE_USER");
+    buyer.setActive(true);
+    buyer.setCreatedAt(LocalDateTime.now());
+    buyer.setUpdatedAt(LocalDateTime.now());
+
+    User savedBuyer = userRepository.save(buyer);
+    logger.info("Buyer user created successfully");
+    return savedBuyer;
   }
 
   @Transactional
   protected void createBasicEntities() {
-    // Create a default category if none exists
     if (categoryRepository.count() == 0) {
       Category category = new Category();
       category.setName("General");
@@ -227,7 +198,6 @@ public class DatabaseInitializer {
       logger.info("Default category created");
     }
 
-    // Create a default location if none exists
     if (locationRepository.count() == 0) {
       Location location = new Location();
       location.setCity("Trondheim");
@@ -238,7 +208,6 @@ public class DatabaseInitializer {
       logger.info("Default location created");
     }
 
-    // Create a default shipping option if none exists
     if (shippingOptionRepository.count() == 0) {
       ShippingOption shippingOption = new ShippingOption();
       shippingOption.setName("Standard Shipping");
@@ -247,41 +216,38 @@ public class DatabaseInitializer {
       logger.info("Default shipping option created");
     }
   }
-  
+
   @Transactional
   protected List<Item> createItemsForUser(User user, int count) {
     logger.info("Creating {} items for user {}", count, user.getUsername());
-    
+
     List<Item> createdItems = new ArrayList<>();
-    
-    // Get default entities
+
     Category category = categoryRepository.findAll().stream().findFirst()
         .orElseThrow(() -> new RuntimeException("No category found"));
-        
     Location location = locationRepository.findAll().stream().findFirst()
         .orElseThrow(() -> new RuntimeException("No location found"));
-        
     ShippingOption shippingOption = shippingOptionRepository.findAll().stream().findFirst()
         .orElseThrow(() -> new RuntimeException("No shipping option found"));
-    
+
     Random random = new Random();
     String[] conditions = {"New", "Used - like new", "Used - good", "Used - fair"};
     String[] brands = {"Nike", "Adidas", "Puma", "Reebok", "Under Armour"};
     String[] colors = {"Red", "Blue", "Green", "Black", "White", "Yellow"};
     String[] sizes = {"XS", "S", "M", "L", "XL"};
-    
+
     for (int i = 0; i < count; i++) {
       Item item = new Item();
       item.setTitle("Item " + (i + 1));
       item.setShortDescription("Short description for item " + (i + 1));
       item.setLongDescription("This is a detailed description for item " + (i + 1) + ". It provides more information about the item's features and condition.");
-      item.setPrice(50.0 + random.nextInt(450)); // Price between $50 and $500
+      item.setPrice(50.0 + random.nextInt(450)); // Price between 50 and 500
       item.setCategory(category);
       item.setSeller(user);
       item.setLocation(location);
       item.setShippingOption(shippingOption);
-      item.setLatitude(63.4 + random.nextDouble() * 0.1); // Random latitude around Trondheim
-      item.setLongitude(10.4 + random.nextDouble() * 0.1); // Random longitude around Trondheim
+      item.setLatitude(63.4 + random.nextDouble() * 0.1);
+      item.setLongitude(10.4 + random.nextDouble() * 0.1);
       item.setCondition(conditions[random.nextInt(conditions.length)]);
       item.setSize(sizes[random.nextInt(sizes.length)]);
       item.setBrand(brands[random.nextInt(brands.length)]);
@@ -290,62 +256,37 @@ public class DatabaseInitializer {
       item.setVippsPaymentEnabled(random.nextBoolean());
       item.setCreatedAt(LocalDateTime.now());
       item.setUpdatedAt(LocalDateTime.now());
-      
+
       createdItems.add(itemRepository.save(item));
     }
-    
+
     logger.info("Successfully created {} items for user {}", count, user.getUsername());
     return createdItems;
   }
 
   @Transactional
-  protected void createFavoritesForUsers(List<User> users, List<Item> items) {
-    logger.info("Creating favorites for {} users on {} items", users.size(), items.size());
+  protected void createConversation(User seller, User buyer, Item item) {
+    logger.info("Creating conversation between seller {} and buyer {} for item {}",
+        seller.getUsername(), buyer.getUsername(), item.getTitle());
 
-    if (users.isEmpty() || items.isEmpty()) {
-      logger.warn("No users or items available to create favorites");
-      return;
-    }
+    // First message: from buyer to seller
+    CreateMessageRequest buyerMessageRequest = new CreateMessageRequest(
+        buyer.getId().toString(),
+        seller.getId().toString(),
+        "Hi! I'm interested in your item '" + item.getTitle() + "'. Is it still available?",
+        LocalDateTime.now()
+    );
+    MessageDTO buyerMessage = messageService.createMessage(buyerMessageRequest);
 
-    Random random = new Random();
+    // Follow-up message: from seller to buyer, 5 minutes later
+    CreateMessageRequest sellerMessageRequest = new CreateMessageRequest(
+        seller.getId().toString(),
+        buyer.getId().toString(),
+        "Hello! Thanks for your interest. Yes, it's still available. Let me know if you have any other questions.",
+        LocalDateTime.now().plusMinutes(5)
+    );
+    MessageDTO sellerMessage = messageService.createMessage(sellerMessageRequest);
 
-    // Create a pattern of favorites with intentional overlap
-    for (int i = 0; i < users.size(); i++) {
-      User user = users.get(i);
-      Set<Item> userFavorites = new HashSet<>();
-
-      // Each user will have 3-5 favorites with designed overlap
-      int numFavorites = random.nextInt(3) + 3;
-
-      // Ensure overlap by using a sliding window approach
-      for (int j = 0; j < numFavorites; j++) {
-        int itemIndex = (i + j) % items.size();
-        userFavorites.add(items.get(itemIndex));
-      }
-
-      // Add a few random favorites to make it less structured
-      for (int j = 0; j < 2; j++) {
-        if (random.nextBoolean()) {
-          int randomItemIndex = random.nextInt(items.size());
-          userFavorites.add(items.get(randomItemIndex));
-        }
-      }
-
-      // Create favorite entities with proper User and Item relationships
-      for (Item item : userFavorites) {
-        Favorite favorite = new Favorite();
-        favorite.setUser(user);  // Set the actual User object
-        favorite.setItem(item);  // Set the actual Item object
-        favorite.setCreatedAt(LocalDateTime.now());
-        favorite.setActive(true); // Explicitly set active to true to avoid null value assignment
-
-        favoriteRepository.save(favorite);
-        logger.debug("Created favorite for user {} on item {}", user.getUsername(), item.getTitle());
-      }
-
-      logger.info("Created {} favorites for user {}", userFavorites.size(), user.getUsername());
-    }
-
-    logger.info("Successfully created favorites for all users");
+    logger.info("Conversation created with messages: {} and {}", buyerMessage.getId(), sellerMessage.getId());
   }
 }
