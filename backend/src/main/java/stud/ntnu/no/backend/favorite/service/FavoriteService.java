@@ -8,63 +8,63 @@ import stud.ntnu.no.backend.favorite.exception.FavoriteValidationException;
 import java.util.List;
 
 /**
- * Service-grensesnitt for håndtering av favoritter.
- * Definerer operasjoner for henting, opprettelse, oppdatering og sletting av favoritter.
+ * Service interface for managing favorites.
+ * Defines operations for retrieving, creating, updating, and deleting favorites.
  */
 public interface FavoriteService {
 
     /**
-     * Henter alle favoritter i systemet.
+     * Retrieves all favorites in the system.
      *
-     * @return En liste med alle favoritter som FavoriteDTO-objekter
+     * @return A list of all favorites as FavoriteDTO objects
      */
     List<FavoriteDTO> getAllFavorites();
 
     /**
-     * Henter alle favoritter for en spesifikk bruker.
+     * Retrieves all favorites for a specific user.
      *
-     * @param userId Brukerens ID
-     * @return En liste med brukerens favoritter som FavoriteDTO-objekter
-     * @throws FavoriteValidationException hvis bruker-ID er null eller tom
+     * @param userId The ID of the user
+     * @return A list of the user's favorites as FavoriteDTO objects
+     * @throws FavoriteValidationException if the user ID is null or empty
      */
     List<FavoriteDTO> getFavoritesByUserId(String userId);
 
     /**
-     * Henter en spesifikk favoritt basert på ID.
+     * Retrieves a specific favorite by ID.
      *
-     * @param id Favorittens ID
-     * @return FavoriteDTO-objekt for den spesifikke favoritten
-     * @throws FavoriteValidationException hvis ID er null
-     * @throws FavoriteNotFoundException hvis favoritten ikke finnes
+     * @param id The ID of the favorite
+     * @return FavoriteDTO object for the specific favorite
+     * @throws FavoriteValidationException if the ID is null
+     * @throws FavoriteNotFoundException if the favorite is not found
      */
     FavoriteDTO getFavoriteById(Long id);
 
     /**
-     * Oppretter en ny favoritt.
+     * Creates a new favorite.
      *
-     * @param request Forespørsel med data for den nye favoritten
-     * @return FavoriteDTO-objekt for den nye favoritten
-     * @throws FavoriteValidationException hvis forespørselen er ugyldig eller favoritten allerede eksisterer
+     * @param request Request with data for the new favorite
+     * @return FavoriteDTO object for the new favorite
+     * @throws FavoriteValidationException if the request is invalid or the favorite already exists
      */
     FavoriteDTO createFavorite(CreateFavoriteRequest request);
 
     /**
-     * Oppdaterer en eksisterende favoritt.
+     * Updates an existing favorite.
      *
-     * @param id Favorittens ID
-     * @param request Forespørsel med oppdaterte data
-     * @return FavoriteDTO-objekt for den oppdaterte favoritten
-     * @throws FavoriteValidationException hvis ID eller forespørselen er ugyldig
-     * @throws FavoriteNotFoundException hvis favoritten ikke finnes
+     * @param id The ID of the favorite
+     * @param request Request with updated data
+     * @return FavoriteDTO object for the updated favorite
+     * @throws FavoriteValidationException if the ID or request is invalid
+     * @throws FavoriteNotFoundException if the favorite is not found
      */
     FavoriteDTO updateFavorite(Long id, CreateFavoriteRequest request);
 
     /**
-     * Sletter en favoritt.
+     * Deletes a favorite.
      *
-     * @param id Favorittens ID
-     * @throws FavoriteValidationException hvis ID er null
-     * @throws FavoriteNotFoundException hvis favoritten ikke finnes
+     * @param id The ID of the favorite
+     * @throws FavoriteValidationException if the ID is null
+     * @throws FavoriteNotFoundException if the favorite is not found
      */
     void deleteFavorite(Long id);
 }

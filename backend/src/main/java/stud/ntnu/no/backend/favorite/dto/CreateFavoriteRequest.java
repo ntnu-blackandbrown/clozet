@@ -3,8 +3,8 @@ package stud.ntnu.no.backend.favorite.dto;
 import java.util.Objects;
 
 /**
- * DTO for å opprette eller oppdatere en favoritt.
- * Inneholder nødvendig informasjon for å lage eller endre en favoritt.
+ * DTO for creating or updating a favorite.
+ * Contains necessary information to create or modify a favorite.
  */
 public class CreateFavoriteRequest {
 
@@ -13,17 +13,17 @@ public class CreateFavoriteRequest {
     private boolean active;
 
     /**
-     * Tom konstruktør for CreateFavoriteRequest.
+     * Empty constructor for CreateFavoriteRequest.
      */
     public CreateFavoriteRequest() {
     }
 
     /**
-     * Konstruktør for å opprette et nytt CreateFavoriteRequest-objekt.
+     * Constructor to create a new CreateFavoriteRequest object.
      *
-     * @param userId Brukerens ID
-     * @param itemId ID for elementet som skal favoriseres
-     * @param active Angir om favoritten er aktiv eller ikke
+     * @param userId The ID of the user
+     * @param itemId The ID of the item to be favorited
+     * @param active Indicates whether the favorite is active or not
      */
     public CreateFavoriteRequest(String userId, Long itemId, boolean active) {
         this.userId = userId;
@@ -32,54 +32,54 @@ public class CreateFavoriteRequest {
     }
 
     /**
-     * Henter brukerens ID.
+     * Retrieves the user's ID.
      *
-     * @return Brukerens ID
+     * @return The user's ID
      */
     public String getUserId() {
         return userId;
     }
 
     /**
-     * Setter brukerens ID.
+     * Sets the user's ID.
      *
-     * @param userId Brukerens ID
+     * @param userId The user's ID
      */
     public void setUserId(String userId) {
         this.userId = userId;
     }
 
     /**
-     * Henter elementets ID.
+     * Retrieves the item's ID.
      *
-     * @return Elementets ID
+     * @return The item's ID
      */
     public Long getItemId() {
         return itemId;
     }
 
     /**
-     * Setter elementets ID.
+     * Sets the item's ID.
      *
-     * @param itemId Elementets ID
+     * @param itemId The item's ID
      */
     public void setItemId(Long itemId) {
         this.itemId = itemId;
     }
 
     /**
-     * Sjekker om favoritten er aktiv.
+     * Checks if the favorite is active.
      *
-     * @return true hvis favoritten er aktiv, ellers false
+     * @return true if the favorite is active, otherwise false
      */
     public boolean getActive() {
         return active;
     }
 
     /**
-     * Setter favorittens aktive status.
+     * Sets the active status of the favorite.
      *
-     * @param active Favorittens aktive status
+     * @param active The active status of the favorite
      */
     public void setActive(boolean active) {
         this.active = active;

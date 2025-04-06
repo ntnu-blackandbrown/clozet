@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Mapper-klasse for å konvertere mellom Favorite-entitet og DTO-objekter.
+ * Mapper class for converting between Favorite entity and DTO objects.
  */
 @Mapper(componentModel = "spring")
 public abstract class FavoriteMapper {
@@ -28,10 +28,10 @@ public abstract class FavoriteMapper {
     protected ItemRepository itemRepository;
 
     /**
-     * Mapper en Favorite-entitet til en FavoriteDTO.
+     * Maps a Favorite entity to a FavoriteDTO.
      *
-     * @param favorite Favorite-entiteten som skal mappes
-     * @return Et FavoriteDTO-objekt med data fra entiteten
+     * @param favorite The Favorite entity to be mapped
+     * @return A FavoriteDTO object with data from the entity
      */
     @Mapping(target = "userId", expression = "java(favorite.getUserId())")
     @Mapping(target = "itemId", expression = "java(favorite.getItemId())")
@@ -39,20 +39,20 @@ public abstract class FavoriteMapper {
     public abstract FavoriteDTO toDTO(Favorite favorite);
 
     /**
-     * Mapper en liste med Favorite-entiteter til en liste med FavoriteDTO-objekter.
+     * Maps a list of Favorite entities to a list of FavoriteDTO objects.
      *
-     * @param favorites Listen med Favorite-entiteter
-     * @return En liste med FavoriteDTO-objekter
+     * @param favorites The list of Favorite entities
+     * @return A list of FavoriteDTO objects
      */
     public abstract List<FavoriteDTO> toDTOList(List<Favorite> favorites);
 
     /**
-     * Mapper en CreateFavoriteRequest til en Favorite-entitet.
-     * Henter bruker og item fra respektive repositories.
+     * Maps a CreateFavoriteRequest to a Favorite entity.
+     * Retrieves user and item from respective repositories.
      *
-     * @param request CreateFavoriteRequest-objektet som skal mappes
-     * @return En Favorite-entitet
-     * @throws RuntimeException hvis bruker eller item ikke finnes
+     * @param request The CreateFavoriteRequest object to be mapped
+     * @return A Favorite entity
+     * @throws RuntimeException if user or item is not found
      */
     public Favorite toEntity(CreateFavoriteRequest request) {
         if (request == null) {
@@ -77,10 +77,10 @@ public abstract class FavoriteMapper {
     }
 
     /**
-     * Oppdaterer en eksisterende Favorite-entitet basert på data fra en CreateFavoriteRequest.
+     * Updates an existing Favorite entity based on data from a CreateFavoriteRequest.
      *
-     * @param favorite Favorite-entiteten som skal oppdateres
-     * @param request CreateFavoriteRequest med oppdaterte data
+     * @param favorite The Favorite entity to be updated
+     * @param request CreateFavoriteRequest with updated data
      */
     public void updateEntity(Favorite favorite, CreateFavoriteRequest request) {
         if (request == null) {
