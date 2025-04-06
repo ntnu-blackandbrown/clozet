@@ -20,8 +20,7 @@ const receiverUsernames = ref(new Map()) // Map of receiverId -> username
 // Returns currently active chatId from route (or null)
 const activeChat = computed(() => {
   const chatId = route.params.chatId
-  const parsedId = parseInt(chatId)
-  return isNaN(parsedId) ? null : parsedId
+  return chatId || null
 })
 
 /**
@@ -31,6 +30,7 @@ const activeChat = computed(() => {
  * - fetch receiver details if needed
  */
 const handleChatSelect = async (chatId) => {
+  console.log('Selecting chat:', chatId)
   try {
     router.push(`/messages/${chatId}`)
 

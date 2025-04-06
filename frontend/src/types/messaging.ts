@@ -8,7 +8,7 @@ export interface Message {
 }
 
 export interface Conversation {
-  id: number
+  id: string
   receiverId: number
   receiverName: string
   itemId: number

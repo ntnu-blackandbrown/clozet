@@ -10,7 +10,7 @@ interface ItemDTO {
 
 const props = defineProps<{
   conversations: Conversation[]
-  activeConversationId: number
+  activeConversationId: string | null
   receiverUsernames: Map<number, string>
 }>()
 
