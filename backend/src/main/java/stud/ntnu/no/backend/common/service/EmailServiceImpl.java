@@ -69,26 +69,6 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendMessageNotification(String toEmail, String senderName) {
-        String loginLink = emailConfig.getBaseUrl() + "/messages";
-        String subject = "Ny melding på Clozet";
-        
-        try {
-            String template = EmailTemplateUtil.loadTemplate("message-notification");
-            Map<String, String> variables = EmailTemplateUtil.createCommonVariables();
-            variables.put("senderName", senderName);
-            variables.put("loginLink", loginLink);
-            
-            String htmlContent = EmailTemplateUtil.processTemplate(template, variables);
-            sendHtmlEmail(toEmail, subject, htmlContent);
-            logger.info("Message notification email sent to: {}", toEmail);
-        } catch (IOException e) {
-            logger.error("Failed to load message notification email template: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to send message notification email", e);
-        }
-    }
-
-    @Override
     public void sendPasswordChangeConfirmationEmail(String email) {
         String resetLink = emailConfig.getBaseUrl() + "/forgot-password";
         String subject = "Ditt passord er endret på Clozet";
@@ -104,23 +84,6 @@ public class EmailServiceImpl implements EmailService {
         } catch (IOException e) {
             logger.error("Failed to load password change confirmation email template: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to send password change confirmation email", e);
-        }
-    }
-
-    @Override
-    public void sendTextEmail(String toEmail, String subject, String message) {
-        try {
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setFrom(emailConfig.getEmailFrom());
-            mailMessage.setTo(toEmail);
-            mailMessage.setSubject(subject);
-            mailMessage.setText(message);
-            
-            mailSender.send(mailMessage);
-            logger.info("Plain text email sent to: {}", toEmail);
-        } catch (Exception e) {
-            logger.error("Failed to send email to {}: {}", toEmail, e.getMessage(), e);
-            throw new RuntimeException("Failed to send email", e);
         }
     }
 
