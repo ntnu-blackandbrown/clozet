@@ -4,9 +4,11 @@ import { useRouter, useRoute } from 'vue-router'
 import MessagesSidebar from '../components/messaging/MessagesSidebar.vue'
 import ChatArea from '../components/messaging/ChatArea.vue'
 import axios from '@/api/axios'
+import { useAuthStore } from '@/stores/AuthStore'
 
 const router = useRouter()
 const route = useRoute()
+const authStore = useAuthStore()
 
 const chats = ref([])
 const chatMessages = ref({})
@@ -47,8 +49,13 @@ const handleNewMessage = async ({ chatId, message }) => {
 onMounted(async () => {
   try {
     // Fetch all conversations
-    const response = await axios.get('/api/conversations')
-    chats.value = response.data
+    const response = await axios.get('/api/conversations', {
+      params: {
+        userId: authStore.user?.id?.toString() || ''
+      }
+    })
+    console.log(chats.value)
+    console.log(response.data)
 
     // If there are conversations and no active chat, set the first one as active
     if (chats.value.length > 0 && !activeChat.value) {
