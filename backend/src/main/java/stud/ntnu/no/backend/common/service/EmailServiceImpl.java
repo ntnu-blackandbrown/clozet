@@ -50,7 +50,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendPasswordResetEmail(String toEmail, String token) {
-        String resetLink = emailConfig.getBaseUrl() + "/reset-password?token=" + token;
+        String resetLink = emailConfig.getBaseUrl() + "reset-password?token=" + token;
         String subject = "Tilbakestill ditt passord på Clozet";
         
         try {
@@ -70,7 +70,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendPasswordChangeConfirmationEmail(String email) {
-        String resetLink = emailConfig.getBaseUrl() + "/forgot-password";
+        String resetLink = emailConfig.getBaseUrl() + "forgot-password";
         String subject = "Ditt passord er endret på Clozet";
 
         try {
@@ -89,7 +89,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendPasswordResetConfirmationEmail(String email) {
-        String loginLink = emailConfig.getBaseUrl() + "/login";
+        String loginLink = emailConfig.getBaseUrl() + "login";
         String subject = "Passord tilbakestilt på Clozet";
 
         try {
