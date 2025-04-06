@@ -12,6 +12,13 @@ import java.time.Year;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Utility class for loading and processing email templates.
+ * <p>
+ * Provides methods to load HTML templates, inject CSS styles, and replace
+ * placeholders with actual values.
+ * </p>
+ */
 public class EmailTemplateUtil {
 
     private static final String TEMPLATE_DIR = "templates/email/";
@@ -19,10 +26,10 @@ public class EmailTemplateUtil {
     private static String cachedCss = null;
     
     /**
-     * Load an email template from the resources directory
-     * 
-     * @param templateName filename without path or extension (e.g. "verification" for "templates/email/verification.html")
-     * @return the template content as string
+     * Loads an email template from the resources directory.
+     *
+     * @param templateName the filename without path or extension (e.g., "verification" for "templates/email/verification.html")
+     * @return the template content as a string
      * @throws IOException if the template cannot be read
      */
     public static String loadTemplate(String templateName) throws IOException {
@@ -35,10 +42,10 @@ public class EmailTemplateUtil {
     }
     
     /**
-     * Load CSS style and inject it into the template
-     * 
+     * Loads CSS style and injects it into the template.
+     *
      * @param template the HTML template
-     * @return template with injected CSS
+     * @return the template with injected CSS
      * @throws IOException if the CSS file cannot be read
      */
     private static String injectCss(String template) throws IOException {
@@ -57,10 +64,10 @@ public class EmailTemplateUtil {
     }
     
     /**
-     * Process a template by replacing placeholders with values
-     * 
-     * @param template the template string
-     * @param variables map of placeholder names and their values
+     * Processes a template by replacing placeholders with values.
+     *
+     * @param template  the template string
+     * @param variables a map of placeholder names and their values
      * @return the processed template
      */
     public static String processTemplate(String template, Map<String, String> variables) {
@@ -72,9 +79,9 @@ public class EmailTemplateUtil {
     }
     
     /**
-     * Create a variables map with common values
-     * 
-     * @return map with common template variables
+     * Creates a variables map with common values.
+     *
+     * @return a map with common template variables
      */
     public static Map<String, String> createCommonVariables() {
         Map<String, String> variables = new HashMap<>();

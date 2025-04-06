@@ -34,15 +34,33 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Global exception handler for the application.
+ * <p>
+ * Handles various exceptions and returns appropriate HTTP responses.
+ * </p>
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Handles {@code DataIntegrityViolationException}.
+     *
+     * @param ex the exception
+     * @return a response entity with error details
+     */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         String message = "Database integrity constraint violated. Make sure to delete dependent records first.";
         return buildErrorResponse(message, HttpStatus.CONFLICT);
     }
 
+    /**
+     * Handles {@code DataIntegrityException}.
+     *
+     * @param ex the exception
+     * @return a response entity with error details
+     */
     @ExceptionHandler(DataIntegrityException.class)
     public ResponseEntity<Object> handleCustomDataIntegrityException(DataIntegrityException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
@@ -127,6 +145,13 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    /**
+     * Builds an error response.
+     *
+     * @param message the error message
+     * @param status  the HTTP status
+     * @return a response entity with error details
+     */
     private ResponseEntity<Object> buildErrorResponse(String message, HttpStatus status) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
@@ -222,6 +247,13 @@ public class GlobalExceptionHandler {
         return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Creates an error response.
+     *
+     * @param message the error message
+     * @param status  the HTTP status
+     * @return a response entity with error details
+     */
     private ResponseEntity<Object> createErrorResponse(String message, HttpStatus status) {
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("timestamp", LocalDateTime.now());

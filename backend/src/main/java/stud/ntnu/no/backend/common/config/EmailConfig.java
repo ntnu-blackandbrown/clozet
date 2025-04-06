@@ -9,6 +9,12 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
 
+/**
+ * Configuration class for email settings.
+ * <p>
+ * Configures the JavaMailSender bean and provides email-related properties.
+ * </p>
+ */
 @Configuration
 public class EmailConfig {
 
@@ -42,6 +48,11 @@ public class EmailConfig {
     @Value("${app.email.base-url:http://localhost:5173}")
     private String baseUrl;
 
+    /**
+     * Configures and returns a {@code JavaMailSender} bean.
+     *
+     * @return the configured JavaMailSender
+     */
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -64,15 +75,29 @@ public class EmailConfig {
         return mailSender;
     }
 
-
+    /**
+     * Returns the email address used as the sender.
+     *
+     * @return the sender's email address
+     */
     public String getEmailFrom() {
         return emailFrom;
     }
 
+    /**
+     * Returns the number of hours before a verification link expires.
+     *
+     * @return the verification expiry hours
+     */
     public int getVerificationExpiryHours() {
         return verificationExpiryHours;
     }
 
+    /**
+     * Returns the number of hours before a password reset link expires.
+     *
+     * @return the password reset expiry hours
+     */
     public int getPasswordResetExpiryHours() {
         return passwordResetExpiryHours;
     }
