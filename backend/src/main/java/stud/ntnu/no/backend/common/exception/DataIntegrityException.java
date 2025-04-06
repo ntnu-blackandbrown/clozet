@@ -21,6 +21,6 @@ public class DataIntegrityException extends BaseException {
      * @param cause   the cause of the exception
      */
     public DataIntegrityException(String message, Throwable cause) {
-        super(message, cause);
+        super(message + " Cause: " + cause.getMessage());
     }
 }
