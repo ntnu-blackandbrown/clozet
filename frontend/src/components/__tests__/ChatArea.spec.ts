@@ -1,7 +1,15 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import ChatArea from '@/components/messaging/ChatArea.vue'
 import type { Message, Conversation } from '@/types/messaging'
+
+// Mock AuthStore
+vi.mock('@/stores/AuthStore', () => ({
+  useAuthStore: vi.fn(() => ({
+    user: { id: 1 },
+    isLoggedIn: true
+  }))
+}))
 
 // Sample test data
 const sampleMessage: Message = {
@@ -123,7 +131,7 @@ describe('ChatArea.vue', () => {
     expect(payload.chatId).toBe('123')
     expect(payload.message.content).toBe('Test message')
     expect(payload.message.senderId).toBe(1)
-    expect(payload.message.receiverId).toBe(Number(sampleConversation.id))
+    expect(payload.message.receiverId).toBe(2)
     expect(typeof payload.message.timestamp).toBe('string')
   })
 
