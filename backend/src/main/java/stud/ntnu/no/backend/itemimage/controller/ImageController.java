@@ -4,9 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import stud.ntnu.no.backend.itemimage.dto.ItemImageDTO;
 import stud.ntnu.no.backend.itemimage.entity.ItemImage;
 import stud.ntnu.no.backend.itemimage.exception.EmptyFileException;
 import stud.ntnu.no.backend.itemimage.exception.InvalidFileTypeException;
+import stud.ntnu.no.backend.itemimage.mapper.ItemImageMapper;
 import stud.ntnu.no.backend.itemimage.service.ImageService;
 
 import java.util.List;
@@ -20,9 +22,11 @@ import java.util.List;
 public class ImageController {
 
     private final ImageService imageService;
+    private final ItemImageMapper itemImageMapper;
 
-    public ImageController(ImageService imageService) {
+    public ImageController(ImageService imageService, ItemImageMapper itemImageMapper) {
         this.imageService = imageService;
+        this.itemImageMapper = itemImageMapper;
     }
 
     /**
@@ -63,9 +67,10 @@ public class ImageController {
      * @return A list of images associated with the item
      */
     @GetMapping("/item/{itemId}")
-    public ResponseEntity<List<ItemImage>> getImagesByItemId(@PathVariable Long itemId) {
+    public ResponseEntity<List<ItemImageDTO>> getImagesByItemId(@PathVariable Long itemId) {
         List<ItemImage> images = imageService.getImagesByItemId(itemId);
-        return ResponseEntity.ok(images);
+        List<ItemImageDTO> imageDTOs = itemImageMapper.toDTOList(images);
+        return ResponseEntity.ok(imageDTOs);
     }
 
     /**
