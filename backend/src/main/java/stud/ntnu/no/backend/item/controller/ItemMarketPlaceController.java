@@ -3,6 +3,8 @@ package stud.ntnu.no.backend.item.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import stud.ntnu.no.backend.item.dto.ItemMarketPlaceDTO;
 import stud.ntnu.no.backend.item.service.ItemMarketPlaceService;
 
@@ -14,6 +16,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/marketplace")
 public class ItemMarketPlaceController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ItemMarketPlaceController.class);
 
     private final ItemMarketPlaceService itemMarketPlaceService;
 
@@ -32,6 +36,7 @@ public class ItemMarketPlaceController {
      */
     @GetMapping("/items")
     public ResponseEntity<List<ItemMarketPlaceDTO>> getAllMarketPlaceItems() {
+        logger.info("Fetching all marketplace items");
         List<ItemMarketPlaceDTO> items = itemMarketPlaceService.getAllMarketPlaceItems();
         return ResponseEntity.ok(items);
     }
@@ -44,6 +49,7 @@ public class ItemMarketPlaceController {
     @GetMapping("/items/category/{categoryId}")
     public ResponseEntity<List<ItemMarketPlaceDTO>> getMarketPlaceItemsByCategory(
             @PathVariable Long categoryId) {
+        logger.info("Fetching marketplace items for category with id: {}", categoryId);
         List<ItemMarketPlaceDTO> items = itemMarketPlaceService.getMarketPlaceItemsByCategory(categoryId);
         return ResponseEntity.ok(items);
     }

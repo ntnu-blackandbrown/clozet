@@ -2,6 +2,8 @@ package stud.ntnu.no.backend.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import stud.ntnu.no.backend.item.dto.ItemMarketPlaceDTO;
 import stud.ntnu.no.backend.item.entity.Item;
 import stud.ntnu.no.backend.item.mapper.ItemMarketPlaceMapper;
@@ -14,6 +16,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ItemMarketPlaceService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ItemMarketPlaceService.class);
 
     private final ItemRepository itemRepository;
     private final ItemMarketPlaceMapper itemMarketPlaceMapper;
@@ -29,6 +33,7 @@ public class ItemMarketPlaceService {
     }
 
     public List<ItemMarketPlaceDTO> getAllMarketPlaceItems() {
+        logger.info("Fetching all marketplace items");
         // Get current user, if authenticated
         User currentUser = null;
         try {
@@ -47,6 +52,7 @@ public class ItemMarketPlaceService {
     }
 
     public List<ItemMarketPlaceDTO> getMarketPlaceItemsByCategory(Long categoryId) {
+        logger.info("Fetching marketplace items for category with id: {}", categoryId);
         User currentUser = null;
         try {
             currentUser = userService.getCurrentUser();
