@@ -13,6 +13,7 @@ const authStore = useAuthStore()
 const chats = ref([])
 const chatMessages = ref({})
 const receiverDetails = ref({})
+const receiverUsernames = ref(new Map())
 
 const activeChat = computed(() => {
   const chatId = parseInt(route.params.chatId)
@@ -25,12 +26,24 @@ const handleChatSelect = (chatId) => {
 
 const fetchReceiverDetails = async (receiverId) => {
   try {
-    const response = await axios.get(`/api/users/${receiverId}`)
-    receiverDetails.value = response.data
-    console.log('Receiver details:', response.data)
-    return response.data
+    console.log(`Fetching details for receiver ID: ${receiverId}`)
+    // Convert receiverId to number to ensure consistent type
+    const numericReceiverId = Number(receiverId)
+    const response = await axios.get(`/api/users/${numericReceiverId}`)
+
+    if (response.data) {
+      receiverDetails.value = response.data
+      // Make sure we're using the numeric ID as the key
+      receiverUsernames.value.set(numericReceiverId, response.data.usernameOrEmail || response.data.username || response.data.firstName)
+      console.log(`Stored username for receiver ${numericReceiverId}:`, response.data)
+      console.log('Current receiverUsernames map:', Object.fromEntries(receiverUsernames.value))
+      return response.data
+    } else {
+      console.warn(`No data received for receiver ID ${numericReceiverId}`)
+      return null
+    }
   } catch (error) {
-    console.error('Failed to fetch receiver details:', error)
+    console.error(`Failed to fetch receiver details for ID ${receiverId}:`, error.response || error)
     return null
   }
 }
@@ -84,16 +97,19 @@ onMounted(async () => {
 
     chats.value = response.data
     console.log('Updated chats value:', chats.value)
+    console.log('Initial receiverUsernames map:', Object.fromEntries(receiverUsernames.value))
 
-    // Fetch receiver details for the first conversation if it exists
-    if (chats.value.length > 0) {
-      const firstConversation = chats.value[0]
-      console.log('First conversation:', firstConversation)
-      if (firstConversation.receiverId) {
-        const receiverDetails = await fetchReceiverDetails(firstConversation.receiverId)
-        console.log('Receiver details for first conversation:', receiverDetails)
+    // Fetch receiver details for all conversations
+    for (const conversation of chats.value) {
+      if (conversation.receiverId) {
+        console.log(`Processing conversation ${conversation.id} with receiverId ${conversation.receiverId}`)
+        await fetchReceiverDetails(conversation.receiverId)
+      } else {
+        console.warn(`Conversation ${conversation.id} has no receiverId`)
       }
     }
+
+    console.log('Final receiverUsernames map:', Object.fromEntries(receiverUsernames.value))
 
     // If there are conversations and no active chat, set the first one as active
     if (chats.value.length > 0 && !activeChat.value) {
@@ -117,6 +133,7 @@ onMounted(async () => {
     <MessagesSidebar
       :conversations="chats"
       :activeConversationId="activeChat"
+      :receiver-usernames="receiverUsernames"
       @select-chat="handleChatSelect"
     />
     <!-- Right chat area -->

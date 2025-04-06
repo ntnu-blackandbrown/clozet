@@ -11,6 +11,7 @@ interface ItemDTO {
 const props = defineProps<{
   conversations: Conversation[]
   activeConversationId: number
+  receiverUsernames: Map<number, string>
 }>()
 
 const emit = defineEmits(['select-chat'])
@@ -30,6 +31,22 @@ const getLatestMessage = (conversation: Conversation) => {
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   )
   return sortedMessages[0].content
+}
+
+const getReceiverUsername = (conversation: Conversation) => {
+  console.log(`Getting username for conversation ${conversation.id}:`)
+  const numericReceiverId = Number(conversation.receiverId)
+  console.log(`- receiverId: ${numericReceiverId}`)
+  console.log(`- receiverName: ${conversation.receiverName}`)
+
+  // Try to get username from the map using numeric ID
+  const usernameFromMap = props.receiverUsernames.get(numericReceiverId)
+  console.log(`- username from map: ${usernameFromMap}`)
+
+  // Use fallbacks in order: map username -> conversation receiverName -> Unknown User
+  const username = usernameFromMap || conversation.receiverName || 'Unknown User'
+  console.log(`- final username: ${username}`)
+  return username
 }
 
 onMounted(async () => {
@@ -75,11 +92,11 @@ onMounted(async () => {
           <img
             v-if="itemImages.get(conversation.itemId)"
             :src="itemImages.get(conversation.itemId)"
-            :alt="conversation.receiverName"
+            :alt="getReceiverUsername(conversation)"
           />
         </div>
         <div class="chat-info">
-          <div class="chat-name">{{ conversation.receiverName }}</div>
+          <div class="chat-name">{{ getReceiverUsername(conversation) }}</div>
           <div class="chat-preview">{{ getLatestMessage(conversation) }}</div>
         </div>
         <div class="chat-meta">

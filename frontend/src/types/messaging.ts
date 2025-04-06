@@ -9,6 +9,7 @@ export interface Message {
 
 export interface Conversation {
   id: number
+  receiverId: number
   receiverName: string
   itemId: number
   listOfMessages: Message[]
