@@ -12,6 +12,7 @@ const authStore = useAuthStore()
 
 const chats = ref([])
 const chatMessages = ref({})
+const receiverDetails = ref({})
 
 const activeChat = computed(() => {
   const chatId = parseInt(route.params.chatId)
@@ -20,6 +21,18 @@ const activeChat = computed(() => {
 
 const handleChatSelect = (chatId) => {
   router.push(`/messages/${chatId}`)
+}
+
+const fetchReceiverDetails = async (receiverId) => {
+  try {
+    const response = await axios.get(`/api/users/${receiverId}`)
+    receiverDetails.value = response.data
+    console.log('Receiver details:', response.data)
+    return response.data
+  } catch (error) {
+    console.error('Failed to fetch receiver details:', error)
+    return null
+  }
 }
 
 const handleNewMessage = async ({ chatId, message }) => {
@@ -72,6 +85,16 @@ onMounted(async () => {
     chats.value = response.data
     console.log('Updated chats value:', chats.value)
 
+    // Fetch receiver details for the first conversation if it exists
+    if (chats.value.length > 0) {
+      const firstConversation = chats.value[0]
+      console.log('First conversation:', firstConversation)
+      if (firstConversation.receiverId) {
+        const receiverDetails = await fetchReceiverDetails(firstConversation.receiverId)
+        console.log('Receiver details for first conversation:', receiverDetails)
+      }
+    }
+
     // If there are conversations and no active chat, set the first one as active
     if (chats.value.length > 0 && !activeChat.value) {
       router.replace(`/messages/${chats.value[0].id}`)
@@ -101,6 +124,7 @@ onMounted(async () => {
       :active-chat="activeChat"
       :messages="chatMessages[activeChat] || []"
       :contact="chats.find((chat) => chat.id === activeChat)"
+      :receiver-details="receiverDetails"
       @send-message="handleNewMessage"
     />
   </div>
