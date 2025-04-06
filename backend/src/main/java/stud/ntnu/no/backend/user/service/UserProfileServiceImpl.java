@@ -11,6 +11,9 @@ import stud.ntnu.no.backend.user.repository.UserRepository;
 
 import java.util.Set;
 
+/**
+ * Implementation of UserProfileService for managing user profiles.
+ */
 @Service
 public class UserProfileServiceImpl implements UserProfileService {
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
@@ -26,6 +29,14 @@ public class UserProfileServiceImpl implements UserProfileService {
         this.fileStorageService = fileStorageService;
     }
 
+    /**
+     * Uploads a profile picture for a user.
+     *
+     * @param file the profile picture file
+     * @param userId the ID of the user
+     * @return the URL of the uploaded profile picture
+     * @throws Exception if an error occurs during upload
+     */
     @Override
     public String uploadProfilePicture(MultipartFile file, Long userId) throws Exception {
         validateFile(file);

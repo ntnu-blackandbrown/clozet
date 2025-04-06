@@ -9,6 +9,9 @@ import stud.ntnu.no.backend.user.entity.User;
 
 import java.util.List;
 
+/**
+ * Service interface for managing users.
+ */
 public abstract class UserService {
     public abstract List<UserDTO> getAllUsers();
     public abstract UserDTO getUserById(Long id);

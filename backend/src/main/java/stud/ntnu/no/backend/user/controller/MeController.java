@@ -14,6 +14,11 @@ import stud.ntnu.no.backend.user.dto.UserDTO;
 import stud.ntnu.no.backend.user.exception.UserNotFoundException;
 import stud.ntnu.no.backend.user.service.UserService;
 
+/**
+ * REST controller for managing the current user's account.
+ * <p>
+ * This controller provides endpoints for retrieving and updating the current user's information.
+ */
 @RestController
 @RequestMapping("/api")
 public class MeController {
@@ -22,10 +27,20 @@ public class MeController {
 
     private final UserService userService;
 
+    /**
+     * Constructs a new MeController with the specified user service.
+     *
+     * @param userService the UserService
+     */
     public MeController(UserService userService) {
         this.userService = userService;
     }
 
+    /**
+     * Retrieves the current authenticated user's information.
+     *
+     * @return the current user's UserDTO or an error message if unauthorized
+     */
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
         // Hent autentiseringen fra SecurityContextHolder
@@ -56,6 +71,12 @@ public class MeController {
         }
     }
 
+    /**
+     * Changes the password of the current authenticated user.
+     *
+     * @param changePasswordDTO the ChangePasswordDTO containing current and new passwords
+     * @return a success message or an error message if the operation fails
+     */
     @PostMapping("/me/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
         System.out.println("MeController.changePassword - Request received");

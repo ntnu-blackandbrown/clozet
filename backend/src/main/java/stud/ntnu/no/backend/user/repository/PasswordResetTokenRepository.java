@@ -7,6 +7,9 @@ import stud.ntnu.no.backend.user.entity.User;
 
 import java.util.Optional;
 
+/**
+ * Repository interface for managing PasswordResetToken entities.
+ */
 @Repository
 public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken, Long> {
     Optional<PasswordResetToken> findByToken(String token);

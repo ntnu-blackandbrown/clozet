@@ -3,6 +3,12 @@ package stud.ntnu.no.backend.user.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Represents a user entity.
+ * <p>
+ * This entity is used to store user information including credentials and profile details.
+ * </p>
+ */
 @Entity
 @Table(name = "users")
 public class User {
@@ -139,8 +145,11 @@ public class User {
     this.verificationTokenExpiry = verificationTokenExpiry;
   }
 
-
-
+  /**
+   * Sets the full name of the user by splitting the input string into first and last name.
+   *
+   * @param fullName the full name of the user
+   */
   public void setFullName(String fullName) {
     if (fullName != null) {
       String[] parts = fullName.split(" ", 2);

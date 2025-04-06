@@ -9,17 +9,34 @@ import stud.ntnu.no.backend.itemimage.exception.EmptyFileException;
 import stud.ntnu.no.backend.itemimage.exception.InvalidFileTypeException;
 import stud.ntnu.no.backend.user.service.UserProfileService;
 
+/**
+ * REST controller for managing user profile images.
+ * <p>
+ * This controller provides endpoints for uploading, retrieving, and deleting user profile images.
+ */
 @RestController
 @RequestMapping("/api/users/profile")
 public class UserImageController {
 
     private final UserProfileService userProfileService;
 
+    /**
+     * Constructs a new UserImageController with the specified user profile service.
+     *
+     * @param userProfileService the UserProfileService
+     */
     @Autowired
     public UserImageController(UserProfileService userProfileService) {
         this.userProfileService = userProfileService;
     }
 
+    /**
+     * Uploads a profile image for a user.
+     *
+     * @param file the MultipartFile containing the image
+     * @param userId the ID of the user
+     * @return the URL of the uploaded image or an error message if the upload fails
+     */
     @PostMapping("/image")
     public ResponseEntity<?> uploadProfileImage(
             @RequestParam("file") MultipartFile file,
@@ -40,6 +57,12 @@ public class UserImageController {
         }
     }
 
+    /**
+     * Retrieves the profile image URL for a user.
+     *
+     * @param userId the ID of the user
+     * @return the URL of the profile image or a no content response if not found
+     */
     @GetMapping("/{userId}/image")
     public ResponseEntity<?> getProfileImage(@PathVariable Long userId) {
         try {
@@ -54,6 +77,12 @@ public class UserImageController {
         }
     }
 
+    /**
+     * Deletes the profile image for a user.
+     *
+     * @param userId the ID of the user
+     * @return a success message or an error message if the deletion fails
+     */
     @DeleteMapping("/{userId}/image")
     public ResponseEntity<?> deleteProfileImage(@PathVariable Long userId) {
         try {
