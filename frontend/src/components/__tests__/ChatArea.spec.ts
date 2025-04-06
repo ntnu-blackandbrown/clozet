@@ -14,7 +14,10 @@ const sampleMessage: Message = {
 }
 
 const sampleConversation: Conversation = {
-  id: 123,
+  id: '123',
+  conversationId: '123',
+  senderId: 1,
+  receiverId: 2,
   receiverName: 'Alice',
   itemId: 10,
   listOfMessages: [sampleMessage],
@@ -52,7 +55,7 @@ describe('ChatArea.vue', () => {
   it('renders header with contact name when activeChat and contact are provided', async () => {
     const wrapper = mount(ChatArea, {
       props: {
-        activeChat: 123,
+        activeChat: '123',
         messages: [sampleMessage],
         contact: sampleConversation,
       },
@@ -70,7 +73,7 @@ describe('ChatArea.vue', () => {
   it('renders messages with a date divider and correct message classes', async () => {
     const wrapper = mount(ChatArea, {
       props: {
-        activeChat: 123,
+        activeChat: '123',
         messages: [sampleMessage],
         contact: sampleConversation,
       },
@@ -96,7 +99,7 @@ describe('ChatArea.vue', () => {
   it('emits "send-message" event with correct payload when MessageInput emits send', async () => {
     const wrapper = mount(ChatArea, {
       props: {
-        activeChat: 123,
+        activeChat: '123',
         messages: [],
         contact: sampleConversation,
       },
@@ -114,13 +117,13 @@ describe('ChatArea.vue', () => {
     const emitted = wrapper.emitted('send-message')
     expect(emitted).toBeTruthy()
     const payload = emitted![0][0] as {
-      chatId: number
+      chatId: string
       message: { content: string; senderId: number; receiverId: number; timestamp: string }
     }
-    expect(payload.chatId).toBe(123)
+    expect(payload.chatId).toBe('123')
     expect(payload.message.content).toBe('Test message')
     expect(payload.message.senderId).toBe(1)
-    expect(payload.message.receiverId).toBe(sampleConversation.id)
+    expect(payload.message.receiverId).toBe(Number(sampleConversation.id))
     expect(typeof payload.message.timestamp).toBe('string')
   })
 
@@ -144,7 +147,7 @@ describe('ChatArea.vue', () => {
     // Case 2: contact is undefined → even if activeChat is provided, handleSendMessage returns early.
     const wrapper2 = mount(ChatArea, {
       props: {
-        activeChat: 123,
+        activeChat: '123',
         messages: [],
         contact: undefined,
       },
