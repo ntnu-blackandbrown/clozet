@@ -10,11 +10,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 
+/**
+ * Mapper for converting between Message entities and DTOs.
+ * <p>
+ * This class provides methods to convert between Message entities and their
+ * corresponding Data Transfer Objects (DTOs).
+ */
 @Component
 public class MessageMapper {
     @Autowired
     private ItemRepository itemRepository;
 
+    /**
+     * Converts a Message entity to a MessageDTO.
+     *
+     * @param message the Message entity
+     * @return the MessageDTO
+     */
     public MessageDTO toDTO(Message message) {
         return new MessageDTO(
                 message.getId(),
@@ -26,6 +38,12 @@ public class MessageMapper {
         );
     }
 
+    /**
+     * Converts a CreateMessageRequest to a Message entity.
+     *
+     * @param request the CreateMessageRequest
+     * @return the Message entity
+     */
     public Message toEntity(CreateMessageRequest request) {
         Message message = new Message();
         message.setSenderId(request.getSenderId());
@@ -41,6 +59,12 @@ public class MessageMapper {
         return message;
     }
 
+    /**
+     * Updates a Message entity from an UpdateMessageRequest.
+     *
+     * @param message the Message entity to update
+     * @param request the UpdateMessageRequest
+     */
     public void updateEntityFromRequest(Message message, UpdateMessageRequest request) {
         if (request.getContent() != null) {
             message.setContent(request.getContent());

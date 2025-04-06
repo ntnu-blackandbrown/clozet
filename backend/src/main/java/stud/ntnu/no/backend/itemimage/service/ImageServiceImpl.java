@@ -14,6 +14,10 @@ import stud.ntnu.no.backend.itemimage.repository.ItemImageRepository;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Implementation of the ImageService interface.
+ * Provides methods for uploading, retrieving, and deleting item images.
+ */
 @Service
 public class ImageServiceImpl implements ImageService {
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
@@ -23,6 +27,13 @@ public class ImageServiceImpl implements ImageService {
     private final ItemRepository itemRepository;
     private final FileStorageService fileStorageService;
 
+    /**
+     * Constructs an ImageServiceImpl with the specified repositories and storage service.
+     *
+     * @param itemImageRepository Repository for item images
+     * @param itemRepository Repository for items
+     * @param fileStorageService Service for storing files
+     */
     @Autowired
     public ImageServiceImpl(ItemImageRepository itemImageRepository,
                             ItemRepository itemRepository,
@@ -32,6 +43,14 @@ public class ImageServiceImpl implements ImageService {
         this.fileStorageService = fileStorageService;
     }
 
+    /**
+     * Uploads an image and associates it with a specific item.
+     *
+     * @param file The image file to upload
+     * @param itemId The ID of the item the image is associated with
+     * @return The URL of the uploaded image
+     * @throws RuntimeException if the item is not found or file storage fails
+     */
     @Override
     public String uploadImage(MultipartFile file, Long itemId) {
         validateFile(file);
@@ -62,16 +81,34 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
+    /**
+     * Retrieves all images associated with a specific item.
+     *
+     * @param itemId The ID of the item
+     * @return A list of images associated with the item
+     */
     @Override
     public List<ItemImage> getImagesByItemId(Long itemId) {
         return itemImageRepository.findByItemId(itemId);
     }
 
+    /**
+     * Deletes an image by its ID.
+     *
+     * @param imageId The ID of the image to delete
+     */
     @Override
     public void deleteImage(Long imageId) {
         itemImageRepository.deleteById(imageId);
     }
 
+    /**
+     * Validates the uploaded file.
+     *
+     * @param file The file to validate
+     * @throws EmptyFileException if the file is empty
+     * @throws InvalidFileTypeException if the file type is not supported
+     */
     private void validateFile(MultipartFile file) {
         if (file.isEmpty()) {
             throw new EmptyFileException("Failed to store empty file");

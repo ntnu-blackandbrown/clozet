@@ -7,6 +7,9 @@ import stud.ntnu.no.backend.user.entity.VerificationToken;
 
 import java.util.Optional;
 
+/**
+ * Repository interface for managing VerificationToken entities.
+ */
 @Repository
 public interface VerificationTokenRepository extends JpaRepository<VerificationToken, Long> {
     Optional<VerificationToken> findByToken(String token);

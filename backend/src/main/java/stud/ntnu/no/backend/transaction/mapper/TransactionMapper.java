@@ -9,6 +9,11 @@ import stud.ntnu.no.backend.transaction.entity.Transaction;
 
 import java.time.LocalDateTime;
 
+/**
+ * Mapper for converting between Transaction entities and DTOs.
+ * <p>
+ * This class provides methods to convert Transaction entities to DTOs and vice versa.
+ */
 @Component
 public class TransactionMapper {
 
@@ -18,6 +23,12 @@ public class TransactionMapper {
         this.itemRepository = itemRepository;
     }
 
+    /**
+     * Converts a Transaction entity to a TransactionDTO.
+     *
+     * @param transaction the Transaction entity
+     * @return the TransactionDTO
+     */
     public TransactionDTO toDTO(Transaction transaction) {
         TransactionDTO dto = new TransactionDTO();
         dto.setId(transaction.getId());
@@ -36,6 +47,12 @@ public class TransactionMapper {
         return dto;
     }
 
+    /**
+     * Converts a CreateTransactionRequest to a Transaction entity.
+     *
+     * @param dto the CreateTransactionRequest
+     * @return the Transaction entity
+     */
     public Transaction toEntity(CreateTransactionRequest dto) {
         Transaction transaction = new Transaction();
         transaction.setBuyerId(dto.getBuyerId());

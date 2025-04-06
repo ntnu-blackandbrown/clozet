@@ -7,9 +7,15 @@ import stud.ntnu.no.backend.history.entity.History;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Mapper class to convert between History entity and HistoryDTO.
+ */
 @Component
 public class HistoryMapper {
 
+    /**
+     * Converts a History entity to a HistoryDTO.
+     */
     public HistoryDTO toDto(History history) {
         HistoryDTO dto = new HistoryDTO();
         dto.setId(history.getId());
@@ -20,7 +26,10 @@ public class HistoryMapper {
         dto.setActive(history.isActive());
         return dto;
     }
-    
+
+    /**
+     * Converts a list of History entities to a list of HistoryDTOs.
+     */
     public List<HistoryDTO> toDtoList(List<History> histories) {
         return histories.stream()
                 .map(this::toDto)

@@ -9,6 +9,11 @@ import stud.ntnu.no.backend.message.dto.MessageDTO;
 
 import java.util.Map;
 
+/**
+ * Service for WebSocket communication.
+ * <p>
+ * This service provides methods for broadcasting message and conversation events via WebSocket.
+ */
 @Service
 public class WebSocketService {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketService.class);
@@ -19,6 +24,11 @@ public class WebSocketService {
         this.messagingTemplate = messagingTemplate;
     }
 
+    /**
+     * Constructs a new WebSocketService with the specified messaging template.
+     *
+     * @param messagingTemplate the SimpMessagingTemplate
+     */
     public void notifyMessageCreated(MessageDTO message) {
         try {
             logger.info("Broadcasting new message with ID: {}", message.getId());
@@ -32,6 +42,11 @@ public class WebSocketService {
         }
     }
 
+    /**
+     * Notifies clients of a newly created message.
+     *
+     * @param message the MessageDTO
+     */
     public void notifyMessageRead(MessageDTO message) {
         try {
             logger.info("Broadcasting message marked as read with ID: {}", message.getId());
@@ -41,6 +56,11 @@ public class WebSocketService {
         }
     }
 
+    /**
+     * Notifies clients of a message update.
+     *
+     * @param message the MessageDTO
+     */
     public void notifyMessageUpdated(MessageDTO message) {
         try {
             logger.info("Broadcasting message update with ID: {}", message.getId());
@@ -50,6 +70,11 @@ public class WebSocketService {
         }
     }
 
+    /**
+     * Notifies clients of a message deletion.
+     *
+     * @param messageId the ID of the deleted message
+     */
     public void notifyMessageDeleted(Long messageId) {
         try {
             logger.info("Broadcasting message deletion with ID: {}", messageId);
@@ -61,6 +86,12 @@ public class WebSocketService {
 
     // Add these methods to your existing WebSocketService class
 
+    /**
+     * Notifies clients that a conversation has been archived.
+     *
+     * @param conversationId the ID of the conversation
+     * @param userId the ID of the user
+     */
     public void notifyConversationArchived(String conversationId, String userId) {
         try {
             logger.info("Broadcasting conversation archive: {}", conversationId);
@@ -71,6 +102,11 @@ public class WebSocketService {
         }
     }
 
+    /**
+     * Notifies clients of a conversation deletion.
+     *
+     * @param conversationId the ID of the deleted conversation
+     */
     public void notifyConversationDeleted(String conversationId) {
         try {
             logger.info("Broadcasting conversation deletion: {}", conversationId);

@@ -6,8 +6,8 @@ import stud.ntnu.no.backend.user.entity.User;
 import java.time.LocalDateTime;
 
 /**
- * Entitetsklasse for favoritter.
- * Representerer en databasepost for en favoritt med tilhørende attributter.
+ * Entity class for favorites.
+ * Represents a database record for a favorite with associated attributes.
  */
 @Entity
 @Table(name = "favorites")
@@ -31,8 +31,8 @@ public class Favorite {
     private boolean active;
 
     /**
-     * Tom konstruktør for Favorite.
-     * Kreves av JPA.
+     * Empty constructor for Favorite.
+     * Required by JPA.
      */
     public Favorite() {
         this.createdAt = LocalDateTime.now();
@@ -40,13 +40,13 @@ public class Favorite {
     }
 
     /**
-     * Konstruktør for å opprette et nytt Favorite-objekt med alle feltene.
+     * Constructor to create a new Favorite object with all fields.
      *
-     * @param id ID for favoritten
-     * @param user Brukeren som eier favoritten
-     * @param item Elementet som er favorisert
-     * @param createdAt Tidspunkt for opprettelse
-     * @param active Status for favoritten (aktiv/inaktiv)
+     * @param id The ID of the favorite
+     * @param user The user who owns the favorite
+     * @param item The item that is favorited
+     * @param createdAt The creation timestamp
+     * @param active The status of the favorite (active/inactive)
      */
     public Favorite(Long id, User user, Item item, LocalDateTime createdAt, boolean active) {
         this.id = id;
@@ -57,108 +57,108 @@ public class Favorite {
     }
 
     /**
-     * Henter favorittens ID.
+     * Retrieves the ID of the favorite.
      *
-     * @return Favorittens ID
+     * @return The ID of the favorite
      */
     public Long getId() {
         return id;
     }
 
     /**
-     * Setter favorittens ID.
+     * Sets the ID of the favorite.
      *
-     * @param id Favorittens ID
+     * @param id The ID of the favorite
      */
     public void setId(Long id) {
         this.id = id;
     }
 
     /**
-     * Henter brukerens ID.
+     * Retrieves the user's ID as a string.
      *
-     * @return Brukerens ID som string
+     * @return The user's ID as a string
      */
     public String getUserId() {
         return user != null ? user.getId().toString() : null;
     }
 
     /**
-     * Henter brukerobjektet.
+     * Retrieves the user object.
      *
-     * @return Brukeren som eier favoritten
+     * @return The user who owns the favorite
      */
     public User getUser() {
         return user;
     }
 
     /**
-     * Setter brukeren for favoritten.
+     * Sets the user for the favorite.
      *
-     * @param user Brukeren som skal eie favoritten
+     * @param user The user who will own the favorite
      */
     public void setUser(User user) {
         this.user = user;
     }
 
     /**
-     * Henter elementets ID.
+     * Retrieves the item's ID.
      *
-     * @return Elementets ID
+     * @return The item's ID
      */
     public Long getItemId() {
         return item != null ? item.getId() : null;
     }
 
     /**
-     * Henter elementobjektet.
+     * Retrieves the item object.
      *
-     * @return Elementet som er favorisert
+     * @return The item that is favorited
      */
     public Item getItem() {
         return item;
     }
 
     /**
-     * Setter elementet for favoritten.
+     * Sets the item for the favorite.
      *
-     * @param item Elementet som skal favoriseres
+     * @param item The item to be favorited
      */
     public void setItem(Item item) {
         this.item = item;
     }
 
     /**
-     * Henter tidspunktet for opprettelse.
+     * Retrieves the creation timestamp.
      *
-     * @return Tidspunkt for opprettelse
+     * @return The creation timestamp
      */
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     /**
-     * Setter tidspunktet for opprettelse.
+     * Sets the creation timestamp.
      *
-     * @param createdAt Tidspunkt for opprettelse
+     * @param createdAt The creation timestamp
      */
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
     /**
-     * Sjekker om favoritten er aktiv.
+     * Checks if the favorite is active.
      *
-     * @return true hvis favoritten er aktiv, ellers false
+     * @return true if the favorite is active, otherwise false
      */
     public boolean isActive() {
         return active;
     }
 
     /**
-     * Setter favorittens aktive status.
+     * Sets the active status of the favorite.
      *
-     * @param active Favorittens aktive status
+     * @param active The active status of the favorite
      */
     public void setActive(boolean active) {
         this.active = active;

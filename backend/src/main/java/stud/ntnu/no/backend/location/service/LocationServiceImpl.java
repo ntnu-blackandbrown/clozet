@@ -12,12 +12,23 @@ import stud.ntnu.no.backend.location.repository.LocationRepository;
 
 import java.util.List;
 
+/**
+ * Implementation of the LocationService interface.
+ * <p>
+ * This class provides methods for managing locations, including CRUD operations.
+ */
 @Service
 public class LocationServiceImpl implements LocationService {
 
     private final LocationRepository locationRepository;
     private final LocationMapper locationMapper;
 
+    /**
+     * Constructs a new LocationServiceImpl with the specified repository and mapper.
+     *
+     * @param locationRepository the LocationRepository
+     * @param locationMapper the LocationMapper
+     */
     public LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper) {
         this.locationRepository = locationRepository;
         this.locationMapper = locationMapper;
@@ -65,6 +76,15 @@ public class LocationServiceImpl implements LocationService {
         locationRepository.deleteById(id);
     }
     
+    /**
+     * Validates the given CreateLocationDTO.
+     * <p>
+     * This method checks that the city and region are not empty and that the latitude
+     * and longitude are within valid ranges.
+     *
+     * @param locationDTO the CreateLocationDTO to validate
+     * @throws LocationValidationException if validation fails
+     */
     private void validateLocation(CreateLocationDTO locationDTO) {
         if (locationDTO.getCity() == null || locationDTO.getCity().trim().isEmpty()) {
             throw new LocationValidationException("City cannot be empty");

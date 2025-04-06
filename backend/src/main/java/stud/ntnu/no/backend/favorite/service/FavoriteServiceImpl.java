@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Implementasjon av FavoriteService-grensesnittet som håndterer favoritt-funksjonalitet.
- * Denne tjenesten håndterer operasjoner for å hente, opprette, oppdatere og slette favoritter.
+ * Implementation of the FavoriteService interface that handles favorite functionality.
+ * This service manages operations for retrieving, creating, updating, and deleting favorites.
  */
 @Service
 public class FavoriteServiceImpl implements FavoriteService {
@@ -31,9 +31,9 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     /**
-     * Henter alle favoritter i systemet.
-     * 
-     * @return En liste med alle favoritter som FavoriteDTO-objekter
+     * Retrieves all favorites in the system.
+     *
+     * @return A list of all favorites as FavoriteDTO objects
      */
     @Override
     @Transactional(readOnly = true)
@@ -44,11 +44,11 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     /**
-     * Henter alle favoritter for en spesifikk bruker.
-     * 
-     * @param userId Brukerens ID
-     * @return En liste med brukerens favoritter som FavoriteDTO-objekter
-     * @throws FavoriteValidationException hvis bruker-ID er null eller tom
+     * Retrieves all favorites for a specific user.
+     *
+     * @param userId The ID of the user
+     * @return A list of the user's favorites as FavoriteDTO objects
+     * @throws FavoriteValidationException if the user ID is null or empty
      */
     @Override
     @Transactional(readOnly = true)
@@ -70,12 +70,12 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     /**
-     * Henter en spesifikk favoritt basert på ID.
-     * 
-     * @param id Favorittens ID
-     * @return FavoriteDTO-objekt for den spesifikke favoritten
-     * @throws FavoriteValidationException hvis ID er null
-     * @throws FavoriteNotFoundException hvis favoritten ikke finnes
+     * Retrieves a specific favorite by ID.
+     *
+     * @param id The ID of the favorite
+     * @return FavoriteDTO object for the specific favorite
+     * @throws FavoriteValidationException if the ID is null
+     * @throws FavoriteNotFoundException if the favorite is not found
      */
     @Override
     @Transactional(readOnly = true)
@@ -90,11 +90,11 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     /**
-     * Oppretter en ny favoritt.
-     * 
-     * @param request Forespørsel med data for den nye favoritten
-     * @return FavoriteDTO-objekt for den nye favoritten
-     * @throws FavoriteValidationException hvis forespørselen er ugyldig eller favoritten allerede eksisterer
+     * Creates a new favorite.
+     *
+     * @param request Request with data for the new favorite
+     * @return FavoriteDTO object for the new favorite
+     * @throws FavoriteValidationException if the request is invalid or the favorite already exists
      */
     @Override
     @Transactional
@@ -112,13 +112,13 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     /**
-     * Oppdaterer en eksisterende favoritt.
-     * 
-     * @param id Favorittens ID
-     * @param request Forespørsel med oppdaterte data
-     * @return FavoriteDTO-objekt for den oppdaterte favoritten
-     * @throws FavoriteValidationException hvis ID eller forespørselen er ugyldig
-     * @throws FavoriteNotFoundException hvis favoritten ikke finnes
+     * Updates an existing favorite.
+     *
+     * @param id The ID of the favorite
+     * @param request Request with updated data
+     * @return FavoriteDTO object for the updated favorite
+     * @throws FavoriteValidationException if the ID or request is invalid
+     * @throws FavoriteNotFoundException if the favorite is not found
      */
     @Override
     @Transactional
@@ -137,6 +137,11 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     /**
+     * Deletes a favorite.
+     *
+     * @param id The ID of the favorite
+     * @throws FavoriteValidationException if the ID is null
+     * @throws FavoriteNotFoundException if the favorite is not found
      * Sletter en favoritt.
      * 
      * @param id Favorittens ID

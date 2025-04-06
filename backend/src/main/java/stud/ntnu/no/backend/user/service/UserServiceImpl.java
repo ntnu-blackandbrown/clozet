@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of UserService for managing users.
+ */
 @Service
 public class UserServiceImpl extends UserService {
 
@@ -71,6 +74,11 @@ public class UserServiceImpl extends UserService {
             .orElseThrow(() -> new UserNotFoundException("Username " + username + " not found"));
     }
 
+    /**
+     * Retrieves all users.
+     *
+     * @return a list of user DTOs
+     */
     @Override
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()

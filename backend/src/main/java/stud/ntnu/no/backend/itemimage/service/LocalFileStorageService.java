@@ -13,11 +13,21 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+/**
+ * Service for storing files locally on the server.
+ * Activated when the application property 'app.storage.use-cloudinary' is set to false or not set.
+ */
 @Service("localFileStorageService")
 @ConditionalOnProperty(name = "app.storage.use-cloudinary", havingValue = "false", matchIfMissing = true)
 public class LocalFileStorageService implements FileStorageService {
     private final Path fileStorageLocation;
 
+    /**
+     * Constructs a LocalFileStorageService with the specified upload directory.
+     *
+     * @param uploadDir The directory where files will be stored
+     * @throws RuntimeException if the upload directory cannot be created
+     */
     public LocalFileStorageService(@Value("${app.upload.dir:uploads}") String uploadDir) {
         this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
         try {
@@ -27,6 +37,14 @@ public class LocalFileStorageService implements FileStorageService {
         }
     }
 
+    /**
+     * Stores a file locally under a specific item directory.
+     *
+     * @param file The file to store
+     * @param itemId The ID of the item associated with the file
+     * @return The path of the stored file
+     * @throws IOException If an error occurs during file storage
+     */
     @Override
     public String storeFile(MultipartFile file, Long itemId) throws IOException {
         Path itemDirectory = fileStorageLocation.resolve(itemId.toString());

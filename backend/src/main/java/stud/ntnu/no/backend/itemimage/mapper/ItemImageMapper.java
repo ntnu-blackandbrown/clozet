@@ -11,12 +11,20 @@ import stud.ntnu.no.backend.item.repository.ItemRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Mapper class for converting between ItemImage entity and DTO objects.
+ */
 @Component
 public class ItemImageMapper {
     @Autowired
     private ItemRepository itemRepository;
 
-    // Changed method name from toDTO to toDto for consistency
+    /**
+     * Converts an ItemImage entity to an ItemImageDTO.
+     *
+     * @param itemImage The ItemImage entity to convert
+     * @return The converted ItemImageDTO
+     */
     public ItemImageDTO toDto(ItemImage itemImage) {
         return new ItemImageDTO(
                 itemImage.getId(),
@@ -27,14 +35,24 @@ public class ItemImageMapper {
         );
     }
 
-    // Added toDtoList method
+    /**
+     * Converts a list of ItemImage entities to a list of ItemImageDTOs.
+     *
+     * @param itemImages The list of ItemImage entities to convert
+     * @return The list of converted ItemImageDTOs
+     */
     public List<ItemImageDTO> toDtoList(List<ItemImage> itemImages) {
         return itemImages.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-    // Updated to use CreateItemImageDTO instead of CreateItemImageRequest
+    /**
+     * Converts a CreateItemImageDTO to an ItemImage entity.
+     *
+     * @param dto The CreateItemImageDTO to convert
+     * @return The converted ItemImage entity
+     */
     public ItemImage toEntity(CreateItemImageDTO dto) {
         ItemImage itemImage = new ItemImage();
         itemImage.setImageUrl(dto.getImageUrl());
@@ -50,7 +68,12 @@ public class ItemImageMapper {
         return itemImage;
     }
 
-    // Added updateItemImageFromDto method
+    /**
+     * Updates an existing ItemImage entity from a CreateItemImageDTO.
+     *
+     * @param dto The CreateItemImageDTO containing updated data
+     * @param itemImage The ItemImage entity to update
+     */
     public void updateItemImageFromDto(CreateItemImageDTO dto, ItemImage itemImage) {
         if (dto.getImageUrl() != null) {
             itemImage.setImageUrl(dto.getImageUrl());

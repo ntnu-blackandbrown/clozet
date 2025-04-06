@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
- * Data Transfer Object (DTO) for favoritter.
- * Brukes for å overføre favoritt-data mellom klient og server.
+ * Data Transfer Object (DTO) for favorites.
+ * Used to transfer favorite data between client and server.
  */
 public class FavoriteDTO {
 
@@ -17,20 +17,20 @@ public class FavoriteDTO {
     private LocalDateTime updatedAt;
 
     /**
-     * Tom konstruktør for FavoriteDTO.
+     * Empty constructor for FavoriteDTO.
      */
     public FavoriteDTO() {
     }
 
     /**
-     * Konstruktør for å opprette et nytt FavoriteDTO-objekt med alle feltene.
+     * Constructor to create a new FavoriteDTO object with all fields.
      *
-     * @param id ID for favoritten
-     * @param userId Brukerens ID
-     * @param itemId ID for elementet som er favorisert
-     * @param active Status for favoritten (aktiv/inaktiv)
-     * @param createdAt Tidspunkt for opprettelse
-     * @param updatedAt Tidspunkt for siste oppdatering
+     * @param id The ID of the favorite
+     * @param userId The ID of the user
+     * @param itemId The ID of the item that is favorited
+     * @param active The status of the favorite (active/inactive)
+     * @param createdAt The creation timestamp
+     * @param updatedAt The last update timestamp
      */
     public FavoriteDTO(Long id, String userId, Long itemId, boolean active, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
@@ -42,108 +42,108 @@ public class FavoriteDTO {
     }
 
     /**
-     * Henter favorittens ID.
+     * Retrieves the ID of the favorite.
      *
-     * @return Favorittens ID
+     * @return The ID of the favorite
      */
     public Long getId() {
         return id;
     }
 
     /**
-     * Setter favorittens ID.
+     * Sets the ID of the favorite.
      *
-     * @param id Favorittens ID
+     * @param id The ID of the favorite
      */
     public void setId(Long id) {
         this.id = id;
     }
 
     /**
-     * Henter brukerens ID.
+     * Retrieves the user's ID.
      *
-     * @return Brukerens ID
+     * @return The user's ID
      */
     public String getUserId() {
         return userId;
     }
 
     /**
-     * Setter brukerens ID.
+     * Sets the user's ID.
      *
-     * @param userId Brukerens ID
+     * @param userId The user's ID
      */
     public void setUserId(String userId) {
         this.userId = userId;
     }
 
     /**
-     * Henter elementets ID.
+     * Retrieves the item's ID.
      *
-     * @return Elementets ID
+     * @return The item's ID
      */
     public Long getItemId() {
         return itemId;
     }
 
     /**
-     * Setter elementets ID.
+     * Sets the item's ID.
      *
-     * @param itemId Elementets ID
+     * @param itemId The item's ID
      */
     public void setItemId(Long itemId) {
         this.itemId = itemId;
     }
 
     /**
-     * Sjekker om favoritten er aktiv.
+     * Checks if the favorite is active.
      *
-     * @return true hvis favoritten er aktiv, ellers false
+     * @return true if the favorite is active, otherwise false
      */
     public boolean isActive() {
         return active;
     }
 
     /**
-     * Setter favorittens aktive status.
+     * Sets the active status of the favorite.
      *
-     * @param active Favorittens aktive status
+     * @param active The active status of the favorite
      */
     public void setActive(boolean active) {
         this.active = active;
     }
 
     /**
-     * Henter tidspunktet for opprettelse.
+     * Retrieves the creation timestamp.
      *
-     * @return Tidspunkt for opprettelse
+     * @return The creation timestamp
      */
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     /**
-     * Setter tidspunktet for opprettelse.
+     * Sets the creation timestamp.
      *
-     * @param createdAt Tidspunkt for opprettelse
+     * @param createdAt The creation timestamp
      */
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
     /**
-     * Henter tidspunktet for siste oppdatering.
+     * Retrieves the last update timestamp.
      *
-     * @return Tidspunkt for siste oppdatering
+     * @return The last update timestamp
      */
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
     /**
-     * Setter tidspunktet for siste oppdatering.
+     * Sets the last update timestamp.
      *
-     * @param updatedAt Tidspunkt for siste oppdatering
+     * @param updatedAt The last update timestamp
      */
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;

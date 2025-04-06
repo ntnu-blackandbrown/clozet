@@ -5,6 +5,9 @@ import stud.ntnu.no.backend.itemimage.dto.ItemImageDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * DTO for displaying detailed product information.
+ */
 public class ProductDisplayDTO {
     private Long id;
     private String title;

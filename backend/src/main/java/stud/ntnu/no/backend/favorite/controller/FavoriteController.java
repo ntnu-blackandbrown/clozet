@@ -11,8 +11,8 @@ import stud.ntnu.no.backend.favorite.service.FavoriteService;
 import java.util.List;
 
 /**
- * REST-kontroller for å håndtere favoritt-operasjoner.
- * Eksponerer endepunkter for å hente, opprette, oppdatere og slette favoritter.
+ * REST controller for handling favorite operations.
+ * Exposes endpoints to retrieve, create, update, and delete favorites.
  */
 @RestController
 @RequestMapping("/api/favorites")
@@ -27,9 +27,9 @@ public class FavoriteController {
     }
 
     /**
-     * Henter alle favoritter.
+     * Retrieves all favorites.
      *
-     * @return Liste med alle favoritter
+     * @return List of all favorites
      */
     @GetMapping
     public ResponseEntity<List<FavoriteDTO>> getAllFavorites() {
@@ -38,10 +38,10 @@ public class FavoriteController {
     }
 
     /**
-     * Henter en spesifikk favoritt basert på ID.
+     * Retrieves a specific favorite by ID.
      *
-     * @param id Favorittens ID
-     * @return Favoritten med angitt ID
+     * @param id The ID of the favorite
+     * @return The favorite with the specified ID
      */
     @GetMapping("/{id}")
     public ResponseEntity<FavoriteDTO> getFavoriteById(@PathVariable Long id) {
@@ -50,10 +50,10 @@ public class FavoriteController {
     }
 
     /**
-     * Henter alle favoritter for en spesifikk bruker.
+     * Retrieves all favorites for a specific user.
      *
-     * @param userId Brukerens ID
-     * @return Liste med brukerens favoritter
+     * @param userId The ID of the user
+     * @return List of the user's favorites
      */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<FavoriteDTO>> getFavoritesByUserId(@PathVariable String userId) {
@@ -62,10 +62,10 @@ public class FavoriteController {
     }
 
     /**
-     * Oppretter en ny favoritt.
+     * Creates a new favorite.
      *
-     * @param request Data for å opprette en ny favoritt
-     * @return Den nyopprettede favoritten
+     * @param request Data for creating a new favorite
+     * @return The newly created favorite
      */
     @PostMapping
     public ResponseEntity<FavoriteDTO> createFavorite(@RequestBody CreateFavoriteRequest request) {
@@ -74,11 +74,11 @@ public class FavoriteController {
     }
 
     /**
-     * Oppdaterer en eksisterende favoritt.
+     * Updates an existing favorite.
      *
-     * @param id Favorittens ID
-     * @param request Data for å oppdatere favoritten
-     * @return Den oppdaterte favoritten
+     * @param id The ID of the favorite
+     * @param request Data for updating the favorite
+     * @return The updated favorite
      */
     @PutMapping("/{id}")
     public ResponseEntity<FavoriteDTO> updateFavorite(@PathVariable Long id, @RequestBody CreateFavoriteRequest request) {
@@ -87,10 +87,10 @@ public class FavoriteController {
     }
 
     /**
-     * Sletter en favoritt.
+     * Deletes a favorite.
      *
-     * @param id Favorittens ID
-     * @return Tomt svar med statusen NO_CONTENT
+     * @param id The ID of the favorite
+     * @return Empty response with status NO_CONTENT
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFavorite(@PathVariable Long id) {

@@ -27,6 +27,14 @@ public class HistoryServiceImpl implements HistoryService {
     private final ItemRepository itemRepository;
     private final HistoryMapper historyMapper;
     
+    /**
+     * Constructs a new HistoryServiceImpl with the specified repositories and mapper.
+     *
+     * @param historyRepository the history repository
+     * @param userRepository the user repository
+     * @param itemRepository the item repository
+     * @param historyMapper the history mapper
+     */
     public HistoryServiceImpl(
             HistoryRepository historyRepository,
             UserRepository userRepository,
@@ -38,6 +46,16 @@ public class HistoryServiceImpl implements HistoryService {
         this.historyMapper = historyMapper;
     }
 
+    /**
+     * Adds an item to the user's history.
+     *
+     * @param userId the user ID
+     * @param itemId the item ID
+     * @return the history DTO
+     * @throws UserNotFoundException if the user is not found
+     * @throws ItemNotFoundException if the item is not found
+     * @throws HistoryValidationException if the user ID or item ID is null
+     */
     @Override
     @Transactional
     public HistoryDTO addToHistory(Long userId, Long itemId) {
@@ -68,6 +86,15 @@ public class HistoryServiceImpl implements HistoryService {
         return historyMapper.toDto(historyRepository.save(history));
     }
 
+    /**
+     * Removes an item from the user's history.
+     *
+     * @param userId the user ID
+     * @param itemId the item ID
+     * @throws UserNotFoundException if the user is not found
+     * @throws ItemNotFoundException if the item is not found
+     * @throws HistoryNotFoundException if the history entry is not found
+     */
     @Override
     @Transactional
     public void removeFromHistory(Long userId, Long itemId) {
@@ -83,6 +110,12 @@ public class HistoryServiceImpl implements HistoryService {
         historyRepository.delete(history);
     }
     
+    /**
+     * Deletes all history entries for a user.
+     *
+     * @param userId the user ID
+     * @throws RuntimeException if the user is not found
+     */
     @Override
     @Transactional
     public void deleteHistory(Long userId) {
@@ -92,6 +125,13 @@ public class HistoryServiceImpl implements HistoryService {
         historyRepository.deleteByUser(user);
     }
     
+    /**
+     * Pauses or resumes the user's history.
+     *
+     * @param userId the user ID
+     * @param pause true to pause, false to resume
+     * @throws RuntimeException if the user is not found
+     */
     @Override
     @Transactional
     public void pauseHistory(Long userId, boolean pause) {
@@ -105,6 +145,13 @@ public class HistoryServiceImpl implements HistoryService {
         historyRepository.saveAll(userHistory);
     }
     
+    /**
+     * Retrieves the user's active history.
+     *
+     * @param userId the user ID
+     * @return the list of history DTOs
+     * @throws RuntimeException if the user is not found
+     */
     @Override
     @Transactional(readOnly = true)
     public List<HistoryDTO> getUserHistory(Long userId) {

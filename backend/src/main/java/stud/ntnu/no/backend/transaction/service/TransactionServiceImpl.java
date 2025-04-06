@@ -14,12 +14,23 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the TransactionService interface.
+ * <p>
+ * This class provides methods for managing transactions, including CRUD operations.
+ */
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final TransactionMapper transactionMapper;
 
+    /**
+     * Constructs a new TransactionServiceImpl with the specified dependencies.
+     *
+     * @param transactionRepository the TransactionRepository
+     * @param transactionMapper the TransactionMapper
+     */
     public TransactionServiceImpl(TransactionRepository transactionRepository, 
                                   TransactionMapper transactionMapper) {
         this.transactionRepository = transactionRepository;
@@ -44,6 +55,14 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Transactional
     public TransactionDTO createTransaction(CreateTransactionRequest request) {
+        /**
+         * Validates the given CreateTransactionRequest.
+         * <p>
+         * This method checks that the request is not null.
+         *
+         * @param request the CreateTransactionRequest to validate
+         * @throws TransactionValidationException if validation fails
+         */
         if (request == null) {
             throw new TransactionValidationException("Transaction request cannot be null");
         }

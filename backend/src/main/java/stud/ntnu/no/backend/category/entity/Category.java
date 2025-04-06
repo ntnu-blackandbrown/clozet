@@ -6,29 +6,43 @@ import stud.ntnu.no.backend.item.entity.Item;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Entity representing a category in the system.
+ * Categories can have hierarchical relationships with parent-child associations.
+ * They are also related to items that belong to them.
+ */
 @Entity
 @Table(name = "categories")
 public class Category {
+  /** Unique identifier for the category */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  /** Unique name of the category */
   @Column(unique = true, nullable = false)
   private String name;
 
+  /** Description of what the category contains */
   @Column(unique = true, nullable = false)
   private String description;
 
+  /** Parent category, null if this is a top-level category */
   @ManyToOne
   @JoinColumn(name = "parent_id")
   private Category parent;
 
+  /** Timestamp when the category was created */
   private LocalDateTime createdAt;
+  
+  /** Timestamp when the category was last updated */
   private LocalDateTime updatedAt;
 
+  /** Items belonging to this category */
   @OneToMany(mappedBy = "category")
   private List<Item> items;
 
+  /** Direct subcategories of this category */
   @OneToMany(mappedBy = "parent")
   private List<Category> subcategories;
 

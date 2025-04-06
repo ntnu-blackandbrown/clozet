@@ -3,6 +3,12 @@ package stud.ntnu.no.backend.user.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Represents a password reset token entity.
+ * <p>
+ * This entity is used to store password reset tokens associated with users.
+ * </p>
+ */
 @Entity
 @Table(name = "password_reset_tokens")
 public class PasswordResetToken {
@@ -24,6 +30,13 @@ public class PasswordResetToken {
     // For JPA
     protected PasswordResetToken() {}
 
+    /**
+     * Constructs a new PasswordResetToken with the specified token, expiry date, and user.
+     *
+     * @param token the token string
+     * @param expiryDate the expiry date of the token
+     * @param user the user associated with the token
+     */
     public PasswordResetToken(String token, LocalDateTime expiryDate, User user) {
         this.token = token;
         this.expiryDate = expiryDate;
@@ -58,6 +71,11 @@ public class PasswordResetToken {
         this.user = user;
     }
 
+    /**
+     * Checks if the token is expired.
+     *
+     * @return true if the token is expired, false otherwise
+     */
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(expiryDate);
     }
