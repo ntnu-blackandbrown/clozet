@@ -5,11 +5,13 @@ import MessagesSidebar from '../components/messaging/MessagesSidebar.vue'
 import ChatArea from '../components/messaging/ChatArea.vue'
 import axios from '@/api/axios'
 import { useAuthStore } from '@/stores/AuthStore'
+import { useWebsocket } from '@/websocket/websocket'
 
 // Core stores and router
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const websocket = useWebsocket()
 
 // Reactive state
 const chats = ref([]) // All conversations the user is in
@@ -173,14 +175,19 @@ onMounted(async () => {
         chatMessages.value[activeChat.value] = mssgResponse.data
       }
     }
+
   } catch (error) {
     console.error('Failed to fetch conversations:', error)
   }
 })
+
 </script>
 
 
 <template>
+  <div :class="['status', websocket.connectionStatusClass]">Status: {{ websocket.connectionStatus }}</div>
+
+  <button @click="websocket.connect">Connect</button>
   <div class="messages-container">
     <!-- Left sidebar with messages list -->
     <MessagesSidebar
