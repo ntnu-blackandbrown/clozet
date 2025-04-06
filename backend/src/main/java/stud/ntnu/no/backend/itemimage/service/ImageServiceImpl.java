@@ -1,5 +1,7 @@
 package stud.ntnu.no.backend.itemimage.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.Set;
  */
 @Service
 public class ImageServiceImpl implements ImageService {
+    private static final Logger logger = LoggerFactory.getLogger(ImageServiceImpl.class);
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
             "image/jpeg", "image/png", "image/jpg", "image/gif");
 
@@ -53,10 +56,12 @@ public class ImageServiceImpl implements ImageService {
      */
     @Override
     public String uploadImage(MultipartFile file, Long itemId) {
+        logger.info("Uploading image for item ID: {}", itemId);
         validateFile(file);
 
         try {
             String url = fileStorageService.storeFile(file, itemId);
+            logger.info("Image stored successfully at: {}", url);
 
             // Get the item object
             Item item = itemRepository.findById(itemId)
@@ -74,9 +79,11 @@ public class ImageServiceImpl implements ImageService {
             image.setItem(item);
 
             itemImageRepository.save(image);
+            logger.info("Image associated with item ID: {}", itemId);
 
             return url;
         } catch (Exception e) {
+            logger.error("Failed to store file for item ID: {}", itemId, e);
             throw new RuntimeException("Failed to store file: " + e.getMessage(), e);
         }
     }
@@ -89,6 +96,7 @@ public class ImageServiceImpl implements ImageService {
      */
     @Override
     public List<ItemImage> getImagesByItemId(Long itemId) {
+        logger.info("Retrieving images for item ID: {}", itemId);
         return itemImageRepository.findByItemId(itemId);
     }
 
@@ -99,6 +107,7 @@ public class ImageServiceImpl implements ImageService {
      */
     @Override
     public void deleteImage(Long imageId) {
+        logger.info("Deleting image with ID: {}", imageId);
         itemImageRepository.deleteById(imageId);
     }
 
@@ -111,11 +120,13 @@ public class ImageServiceImpl implements ImageService {
      */
     private void validateFile(MultipartFile file) {
         if (file.isEmpty()) {
+            logger.warn("Attempted to upload an empty file");
             throw new EmptyFileException("Failed to store empty file");
         }
 
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
+            logger.warn("Unsupported file type: {}", contentType);
             throw new InvalidFileTypeException("File type not supported. Only JPEG, PNG, and GIF are allowed");
         }
     }

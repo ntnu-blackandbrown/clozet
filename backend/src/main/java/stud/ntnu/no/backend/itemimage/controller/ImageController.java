@@ -1,5 +1,7 @@
 package stud.ntnu.no.backend.itemimage.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import java.util.List;
 @RequestMapping("/api/images")
 public class ImageController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
     private final ImageService imageService;
 
     public ImageController(ImageService imageService) {
@@ -37,20 +40,24 @@ public class ImageController {
         @RequestParam("file") MultipartFile file,
         @RequestParam("itemId") Long itemId) {
 
+        logger.info("Uploading image for item ID: {}", itemId);
         try {
             String imageUrl = imageService.uploadImage(file, itemId);
+            logger.info("Image uploaded successfully: {}", imageUrl);
             return ResponseEntity.ok().body(imageUrl);
 
         } catch (EmptyFileException e) {
+            logger.error("Empty file upload attempt for item ID: {}", itemId, e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("Filen er tom. Last opp en gyldig bildefil.");
 
         } catch (InvalidFileTypeException e) {
+            logger.error("Invalid file type upload attempt for item ID: {}", itemId, e);
             return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                 .body("Ugyldig filtype. Bare JPEG, PNG og GIF støttes.");
 
         } catch (RuntimeException e) {
-            // Dette fanger f.eks. "Item not found" eller "Failed to store file"
+            logger.error("Image upload failed for item ID: {}", itemId, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Opplasting feilet: " + e.getMessage());
         }
@@ -64,6 +71,7 @@ public class ImageController {
      */
     @GetMapping("/item/{itemId}")
     public ResponseEntity<List<ItemImage>> getImagesByItemId(@PathVariable Long itemId) {
+        logger.info("Retrieving images for item ID: {}", itemId);
         List<ItemImage> images = imageService.getImagesByItemId(itemId);
         return ResponseEntity.ok(images);
     }
@@ -76,6 +84,7 @@ public class ImageController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteImage(@PathVariable Long id) {
+        logger.info("Deleting image with ID: {}", id);
         imageService.deleteImage(id);
         return ResponseEntity.ok().build();
     }
