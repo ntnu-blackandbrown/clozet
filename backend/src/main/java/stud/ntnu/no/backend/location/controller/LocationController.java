@@ -1,5 +1,7 @@
 package stud.ntnu.no.backend.location.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,8 @@ import java.util.List;
 @RequestMapping("/api/locations")
 public class LocationController {
 
+    private static final Logger logger = LoggerFactory.getLogger(LocationController.class);
+
     private final LocationService locationService;
 
     public LocationController(LocationService locationService) {
@@ -30,6 +34,7 @@ public class LocationController {
      */
     @GetMapping
     public ResponseEntity<List<LocationDTO>> getAllLocations() {
+        logger.info("Received request to fetch all locations");
         return ResponseEntity.ok(locationService.getAllLocations());
     }
 
@@ -41,6 +46,7 @@ public class LocationController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<LocationDTO> getLocation(@PathVariable Long id) {
+        logger.info("Received request to fetch location with id: {}", id);
         return ResponseEntity.ok(locationService.getLocation(id));
     }
 
@@ -52,6 +58,7 @@ public class LocationController {
      */
     @PostMapping
     public ResponseEntity<LocationDTO> createLocation(@RequestBody CreateLocationDTO locationDTO) {
+        logger.info("Received request to create a new location with details: {}", locationDTO);
         return new ResponseEntity<>(locationService.createLocation(locationDTO), HttpStatus.CREATED);
     }
 
@@ -66,6 +73,7 @@ public class LocationController {
     public ResponseEntity<LocationDTO> updateLocation(
             @PathVariable Long id,
             @RequestBody CreateLocationDTO locationDTO) {
+        logger.info("Received request to update location with id: {}", id);
         return ResponseEntity.ok(locationService.updateLocation(id, locationDTO));
     }
 
@@ -77,6 +85,7 @@ public class LocationController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {
+        logger.info("Received request to delete location with id: {}", id);
         locationService.deleteLocation(id);
         return ResponseEntity.noContent().build();
     }
