@@ -3,7 +3,7 @@ package stud.ntnu.no.backend.common.exception;
 /**
  * Exception thrown when a data integrity violation occurs.
  */
-public class DataIntegrityException extends RuntimeException {
+public class DataIntegrityException extends BaseException {
 
     /**
      * Constructs a {@code DataIntegrityException} with the specified message.
