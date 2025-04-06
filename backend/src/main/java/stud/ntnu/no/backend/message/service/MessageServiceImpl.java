@@ -13,6 +13,11 @@ import stud.ntnu.no.backend.message.repository.MessageRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the MessageService interface.
+ * <p>
+ * This class provides methods for managing messages, including CRUD operations.
+ */
 @Service
 public class MessageServiceImpl implements MessageService {
 
@@ -20,6 +25,13 @@ public class MessageServiceImpl implements MessageService {
     private final MessageMapper messageMapper;
     private final WebSocketService webSocketService;
 
+    /**
+     * Constructs a new MessageServiceImpl with the specified dependencies.
+     *
+     * @param messageRepository the MessageRepository
+     * @param messageMapper the MessageMapper
+     * @param webSocketService the WebSocketService
+     */
     @Autowired
     public MessageServiceImpl(MessageRepository messageRepository, MessageMapper messageMapper, WebSocketService webSocketService) {
         this.messageRepository = messageRepository;

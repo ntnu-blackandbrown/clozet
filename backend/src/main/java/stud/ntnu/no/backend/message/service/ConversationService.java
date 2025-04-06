@@ -14,6 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Service for managing conversations.
+ * <p>
+ * This service provides methods for retrieving and archiving user conversations.
+ */
 @Service
 public class ConversationService {
     
@@ -21,6 +26,13 @@ public class ConversationService {
     private final MessageMapper messageMapper;
     private final WebSocketService webSocketService;
     
+    /**
+     * Constructs a new ConversationService with the specified dependencies.
+     *
+     * @param messageRepository the MessageRepository
+     * @param messageMapper the MessageMapper
+     * @param webSocketService the WebSocketService
+     */
     @Autowired
     public ConversationService(MessageRepository messageRepository, 
                                MessageMapper messageMapper,
@@ -30,6 +42,12 @@ public class ConversationService {
         this.webSocketService = webSocketService;
     }
     
+    /**
+     * Retrieves all conversations for a user.
+     *
+     * @param userId the ID of the user
+     * @return a list of ConversationDTOs
+     */
     public List<ConversationDTO> getUserConversations(String userId) {
         // Get all messages where user is sender or receiver
         List<Message> allMessages = messageRepository.findBySenderIdOrReceiverId(userId, userId);
@@ -71,6 +89,14 @@ public class ConversationService {
         return conversations;
     }
     
+    /**
+     * Generates a conversation ID based on sender, receiver, and item ID.
+     *
+     * @param senderId the sender ID
+     * @param receiverId the receiver ID
+     * @param itemId the item ID
+     * @return the conversation ID
+     */
     private String generateConversationId(String senderId, String receiverId, Long itemId) {
         // Create a consistent conversation ID regardless of who is sender/receiver
         String[] parties = {senderId, receiverId};
@@ -78,6 +104,12 @@ public class ConversationService {
         return parties[0] + "_" + parties[1] + "_" + (itemId != null ? itemId : "null");
     }
     
+    /**
+     * Archives a conversation for a user.
+     *
+     * @param conversationId the ID of the conversation
+     * @param userId the ID of the user
+     */
     public void archiveConversation(String conversationId, String userId) {
         // Implementation would depend on how you want to store archived status
         // For now, just notify via WebSocket

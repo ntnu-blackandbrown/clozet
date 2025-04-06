@@ -12,6 +12,11 @@ import stud.ntnu.no.backend.message.dto.CreateMessageRequest;
 import stud.ntnu.no.backend.message.dto.MessageDTO;
 import stud.ntnu.no.backend.message.service.MessageService;
 
+/**
+ * WebSocket controller for handling chat messages.
+ * <p>
+ * This controller provides endpoints for sending and marking messages as read via WebSocket.
+ */
 @Controller
 public class WebSocketMessageController {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketMessageController.class);
@@ -19,12 +24,24 @@ public class WebSocketMessageController {
     private final MessageService messageService;
     private final SimpMessagingTemplate messagingTemplate;
 
+    /**
+     * Constructs a new WebSocketMessageController with the specified service and messaging template.
+     *
+     * @param messageService the MessageService
+     * @param messagingTemplate the SimpMessagingTemplate
+     */
     @Autowired
     public WebSocketMessageController(MessageService messageService, SimpMessagingTemplate messagingTemplate) {
         this.messageService = messageService;
         this.messagingTemplate = messagingTemplate;
     }
 
+    /**
+     * Sends a message via WebSocket.
+     *
+     * @param messageRequest the CreateMessageRequest
+     * @return the created MessageDTO
+     */
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/messages")
     public MessageDTO sendMessage(@Payload CreateMessageRequest messageRequest) {
@@ -32,6 +49,11 @@ public class WebSocketMessageController {
         return messageService.createMessage(messageRequest);
     }
 
+    /**
+     * Marks a message as read via WebSocket.
+     *
+     * @param messageId the ID of the message to mark as read
+     */
     @MessageMapping("/chat.markRead")
     public void markMessageAsRead(@Payload Long messageId) {
         logger.info("Marking message as read: {}", messageId);
