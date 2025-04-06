@@ -6,7 +6,6 @@ import stud.ntnu.no.backend.common.exception.BaseException;
  * <p>
  * This exception is mapped to a 400 Bad Request HTTP status code.
  */
-//@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ReviewValidationException extends BaseException {
     /**
      * Constructs a new ReviewValidationException with the specified detail message.
