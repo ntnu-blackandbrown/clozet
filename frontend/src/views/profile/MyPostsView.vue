@@ -3,16 +3,13 @@ import { ref, onMounted } from 'vue'
 import axios from '@/api/axios.ts'
 import type { Product } from '@/types/product'
 import ProductList from '@/components/product/ProductList.vue'
-
+import { useAuthStore } from '@/stores/AuthStore'
 const items = ref<Product[]>([])
-
-const props = defineProps<{
-  userId: number
-}>()
+const authStore = useAuthStore()
 
 onMounted(async () => {
   try {
-    const response = await axios.get(`api/items/seller/${props.userId}`)
+    const response = await axios.get(`api/items/seller/${authStore.user?.id}`)
     items.value = response.data
   } catch (error) {
     console.error('Failed to fetch items:', error)
