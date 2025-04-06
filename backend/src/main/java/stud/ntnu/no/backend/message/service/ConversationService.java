@@ -2,6 +2,8 @@ package stud.ntnu.no.backend.message.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import stud.ntnu.no.backend.message.dto.ConversationDTO;
 import stud.ntnu.no.backend.message.dto.MessageDTO;
 import stud.ntnu.no.backend.message.entity.Message;
@@ -21,11 +23,13 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ConversationService {
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(ConversationService.class);
+
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
     private final WebSocketService webSocketService;
-    
+
     /**
      * Constructs a new ConversationService with the specified dependencies.
      *
@@ -34,14 +38,14 @@ public class ConversationService {
      * @param webSocketService the WebSocketService
      */
     @Autowired
-    public ConversationService(MessageRepository messageRepository, 
+    public ConversationService(MessageRepository messageRepository,
                                MessageMapper messageMapper,
                                WebSocketService webSocketService) {
         this.messageRepository = messageRepository;
         this.messageMapper = messageMapper;
         this.webSocketService = webSocketService;
     }
-    
+
     /**
      * Retrieves all conversations for a user.
      *
@@ -49,25 +53,27 @@ public class ConversationService {
      * @return a list of ConversationDTOs
      */
     public List<ConversationDTO> getUserConversations(String userId) {
+        logger.info("Retrieving conversations for user: {}", userId);
+
         // Get all messages where user is sender or receiver
         List<Message> allMessages = messageRepository.findBySenderIdOrReceiverId(userId, userId);
-        
+
         // Group by conversation (senderId + receiverId + itemId)
         Map<String, List<Message>> conversationGroups = allMessages.stream()
-            .collect(Collectors.groupingBy(message -> 
-                generateConversationId(message.getSenderId(), message.getReceiverId(), 
+            .collect(Collectors.groupingBy(message ->
+                generateConversationId(message.getSenderId(), message.getReceiverId(),
                                       message.getItem() != null ? message.getItem().getId() : null)));
-        
+
         // Convert to ConversationDTOs
         List<ConversationDTO> conversations = new ArrayList<>();
         for (Map.Entry<String, List<Message>> entry : conversationGroups.entrySet()) {
             List<Message> messages = entry.getValue();
             // Sort messages by timestamp
             messages.sort(Comparator.comparing(Message::getCreatedAt));
-            
+
             // Get latest message for summary info
             Message latestMessage = messages.get(messages.size() - 1);
-            
+
             // Create ConversationDTO
             ConversationDTO conversation = new ConversationDTO(
                 entry.getKey(),
@@ -79,16 +85,16 @@ public class ConversationService {
                 false, // Default to not archived
                 messages.stream().map(messageMapper::toDTO).collect(Collectors.toList())
             );
-            
+
             conversations.add(conversation);
         }
-        
+
         // Sort conversations by last message timestamp
         conversations.sort(Comparator.comparing(ConversationDTO::getLastMessageTime).reversed());
-        
+
         return conversations;
     }
-    
+
     /**
      * Generates a conversation ID based on sender, receiver, and item ID.
      *
@@ -103,7 +109,7 @@ public class ConversationService {
         java.util.Arrays.sort(parties);
         return parties[0] + "_" + parties[1] + "_" + (itemId != null ? itemId : "null");
     }
-    
+
     /**
      * Archives a conversation for a user.
      *
@@ -111,6 +117,8 @@ public class ConversationService {
      * @param userId the ID of the user
      */
     public void archiveConversation(String conversationId, String userId) {
+        logger.info("Archiving conversation: {} for user: {}", conversationId, userId);
+
         // Implementation would depend on how you want to store archived status
         // For now, just notify via WebSocket
         webSocketService.notifyConversationArchived(conversationId, userId);

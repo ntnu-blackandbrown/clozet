@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stud.ntnu.no.backend.message.dto.ConversationDTO;
 import stud.ntnu.no.backend.message.service.ConversationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -16,9 +18,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/conversations")
 public class ConversationController {
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(ConversationController.class);
+
     private final ConversationService conversationService;
-    
+
     /**
      * Constructs a new ConversationController with the specified service.
      *
@@ -28,7 +32,7 @@ public class ConversationController {
     public ConversationController(ConversationService conversationService) {
         this.conversationService = conversationService;
     }
-    
+
     /**
      * Retrieves all conversations for a user.
      *
@@ -37,9 +41,10 @@ public class ConversationController {
      */
     @GetMapping
     public ResponseEntity<List<ConversationDTO>> getUserConversations(@RequestParam String userId) {
+        logger.info("Retrieving conversations for user: {}", userId);
         return ResponseEntity.ok(conversationService.getUserConversations(userId));
     }
-    
+
     /**
      * Archives a conversation for a user.
      *
@@ -51,6 +56,7 @@ public class ConversationController {
     public ResponseEntity<Void> archiveConversation(
             @PathVariable String conversationId,
             @RequestParam String userId) {
+        logger.info("Archiving conversation: {} for user: {}", conversationId, userId);
         conversationService.archiveConversation(conversationId, userId);
         return ResponseEntity.ok().build();
     }

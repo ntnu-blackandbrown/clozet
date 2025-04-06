@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import stud.ntnu.no.backend.common.security.model.CustomUserDetails;
 import stud.ntnu.no.backend.item.service.ItemService;
@@ -21,6 +23,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/items")
 public class ItemController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ItemController.class);
 
     private final ItemService itemService;
 
@@ -38,6 +42,7 @@ public class ItemController {
      */
     @GetMapping
     public ResponseEntity<List<ItemDTO>> getAllItems() {
+        logger.info("Fetching all active items");
         return ResponseEntity.ok(itemService.getActiveItems());
     }
 
@@ -47,6 +52,7 @@ public class ItemController {
      */
     @GetMapping("/all")
     public ResponseEntity<List<ItemDTO>> getAllItemsIncludingInactive() {
+        logger.info("Fetching all items including inactive ones");
         return ResponseEntity.ok(itemService.getAllItems());
     }
 
@@ -57,6 +63,7 @@ public class ItemController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ItemDTO> getItem(@PathVariable Long id) {
+        logger.info("Fetching item with id: {}", id);
         return ResponseEntity.ok(itemService.getItem(id));
     }
 
@@ -67,6 +74,7 @@ public class ItemController {
      */
     @GetMapping("/seller/{sellerId}")
     public ResponseEntity<List<ItemDTO>> getItemsBySeller(@PathVariable Long sellerId) {
+        logger.info("Fetching items for seller with id: {}", sellerId);
         return ResponseEntity.ok(itemService.getItemsBySeller(sellerId));
     }
 
@@ -77,6 +85,7 @@ public class ItemController {
      */
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<ItemDTO>> getItemsByCategory(@PathVariable Long categoryId) {
+        logger.info("Fetching items for category with id: {}", categoryId);
         return ResponseEntity.ok(itemService.getItemsByCategory(categoryId));
     }
 
@@ -87,6 +96,7 @@ public class ItemController {
      */
     @GetMapping("/search")
     public ResponseEntity<List<ItemDTO>> searchItems(@RequestParam String query) {
+        logger.info("Searching items with query: {}", query);
         return ResponseEntity.ok(itemService.searchItems(query));
     }
 
@@ -97,6 +107,7 @@ public class ItemController {
      */
     @PostMapping
     public ResponseEntity<ItemDTO> createItem(@Valid @RequestBody CreateItemDTO itemDTO) {
+        logger.info("Creating new item");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         User user = userDetails.getUser();
@@ -111,6 +122,7 @@ public class ItemController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<ItemDTO> updateItem(@PathVariable Long id, @Valid @RequestBody CreateItemDTO itemDTO) {
+        logger.info("Updating item with id: {}", id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         User user = userDetails.getUser();
@@ -124,6 +136,7 @@ public class ItemController {
      */
     @PatchMapping("/{id}/deactivate")
     public ResponseEntity<Void> deactivateItem(@PathVariable Long id) {
+        logger.info("Deactivating item with id: {}", id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         User user = userDetails.getUser();
@@ -138,6 +151,7 @@ public class ItemController {
      */
     @PatchMapping("/{id}/activate")
     public ResponseEntity<Void> activateItem(@PathVariable Long id) {
+        logger.info("Activating item with id: {}", id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         User user = userDetails.getUser();
@@ -152,6 +166,7 @@ public class ItemController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
+        logger.info("Deleting item with id: {}", id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         User user = userDetails.getUser();

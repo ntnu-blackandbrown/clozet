@@ -48,7 +48,7 @@ public abstract class FavoriteMapper {
 
     /**
      * Maps a CreateFavoriteRequest to a Favorite entity.
-     * Retrieves user and item from respective repositories.
+     * Retrieves user and item from the respective repositories.
      *
      * @param request The CreateFavoriteRequest object to be mapped
      * @return A Favorite entity

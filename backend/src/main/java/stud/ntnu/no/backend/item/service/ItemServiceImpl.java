@@ -1,6 +1,8 @@
 package stud.ntnu.no.backend.item.service;
 
 import io.micrometer.common.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stud.ntnu.no.backend.category.entity.Category;
@@ -28,6 +30,8 @@ import java.util.List;
 @Service
 public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ItemServiceImpl.class);
+
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
@@ -51,16 +55,19 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
 
     @Override
     public List<ItemDTO> getAllItems() {
+        logger.info("Fetching all items");
         return itemMapper.toDtoList(itemRepository.findAll());
     }
 
     @Override
     public List<ItemDTO> getActiveItems() {
+        logger.info("Fetching all active items");
         return itemMapper.toDtoList(itemRepository.findByIsAvailableTrue());
     }
 
     @Override
     public ItemDTO getItem(Long id) {
+        logger.info("Fetching item with id: {}", id);
         Item item = itemRepository.findById(id)
             .orElseThrow(() -> new ItemNotFoundException(id));
         return itemMapper.toDto(item);
@@ -68,6 +75,7 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
 
     @Override
     public List<ItemDTO> getItemsBySeller(Long sellerId) {
+        logger.info("Fetching items for seller with id: {}", sellerId);
         if (!userRepository.existsById(sellerId)) {
             throw new UserNotFoundException(sellerId);
         }
@@ -76,6 +84,7 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
 
     @Override
     public List<ItemDTO> getItemsByCategory(Long categoryId) {
+        logger.info("Fetching items for category with id: {}", categoryId);
         if (!categoryRepository.existsById(categoryId)) {
             throw new CategoryNotFoundException(categoryId);
         }
@@ -84,6 +93,7 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
 
     @Override
     public List<ItemDTO> searchItems(String query) {
+        logger.info("Searching items with query: {}", query);
         if (query == null || query.trim().isEmpty()) {
             throw new ItemValidationException("Search query cannot be empty");
         }
@@ -92,6 +102,7 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
 
     @Override
     public ItemDTO createItem(CreateItemDTO itemDTO, Long userId) {
+        logger.info("Creating item: {}", itemDTO);
         Category category = categoryRepository.findById(itemDTO.getCategoryId())
             .orElseThrow(() -> new ItemValidationException("Category not found"));
 
@@ -113,8 +124,9 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
 
     @Override
     public ItemDTO updateItem(Long itemId, CreateItemDTO itemDTO, Long userId) {
+        logger.info("Updating item: {}", itemDTO);
         Item item = findItemAndVerifyOwnership(itemId, userId);
-        
+
         Category category = null;
         if (itemDTO.getCategoryId() != null) {
             category = categoryRepository.findById(itemDTO.getCategoryId())
@@ -134,7 +146,7 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
         }
 
         validateItem(itemDTO);
-        
+
         itemMapper.updateEntityFromDto(item, itemDTO, category, location, shippingOption);
         item = itemRepository.save(item);
         return itemMapper.toDto(item);
@@ -142,6 +154,7 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
 
     @Override
     public void deactivateItem(Long itemId, Long userId) {
+        logger.info("Deactivating item: {}", itemId);
         Item item = findItemAndVerifyOwnership(itemId, userId);
         item.setAvailable(false);
         item.setUpdatedAt(LocalDateTime.now());
@@ -150,6 +163,7 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
 
     @Override
     public void activateItem(Long itemId, Long userId) {
+        logger.info("Activating item: {}", itemId);
         Item item = findItemAndVerifyOwnership(itemId, userId);
         item.setAvailable(true);
         item.setUpdatedAt(LocalDateTime.now());
@@ -159,22 +173,25 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
     @Override
     @Transactional
     public void deleteItem(Long id, Long sellerId) {
+        logger.info("Deleting item: {}", id);
         Item item = findItemAndVerifyOwnership(id, sellerId);
         itemRepository.delete(item);
     }
 
     private Item findItemAndVerifyOwnership(Long itemId, Long userId) {
+        logger.info("Finding item with id: {}", itemId);
         Item item = itemRepository.findById(itemId)
             .orElseThrow(() -> new ItemNotFoundException(itemId));
-        
+
         if (!item.getSeller().getId().equals(userId)) {
             throw new ItemValidationException("You don't have permission to modify this item");
         }
-        
+
         return item;
     }
 
     private void validateItem(CreateItemDTO itemDTO) {
+        logger.info("Validating item: {}", itemDTO);
         if (StringUtils.isBlank(itemDTO.getTitle())) {
             throw new ItemValidationException("Title cannot be empty");
         }

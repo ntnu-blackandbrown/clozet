@@ -1,5 +1,7 @@
 package stud.ntnu.no.backend.shippingoption.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/shipping-options")
 public class ShippingOptionController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ShippingOptionController.class);
 
     private final ShippingOptionService shippingOptionService;
 
@@ -36,6 +40,7 @@ public class ShippingOptionController {
      */
     @GetMapping
     public ResponseEntity<List<ShippingOptionDTO>> getAllShippingOptions() {
+        logger.info("Received request to fetch all shipping options");
         return ResponseEntity.ok(shippingOptionService.getAllShippingOptions());
     }
 
@@ -47,6 +52,7 @@ public class ShippingOptionController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ShippingOptionDTO> getShippingOption(@PathVariable Long id) {
+        logger.info("Received request to fetch shipping option with id: {}", id);
         return ResponseEntity.ok(shippingOptionService.getShippingOption(id));
     }
 
@@ -58,6 +64,7 @@ public class ShippingOptionController {
      */
     @PostMapping
     public ResponseEntity<ShippingOptionDTO> createShippingOption(@RequestBody CreateShippingOptionDTO shippingOptionDTO) {
+        logger.info("Received request to create a new shipping option with name: {}", shippingOptionDTO.getName());
         return new ResponseEntity<>(shippingOptionService.createShippingOption(shippingOptionDTO), HttpStatus.CREATED);
     }
 
@@ -72,6 +79,7 @@ public class ShippingOptionController {
     public ResponseEntity<ShippingOptionDTO> updateShippingOption(
             @PathVariable Long id,
             @RequestBody CreateShippingOptionDTO shippingOptionDTO) {
+        logger.info("Received request to update shipping option with id: {}", id);
         return ResponseEntity.ok(shippingOptionService.updateShippingOption(id, shippingOptionDTO));
     }
 
@@ -83,6 +91,7 @@ public class ShippingOptionController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteShippingOption(@PathVariable Long id) {
+        logger.info("Received request to delete shipping option with id: {}", id);
         shippingOptionService.deleteShippingOption(id);
         return ResponseEntity.noContent().build();
     }

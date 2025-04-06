@@ -12,6 +12,7 @@ import java.util.List;
  * Extends JpaRepository to inherit standard CRUD operations.
  */
 public interface CategoryRepository extends JpaRepository<Category, Long> {
+
     /**
      * Finds all subcategories for a given parent category.
      *
@@ -19,7 +20,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
      * @return List of subcategories
      */
     List<Category> findByParentId(Long parentId);
-    
+
     /**
      * Checks if a category with the given name already exists.
      *
@@ -27,7 +28,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
      * @return true if a category with the name exists, false otherwise
      */
     boolean existsByName(String name);
-    
+
     /**
      * Finds categories ordered by the number of times items in the category have been favorited.
      * Uses pagination to limit the result set.

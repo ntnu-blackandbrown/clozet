@@ -9,12 +9,15 @@ import stud.ntnu.no.backend.history.service.HistoryService;
 import stud.ntnu.no.backend.user.entity.User;
 
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/history")
 public class HistoryController {
 
     private final HistoryService historyService;
+    private static final Logger logger = LoggerFactory.getLogger(HistoryController.class);
     
     @Autowired
     public HistoryController(HistoryService historyService) {
@@ -30,7 +33,10 @@ public class HistoryController {
     @PostMapping("/add/{itemId}")
     @ResponseStatus(HttpStatus.CREATED)
     public HistoryDTO addToHistory(@PathVariable Long itemId, @AuthenticationPrincipal User user) {
-        return historyService.addToHistory(user.getId(), itemId);
+        logger.info("Adding item {} to history for user {}", itemId, user.getId());
+        HistoryDTO historyDTO = historyService.addToHistory(user.getId(), itemId);
+        logger.info("Item {} added to history for user {}", itemId, user.getId());
+        return historyDTO;
     }
     
     /**
@@ -41,7 +47,9 @@ public class HistoryController {
     @DeleteMapping("/remove/{itemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeFromHistory(@PathVariable Long itemId, @AuthenticationPrincipal User user) {
+        logger.info("Removing item {} from history for user {}", itemId, user.getId());
         historyService.removeFromHistory(user.getId(), itemId);
+        logger.info("Item {} removed from history for user {}", itemId, user.getId());
     }
     
     /**
@@ -51,7 +59,9 @@ public class HistoryController {
     @DeleteMapping("/clear")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteHistory(@AuthenticationPrincipal User user) {
+        logger.info("Clearing history for user {}", user.getId());
         historyService.deleteHistory(user.getId());
+        logger.info("History cleared for user {}", user.getId());
     }
     
     /**
@@ -62,7 +72,9 @@ public class HistoryController {
     @PostMapping("/pause/{pause}")
     @ResponseStatus(HttpStatus.OK)
     public void pauseHistory(@PathVariable boolean pause, @AuthenticationPrincipal User user) {
+        logger.info("Pausing history for user {} - {}", user.getId(), pause);
         historyService.pauseHistory(user.getId(), pause);
+        logger.info("History paused for user {} - {}", user.getId(), pause);
     }
     
     /**
@@ -72,6 +84,9 @@ public class HistoryController {
      */
     @GetMapping
     public List<HistoryDTO> getUserHistory(@AuthenticationPrincipal User user) {
-        return historyService.getUserHistory(user.getId());
+        logger.info("Getting history for user {}", user.getId());
+        List<HistoryDTO> historyDTOs = historyService.getUserHistory(user.getId());
+        logger.info("History retrieved for user {}", user.getId());
+        return historyDTOs;
     }
 }

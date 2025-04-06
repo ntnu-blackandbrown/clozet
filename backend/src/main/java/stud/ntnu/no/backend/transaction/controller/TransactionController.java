@@ -1,5 +1,7 @@
 package stud.ntnu.no.backend.transaction.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import java.util.List;
 @RequestMapping("/api/transactions")
 public class TransactionController {
 
+    private static final Logger logger = LoggerFactory.getLogger(TransactionController.class);
+
     private final TransactionService transactionService;
 
     /**
@@ -38,6 +42,7 @@ public class TransactionController {
      */
     @GetMapping
     public ResponseEntity<List<TransactionDTO>> getAllTransactions() {
+        logger.info("Fetching all transactions");
         return ResponseEntity.ok(transactionService.getAllTransactions());
     }
     
@@ -49,6 +54,7 @@ public class TransactionController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<TransactionDTO> getTransactionById(@PathVariable Long id) {
+        logger.info("Fetching transaction with ID: {}", id);
         return ResponseEntity.ok(transactionService.getTransactionById(id));
     }
     
@@ -60,6 +66,7 @@ public class TransactionController {
      */
     @PostMapping
     public ResponseEntity<TransactionDTO> createTransaction(@RequestBody CreateTransactionRequest dto) {
+        logger.info("Creating new transaction");
         return new ResponseEntity<>(transactionService.createTransaction(dto), HttpStatus.CREATED);
     }
     
@@ -72,6 +79,7 @@ public class TransactionController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<TransactionDTO> updateTransaction(@PathVariable Long id, @RequestBody UpdateTransactionRequest dto) {
+        logger.info("Updating transaction with ID: {}", id);
         return ResponseEntity.ok(transactionService.updateTransaction(id, dto));
     }
     
@@ -83,6 +91,7 @@ public class TransactionController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
+        logger.info("Deleting transaction with ID: {}", id);
         transactionService.deleteTransaction(id);
         return ResponseEntity.noContent().build();
     }
@@ -98,6 +107,7 @@ public class TransactionController {
     public ResponseEntity<List<TransactionDTO>> getTransactionsBetweenDates(
             @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
             @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
+        logger.info("Fetching transactions between {} and {}", start, end);
         return ResponseEntity.ok(transactionService.findByCreatedAtBetween(start, end));
     }
 }
