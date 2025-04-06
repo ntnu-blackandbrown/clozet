@@ -1,16 +1,17 @@
 // src/main/java/stud/ntnu/no/backend/transaction/exception/TransactionNotFoundException.java
 package stud.ntnu.no.backend.transaction.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import stud.ntnu.no.backend.common.exception.BaseException;
+//import org.springframework.http.HttpStatus;
+//import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Exception thrown when a transaction is not found.
  * <p>
  * This exception is mapped to a 404 Not Found HTTP status code.
  */
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class TransactionNotFoundException extends RuntimeException {
+//@ResponseStatus(HttpStatus.NOT_FOUND)
+public class TransactionNotFoundException extends BaseException {
     /**
      * Constructs a new TransactionNotFoundException with the specified transaction ID.
      *
