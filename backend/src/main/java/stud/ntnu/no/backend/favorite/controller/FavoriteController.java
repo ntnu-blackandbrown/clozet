@@ -9,6 +9,8 @@ import stud.ntnu.no.backend.favorite.dto.FavoriteDTO;
 import stud.ntnu.no.backend.favorite.service.FavoriteService;
 
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * REST controller for handling favorite operations.
@@ -18,6 +20,8 @@ import java.util.List;
 @RequestMapping("/api/favorites")
 @CrossOrigin(origins = "*")
 public class FavoriteController {
+
+    private static final Logger logger = LoggerFactory.getLogger(FavoriteController.class);
 
     private final FavoriteService favoriteService;
 
@@ -33,7 +37,9 @@ public class FavoriteController {
      */
     @GetMapping
     public ResponseEntity<List<FavoriteDTO>> getAllFavorites() {
+        logger.info("Received request to get all favorites.");
         List<FavoriteDTO> favorites = favoriteService.getAllFavorites();
+        logger.info("Returning {} favorites.", favorites.size());
         return ResponseEntity.ok(favorites);
     }
 
@@ -45,7 +51,9 @@ public class FavoriteController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<FavoriteDTO> getFavoriteById(@PathVariable Long id) {
+        logger.info("Received request to get favorite by ID: {}", id);
         FavoriteDTO favorite = favoriteService.getFavoriteById(id);
+        logger.info("Returning favorite: {}", favorite);
         return ResponseEntity.ok(favorite);
     }
 
@@ -57,7 +65,9 @@ public class FavoriteController {
      */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<FavoriteDTO>> getFavoritesByUserId(@PathVariable String userId) {
+        logger.info("Received request to get favorites by user ID: {}", userId);
         List<FavoriteDTO> favorites = favoriteService.getFavoritesByUserId(userId);
+        logger.info("Returning {} favorites for user ID: {}", favorites.size(), userId);
         return ResponseEntity.ok(favorites);
     }
 
@@ -69,7 +79,9 @@ public class FavoriteController {
      */
     @PostMapping
     public ResponseEntity<FavoriteDTO> createFavorite(@RequestBody CreateFavoriteRequest request) {
+        logger.info("Received request to create a new favorite: {}", request);
         FavoriteDTO createdFavorite = favoriteService.createFavorite(request);
+        logger.info("Created favorite: {}", createdFavorite);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdFavorite);
     }
 
@@ -82,7 +94,9 @@ public class FavoriteController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<FavoriteDTO> updateFavorite(@PathVariable Long id, @RequestBody CreateFavoriteRequest request) {
+        logger.info("Received request to update favorite with ID: {}, request: {}", id, request);
         FavoriteDTO updatedFavorite = favoriteService.updateFavorite(id, request);
+        logger.info("Updated favorite: {}", updatedFavorite);
         return ResponseEntity.ok(updatedFavorite);
     }
 
@@ -94,7 +108,9 @@ public class FavoriteController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFavorite(@PathVariable Long id) {
+        logger.info("Received request to delete favorite with ID: {}", id);
         favoriteService.deleteFavorite(id);
+        logger.info("Deleted favorite with ID: {}", id);
         return ResponseEntity.noContent().build();
     }
 }
