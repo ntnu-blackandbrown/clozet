@@ -22,8 +22,39 @@ const activeChat = computed(() => {
   return isNaN(parsedId) ? null : parsedId
 })
 
-const handleChatSelect = (chatId) => {
-  router.push(`/messages/${chatId}`)
+const handleChatSelect = async (chatId) => {
+  try {
+    // Update the route to reflect the selected chat
+    router.push(`/messages/${chatId}`)
+
+    // Find the selected conversation
+    const selectedConversation = chats.value.find(chat => chat.id === chatId)
+    if (!selectedConversation) {
+      console.error('Selected conversation not found')
+      return
+    }
+
+    console.log('Selected conversation:', selectedConversation)
+
+    // Fetch messages between sender and receiver
+    const mssgResponse = await axios.get('/api/messages', {
+      params: {
+        senderId: authStore.user?.id?.toString(),
+        receiverId: selectedConversation.receiverId?.toString()
+      }
+    })
+
+    // Store messages for this chat
+    chatMessages.value[chatId] = mssgResponse.data
+    console.log('Fetched messages:', mssgResponse.data)
+
+    // Fetch receiver details if not already fetched
+    if (selectedConversation.receiverId) {
+      await fetchReceiverDetails(selectedConversation.receiverId)
+    }
+  } catch (error) {
+    console.error('Failed to fetch messages for conversation:', error)
+  }
 }
 
 const fetchReceiverDetails = async (receiverId) => {
@@ -64,12 +95,19 @@ const handleNewMessage = async ({ chatId, message }) => {
       timestamp: new Date().toISOString(),
     })
 
-    //after a successful message, update the chat by fetching the latest messages
-    const mssgResponse = await axios.get(`/api/messages/${chatId}`)
-    chatMessages.value[chatId] = mssgResponse.data
+    // Fetch updated messages between sender and receiver
+    const selectedConversation = chats.value.find(chat => chat.id === chatId)
+    if (selectedConversation) {
+      const mssgResponse = await axios.get('/api/messages', {
+        params: {
+          senderId: authStore.user?.id?.toString(),
+          receiverId: selectedConversation.receiverId?.toString()
+        }
+      })
+      chatMessages.value[chatId] = mssgResponse.data
+    }
   } catch (error) {
     console.error('Failed to send message:', error)
-    // You might want to show an error notification to the user here
   }
 }
 
@@ -112,17 +150,34 @@ onMounted(async () => {
 
     // If there are conversations and we're on the base messages route
     if (chats.value.length > 0 && !route.params.chatId) {
-      // Navigate to the first conversation
-      router.replace(`/messages/${chats.value[0].id}`)
+      // Navigate to the first conversation and fetch its messages
+      const firstChat = chats.value[0]
+      router.replace(`/messages/${firstChat.id}`)
+
+      // Fetch initial messages for the first conversation
+      const mssgResponse = await axios.get('/api/messages', {
+        params: {
+          senderId: authStore.user?.id?.toString(),
+          receiverId: firstChat.receiverId?.toString()
+        }
+      })
+      chatMessages.value[firstChat.id] = mssgResponse.data
     } else if (chats.value.length === 0) {
       console.log('No conversations available')
-      // Optionally, you could redirect to a "no conversations" view or show a message
     }
 
-    // If we have an active chat (either from URL or just set), fetch its messages
+    // If we have an active chat from the URL, fetch its messages
     if (activeChat.value) {
-      const mssgResponse = await axios.get(`/api/messages/${activeChat.value}`)
-      chatMessages.value[activeChat.value] = mssgResponse.data
+      const activeConversation = chats.value.find(chat => chat.id === activeChat.value)
+      if (activeConversation) {
+        const mssgResponse = await axios.get('/api/messages', {
+          params: {
+            senderId: authStore.user?.id?.toString(),
+            receiverId: activeConversation.receiverId?.toString()
+          }
+        })
+        chatMessages.value[activeChat.value] = mssgResponse.data
+      }
     }
   } catch (error) {
     console.error('Failed to fetch conversations:', error)
