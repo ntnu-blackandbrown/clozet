@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from '@/api/axios'
+import { useAuthStore } from '@/stores/AuthStore'
+
+const authStore = useAuthStore()
 
 interface WishlistButtonProps {
   productId?: number
@@ -12,11 +16,45 @@ const props = withDefaults(defineProps<WishlistButtonProps>(), {
 })
 
 const isWishlisted = ref(props.isWishlisted)
+const favoriteId = ref<number | null>(null)
 
-const toggleWishlist = () => {
+const fetchFavoriteId = async () => {
+  try {
+    const response = await axios.get(`api/favorites/user/${authStore.user?.id}`)
+    const favorites = response.data
+    const favorite = favorites.find((f: any) => f.itemId === props.productId)
+    if (favorite) {
+      favoriteId.value = favorite.id
+    }
+  } catch (error) {
+    console.error('Failed to fetch favorite ID:', error)
+  }
+}
+
+onMounted(async () => {
+  if (props.isWishlisted) {
+    await fetchFavoriteId()
+  }
+})
+
+const toggleWishlist = async () => {
   isWishlisted.value = !isWishlisted.value
   // TODO: Implement actual wishlist functionality with backend
   console.log('current state of isWishlisted: ', isWishlisted.value)
+  if(isWishlisted.value){
+    const response = await axios.post(`api/favorites`, {
+      userId: authStore.user?.id,
+      itemId: props.productId,
+    })
+    console.log('response: ', response)
+    favoriteId.value = response.data.id // Store the favorite ID from the response
+  } else {
+    if (favoriteId.value) {
+      const response = await axios.delete(`api/favorites/${favoriteId.value}`)
+      console.log('response: ', response)
+      favoriteId.value = null
+    }
+  }
 }
 </script>
 
