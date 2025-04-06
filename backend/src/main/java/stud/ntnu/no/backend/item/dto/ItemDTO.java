@@ -5,6 +5,9 @@ import stud.ntnu.no.backend.itemimage.dto.ItemImageDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * DTO for transferring item information.
+ */
 public class ItemDTO {
     private Long id;
     private String title;

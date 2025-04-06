@@ -1,5 +1,8 @@
 package stud.ntnu.no.backend.item.dto;
 
+/**
+ * DTO for displaying marketplace item information.
+ */
 public class ItemMarketPlaceDTO {
     private Long id;
     private String title;
