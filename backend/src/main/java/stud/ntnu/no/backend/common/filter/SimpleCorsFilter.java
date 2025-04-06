@@ -38,10 +38,10 @@ public class SimpleCorsFilter implements Filter {
         logger.info("Request origin: {}", origin);
         
         // Allow specific origins exactly as they appear in the request
+        origin = normalizeOrigin(origin);
         if (origin != null && (
                 origin.equals("http://localhost:5173") || 
-                origin.equals("https://clozet.netlify.app") || 
-                origin.equals("https://clozet.netlify.app/"))) {
+                origin.equals("https://clozet.netlify.app"))) {
             logger.info("Setting Access-Control-Allow-Origin to: {}", origin);
             response.setHeader("Access-Control-Allow-Origin", origin);
         }
