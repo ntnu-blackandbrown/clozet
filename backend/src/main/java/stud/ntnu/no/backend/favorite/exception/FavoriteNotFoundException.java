@@ -2,12 +2,13 @@ package stud.ntnu.no.backend.favorite.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import stud.ntnu.no.backend.common.exception.BaseException;
 
 /**
  * Exception thrown when a favorite is not found.
  * Responds with HTTP status NOT_FOUND.
  */
-public class FavoriteNotFoundException extends RuntimeException {
+public class FavoriteNotFoundException extends BaseException {
     /**
      * Constructs a new FavoriteNotFoundException with the specified favorite ID.
      *
