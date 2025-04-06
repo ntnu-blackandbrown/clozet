@@ -1,8 +1,5 @@
 package stud.ntnu.no.backend.category.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 /**
  * Exception thrown when category validation fails.
  * Returns HTTP 400 Bad Request response to the client.

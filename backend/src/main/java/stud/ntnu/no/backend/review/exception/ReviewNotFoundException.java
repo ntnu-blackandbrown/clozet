@@ -7,7 +7,6 @@ import stud.ntnu.no.backend.common.exception.BaseException;
  * <p>
  * This exception is mapped to a 404 Not Found HTTP status code.
  */
-//@ResponseStatus(HttpStatus.NOT_FOUND)
 public class ReviewNotFoundException extends BaseException {
     /**
      * Constructs a new ReviewNotFoundException with the specified review ID.

@@ -1,9 +1,6 @@
 package stud.ntnu.no.backend.review.exception;
 
 import stud.ntnu.no.backend.common.exception.BaseException;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.web.bind.annotation.ResponseStatus;
-
 /**
  * Exception thrown when a review validation fails.
  * <p>
