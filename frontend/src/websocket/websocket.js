@@ -88,16 +88,19 @@ function subscribeToTopics() {
       const message = JSON.parse(msg.body)
       messageCount++
 
-      messages.value.push({
-        id: message.id,
-        senderId: message.senderId,
-        receiverId: message.receiverId,
-        content: message.content,
-        timestamp: message.createdAt,
-        type: 'received'
-      })
+      // Only add the message if it wasn't sent by the current user
+      if (message.senderId !== sender.value) {
+        messages.value.push({
+          id: message.id,
+          senderId: message.senderId,
+          receiverId: message.receiverId,
+          content: message.content,
+          timestamp: message.createdAt,
+          type: 'received'
+        })
 
-      log(`Received message #${messageCount}:<br>ID: ${message.id}<br>From: ${message.senderId}<br>To: ${message.receiverId}<br>Content: ${message.content}<br>Time: ${message.createdAt}`, 'message-received')
+        log(`Received message #${messageCount}:<br>ID: ${message.id}<br>From: ${message.senderId}<br>To: ${message.receiverId}<br>Content: ${message.content}<br>Time: ${message.createdAt}`, 'message-received')
+      }
     } catch (e) {
       log(`Error parsing message: ${e.message}`, 'error')
     }
