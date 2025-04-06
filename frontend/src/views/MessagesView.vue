@@ -16,8 +16,10 @@ const receiverDetails = ref({})
 const receiverUsernames = ref(new Map())
 
 const activeChat = computed(() => {
-  const chatId = parseInt(route.params.chatId)
-  return isNaN(chatId) ? null : chatId
+  const chatId = route.params.chatId
+  if (!chatId) return null
+  const parsedId = parseInt(chatId)
+  return isNaN(parsedId) ? null : parsedId
 })
 
 const handleChatSelect = (chatId) => {
@@ -97,7 +99,6 @@ onMounted(async () => {
 
     chats.value = response.data
     console.log('Updated chats value:', chats.value)
-    console.log('Initial receiverUsernames map:', Object.fromEntries(receiverUsernames.value))
 
     // Fetch receiver details for all conversations
     for (const conversation of chats.value) {
@@ -109,14 +110,16 @@ onMounted(async () => {
       }
     }
 
-    console.log('Final receiverUsernames map:', Object.fromEntries(receiverUsernames.value))
-
-    // If there are conversations and no active chat, set the first one as active
-    if (chats.value.length > 0 && !activeChat.value) {
+    // If there are conversations and we're on the base messages route
+    if (chats.value.length > 0 && !route.params.chatId) {
+      // Navigate to the first conversation
       router.replace(`/messages/${chats.value[0].id}`)
+    } else if (chats.value.length === 0) {
+      console.log('No conversations available')
+      // Optionally, you could redirect to a "no conversations" view or show a message
     }
 
-    // Fetch messages for the active chat if one is selected
+    // If we have an active chat (either from URL or just set), fetch its messages
     if (activeChat.value) {
       const mssgResponse = await axios.get(`/api/messages/${activeChat.value}`)
       chatMessages.value[activeChat.value] = mssgResponse.data
