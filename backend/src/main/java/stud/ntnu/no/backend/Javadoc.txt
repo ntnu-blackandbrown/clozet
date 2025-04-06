@@ -1,0 +1,26 @@
+Structure and Placement:
+JavaDoc comments should be placed above classes and methods. They must never be written inside the method body. If a class implements an interface and the interface is already well documented with JavaDoc (including a description that applies to the class), then you don’t need to repeat the JavaDoc in the implementation class.
+
+Format:
+Use the /** ... */ syntax for JavaDoc comments. The first sentence should be a short and precise summary of what the class or method does. Use HTML tags such as <p>, <code>, <ul>, <li>, and <a href> to structure the content. Use <ol> or <ul> for ordered or unordered lists. To improve readability, each line in the comment should not exceed 80 characters.
+
+Tone and Language Style:
+Write in the third person — for example, use “Returns the result” instead of “I return…” or “You return…”. It’s okay to use sentence fragments; full sentences are not required. The language should be neutral and clear, and avoid overexplaining. Focus on concise, professional phrasing.
+
+Tags:
+Use JavaDoc tags like:
+
+@param – to describe parameters
+
+@return – to describe return values
+
+@throws – to specify exceptions that might be thrown
+
+@author
+
+@version
+Also, you can use {@link ...} to link to other methods or classes to make the documentation easier to navigate.
+
+Inline Comments (inside methods):
+When writing comments inside method bodies, use // for short explanations. If a longer comment is needed, you can use /* ... */, but do this sparingly. Avoid cluttering your code with unnecessary comments—focus on writing code and explanations that are easy to read and understand.
+
