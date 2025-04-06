@@ -13,21 +13,37 @@ import stud.ntnu.no.backend.category.repository.CategoryRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Implementation of the CategoryService interface.
+ * Handles business logic for category operations and interacts with the repository layer.
+ */
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
+    /**
+     * Constructor for dependency injection.
+     *
+     * @param categoryRepository Repository for database operations
+     * @param categoryMapper Mapper for entity-DTO conversions
+     */
     public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
         this.categoryRepository = categoryRepository;
         this.categoryMapper = categoryMapper;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<CategoryDTO> getAllCategories() {
         return categoryMapper.toDtoList(categoryRepository.findAll());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CategoryDTO getCategory(Long id) {
         return categoryRepository.findById(id)
@@ -35,6 +51,10 @@ public class CategoryServiceImpl implements CategoryService {
             .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: " + id));
     }
 
+    /**
+     * {@inheritDoc}
+     * Uses a pageable request to limit results to top 5.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<CategoryDTO> getTopFiveCategories() {
@@ -43,6 +63,10 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.toDtoList(topCategories);
     }
 
+    /**
+     * {@inheritDoc}
+     * Sets creation and update timestamps automatically.
+     */
     @Override
     @Transactional
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
@@ -52,6 +76,10 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.toDto(categoryRepository.save(category));
     }
 
+    /**
+     * {@inheritDoc}
+     * Updates only non-null fields and sets the updatedAt timestamp.
+     */
     @Override
     @Transactional
     public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
@@ -69,6 +97,10 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.toDto(categoryRepository.save(existingCategory));
     }
 
+    /**
+     * {@inheritDoc}
+     * Verifies existence before deletion to provide clear error messages.
+     */
     @Override
     @Transactional
     public void deleteCategory(Long id) {
