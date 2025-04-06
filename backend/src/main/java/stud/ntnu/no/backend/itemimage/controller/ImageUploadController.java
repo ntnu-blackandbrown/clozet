@@ -8,6 +8,10 @@ import stud.ntnu.no.backend.itemimage.service.FileStorageService;
 
 import java.io.IOException;
 
+/**
+ * REST controller for testing image upload functionality.
+ * Provides an endpoint for uploading images.
+ */
 @RestController
 @RequestMapping("/api/test-image")
 public class ImageUploadController {
@@ -18,6 +22,13 @@ public class ImageUploadController {
         this.storageService = storageService;
     }
 
+    /**
+     * Uploads an image and associates it with an optional item ID.
+     *
+     * @param file The image file to upload
+     * @param itemId The optional ID of the item the image is associated with
+     * @return The URL of the uploaded image or an error message
+     */
     @PostMapping("/upload")
     public ResponseEntity<String> uploadImage(
         @RequestParam("file") MultipartFile file,

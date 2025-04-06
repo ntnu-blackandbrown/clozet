@@ -7,6 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Configuration class for setting up Cloudinary.
+ * Loads Cloudinary credentials from application properties and provides a Cloudinary bean.
+ */
 @Configuration
 public class CloudinaryConfig {
     @Value("${app.cloudinary.cloud-name:}")
@@ -18,6 +22,11 @@ public class CloudinaryConfig {
     @Value("${app.cloudinary.api-secret:}")
     private String apiSecret;
 
+    /**
+     * Creates and configures a Cloudinary instance.
+     *
+     * @return A configured Cloudinary instance
+     */
     @Bean
     public Cloudinary cloudinary() {
         Map<String, String> config = new HashMap<>();

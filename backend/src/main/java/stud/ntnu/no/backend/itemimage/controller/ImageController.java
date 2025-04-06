@@ -11,6 +11,10 @@ import stud.ntnu.no.backend.itemimage.service.ImageService;
 
 import java.util.List;
 
+/**
+ * REST controller for handling image operations.
+ * Provides endpoints for uploading, retrieving, and deleting images.
+ */
 @RestController
 @RequestMapping("/api/images")
 public class ImageController {
@@ -21,6 +25,13 @@ public class ImageController {
         this.imageService = imageService;
     }
 
+    /**
+     * Uploads an image for a specific item.
+     *
+     * @param file The image file to upload
+     * @param itemId The ID of the item the image is associated with
+     * @return The URL of the uploaded image or an error message
+     */
     @PostMapping("/upload")
     public ResponseEntity<?> uploadImage(
         @RequestParam("file") MultipartFile file,
@@ -45,12 +56,24 @@ public class ImageController {
         }
     }
 
+    /**
+     * Retrieves images by item ID.
+     *
+     * @param itemId The ID of the item
+     * @return A list of images associated with the item
+     */
     @GetMapping("/item/{itemId}")
     public ResponseEntity<List<ItemImage>> getImagesByItemId(@PathVariable Long itemId) {
         List<ItemImage> images = imageService.getImagesByItemId(itemId);
         return ResponseEntity.ok(images);
     }
 
+    /**
+     * Deletes an image by ID.
+     *
+     * @param id The ID of the image to delete
+     * @return A response indicating the result of the delete operation
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteImage(@PathVariable Long id) {
         imageService.deleteImage(id);
