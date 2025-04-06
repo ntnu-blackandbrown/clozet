@@ -1,13 +1,31 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import MessageInput from './MessageInput.vue'
 import type { Message, Conversation } from '@/types/messaging'
+import { useAuthStore } from '@/stores/AuthStore'
+
+const authStore = useAuthStore()
 
 const props = defineProps<{
-  activeChat: number | null
+  activeChat: string | null
   messages: Message[]
   contact: Conversation | undefined
 }>()
+
+// Watch for changes in messages and log them
+watch(() => props.messages, (newMessages) => {
+  console.log('Messages in conversation:', newMessages)
+  newMessages.forEach((message, index) => {
+    console.log(`Message ${index + 1}:`, {
+      id: message.id,
+      content: message.content,
+      senderId: message.senderId,
+      receiverId: message.receiverId,
+      createdAt: message.createdAt,
+      isFromCurrentUser: message.senderId === authStore.user?.id
+    })
+  })
+}, { immediate: true })
 
 const emit = defineEmits(['send-message'])
 
@@ -18,11 +36,15 @@ const handleSendMessage = (text: string) => {
     chatId: props.activeChat,
     message: {
       content: text,
-      senderId: 1, // This should be replaced with actual user ID
-      receiverId: props.contact.id,
+      senderId: authStore.user?.id,
+      receiverId: props.contact.receiverId,
       timestamp: new Date().toISOString(),
     },
   })
+}
+
+const isMessageFromCurrentUser = (message: Message) => {
+  return message.senderId === authStore.user?.id
 }
 </script>
 

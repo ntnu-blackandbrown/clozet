@@ -1,47 +1,3 @@
-<template>
-  <div class="container">
-    <h1>WebSocket Message Tester</h1>
-    <div :class="['status', connectionStatusClass]">Status: {{ connectionStatus }}</div>
-
-    <div class="connection-info">
-      <div class="form-group">
-        <label>Server URL:</label>
-        <input v-model="serverUrl" />
-        <p><small>Use HTTP/HTTPS URL, not ws directly</small></p>
-      </div>
-      <div>
-        <button @click="connect" :disabled="connected">Connect</button>
-        <button @click="disconnect" :disabled="!connected">Disconnect</button>
-        <button @click="checkConnection">Check Connection</button>
-      </div>
-    </div>
-
-    <h2>Messages</h2>
-    <div id="log">
-      <div v-for="(msg, index) in logs" :key="index" :class="msg.type">{{ msg.text }}</div>
-    </div>
-
-    <div class="controls">
-      <h3>Send Message</h3>
-      <div class="form-group">
-        <label>Sender ID:</label>
-        <input v-model="sender" />
-      </div>
-      <div class="form-group">
-        <label>Receiver ID:</label>
-        <input v-model="receiver" />
-      </div>
-      <div class="form-group">
-        <label>Message:</label>
-        <textarea v-model="messageContent" @keypress.enter.prevent="sendMessage"></textarea>
-      </div>
-      <button @click="sendMessage" :disabled="!connected">Send Message</button>
-      <button @click="pingServer" :disabled="!connected">Ping Server</button>
-    </div>
-  </div>
-</template>
-
-<script setup>
 import { ref } from 'vue'
 import SockJS from 'sockjs-client'
 import Stomp from 'stompjs'
@@ -173,20 +129,3 @@ function checkConnection() {
     updateConnectionStatus('disconnected', 'Not Connected')
   }
 }
-</script>
-
-<style scoped>
-.container { max-width: 800px; margin: 20px auto; font-family: Arial; }
-#log { height: 300px; overflow-y: scroll; background: #f5f5f5; border: 1px solid #ccc; padding: 10px; }
-.status { padding: 10px; font-weight: bold; margin-bottom: 10px; border-radius: 4px; }
-.connected { background: #dff0d8; color: #3c763d; border: 1px solid #d6e9c6; }
-.disconnected { background: #f2dede; color: #a94442; border: 1px solid #ebccd1; }
-.connecting { background: #fcf8e3; color: #8a6d3b; border: 1px solid #faebcc; }
-.controls { margin-top: 20px; }
-.form-group { margin-bottom: 10px; }
-textarea, input { width: 100%; padding: 8px; }
-button { margin-right: 10px; padding: 8px 15px; }
-.message-received { color: green; }
-.message-sent { color: blue; }
-.error { color: red; }
-</style>

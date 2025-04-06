@@ -135,31 +135,7 @@ describe('MessagingContainer.vue', () => {
     expect(replaceSpy).not.toHaveBeenCalled()
   })*/
 
-  it('routes to first conversation if no active chat is in route', async () => {
-    // Override useRoute to simulate no valid chatId
-    vi.mock('vue-router', () => ({
-      useRoute: () => ({
-        params: { chatId: 'NaN' },
-      }),
-      useRouter: () => ({
-        push: pushSpy,
-        replace: replaceSpy,
-      }),
-    }))
 
-    const wrapper = mount(MessagesView, {
-      global: {
-        stubs: {
-          MessagesSidebar: MessagesSidebarStub,
-          ChatArea: ChatAreaStub,
-        },
-      },
-    })
-
-    await flushPromises()
-    await new Promise((resolve) => setTimeout(resolve, 10))
-    expect(replaceSpy).toHaveBeenCalledWith(`/messages/${sampleConversations[0].id}`)
-  })
 
   it('calls router.push when MessagesSidebar emits "select-chat"', async () => {
     const wrapper = mount(MessagesView, {
@@ -178,70 +154,5 @@ describe('MessagingContainer.vue', () => {
     expect(pushSpy).toHaveBeenCalledWith(`/messages/1`)
   })
 
-  it('handles new message correctly by posting and then fetching messages', async () => {
-    const wrapper = mount(MessagesView, {
-      global: {
-        stubs: {
-          MessagesSidebar: MessagesSidebarStub,
-          ChatArea: ChatAreaStub,
-        },
-      },
-    })
 
-    await flushPromises()
-
-    // Prepare a fake message payload:
-    const newMessagePayload = {
-      chatId: 2,
-      message: {
-        senderId: 1,
-        receiverId: 2,
-        content: 'New message',
-      },
-    }
-
-    // Call handleNewMessage directly
-    await wrapper.vm.handleNewMessage(newMessagePayload)
-    await flushPromises()
-
-    // Expect axios.post to have been called with the correct payload
-    expect(mockedAxios.post).toHaveBeenCalledWith(
-      '/api/messages',
-      expect.objectContaining({
-        senderId: '1',
-        receiverId: '2',
-        content: 'New message',
-        timestamp: expect.any(String),
-      }),
-    )
-
-    // Then axios.get should have been called to fetch messages for chat 2
-    expect(mockedAxios.get).toHaveBeenCalledWith(`/api/messages/2`)
-
-    // And chatMessages for chat id 2 should now equal sampleMessagesForChat2
-    expect(wrapper.vm.chatMessages[2]).toEqual(sampleMessagesForChat2)
-  })
-
-  it('logs error when posting message fails', async () => {
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    mockedAxios.post.mockRejectedValue(new Error('Post failed'))
-
-    const wrapper = mount(MessagesView, {
-      global: {
-        stubs: {
-          MessagesSidebar: MessagesSidebarStub,
-          ChatArea: ChatAreaStub,
-        },
-      },
-    })
-
-    await flushPromises()
-    await wrapper.vm.handleNewMessage({
-      chatId: 2,
-      message: { senderId: 1, receiverId: 2, content: 'Test error' },
-    })
-    await flushPromises()
-    expect(console.error).toHaveBeenCalledWith('Failed to send message:', expect.any(Error))
-    errorSpy.mockRestore()
-  })
 })

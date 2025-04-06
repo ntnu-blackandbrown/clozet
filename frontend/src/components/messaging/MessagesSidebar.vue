@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
 import axios from 'axios'
+import { useAuthStore } from '@/stores/AuthStore'
 import type { Message, Conversation } from '@/types/messaging'
 
 interface ItemDTO {
@@ -10,15 +11,31 @@ interface ItemDTO {
 
 const props = defineProps<{
   conversations: Conversation[]
-  activeConversationId: number
+  activeConversationId: string | null
+  receiverUsernames: Map<number, string>
 }>()
 
 const emit = defineEmits(['select-chat'])
-
+const authStore = useAuthStore()
 const itemImages = ref<Map<number, string>>(new Map())
 
+// Get the chat ID for a conversation (conversationId or id)
+const getChatId = (conversation: Conversation) => {
+  return conversation.conversationId || conversation.id;
+}
+
+// Filter conversations to ensure we don't show self-conversations
+const filteredConversations = computed(() => {
+  return props.conversations.filter(conversation => {
+    // Skip conversations where the user is talking to themselves
+    return Number(conversation.receiverId) !== authStore.user?.id;
+  });
+});
+
 const activeConversation = computed(() => {
-  return props.conversations.find((conversation) => conversation.id === props.activeConversationId)
+  return filteredConversations.value.find((conversation) =>
+    getChatId(conversation) === props.activeConversationId
+  );
 })
 
 const getLatestMessage = (conversation: Conversation) => {
@@ -32,13 +49,31 @@ const getLatestMessage = (conversation: Conversation) => {
   return sortedMessages[0].content
 }
 
+const getReceiverUsername = (conversation: Conversation) => {
+  console.log(`Getting username for conversation ${getChatId(conversation)}:`)
+  const numericReceiverId = Number(conversation.receiverId)
+  console.log(`- receiverId: ${numericReceiverId}`)
+  console.log(`- receiverName: ${conversation.receiverName}`)
+
+  // Try to get username from the map using numeric ID
+  const usernameFromMap = props.receiverUsernames.get(numericReceiverId)
+  console.log(`- username from map: ${usernameFromMap}`)
+
+  // Use fallbacks in order: map username -> conversation receiverName -> Unknown User
+  const username = usernameFromMap || conversation.receiverName || 'Unknown User'
+  console.log(`- final username: ${username}`)
+  return username
+}
+
 onMounted(async () => {
   // Fetch images for all items in conversations
   for (const conversation of props.conversations) {
     try {
-      const response = await axios.get<ItemDTO>(`/api/items/${conversation.itemId}`)
-      if (response.data.images && response.data.images.length > 0) {
-        itemImages.value.set(conversation.itemId, response.data.images[0].imageUrl)
+      if (conversation.itemId) {
+        const response = await axios.get<ItemDTO>(`/api/items/${conversation.itemId}`)
+        if (response.data.images && response.data.images.length > 0) {
+          itemImages.value.set(conversation.itemId, response.data.images[0].imageUrl)
+        }
       }
     } catch (error) {
       console.error(`Failed to fetch images for item ${conversation.itemId}:`, error)
@@ -51,7 +86,7 @@ onMounted(async () => {
   <div class="messages-sidebar">
     <div class="messages-header">
       <h1>
-        Messages <span class="message-count">{{ conversations.length }}</span>
+        Messages <span class="message-count">{{ filteredConversations.length }}</span>
       </h1>
       <button class="new-message-btn">
         <i class="fas fa-pen"></i>
@@ -65,21 +100,21 @@ onMounted(async () => {
 
     <div class="messages-list">
       <div
-        v-for="conversation in conversations"
-        :key="conversation.id"
+        v-for="conversation in filteredConversations"
+        :key="getChatId(conversation)"
         class="chat-item"
-        :class="{ active: conversation.id === activeConversationId }"
-        @click="$emit('select-chat', conversation.id)"
+        :class="{ active: getChatId(conversation) === activeConversationId }"
+        @click="$emit('select-chat', getChatId(conversation))"
       >
         <div class="chat-avatar">
           <img
             v-if="itemImages.get(conversation.itemId)"
             :src="itemImages.get(conversation.itemId)"
-            :alt="conversation.receiverName"
+            :alt="getReceiverUsername(conversation)"
           />
         </div>
         <div class="chat-info">
-          <div class="chat-name">{{ conversation.receiverName }}</div>
+          <div class="chat-name">{{ getReceiverUsername(conversation) }}</div>
           <div class="chat-preview">{{ getLatestMessage(conversation) }}</div>
         </div>
         <div class="chat-meta">

@@ -11,7 +11,10 @@ describe('MessagesSidebar.vue', () => {
   // Sample conversations prop
   const conversations = [
     {
-      id: 1,
+      id: '1',
+      conversationId: '1',
+      senderId: 2,
+      receiverId: 1,
       receiverName: 'Alice',
       itemId: 101,
       listOfMessages: [
@@ -35,7 +38,10 @@ describe('MessagesSidebar.vue', () => {
       latestMessageTimestamp: '2022-01-01T11:00:00Z',
     },
     {
-      id: 2,
+      id: '2',
+      conversationId: '2',
+      senderId: 1,
+      receiverId: 3,
       receiverName: 'Bob',
       itemId: 102,
       listOfMessages: [],
@@ -43,7 +49,13 @@ describe('MessagesSidebar.vue', () => {
     },
   ]
 
-  const activeConversationId = 1
+  const activeConversationId = '1'
+
+  // Create a Map for receiverUsernames prop
+  const receiverUsernames = new Map([
+    [1, 'Alice'],
+    [3, 'Bob']
+  ])
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -60,7 +72,11 @@ describe('MessagesSidebar.vue', () => {
 
   it('renders header with correct message count', async () => {
     const wrapper = mount(MessagesSidebar, {
-      props: { conversations, activeConversationId },
+      props: {
+        conversations,
+        activeConversationId,
+        receiverUsernames
+      },
       global: {
         stubs: {
           // Stub the modal to avoid interfering with header tests
@@ -84,7 +100,11 @@ describe('MessagesSidebar.vue', () => {
 
   it('renders chat items with proper info and active class', async () => {
     const wrapper = mount(MessagesSidebar, {
-      props: { conversations, activeConversationId },
+      props: {
+        conversations,
+        activeConversationId,
+        receiverUsernames
+      },
       global: {
         stubs: {
           ProductDisplayModal: true,
@@ -101,7 +121,7 @@ describe('MessagesSidebar.vue', () => {
     const aliceItem = chatItems.find((item) => item.text().includes('Alice'))
     expect(aliceItem).toBeTruthy()
     expect(aliceItem?.classes()).toContain('active')
-    // Latest message should be "How are you?" (since it’s the newest)
+    // Latest message should be "How are you?" (since it's the newest)
     expect(aliceItem?.text()).toContain('How are you?')
 
     // For Bob (conversation id 2): no messages so should display fallback text
@@ -112,7 +132,11 @@ describe('MessagesSidebar.vue', () => {
 
   it('fetches item images and renders avatar when available', async () => {
     const wrapper = mount(MessagesSidebar, {
-      props: { conversations, activeConversationId },
+      props: {
+        conversations,
+        activeConversationId,
+        receiverUsernames
+      },
       global: {
         stubs: {
           ProductDisplayModal: true,
@@ -138,7 +162,11 @@ describe('MessagesSidebar.vue', () => {
 
   it('emits "select-chat" event with correct id when a chat item is clicked', async () => {
     const wrapper = mount(MessagesSidebar, {
-      props: { conversations, activeConversationId },
+      props: {
+        conversations,
+        activeConversationId,
+        receiverUsernames
+      },
       global: {
         stubs: {
           ProductDisplayModal: true,
@@ -148,20 +176,24 @@ describe('MessagesSidebar.vue', () => {
     })
     await flushPromises()
     const chatItems = wrapper.findAll('.chat-item')
-    // Click on Bob’s chat item (id 2)
+    // Click on Bob's chat item (id 2)
     const bobItem = chatItems.find((item) => item.text().includes('Bob'))
     expect(bobItem).toBeTruthy()
     await bobItem?.trigger('click')
     // Verify the "select-chat" event is emitted with conversation id 2
     expect(wrapper.emitted('select-chat')).toBeTruthy()
     const emitted = wrapper.emitted('select-chat') as any[]
-    expect(emitted[0]).toEqual([2])
+    expect(emitted[0]).toEqual(['2'])
   })
 
   /*  it('opens and closes ProductDisplayModal when openProductModal is called', async () => {
     // For testing the modal, ensure your component exposes openProductModal via defineExpose({ openProductModal })
     const wrapper = mount(MessagesSidebar, {
-      props: { conversations, activeConversationId },
+      props: {
+        conversations,
+        activeConversationId,
+        receiverUsernames
+      },
       global: {
         stubs: {
           ProductDisplayModal: {
