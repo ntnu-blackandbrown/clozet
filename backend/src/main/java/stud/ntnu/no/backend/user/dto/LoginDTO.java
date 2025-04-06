@@ -1,15 +1,15 @@
 package stud.ntnu.no.backend.user.dto;
 
 public class LoginDTO {
-    private String username;
+    private String usernameOrEmail;
     private String password;
 
-    // Getters og setters
-    public String getUsername() {
-        return username;
+    // Getters and setters
+    public String getUsernameOrEmail() {
+        return usernameOrEmail;
     }
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsernameOrEmail(String usernameOrEmail) {
+        this.usernameOrEmail = usernameOrEmail;
     }
     public String getPassword() {
         return password;

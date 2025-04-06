@@ -100,55 +100,78 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginRequest, HttpServletResponse response) {
-        logger.info("Login attempt for user: {}", loginRequest.getUsername());
+        logger.info("Login attempt with: {}", loginRequest.getUsernameOrEmail());
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
-                )
-        );
+        // Determine if input is email or username
+        String usernameOrEmail = loginRequest.getUsernameOrEmail();
+        String username = usernameOrEmail;
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        // Generate access-token and refresh-token
-        String accessToken = jwtUtils.generateJwtToken(userDetails);
-        String refreshToken = jwtUtils.generateRefreshToken(userDetails);
-
-        // Set access-token cookie
-        StringBuilder accessCookieBuilder = new StringBuilder();
-        accessCookieBuilder.append("jwt=").append(accessToken).append(";");
-        accessCookieBuilder.append(" Max-Age=").append(jwtCookieMaxAge).append(";");
-        accessCookieBuilder.append(" Path=/;");
-        accessCookieBuilder.append(" HttpOnly;");
-        if (secureCookie) {
-            accessCookieBuilder.append(" Secure;");
+        // If it looks like an email address, find the corresponding username
+        if (usernameOrEmail.contains("@")) {
+            Optional<User> userOpt = userRepository.findByEmail(usernameOrEmail);
+            if (userOpt.isPresent()) {
+                username = userOpt.get().getUsername();
+            } else {
+                // Don't reveal if email exists or not for security
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new MessageResponse("Invalid username/email or password"));
+            }
         }
-        accessCookieBuilder.append(" SameSite=Lax");
-        response.addHeader("Set-Cookie", accessCookieBuilder.toString());
-        logger.info("Set-Cookie header (access token): {}", accessCookieBuilder.toString());
 
-        // Set refresh-token cookie
-        StringBuilder refreshCookieBuilder = new StringBuilder();
-        refreshCookieBuilder.append("refreshToken=").append(refreshToken).append(";");
-        refreshCookieBuilder.append(" Max-Age=").append(jwtRefreshCookieMaxAge).append(";");
-        refreshCookieBuilder.append(" Path=/;");
-        refreshCookieBuilder.append(" HttpOnly;");
-        if (secureCookie) {
-            refreshCookieBuilder.append(" Secure;");
-        }
-        refreshCookieBuilder.append(" SameSite=Lax");
-        response.addHeader("Set-Cookie", refreshCookieBuilder.toString());
-        logger.info("Set-Cookie header (refresh token): {}", refreshCookieBuilder.toString());
-
-        // Get user info and return it
         try {
-            UserDTO userDTO = userService.getUserByUsername(loginRequest.getUsername());
-            return ResponseEntity.ok(userDTO);
+            // Authenticate with the username
+            Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    username,
+                    loginRequest.getPassword()
+                )
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            // Generate access-token and refresh-token
+            String accessToken = jwtUtils.generateJwtToken(userDetails);
+            String refreshToken = jwtUtils.generateRefreshToken(userDetails);
+
+            // Set access-token cookie
+            StringBuilder accessCookieBuilder = new StringBuilder();
+            accessCookieBuilder.append("jwt=").append(accessToken).append(";");
+            accessCookieBuilder.append(" Max-Age=").append(jwtCookieMaxAge).append(";");
+            accessCookieBuilder.append(" Path=/;");
+            accessCookieBuilder.append(" HttpOnly;");
+            if (secureCookie) {
+                accessCookieBuilder.append(" Secure;");
+            }
+            accessCookieBuilder.append(" SameSite=Lax");
+            response.addHeader("Set-Cookie", accessCookieBuilder.toString());
+            logger.info("Set-Cookie header (access token): {}", accessCookieBuilder.toString());
+
+            // Set refresh-token cookie
+            StringBuilder refreshCookieBuilder = new StringBuilder();
+            refreshCookieBuilder.append("refreshToken=").append(refreshToken).append(";");
+            refreshCookieBuilder.append(" Max-Age=").append(jwtRefreshCookieMaxAge).append(";");
+            refreshCookieBuilder.append(" Path=/;");
+            refreshCookieBuilder.append(" HttpOnly;");
+            if (secureCookie) {
+                refreshCookieBuilder.append(" Secure;");
+            }
+            refreshCookieBuilder.append(" SameSite=Lax");
+            response.addHeader("Set-Cookie", refreshCookieBuilder.toString());
+            logger.info("Set-Cookie header (refresh token): {}", refreshCookieBuilder.toString());
+
+            // Get user info and return it
+            try {
+                UserDTO userDTO = userService.getUserByUsername(username);
+                return ResponseEntity.ok(userDTO);
+            } catch (Exception e) {
+                logger.warn("Could not fetch user details, but login was successful", e);
+                return ResponseEntity.ok(new MessageResponse("Innlogging vellykket"));
+            }
         } catch (Exception e) {
-            logger.warn("Could not fetch user details, but login was successful", e);
-            return ResponseEntity.ok(new MessageResponse("Innlogging vellykket"));
+            logger.error("Authentication failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new MessageResponse("Invalid username/email or password"));
         }
     }
 

@@ -196,9 +196,19 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public UserDTO login(LoginDTO loginDTO) {
-        return userRepository.findByUsername(loginDTO.getUsername())
+        String usernameOrEmail = loginDTO.getUsernameOrEmail();
+
+        if (usernameOrEmail.contains("@")) {
+            // If input looks like an email, find by email
+            return userRepository.findByEmail(usernameOrEmail)
                 .map(userMapper::toDto)
-                .orElseThrow(() -> new UserNotFoundException("Username " + loginDTO.getUsername() + " not found"));
+                .orElseThrow(() -> new UserNotFoundException("No user found with email: " + usernameOrEmail));
+        } else {
+            // Otherwise find by username
+            return userRepository.findByUsername(usernameOrEmail)
+                .map(userMapper::toDto)
+                .orElseThrow(() -> new UserNotFoundException("Username " + usernameOrEmail + " not found"));
+        }
     }
 
     @Transactional
