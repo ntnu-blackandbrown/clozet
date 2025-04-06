@@ -34,7 +34,8 @@ import stud.ntnu.no.backend.user.repository.VerificationTokenRepository;
 import stud.ntnu.no.backend.user.service.UserService;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -102,24 +103,24 @@ public class AuthController {
     public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginRequest, HttpServletResponse response) {
         logger.info("Login attempt with: {}", loginRequest.getUsernameOrEmail());
 
-        // Determine if input is email or username
+        // Bestem om input er e-post eller brukernavn
         String usernameOrEmail = loginRequest.getUsernameOrEmail();
         String username = usernameOrEmail;
 
-        // If it looks like an email address, find the corresponding username
+        // Hvis det ser ut som en e-postadresse, hent tilsvarende brukernavn
         if (usernameOrEmail.contains("@")) {
             Optional<User> userOpt = userRepository.findByEmail(usernameOrEmail);
             if (userOpt.isPresent()) {
                 username = userOpt.get().getUsername();
             } else {
-                // Don't reveal if email exists or not for security
+                // Ikke avslør om e-posten eksisterer for sikkerhet
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new MessageResponse("Invalid username/email or password"));
             }
         }
 
         try {
-            // Authenticate with the username
+            // Autentiser med brukernavn
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                     username,
@@ -130,11 +131,11 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-            // Generate access-token and refresh-token
+            // Generer access-token og refresh-token
             String accessToken = jwtUtils.generateJwtToken(userDetails);
             String refreshToken = jwtUtils.generateRefreshToken(userDetails);
 
-            // Set access-token cookie
+            // Sett access-token cookie
             StringBuilder accessCookieBuilder = new StringBuilder();
             accessCookieBuilder.append("jwt=").append(accessToken).append(";");
             accessCookieBuilder.append(" Max-Age=").append(jwtCookieMaxAge).append(";");
@@ -147,7 +148,7 @@ public class AuthController {
             response.addHeader("Set-Cookie", accessCookieBuilder.toString());
             logger.info("Set-Cookie header (access token): {}", accessCookieBuilder.toString());
 
-            // Set refresh-token cookie
+            // Sett refresh-token cookie
             StringBuilder refreshCookieBuilder = new StringBuilder();
             refreshCookieBuilder.append("refreshToken=").append(refreshToken).append(";");
             refreshCookieBuilder.append(" Max-Age=").append(jwtRefreshCookieMaxAge).append(";");
@@ -160,7 +161,7 @@ public class AuthController {
             response.addHeader("Set-Cookie", refreshCookieBuilder.toString());
             logger.info("Set-Cookie header (refresh token): {}", refreshCookieBuilder.toString());
 
-            // Get user info and return it
+            // Hent brukerinfo og returner
             try {
                 UserDTO userDTO = userService.getUserByUsername(username);
                 return ResponseEntity.ok(userDTO);
@@ -197,18 +198,17 @@ public class AuthController {
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
 
-        // Delete the token
+        // Slett tokenen
         verificationTokenRepository.delete(verificationToken);
 
-        // Auto-login the user
+        // Auto-logg inn brukeren
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
 
-        // Generate access-token and refresh-token
+        // Generer access-token og refresh-token
         String accessToken = jwtUtils.generateJwtToken(userDetails);
         String refreshToken = jwtUtils.generateRefreshToken(userDetails);
 
-        // Set cookies
-        // Set access-token cookie
+        // Sett cookies
         StringBuilder accessCookieBuilder = new StringBuilder();
         accessCookieBuilder.append("jwt=").append(accessToken).append(";");
         accessCookieBuilder.append(" Max-Age=").append(jwtCookieMaxAge).append(";");
@@ -220,7 +220,6 @@ public class AuthController {
         accessCookieBuilder.append(" SameSite=Lax");
         response.addHeader("Set-Cookie", accessCookieBuilder.toString());
 
-        // Set refresh-token cookie
         StringBuilder refreshCookieBuilder = new StringBuilder();
         refreshCookieBuilder.append("refreshToken=").append(refreshToken).append(";");
         refreshCookieBuilder.append(" Max-Age=").append(jwtRefreshCookieMaxAge).append(";");
@@ -271,7 +270,89 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("Utlogging vellykket"));
     }
 
-    // Rest of the methods...
+    /**
+     * Request password reset email (Forgot Password)
+     */
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> requestPasswordReset(@RequestBody PasswordResetRequestDTO request) {
+        logger.info("Password reset requested for email: {}", request.getEmail());
+
+        Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
+        if (userOpt.isEmpty()) {
+            // Ikke avslør om e-posten finnes for sikkerhet
+            return ResponseEntity.ok(new MessageResponse(
+                "If an account exists with that email, a password reset link has been sent."));
+        }
+
+        User user = userOpt.get();
+
+        // Slett eventuelle eksisterende tokens for denne brukeren
+        passwordResetTokenRepository.findByUser(user).ifPresent(passwordResetTokenRepository::delete);
+
+        // Generer en ny token
+        String token = UUID.randomUUID().toString();
+        int expiryHours = emailConfig.getPasswordResetExpiryHours();
+        PasswordResetToken passwordResetToken = new PasswordResetToken(
+            token,
+            LocalDateTime.now().plusHours(expiryHours),
+            user);
+
+        passwordResetTokenRepository.save(passwordResetToken);
+
+        // Send e-post med reset-link
+        emailService.sendPasswordResetEmail(user.getEmail(), token);
+
+        return ResponseEntity.ok(new MessageResponse(
+            "If an account exists with that email, a password reset link has been sent."));
+    }
+
+    /**
+     * Validate reset token
+     */
+    @GetMapping("/reset-password/validate")
+    public ResponseEntity<?> validateResetToken(@RequestParam("token") String token) {
+        Optional<PasswordResetToken> tokenOpt = passwordResetTokenRepository.findByToken(token);
+
+        if (tokenOpt.isEmpty() || tokenOpt.get().isExpired()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new MessageResponse("Invalid or expired password reset token"));
+        }
+
+        return ResponseEntity.ok(new MessageResponse("Valid token"));
+    }
+
+    /**
+     * Reset password with token
+     */
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetDTO resetRequest) {
+        Optional<PasswordResetToken> tokenOpt = passwordResetTokenRepository.findByToken(resetRequest.getToken());
+
+        if (tokenOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new MessageResponse("Invalid password reset token"));
+        }
+
+        PasswordResetToken resetToken = tokenOpt.get();
+
+        if (resetToken.isExpired()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new MessageResponse("Password reset token has expired"));
+        }
+
+        User user = resetToken.getUser();
+        user.setPasswordHash(passwordEncoder.encode(resetRequest.getPassword()));
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
+
+        // Slett tokenen etter vellykket reset
+        passwordResetTokenRepository.delete(resetToken);
+
+        // Send bekreftelsesepost
+        emailService.sendPasswordResetConfirmationEmail(user.getEmail());
+
+        return ResponseEntity.ok(new MessageResponse("Password has been reset successfully"));
+    }
 
     /**
      * Helper method to extract cookie value
