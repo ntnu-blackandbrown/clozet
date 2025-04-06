@@ -13,12 +13,23 @@ import stud.ntnu.no.backend.shippingoption.repository.ShippingOptionRepository;
 
 import java.util.List;
 
+/**
+ * Implementation of the ShippingOptionService interface.
+ * <p>
+ * This class provides methods for managing shipping options, including CRUD operations.
+ */
 @Service
 public class ShippingOptionServiceImpl implements ShippingOptionService {
 
     private final ShippingOptionRepository shippingOptionRepository;
     private final ShippingOptionMapper shippingOptionMapper;
 
+    /**
+     * Constructs a new ShippingOptionServiceImpl with the specified dependencies.
+     *
+     * @param shippingOptionRepository the ShippingOptionRepository
+     * @param shippingOptionMapper the ShippingOptionMapper
+     */
     public ShippingOptionServiceImpl(ShippingOptionRepository shippingOptionRepository, 
                                      ShippingOptionMapper shippingOptionMapper) {
         this.shippingOptionRepository = shippingOptionRepository;
@@ -67,6 +78,15 @@ public class ShippingOptionServiceImpl implements ShippingOptionService {
         shippingOptionRepository.deleteById(id);
     }
 
+    /**
+     * Validates the given CreateShippingOptionDTO.
+     * <p>
+     * This method checks that the name is not null or empty, the price is non-negative,
+     * and the estimated days are non-negative.
+     *
+     * @param shippingOptionDTO the CreateShippingOptionDTO to validate
+     * @throws ShippingOptionValidationException if validation fails
+     */
     private void validateShippingOption(CreateShippingOptionDTO shippingOptionDTO) {
         if (shippingOptionDTO.getName() == null || shippingOptionDTO.getName().trim().isEmpty()) {
             throw new ShippingOptionValidationException("Name cannot be empty");
