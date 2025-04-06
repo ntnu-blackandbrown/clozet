@@ -13,4 +13,3 @@ public class EmptyFileException extends RuntimeException {
         super(message);
     }
 }
-

@@ -19,6 +19,8 @@ import stud.ntnu.no.backend.favorite.exception.FavoriteNotFoundException;
 import stud.ntnu.no.backend.favorite.exception.FavoriteValidationException;
 import stud.ntnu.no.backend.itemimage.exception.ItemImageNotFoundException;
 import stud.ntnu.no.backend.itemimage.exception.ItemImageValidationException;
+import stud.ntnu.no.backend.itemimage.exception.EmptyFileException;
+import stud.ntnu.no.backend.itemimage.exception.InvalidFileTypeException;
 import stud.ntnu.no.backend.location.exception.LocationNotFoundException;
 import stud.ntnu.no.backend.location.exception.LocationValidationException;
 import stud.ntnu.no.backend.message.exception.MessageNotFoundException;
@@ -199,6 +201,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ItemImageValidationException.class)
     public ResponseEntity<Object> handleItemImageValidationException(ItemImageValidationException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmptyFileException.class)
+    public ResponseEntity<Object> handleEmptyFileException(EmptyFileException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidFileTypeException.class)
+    public ResponseEntity<Object> handleInvalidFileTypeException(InvalidFileTypeException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
     // Item exception handlers

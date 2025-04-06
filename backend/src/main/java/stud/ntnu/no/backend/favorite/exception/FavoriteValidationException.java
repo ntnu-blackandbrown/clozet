@@ -1,4 +1,3 @@
-// src/main/java/stud/ntnu/no/backend/favorite/exception/FavoriteValidationException.java
 package stud.ntnu.no.backend.favorite.exception;
 
 import org.springframework.http.HttpStatus;
@@ -8,7 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Exception thrown when there is a validation error related to favorites.
  * Responds with HTTP status BAD_REQUEST.
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class FavoriteValidationException extends RuntimeException {
     /**
      * Constructs a new FavoriteValidationException with the specified detail message.
