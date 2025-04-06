@@ -11,6 +11,15 @@ import stud.ntnu.no.backend.common.security.model.CustomUserDetails;
 import stud.ntnu.no.backend.user.entity.User;
 import stud.ntnu.no.backend.user.repository.UserRepository;
 
+/**
+ * Service for loading user details from the database.
+ * <p>
+ * This service implements UserDetailsService and provides user details for authentication.
+ * </p>
+ * 
+ * @author YourName
+ * @version 1.0
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
     private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
@@ -18,6 +27,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Loads user details by username.
+     * 
+     * @param username the username
+     * @return the user details
+     * @throws UsernameNotFoundException if the user is not found
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.debug("Loading user details for: {}", username);

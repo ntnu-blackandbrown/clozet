@@ -10,10 +10,21 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Controller for testing authentication.
+ * <p>
+ * Provides an endpoint to check the current authenticated user's details.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/test")
 public class TestController {
 
+    /**
+     * Returns information about the currently authenticated user.
+     *
+     * @return a response entity containing authentication details
+     */
     @GetMapping("/who-am-i")
     public ResponseEntity<?> whoAmI() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

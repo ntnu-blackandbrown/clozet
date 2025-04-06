@@ -22,6 +22,16 @@ import stud.ntnu.no.backend.common.security.filter.JwtAuthenticationFilter;
 
 import java.util.Arrays;
 
+/**
+ * Configuration class for setting up security filters and authentication.
+ * <p>
+ * This class configures CORS, CSRF, session management, and exception handling.
+ * It also sets up the security filter chain and password encoding.
+ * </p>
+ * 
+ * @author YourName
+ * @version 1.0
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -35,6 +45,13 @@ public class SecurityConfig {
         this.jwtAuthFilter = jwtAuthFilter;
     }
 
+    /**
+     * Configures the security filter chain.
+     * 
+     * @param http the HttpSecurity to modify
+     * @return the configured SecurityFilterChain
+     * @throws Exception if an error occurs during configuration
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         logger.info("Configuring security filter chain");
@@ -74,12 +91,24 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Provides the authentication manager bean.
+     * 
+     * @param authenticationConfiguration the authentication configuration
+     * @return the authentication manager
+     * @throws Exception if an error occurs during retrieval
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    /**
+     * Provides the password encoder bean.
+     * 
+     * @return the password encoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
