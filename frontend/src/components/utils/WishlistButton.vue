@@ -38,6 +38,9 @@ onMounted(async () => {
 })
 
 const toggleWishlist = async () => {
+  if (!authStore.isLoggedIn) {
+    return
+  }
   isWishlisted.value = !isWishlisted.value
   // TODO: Implement actual wishlist functionality with backend
   console.log('current state of isWishlisted: ', isWishlisted.value)
@@ -61,8 +64,12 @@ const toggleWishlist = async () => {
 <template>
   <button
     class="wishlist-button"
-    :class="{ wishlisted: isWishlisted }"
+    :class="{
+      wishlisted: isWishlisted,
+      'disabled': !authStore.isLoggedIn
+    }"
     @click="toggleWishlist"
+    :disabled="!authStore.isLoggedIn"
     aria-label="Add to wishlist"
   >
     <svg
@@ -90,8 +97,13 @@ const toggleWishlist = async () => {
   justify-content: center;
 }
 
-.wishlist-button:hover {
+.wishlist-button:not(.disabled):hover {
   transform: scale(1.1);
+}
+
+.wishlist-button.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .wishlist-icon {
