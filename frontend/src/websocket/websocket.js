@@ -7,15 +7,30 @@ export const useWebsocket = defineStore('websocket', () => {
   const serverUrl = ref('http://localhost:8080/ws')
 
 const authStore = useAuthStore()
-const sender = ref(authStore.user.id)
+// Initialize sender as null and update it when needed
+const sender = ref(null)
+
+// Update sender when auth store changes
+const updateSender = () => {
+  if (authStore.user && authStore.user.id) {
+    sender.value = authStore.user.id.toString()
+    console.log('Sender updated:', sender.value)
+  } else {
+    console.warn('User ID not available in auth store')
+  }
+}
+
 //Will be set by a function
 const receiver = ref(0)
 const setReceiver = (id) => {
+  console.log('Setting receiver ID:', id, typeof id)
   receiver.value = id
+  console.log('Receiver ID after setting:', receiver.value, typeof receiver.value)
 }
 
 const messageContent = ref('')
 const logs = ref([])
+const messages = ref([])
 
 let stompClient = null
 let messageCount = 0
@@ -36,6 +51,10 @@ function updateConnectionStatus(status, message) {
 }
 
 function connect() {
+  // Update sender before connecting
+  updateSender()
+
+  console.log('Attempting to connect to WebSocket server...')
   updateConnectionStatus('connecting', 'Connecting...')
   log(`Attempting to connect to ${serverUrl.value}...`)
 
@@ -68,6 +87,16 @@ function subscribeToTopics() {
     try {
       const message = JSON.parse(msg.body)
       messageCount++
+
+      messages.value.push({
+        id: message.id,
+        senderId: message.senderId,
+        receiverId: message.receiverId,
+        content: message.content,
+        timestamp: message.createdAt,
+        type: 'received'
+      })
+
       log(`Received message #${messageCount}:<br>ID: ${message.id}<br>From: ${message.senderId}<br>To: ${message.receiverId}<br>Content: ${message.content}<br>Time: ${message.createdAt}`, 'message-received')
     } catch (e) {
       log(`Error parsing message: ${e.message}`, 'error')
@@ -95,10 +124,31 @@ function subscribeToTopics() {
 
 
 function sendMessage() {
+  console.log('Attempting to send message...')
+  console.log('Connection status:', connected.value)
+  console.log('Sender ID:', sender.value, typeof sender.value)
+  console.log('Receiver ID:', receiver.value, typeof receiver.value)
+  console.log('Message content:', messageContent.value, typeof messageContent.value)
+
   if (!connected.value || !stompClient) {
     log('Not connected. Connect first.', 'error')
     return
   }
+
+  // Check each field individually to identify which one is causing the issue
+  if (!sender.value) {
+    log('Sender ID is missing', 'error')
+    return
+  }
+  if (!receiver.value) {
+    log('Receiver ID is missing', 'error')
+    return
+  }
+  if (!messageContent.value) {
+    log('Message content is missing', 'error')
+    return
+  }
+
   if (!sender.value || !receiver.value || !messageContent.value) {
     log('Fill all fields', 'error')
     return
@@ -112,6 +162,16 @@ function sendMessage() {
   }
 
   stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(msg))
+
+  messages.value.push({
+    id: Date.now(),
+    senderId: msg.senderId,
+    receiverId: msg.receiverId,
+    content: msg.content,
+    timestamp: msg.createdAt,
+    type: 'sent'
+  })
+
   log(`Sent:<br>From: ${msg.senderId}<br>To: ${msg.receiverId}<br>Content: ${msg.content}`, 'message-sent')
   messageContent.value = ''
 }
@@ -149,6 +209,8 @@ return {
   logs,
   connectionStatus,
   connectionStatusClass,
-  connected
+  connected,
+  messages,
+  updateSender
 }
 })
