@@ -31,6 +31,18 @@ const activeChat = computed(() => {
   return chatId || null
 })
 
+// Helper function to get a chat ID (either conversationId or id)
+const getChatId = (conversation) => {
+  return conversation?.conversationId || conversation?.id;
+}
+
+// Helper function to find a conversation by chat ID
+const findConversationByChatId = (chatId) => {
+  return chats.value.find(chat =>
+    (chat.conversationId === chatId) || (chat.id === chatId)
+  );
+}
+
 /**
  * When a chat is selected from the sidebar:
  * - update the route
@@ -41,9 +53,19 @@ const activeChat = computed(() => {
 const handleChatSelect = async (chatId) => {
   console.log('Selecting chat:', chatId)
   try {
+    // Validate chatId is defined and not 'undefined'
+    if (!chatId || chatId === 'undefined') {
+      console.error('Invalid chat ID:', chatId);
+      return;
+    }
+
     router.push(`/messages/${chatId}`)
 
-    const selectedConversation = chats.value.find(chat => chat.id === chatId)
+    // Look for the conversation by conversationId OR id (depending on backend response)
+    const selectedConversation = chats.value.find(chat =>
+      (chat.conversationId === chatId) || (chat.id === chatId)
+    )
+
     if (!selectedConversation) {
       console.error('Selected conversation not found')
       return
@@ -56,6 +78,9 @@ const handleChatSelect = async (chatId) => {
     if (selectedConversation.receiverId) {
       console.log('Setting receiver ID:', selectedConversation.receiverId.toString())
       websocket.setReceiver(selectedConversation.receiverId.toString())
+
+      // Reset WebSocket messages to clear any old messages
+      websocket.clearMessages();
     } else {
       console.error('Selected conversation has no receiverId')
     }
@@ -68,7 +93,13 @@ const handleChatSelect = async (chatId) => {
       }
     })
 
-    chatMessages.value[chatId] = mssgResponse.data
+    // Ensure messages are sorted by timestamp
+    const sortedMessages = mssgResponse.data.sort((a, b) =>
+      new Date(a.timestamp) - new Date(b.timestamp)
+    );
+
+    // Store messages using the chatId from the parameter
+    chatMessages.value[chatId] = sortedMessages;
 
     if (selectedConversation.receiverId) {
       await fetchReceiverDetails(selectedConversation.receiverId)
@@ -130,27 +161,67 @@ onMounted(async () => {
       }
     })
 
-    chats.value = response.data
-    console.log('Loaded conversations:', chats.value)
+    // Filter out duplicate conversations and conversations with self
+    const uniqueConversations = [];
+    const conversationKeys = new Set();
+
+    response.data.forEach(convo => {
+      // Skip conversations where sender and receiver are the same
+      if (convo.senderId === convo.receiverId) {
+        console.log('Skipping self-conversation:', convo);
+        return;
+      }
+
+      // Create a unique key for each conversation (sorted IDs to handle both directions)
+      const ids = [convo.senderId, convo.receiverId].sort().join('-');
+
+      // Only add if we haven't seen this conversation before
+      if (!conversationKeys.has(ids)) {
+        conversationKeys.add(ids);
+
+        // Ensure receiverId is always the other person, not the current user
+        if (Number(convo.receiverId) === authStore.user?.id) {
+          // Swap sender and receiver if needed
+          const temp = convo.senderId;
+          convo.senderId = convo.receiverId;
+          convo.receiverId = temp;
+        }
+
+        uniqueConversations.push(convo);
+      }
+    });
+
+    chats.value = uniqueConversations;
+    console.log('Loaded unique conversations:', chats.value);
 
     // Step 2: Fetch receiver details for each conversation
     for (const convo of chats.value) {
       if (convo.receiverId) {
         await fetchReceiverDetails(convo.receiverId)
       } else {
-        console.warn(`Conversation ${convo.id} has no receiverId`)
+        console.warn(`Conversation ${convo.conversationId || convo.id} has no receiverId`)
       }
     }
 
     // Step 3: Handle initial chat selection based on URL or first available
     if (chats.value.length > 0) {
-      if (route.params.chatId) {
-        // If we have a chat ID in the route, select that chat
+      if (route.params.chatId && route.params.chatId !== 'undefined') {
+        // If we have a valid chat ID in the route, select that chat
         await handleChatSelect(route.params.chatId)
       } else {
-        // Otherwise, select the first chat
+        // Otherwise, select the first chat and update the URL
         const firstChat = chats.value[0]
-        await handleChatSelect(firstChat.id)
+        // Use conversationId as the primary identifier, fall back to id
+        const chatId = firstChat.conversationId || firstChat.id
+
+        if (chatId) {
+          // Instead of waiting for handleChatSelect to update the URL,
+          // update it first to avoid 'undefined' in the URL
+          router.replace(`/messages/${chatId}`)
+          await handleChatSelect(chatId)
+        } else {
+          console.error('First chat is invalid:', firstChat)
+        }
       }
     } else {
       console.log('No conversations available')
@@ -164,6 +235,27 @@ onMounted(async () => {
 const logConversations = () => {
   console.log('Current conversations:', JSON.stringify(chats.value, null, 2))
 }
+
+// Filter WebSocket messages to only show those relevant to current chat
+const filteredWebSocketMessages = computed(() => {
+  if (!activeChat.value) return [];
+
+  // Find conversation by either id or conversationId
+  const currentChat = chats.value.find(chat =>
+    (chat.conversationId === activeChat.value) || (chat.id === activeChat.value)
+  );
+
+  if (!currentChat) return [];
+
+  // Get the current receiver ID
+  const currentReceiverId = currentChat.receiverId?.toString();
+
+  // Filter WebSocket messages to only include those from/to current receiver
+  return websocket.messages.filter(msg => {
+    // Only messages from the current receiver or to the current receiver
+    return (msg.receiverId === currentReceiverId || msg.senderId === currentReceiverId);
+  });
+});
 </script>
 
 <template>
@@ -178,10 +270,13 @@ const logConversations = () => {
 
     <!-- Right area with WebSocket chat functionality -->
     <div class="chat-content">
+      <!-- WebSocket connection status -->
+      <div :class="['status', websocket.connectionStatusClass]">Status: {{ websocket.connectionStatus }}</div>
+
       <!-- Chat header with active user info -->
       <div v-if="activeChat" class="chat-header">
         <h2>
-          {{ receiverUsernames.get(chats.find(chat => chat.id === activeChat)?.receiverId) || 'Chat' }}
+          {{ receiverUsernames.get(findConversationByChatId(activeChat)?.receiverId) || 'Chat' }}
         </h2>
       </div>
 
@@ -191,19 +286,19 @@ const logConversations = () => {
           <!-- Historic messages from backend -->
           <div v-for="(msg, index) in chatMessages[activeChat]" :key="'chat-'+index"
                :class="['message', Number(msg.senderId) === authStore.user?.id ? 'message-sent' : 'message-received']">
-            <div class="message-header">
+            <div class="message-content">{{ msg.content }}</div>
+            <div class="message-footer">
               <span class="message-time">{{ formatTime(msg.timestamp) }}</span>
             </div>
-            <div class="message-content">{{ msg.content }}</div>
           </div>
 
-          <!-- WebSocket messages -->
-          <div v-for="(msg, index) in websocket.messages" :key="'ws-'+index"
+          <!-- WebSocket messages - filtered to only show those for the active conversation -->
+          <div v-for="(msg, index) in filteredWebSocketMessages" :key="'ws-'+index"
                :class="['message', msg.type === 'sent' ? 'message-sent' : 'message-received']">
-            <div class="message-header">
+            <div class="message-content">{{ msg.content }}</div>
+            <div class="message-footer">
               <span class="message-time">{{ formatTime(msg.timestamp) }}</span>
             </div>
-            <div class="message-content">{{ msg.content }}</div>
           </div>
         </div>
       </div>

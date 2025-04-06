@@ -9,9 +9,12 @@ export interface Message {
 
 export interface Conversation {
   id: string
+  conversationId?: string
+  senderId: number
   receiverId: number
   receiverName: string
   itemId: number
   listOfMessages: Message[]
   latestMessageTimestamp: string
+  lastMessage?: string
 }

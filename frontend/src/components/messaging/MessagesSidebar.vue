@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
 import axios from 'axios'
+import { useAuthStore } from '@/stores/AuthStore'
 import type { Message, Conversation } from '@/types/messaging'
 
 interface ItemDTO {
@@ -15,11 +16,26 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['select-chat'])
-
+const authStore = useAuthStore()
 const itemImages = ref<Map<number, string>>(new Map())
 
+// Get the chat ID for a conversation (conversationId or id)
+const getChatId = (conversation: Conversation) => {
+  return conversation.conversationId || conversation.id;
+}
+
+// Filter conversations to ensure we don't show self-conversations
+const filteredConversations = computed(() => {
+  return props.conversations.filter(conversation => {
+    // Skip conversations where the user is talking to themselves
+    return Number(conversation.receiverId) !== authStore.user?.id;
+  });
+});
+
 const activeConversation = computed(() => {
-  return props.conversations.find((conversation) => conversation.id === props.activeConversationId)
+  return filteredConversations.value.find((conversation) =>
+    getChatId(conversation) === props.activeConversationId
+  );
 })
 
 const getLatestMessage = (conversation: Conversation) => {
@@ -34,7 +50,7 @@ const getLatestMessage = (conversation: Conversation) => {
 }
 
 const getReceiverUsername = (conversation: Conversation) => {
-  console.log(`Getting username for conversation ${conversation.id}:`)
+  console.log(`Getting username for conversation ${getChatId(conversation)}:`)
   const numericReceiverId = Number(conversation.receiverId)
   console.log(`- receiverId: ${numericReceiverId}`)
   console.log(`- receiverName: ${conversation.receiverName}`)
@@ -53,9 +69,11 @@ onMounted(async () => {
   // Fetch images for all items in conversations
   for (const conversation of props.conversations) {
     try {
-      const response = await axios.get<ItemDTO>(`/api/items/${conversation.itemId}`)
-      if (response.data.images && response.data.images.length > 0) {
-        itemImages.value.set(conversation.itemId, response.data.images[0].imageUrl)
+      if (conversation.itemId) {
+        const response = await axios.get<ItemDTO>(`/api/items/${conversation.itemId}`)
+        if (response.data.images && response.data.images.length > 0) {
+          itemImages.value.set(conversation.itemId, response.data.images[0].imageUrl)
+        }
       }
     } catch (error) {
       console.error(`Failed to fetch images for item ${conversation.itemId}:`, error)
@@ -68,7 +86,7 @@ onMounted(async () => {
   <div class="messages-sidebar">
     <div class="messages-header">
       <h1>
-        Messages <span class="message-count">{{ conversations.length }}</span>
+        Messages <span class="message-count">{{ filteredConversations.length }}</span>
       </h1>
       <button class="new-message-btn">
         <i class="fas fa-pen"></i>
@@ -82,11 +100,11 @@ onMounted(async () => {
 
     <div class="messages-list">
       <div
-        v-for="conversation in conversations"
-        :key="conversation.id"
+        v-for="conversation in filteredConversations"
+        :key="getChatId(conversation)"
         class="chat-item"
-        :class="{ active: conversation.id === activeConversationId }"
-        @click="$emit('select-chat', conversation.id)"
+        :class="{ active: getChatId(conversation) === activeConversationId }"
+        @click="$emit('select-chat', getChatId(conversation))"
       >
         <div class="chat-avatar">
           <img

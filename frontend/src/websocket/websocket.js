@@ -198,6 +198,24 @@ function checkConnection() {
   }
 }
 
+// Clear WebSocket messages when changing chats
+function clearMessages() {
+  messages.value = []
+  log('Cleared WebSocket messages', 'info')
+}
+
+// Mark messages as read for a specific sender
+function markMessagesAsRead(senderId) {
+  if (connected.value && stompClient) {
+    const readStatus = {
+      senderId: senderId,
+      receiverId: sender.value,
+      read: true
+    }
+    stompClient.send('/app/chat.markRead', {}, JSON.stringify(readStatus))
+    log(`Marked messages from ${senderId} as read`, 'info')
+  }
+}
 
 return {
   sender,
@@ -209,6 +227,8 @@ return {
   sendMessage,
   pingServer,
   checkConnection,
+  clearMessages,
+  markMessagesAsRead,
   logs,
   connectionStatus,
   connectionStatusClass,
