@@ -12,6 +12,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Utility class for handling JWT operations.
+ * <p>
+ * This class provides methods for generating, validating, and extracting
+ * information from JWT tokens.
+ * </p>
+ * 
+ * @author YourName
+ * @version 1.0
+ */
 @Component
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
@@ -25,18 +35,36 @@ public class JwtUtils {
     @Value("${app.jwt.refresh-expiration}")
     private int jwtRefreshExpirationMs; // Refresh token utløpstid i millisekunder
 
+    /**
+     * Generates a JWT token for the given user details.
+     * 
+     * @param userDetails the user details
+     * @return the generated JWT token
+     */
     public String generateJwtToken(UserDetails userDetails) {
         logger.info("Generating JWT for user: {}", userDetails.getUsername());
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userDetails.getUsername());
     }
 
+    /**
+     * Generates a refresh token for the given user details.
+     * 
+     * @param userDetails the user details
+     * @return the generated refresh token
+     */
     public String generateRefreshToken(UserDetails userDetails) {
         logger.info("Generating refresh token for user: {}", userDetails.getUsername());
         Map<String, Object> claims = new HashMap<>();
         return createRefreshToken(claims, userDetails.getUsername());
     }
 
+    /**
+     * Validates the given JWT token.
+     * 
+     * @param authToken the JWT token
+     * @return true if the token is valid, false otherwise
+     */
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
@@ -56,6 +84,12 @@ public class JwtUtils {
         return false;
     }
 
+    /**
+     * Extracts the username from the given JWT token.
+     * 
+     * @param token the JWT token
+     * @return the username
+     */
     public String getUsernameFromToken(String token) {
         logger.debug("Extracting username from JWT");
         return getClaimFromToken(token, Claims::getSubject);

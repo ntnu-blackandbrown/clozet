@@ -37,6 +37,16 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * REST controller for handling authentication-related requests.
+ * <p>
+ * This controller provides endpoints for user registration, login, email verification,
+ * password reset, and logout.
+ * </p>
+ * 
+ * @author YourName
+ * @version 1.0
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -87,7 +97,10 @@ public class AuthController {
     }
 
     /**
-     * Register a new user and send verification email
+     * Registers a new user and sends a verification email.
+     * 
+     * @param registerUserDTO the user registration data
+     * @return a response entity with a success message
      */
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterUserDTO registerUserDTO) {
@@ -97,7 +110,11 @@ public class AuthController {
     }
 
     /**
-     * Authenticate a user and set JWT cookies
+     * Authenticates a user and sets JWT cookies.
+     * 
+     * @param loginRequest the login request data
+     * @param response the HTTP response
+     * @return a response entity with user details or an error message
      */
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginRequest, HttpServletResponse response) {
@@ -177,7 +194,11 @@ public class AuthController {
     }
 
     /**
-     * Verify a user's email using token
+     * Verifies a user's email using a token.
+     * 
+     * @param token the verification token
+     * @param response the HTTP response
+     * @return a response entity with a success or error message
      */
     @GetMapping("/verify")
     public ResponseEntity<?> verifyUser(@RequestParam String token, HttpServletResponse response) {
@@ -235,7 +256,10 @@ public class AuthController {
     }
 
     /**
-     * Logout user by invalidating tokens
+     * Logs out the user by invalidating tokens.
+     * 
+     * @param response the HTTP response
+     * @return a response entity with a success message
      */
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser(HttpServletResponse response) {
@@ -271,7 +295,10 @@ public class AuthController {
     }
 
     /**
-     * Request password reset email (Forgot Password)
+     * Requests a password reset email.
+     * 
+     * @param request the password reset request data
+     * @return a response entity with a success message
      */
     @PostMapping("/forgot-password")
     public ResponseEntity<?> requestPasswordReset(@RequestBody PasswordResetRequestDTO request) {
@@ -307,7 +334,10 @@ public class AuthController {
     }
 
     /**
-     * Validate reset token
+     * Validates a password reset token.
+     * 
+     * @param token the reset token
+     * @return a response entity with a success or error message
      */
     @GetMapping("/reset-password/validate")
     public ResponseEntity<?> validateResetToken(@RequestParam("token") String token) {
@@ -322,7 +352,10 @@ public class AuthController {
     }
 
     /**
-     * Reset password with token
+     * Resets the password using a token.
+     * 
+     * @param resetRequest the password reset request data
+     * @return a response entity with a success message
      */
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody PasswordResetDTO resetRequest) {
@@ -355,7 +388,11 @@ public class AuthController {
     }
 
     /**
-     * Helper method to extract cookie value
+     * Extracts the value of a cookie by name.
+     * 
+     * @param request the HTTP request
+     * @param cookieName the name of the cookie
+     * @return the cookie value or null if not found
      */
     private String getCookieValue(HttpServletRequest request, String cookieName) {
         if (request.getCookies() == null) {

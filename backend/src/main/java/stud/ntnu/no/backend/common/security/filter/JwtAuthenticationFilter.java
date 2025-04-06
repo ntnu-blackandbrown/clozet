@@ -20,6 +20,16 @@ import stud.ntnu.no.backend.common.security.util.JwtUtils;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * Filter for authenticating requests using JWT tokens.
+ * <p>
+ * This filter extracts JWT tokens from cookies, validates them, and sets the
+ * authentication context if valid.
+ * </p>
+ * 
+ * @author YourName
+ * @version 1.0
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -32,6 +42,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    /**
+     * Filters incoming requests to authenticate users based on JWT tokens.
+     * 
+     * @param request the HTTP request
+     * @param response the HTTP response
+     * @param filterChain the filter chain
+     * @throws ServletException if a servlet error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -60,6 +79,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Retrieves the JWT token from cookies.
+     * 
+     * @param request the HTTP request
+     * @return the JWT token or null if not found
+     */
     private String getJwtFromCookies(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
