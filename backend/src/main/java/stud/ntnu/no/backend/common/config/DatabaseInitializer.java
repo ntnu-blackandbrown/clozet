@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import stud.ntnu.no.backend.itemimage.repository.ItemImageRepository;
 import stud.ntnu.no.backend.category.entity.Category;
 import stud.ntnu.no.backend.category.repository.CategoryRepository;
 import stud.ntnu.no.backend.favorite.repository.FavoriteRepository;
@@ -18,6 +19,7 @@ import stud.ntnu.no.backend.location.entity.Location;
 import stud.ntnu.no.backend.location.repository.LocationRepository;
 import stud.ntnu.no.backend.message.dto.CreateMessageRequest;
 import stud.ntnu.no.backend.message.dto.MessageDTO;
+import stud.ntnu.no.backend.message.repository.MessageRepository;
 import stud.ntnu.no.backend.message.service.MessageService;
 import stud.ntnu.no.backend.shippingoption.entity.ShippingOption;
 import stud.ntnu.no.backend.shippingoption.repository.ShippingOptionRepository;
@@ -51,6 +53,9 @@ public class DatabaseInitializer {
   private ItemRepository itemRepository;
 
   @Autowired
+  private ItemImageRepository itemImageRepository;
+
+  @Autowired
   private CategoryRepository categoryRepository;
 
   @Autowired
@@ -61,6 +66,9 @@ public class DatabaseInitializer {
 
   @Autowired
   private FavoriteRepository favoriteRepository;
+
+  @Autowired
+  private MessageRepository messageRepository;
 
   @Autowired
   private PasswordEncoder passwordEncoder;
@@ -104,13 +112,29 @@ public class DatabaseInitializer {
   protected void cleanDatabase() {
     logger.info("Cleaning database - removing existing records");
     try {
+      // Delete in the correct order to respect foreign key constraints
+
+      // First delete records that may reference items or users
       favoriteRepository.deleteAllInBatch();
+      messageRepository.deleteAllInBatch();
+
+      // Delete item images before items
+      itemImageRepository.deleteAllInBatch();
+      logger.info("Deleted item images");
+
+      // Now safe to delete items
       itemRepository.deleteAllInBatch();
+      logger.info("Deleted items");
+
+      // Delete tokens and users
       verificationTokenRepository.deleteAllInBatch();
       passwordResetTokenRepository.deleteAllInBatch();
       userRepository.deleteAllInBatch();
+
+      logger.info("Database cleaned successfully");
     } catch (Exception e) {
       logger.error("Error cleaning database", e);
+      throw e;  // Re-throw to properly handle the exception
     }
   }
 
