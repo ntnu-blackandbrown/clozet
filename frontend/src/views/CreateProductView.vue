@@ -233,26 +233,45 @@ const onSubmit = handleSubmit(async (values) => {
       isVippsPaymentEnabled: values.isVippsPaymentEnabled,
     }
 
+    // 1. Create the item first
     const response = await axios.post('/api/items', payload, {
       headers: {
         'Content-Type': 'application/json',
       },
     })
 
-    testResult.value = `Success! Item created with ID: ${response.data.id}`
+    const itemId = response.data.id
+    testResult.value = `Success! Item created with ID: ${itemId}`
     console.log('Product created:', response.data)
 
-    // Optional: redirect after a short delay
+    // 2. Upload each image
+    for (const file of imageFiles.value) {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('itemId', itemId.toString())
+
+      await axios.post('/api/images/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+    }
+
+    testResult.value += ' and images uploaded successfully.'
+    console.log('All images uploaded.')
+
+    // Optional: redirect
     setTimeout(() => {
       router.push('/')
     }, 1000)
   } catch (error: any) {
     testResult.value = `Error: ${error.response?.data?.message || error.message}`
-    console.error('Error creating product:', error)
+    console.error('Error:', error)
   } finally {
     isSubmitting.value = false
   }
 })
+
 
 const handlePreview = () => {
   showPreview.value = true
