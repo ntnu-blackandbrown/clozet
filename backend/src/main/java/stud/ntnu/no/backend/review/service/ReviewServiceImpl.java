@@ -12,12 +12,23 @@ import stud.ntnu.no.backend.review.repository.ReviewRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Implementation of the ReviewService interface.
+ * <p>
+ * This class provides methods for managing reviews, including CRUD operations.
+ */
 @Service
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ReviewMapper reviewMapper;
 
+    /**
+     * Constructs a new ReviewServiceImpl with the specified dependencies.
+     *
+     * @param reviewRepository the ReviewRepository
+     * @param reviewMapper the ReviewMapper
+     */
     public ReviewServiceImpl(ReviewRepository reviewRepository, ReviewMapper reviewMapper) {
         this.reviewRepository = reviewRepository;
         this.reviewMapper = reviewMapper;
@@ -83,6 +94,15 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.deleteById(id);
     }
 
+    /**
+     * Validates the given ReviewDTO.
+     * <p>
+     * This method checks that the rating is not null and is between 1 and 5,
+     * and that the reviewer and reviewee IDs are not null and not the same.
+     *
+     * @param reviewDTO the ReviewDTO to validate
+     * @throws ReviewValidationException if validation fails
+     */
     private void validateReview(ReviewDTO reviewDTO) {
         if (reviewDTO.getRating() == null) {
             throw new ReviewValidationException("Rating cannot be null");
@@ -105,6 +125,14 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
     
+    /**
+     * Validates the given ReviewDTO for update.
+     * <p>
+     * This method checks that the rating, if provided, is between 1 and 5.
+     *
+     * @param reviewDTO the ReviewDTO to validate
+     * @throws ReviewValidationException if validation fails
+     */
     private void validateUpdateReview(ReviewDTO reviewDTO) {
         if (reviewDTO.getRating() != null && (reviewDTO.getRating() < 1 || reviewDTO.getRating() > 5)) {
             throw new ReviewValidationException("Rating must be between 1 and 5");
