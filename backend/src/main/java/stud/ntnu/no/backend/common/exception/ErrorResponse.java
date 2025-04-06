@@ -11,19 +11,19 @@ import java.time.LocalDateTime;
 public class ErrorResponse {
     private String message;
     private LocalDateTime timestamp;
-    private int statusCode;
+    private int status;
 
     /**
      * Constructs an {@code ErrorResponse} with the specified details.
      *
      * @param message   the error message
      * @param timestamp the time the error occurred
-     * @param statusCode the HTTP status code
+     * @param status the HTTP status code
      */
-    public ErrorResponse(String message, LocalDateTime timestamp, int statusCode) {
+    public ErrorResponse(String message, LocalDateTime timestamp, int status) {
         this.message = message;
         this.timestamp = timestamp;
-        this.statusCode = statusCode;
+        this.status = status;
     }
 
     /**
@@ -68,7 +68,7 @@ public class ErrorResponse {
      * @return the status code
      */
     public int getStatusCode() {
-        return statusCode;
+        return status;
     }
 
     /**
@@ -77,6 +77,6 @@ public class ErrorResponse {
      * @param statusCode the status code
      */
     public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
+        this.status = statusCode;
     }
 }

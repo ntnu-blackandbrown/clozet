@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Exception thrown when a requested category cannot be found.
  * Returns HTTP 404 Not Found response to the client.
  */
-@ResponseStatus(HttpStatus.NOT_FOUND)
+//@ResponseStatus(HttpStatus.NOT_FOUND)
 public class CategoryNotFoundException extends RuntimeException {
     /**
      * Constructs the exception with an error message including the category ID.

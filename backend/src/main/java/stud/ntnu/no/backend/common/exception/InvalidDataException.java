@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * Exception thrown when invalid data is encountered.
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
+//@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class InvalidDataException extends RuntimeException {
 
     /**
