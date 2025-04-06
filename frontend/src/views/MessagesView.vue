@@ -6,37 +6,40 @@ import ChatArea from '../components/messaging/ChatArea.vue'
 import axios from '@/api/axios'
 import { useAuthStore } from '@/stores/AuthStore'
 
+// Core stores and router
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 
-const chats = ref([])
-const chatMessages = ref({})
-const receiverDetails = ref({})
-const receiverUsernames = ref(new Map())
+// Reactive state
+const chats = ref([]) // All conversations the user is in
+const chatMessages = ref({}) // Messages grouped by chatId
+const receiverDetails = ref({}) // Active receiver's details
+const receiverUsernames = ref(new Map()) // Map of receiverId -> username
 
+// Returns currently active chatId from route (or null)
 const activeChat = computed(() => {
   const chatId = route.params.chatId
-  if (!chatId) return null
   const parsedId = parseInt(chatId)
   return isNaN(parsedId) ? null : parsedId
 })
 
+/**
+ * When a chat is selected from the sidebar:
+ * - update the route
+ * - fetch messages
+ * - fetch receiver details if needed
+ */
 const handleChatSelect = async (chatId) => {
   try {
-    // Update the route to reflect the selected chat
     router.push(`/messages/${chatId}`)
 
-    // Find the selected conversation
     const selectedConversation = chats.value.find(chat => chat.id === chatId)
     if (!selectedConversation) {
       console.error('Selected conversation not found')
       return
     }
 
-    console.log('Selected conversation:', selectedConversation)
-
-    // Fetch messages between sender and receiver
     const mssgResponse = await axios.get('/api/messages', {
       params: {
         senderId: authStore.user?.id?.toString(),
@@ -44,11 +47,8 @@ const handleChatSelect = async (chatId) => {
       }
     })
 
-    // Store messages for this chat
     chatMessages.value[chatId] = mssgResponse.data
-    console.log('Fetched messages:', mssgResponse.data)
 
-    // Fetch receiver details if not already fetched
     if (selectedConversation.receiverId) {
       await fetchReceiverDetails(selectedConversation.receiverId)
     }
@@ -57,45 +57,52 @@ const handleChatSelect = async (chatId) => {
   }
 }
 
+/**
+ * Fetch and store user details for a given receiverId.
+ * Saves a readable name to the receiverUsernames map.
+ */
 const fetchReceiverDetails = async (receiverId) => {
   try {
-    console.log(`Fetching details for receiver ID: ${receiverId}`)
-    // Convert receiverId to number to ensure consistent type
     const numericReceiverId = Number(receiverId)
     const response = await axios.get(`/api/users/${numericReceiverId}`)
 
     if (response.data) {
       receiverDetails.value = response.data
-      // Make sure we're using the numeric ID as the key
-      receiverUsernames.value.set(numericReceiverId, response.data.usernameOrEmail || response.data.username || response.data.firstName)
-      console.log(`Stored username for receiver ${numericReceiverId}:`, response.data)
-      console.log('Current receiverUsernames map:', Object.fromEntries(receiverUsernames.value))
+
+      const readableName =
+        response.data.usernameOrEmail ||
+        response.data.username ||
+        response.data.firstName
+
+      receiverUsernames.value.set(numericReceiverId, readableName)
       return response.data
     } else {
       console.warn(`No data received for receiver ID ${numericReceiverId}`)
       return null
     }
   } catch (error) {
-    console.error(`Failed to fetch receiver details for ID ${receiverId}:`, error.response || error)
+    console.error(`Failed to fetch receiver details for ID ${receiverId}:`, error)
     return null
   }
 }
 
+/**
+ * Handles sending a new message to the backend.
+ * Updates local chat message list after sending.
+ */
 const handleNewMessage = async ({ chatId, message }) => {
   if (!chatMessages.value[chatId]) {
     chatMessages.value[chatId] = []
   }
 
   try {
-    // Send message to backend
-    const response = await axios.post('/api/messages', {
+    await axios.post('/api/messages', {
       senderId: message.senderId.toString(),
       receiverId: message.receiverId.toString(),
       content: message.content,
       timestamp: new Date().toISOString(),
     })
 
-    // Fetch updated messages between sender and receiver
     const selectedConversation = chats.value.find(chat => chat.id === chatId)
     if (selectedConversation) {
       const mssgResponse = await axios.get('/api/messages', {
@@ -111,50 +118,37 @@ const handleNewMessage = async ({ chatId, message }) => {
   }
 }
 
-// Set initial chat if none selected and fetch conversations
+/**
+ * Lifecycle hook: on mount
+ * - fetches all user conversations
+ * - fetches all receiver details
+ * - preloads messages for first conversation or active route
+ */
 onMounted(async () => {
   try {
-    // Fetch all conversations
+    // Step 1: Load all conversations for the logged-in user
     const response = await axios.get('/api/conversations', {
       params: {
         userId: authStore.user?.id?.toString() || ''
       }
     })
 
-    // Log the entire response data structure
-    console.log('Full response data:', response.data)
-
-    // Log each conversation's details
-    response.data.forEach((conversation, index) => {
-      console.log(`Conversation ${index + 1}:`, {
-        id: conversation.id,
-        receiverId: conversation.receiverId,
-        senderId: conversation.senderId,
-        receiverName: conversation.receiverName,
-        latestMessage: conversation.latestMessage
-      })
-    })
-
     chats.value = response.data
-    console.log('Updated chats value:', chats.value)
 
-    // Fetch receiver details for all conversations
-    for (const conversation of chats.value) {
-      if (conversation.receiverId) {
-        console.log(`Processing conversation ${conversation.id} with receiverId ${conversation.receiverId}`)
-        await fetchReceiverDetails(conversation.receiverId)
+    // Step 2: Fetch receiver details for each conversation
+    for (const convo of chats.value) {
+      if (convo.receiverId) {
+        await fetchReceiverDetails(convo.receiverId)
       } else {
-        console.warn(`Conversation ${conversation.id} has no receiverId`)
+        console.warn(`Conversation ${convo.id} has no receiverId`)
       }
     }
 
-    // If there are conversations and we're on the base messages route
+    // Step 3: If on /messages and we have chats, load the first one
     if (chats.value.length > 0 && !route.params.chatId) {
-      // Navigate to the first conversation and fetch its messages
       const firstChat = chats.value[0]
       router.replace(`/messages/${firstChat.id}`)
 
-      // Fetch initial messages for the first conversation
       const mssgResponse = await axios.get('/api/messages', {
         params: {
           senderId: authStore.user?.id?.toString(),
@@ -166,7 +160,7 @@ onMounted(async () => {
       console.log('No conversations available')
     }
 
-    // If we have an active chat from the URL, fetch its messages
+    // Step 4: If navigating directly to a chat URL, load its messages
     if (activeChat.value) {
       const activeConversation = chats.value.find(chat => chat.id === activeChat.value)
       if (activeConversation) {
@@ -184,6 +178,7 @@ onMounted(async () => {
   }
 })
 </script>
+
 
 <template>
   <div class="messages-container">
