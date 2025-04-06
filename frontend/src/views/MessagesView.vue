@@ -119,7 +119,8 @@ onMounted(async () => {
     // Update the sender ID in the WebSocket store
     websocket.updateSender()
 
-    // Connect to WebSocket
+    // Connect to WebSocket immediately on mount
+    console.log('Connecting to WebSocket on mount')
     websocket.connect()
 
     // Step 1: Load all conversations for the logged-in user
@@ -200,7 +201,7 @@ const logConversations = () => {
         <div class="messages-list">
           <!-- Historic messages from backend -->
           <div v-for="(msg, index) in chatMessages[activeChat]" :key="'chat-'+index"
-               :class="['message', msg.senderId === authStore.user?.id ? 'message-sent' : 'message-received']">
+               :class="['message', Number(msg.senderId) === authStore.user?.id ? 'message-sent' : 'message-received']">
             <div class="message-header">
               <span class="message-time">{{ formatTime(msg.timestamp) }}</span>
             </div>
