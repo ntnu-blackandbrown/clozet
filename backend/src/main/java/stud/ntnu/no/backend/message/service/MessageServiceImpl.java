@@ -1,5 +1,7 @@
 package stud.ntnu.no.backend.message.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stud.ntnu.no.backend.message.dto.CreateMessageRequest;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 @Service
 public class MessageServiceImpl implements MessageService {
 
+    private static final Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
+
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
     private final WebSocketService webSocketService;
@@ -41,6 +45,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<MessageDTO> getAllMessages() {
+        logger.info("Retrieving all messages");
         return messageRepository.findAll().stream()
                 .map(messageMapper::toDTO)
                 .collect(Collectors.toList());
@@ -48,6 +53,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageDTO getMessageById(Long id) {
+        logger.info("Retrieving message with ID: {}", id);
         Message message = messageRepository.findById(id)
                 .orElseThrow(() -> new MessageNotFoundException(id));
         return messageMapper.toDTO(message);
@@ -55,6 +61,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageDTO createMessage(CreateMessageRequest request) {
+        logger.info("Creating new message from sender: {}", request.getSenderId());
         Message message = messageMapper.toEntity(request);
         Message savedMessage = messageRepository.save(message);
         MessageDTO messageDTO = messageMapper.toDTO(savedMessage);
@@ -67,6 +74,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageDTO updateMessage(Long id, UpdateMessageRequest request) {
+        logger.info("Updating message with ID: {}", id);
         Message message = messageRepository.findById(id)
                 .orElseThrow(() -> new MessageNotFoundException(id));
         
@@ -82,6 +90,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageDTO markAsRead(Long id) {
+        logger.info("Marking message as read with ID: {}", id);
         Message message = messageRepository.findById(id)
             .orElseThrow(() -> new MessageNotFoundException(id));
 
@@ -102,6 +111,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void deleteMessage(Long id) {
+        logger.info("Deleting message with ID: {}", id);
         if (!messageRepository.existsById(id)) {
             throw new MessageNotFoundException(id);
         }

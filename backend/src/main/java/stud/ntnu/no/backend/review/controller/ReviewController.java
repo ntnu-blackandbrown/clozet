@@ -7,6 +7,7 @@ import stud.ntnu.no.backend.review.dto.ReviewDTO;
 import stud.ntnu.no.backend.review.service.ReviewService;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * REST controller for managing reviews.
@@ -16,6 +17,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/reviews")
 public class ReviewController {
+    
+    private static final Logger logger = Logger.getLogger(ReviewController.class.getName());
     
     private final ReviewService reviewService;
     
@@ -35,6 +38,7 @@ public class ReviewController {
      */
     @GetMapping
     public ResponseEntity<List<ReviewDTO>> getAllReviews() {
+        logger.info("Fetching all reviews");
         return ResponseEntity.ok(reviewService.getAllReviews());
     }
     
@@ -46,6 +50,7 @@ public class ReviewController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ReviewDTO> getReview(@PathVariable Long id) {
+        logger.info("Fetching review with id: " + id);
         return ResponseEntity.ok(reviewService.getReview(id));
     }
     
@@ -57,6 +62,7 @@ public class ReviewController {
      */
     @GetMapping("/reviewee/{revieweeId}")
     public ResponseEntity<List<ReviewDTO>> getReviewsByReviewee(@PathVariable Long revieweeId) {
+        logger.info("Fetching reviews for reviewee with id: " + revieweeId);
         return ResponseEntity.ok(reviewService.getReviewsByReviewee(revieweeId));
     }
     
@@ -68,6 +74,7 @@ public class ReviewController {
      */
     @GetMapping("/reviewer/{reviewerId}")
     public ResponseEntity<List<ReviewDTO>> getReviewsByReviewer(@PathVariable Long reviewerId) {
+        logger.info("Fetching reviews for reviewer with id: " + reviewerId);
         return ResponseEntity.ok(reviewService.getReviewsByReviewer(reviewerId));
     }
     
@@ -79,6 +86,7 @@ public class ReviewController {
      */
     @PostMapping
     public ResponseEntity<ReviewDTO> createReview(@Valid @RequestBody ReviewDTO reviewDTO) {
+        logger.info("Creating new review");
         return ResponseEntity.ok(reviewService.createReview(reviewDTO));
     }
     
@@ -91,6 +99,7 @@ public class ReviewController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @Valid @RequestBody ReviewDTO reviewDTO) {
+        logger.info("Updating review with id: " + id);
         return ResponseEntity.ok(reviewService.updateReview(id, reviewDTO));
     }
     
@@ -102,6 +111,7 @@ public class ReviewController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
+        logger.info("Deleting review with id: " + id);
         reviewService.deleteReview(id);
         return ResponseEntity.noContent().build();
     }

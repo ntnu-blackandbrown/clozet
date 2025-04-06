@@ -19,6 +19,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class HistoryServiceImpl implements HistoryService {
     
@@ -26,6 +29,7 @@ public class HistoryServiceImpl implements HistoryService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final HistoryMapper historyMapper;
+    private static final Logger logger = LoggerFactory.getLogger(HistoryServiceImpl.class);
     
     /**
      * Constructs a new HistoryServiceImpl with the specified repositories and mapper.
@@ -59,13 +63,21 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     @Transactional
     public HistoryDTO addToHistory(Long userId, Long itemId) {
+        logger.info("Adding item {} to history for user {}", itemId, userId);
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+            .orElseThrow(() -> {
+                logger.error("User not found with id: {}", userId);
+                return new UserNotFoundException("User not found with id: " + userId);
+            });
 
         Item item = itemRepository.findById(itemId)
-            .orElseThrow(() -> new ItemNotFoundException("Item not found with id: " + itemId));
+            .orElseThrow(() -> {
+                logger.error("Item not found with id: {}", itemId);
+                return new ItemNotFoundException("Item not found with id: " + itemId);
+            });
 
         if (userId == null || itemId == null) {
+            logger.error("User ID and Item ID cannot be null");
             throw new HistoryValidationException("User ID and Item ID cannot be null");
         }
 
@@ -74,7 +86,9 @@ public class HistoryServiceImpl implements HistoryService {
             History history = existingHistory.get();
             history.setViewedAt(LocalDateTime.now());
             history.setActive(true);
-            return historyMapper.toDto(historyRepository.save(history));
+            HistoryDTO historyDTO = historyMapper.toDto(historyRepository.save(history));
+            logger.info("Item {} already in history for user {}, updated timestamp", itemId, userId);
+            return historyDTO;
         }
 
         History history = new History();
@@ -83,7 +97,9 @@ public class HistoryServiceImpl implements HistoryService {
         history.setViewedAt(LocalDateTime.now());
         history.setActive(true);
 
-        return historyMapper.toDto(historyRepository.save(history));
+        HistoryDTO historyDTO = historyMapper.toDto(historyRepository.save(history));
+        logger.info("Item {} added to history for user {}", itemId, userId);
+        return historyDTO;
     }
 
     /**
@@ -98,16 +114,27 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     @Transactional
     public void removeFromHistory(Long userId, Long itemId) {
+        logger.info("Removing item {} from history for user {}", itemId, userId);
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+            .orElseThrow(() -> {
+                logger.error("User not found with id: {}", userId);
+                return new UserNotFoundException("User not found with id: " + userId);
+            });
 
         Item item = itemRepository.findById(itemId)
-            .orElseThrow(() -> new ItemNotFoundException("Item not found with id: " + itemId));
+            .orElseThrow(() -> {
+                logger.error("Item not found with id: {}", itemId);
+                return new ItemNotFoundException("Item not found with id: " + itemId);
+            });
 
         History history = historyRepository.findByUserAndItem(user, item)
-            .orElseThrow(() -> new HistoryNotFoundException("History entry not found for user ID: " + userId + " and item ID: " + itemId));
+            .orElseThrow(() -> {
+                logger.error("History entry not found for user ID: {} and item ID: {}", userId, itemId);
+                return new HistoryNotFoundException("History entry not found for user ID: " + userId + " and item ID: " + itemId);
+            });
 
         historyRepository.delete(history);
+        logger.info("Item {} removed from history for user {}", itemId, userId);
     }
     
     /**
@@ -119,10 +146,15 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     @Transactional
     public void deleteHistory(Long userId) {
+        logger.info("Deleting history for user {}", userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> {
+                    logger.error("User not found with id: {}", userId);
+                    return new RuntimeException("User not found with id: " + userId);
+                });
         
         historyRepository.deleteByUser(user);
+        logger.info("History deleted for user {}", userId);
     }
     
     /**
@@ -135,14 +167,19 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     @Transactional
     public void pauseHistory(Long userId, boolean pause) {
+        logger.info("Pausing history for user {} - {}", userId, pause);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> {
+                    logger.error("User not found with id: {}", userId);
+                    return new RuntimeException("User not found with id: " + userId);
+                });
         
         List<History> userHistory = historyRepository.findByUserOrderByViewedAtDesc(user);
         for (History history : userHistory) {
             history.setActive(!pause);
         }
         historyRepository.saveAll(userHistory);
+        logger.info("History paused for user {} - {}", userId, pause);
     }
     
     /**
@@ -155,11 +192,17 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     @Transactional(readOnly = true)
     public List<HistoryDTO> getUserHistory(Long userId) {
+        logger.info("Getting history for user {}", userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> {
+                    logger.error("User not found with id: {}", userId);
+                    return new RuntimeException("User not found with id: " + userId);
+                });
         
-        return historyMapper.toDtoList(
+        List<HistoryDTO> historyDTOs = historyMapper.toDtoList(
             historyRepository.findByUserAndActiveOrderByViewedAtDesc(user, true)
         );
+        logger.info("History retrieved for user {}", userId);
+        return historyDTOs;
     }
 }

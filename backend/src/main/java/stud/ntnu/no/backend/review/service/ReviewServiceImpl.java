@@ -11,6 +11,7 @@ import stud.ntnu.no.backend.review.repository.ReviewRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Implementation of the ReviewService interface.
@@ -19,6 +20,8 @@ import java.util.List;
  */
 @Service
 public class ReviewServiceImpl implements ReviewService {
+
+    private static final Logger logger = Logger.getLogger(ReviewServiceImpl.class.getName());
 
     private final ReviewRepository reviewRepository;
     private final ReviewMapper reviewMapper;
@@ -36,11 +39,13 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<ReviewDTO> getAllReviews() {
+        logger.info("Fetching all reviews");
         return reviewMapper.toDtoList(reviewRepository.findAll());
     }
 
     @Override
     public ReviewDTO getReview(Long id) {
+        logger.info("Fetching review with id: " + id);
         Review review = reviewRepository.findById(id)
             .orElseThrow(() -> new ReviewNotFoundException("Review not found with id: " + id));
         return reviewMapper.toDto(review);
@@ -48,17 +53,20 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<ReviewDTO> getReviewsByReviewee(Long revieweeId) {
+        logger.info("Fetching reviews for reviewee with id: " + revieweeId);
         return reviewMapper.toDtoList(reviewRepository.findByRevieweeId(revieweeId));
     }
 
     @Override
     public List<ReviewDTO> getReviewsByReviewer(Long reviewerId) {
+        logger.info("Fetching reviews for reviewer with id: " + reviewerId);
         return reviewMapper.toDtoList(reviewRepository.findByReviewerId(reviewerId));
     }
 
     @Override
     @Transactional
     public ReviewDTO createReview(ReviewDTO reviewDTO) {
+        logger.info("Creating new review");
         validateReview(reviewDTO);
         Review review = reviewMapper.toEntity(reviewDTO);
         review.setCreatedAt(LocalDateTime.now());
@@ -69,6 +77,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public ReviewDTO updateReview(Long id, ReviewDTO reviewDTO) {
+        logger.info("Updating review with id: " + id);
         Review existingReview = reviewRepository.findById(id)
             .orElseThrow(() -> new ReviewNotFoundException("Review not found with id: " + id));
 
@@ -88,6 +97,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public void deleteReview(Long id) {
+        logger.info("Deleting review with id: " + id);
         if (!reviewRepository.existsById(id)) {
             throw new ReviewNotFoundException("Review not found with id: " + id);
         }

@@ -1,5 +1,7 @@
 package stud.ntnu.no.backend.user.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,8 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private UserService userService;
 
@@ -28,6 +32,7 @@ public class UserController {
      */
     @GetMapping
     public List<UserDTO> getAllUsers() {
+        logger.debug("Retrieving all users");
         return userService.getAllUsers();
     }
 
@@ -39,6 +44,7 @@ public class UserController {
      */
     @GetMapping("/{id}")
     public UserDTO getUserById(@PathVariable Long id) {
+        logger.debug("Retrieving user with ID: {}", id);
         return userService.getUserById(id);
     }
 
@@ -51,6 +57,7 @@ public class UserController {
      */
     @PutMapping("/{id}")
     public UserDTO updateUser(@PathVariable Long id, @RequestBody UpdateUserDTO updateUserDTO) {
+        logger.debug("Updating user with ID: {}", id);
         return userService.updateUser(id, updateUserDTO);
     }
 
@@ -62,6 +69,7 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        logger.debug("Deleting user with ID: {}", id);
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

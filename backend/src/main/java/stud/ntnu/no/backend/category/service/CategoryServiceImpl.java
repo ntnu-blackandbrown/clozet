@@ -12,6 +12,8 @@ import stud.ntnu.no.backend.category.repository.CategoryRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of the CategoryService interface.
@@ -19,6 +21,8 @@ import java.util.List;
  */
 @Service
 public class CategoryServiceImpl implements CategoryService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
@@ -38,7 +42,10 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public List<CategoryDTO> getAllCategories() {
-        return categoryMapper.toDtoList(categoryRepository.findAll());
+        logger.info("Fetching all categories");
+        List<CategoryDTO> categories = categoryMapper.toDtoList(categoryRepository.findAll());
+        logger.debug("Found {} categories", categories.size());
+        return categories;
     }
 
     /**
@@ -46,9 +53,13 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public CategoryDTO getCategory(Long id) {
+        logger.info("Fetching category with id: {}", id);
         return categoryRepository.findById(id)
             .map(categoryMapper::toDto)
-            .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: " + id));
+            .orElseThrow(() -> {
+                logger.warn("Category not found with id: {}", id);
+                return new CategoryNotFoundException("Category not found with id: " + id);
+            });
     }
 
     /**
@@ -58,9 +69,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional(readOnly = true)
     public List<CategoryDTO> getTopFiveCategories() {
+        logger.info("Fetching top five categories");
         Pageable topFive = PageRequest.of(0, 5);
         List<Category> topCategories = categoryRepository.findTopCategoriesByFavoriteCount(topFive);
-        return categoryMapper.toDtoList(topCategories);
+        List<CategoryDTO> categoryDTOs = categoryMapper.toDtoList(topCategories);
+        logger.debug("Found {} top categories", categoryDTOs.size());
+        return categoryDTOs;
     }
 
     /**
@@ -70,10 +84,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+        logger.info("Creating a new category with name: {}", categoryDTO.getName());
         Category category = categoryMapper.toEntity(categoryDTO);
         category.setCreatedAt(LocalDateTime.now());
         category.setUpdatedAt(LocalDateTime.now());
-        return categoryMapper.toDto(categoryRepository.save(category));
+        Category savedCategory = categoryRepository.save(category);
+        logger.debug("Category created with id: {}", savedCategory.getId());
+        return categoryMapper.toDto(savedCategory);
     }
 
     /**
@@ -83,8 +100,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
+        logger.info("Updating category with id: {}", id);
         Category existingCategory = categoryRepository.findById(id)
-            .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: " + id));
+            .orElseThrow(() -> {
+                logger.warn("Category not found with id: {}", id);
+                return new CategoryNotFoundException("Category not found with id: " + id);
+            });
 
         if (categoryDTO.getName() != null) {
             existingCategory.setName(categoryDTO.getName());
@@ -94,7 +115,9 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         existingCategory.setUpdatedAt(LocalDateTime.now());
-        return categoryMapper.toDto(categoryRepository.save(existingCategory));
+        Category updatedCategory = categoryRepository.save(existingCategory);
+        logger.debug("Category updated with id: {}", updatedCategory.getId());
+        return categoryMapper.toDto(updatedCategory);
     }
 
     /**
@@ -104,9 +127,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(Long id) {
+        logger.info("Deleting category with id: {}", id);
         if (!categoryRepository.existsById(id)) {
+            logger.warn("Category not found with id: {}", id);
             throw new CategoryNotFoundException("Category not found with id: " + id);
         }
         categoryRepository.deleteById(id);
+        logger.debug("Category deleted with id: {}", id);
     }
 }

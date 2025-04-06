@@ -2,6 +2,8 @@ package stud.ntnu.no.backend.itemimage.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
@@ -19,6 +21,7 @@ import java.util.Map;
 @ConditionalOnProperty(name = "app.storage.use-cloudinary", havingValue = "true")
 @Primary
 public class CloudinaryStorageService implements FileStorageService {
+    private static final Logger logger = LoggerFactory.getLogger(CloudinaryStorageService.class);
     private final Cloudinary cloudinary;
 
     @Autowired
@@ -36,12 +39,15 @@ public class CloudinaryStorageService implements FileStorageService {
      */
     @Override
     public String storeFile(MultipartFile file, Long itemId) throws IOException {
+        logger.info("Storing file in Cloudinary for item ID: {}", itemId);
         Map<String, Object> params = ObjectUtils.asMap(
                 "folder", "items/" + itemId,
                 "resource_type", "auto"
         );
-        
+
         Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), params);
-        return (String) uploadResult.get("secure_url");
+        String url = (String) uploadResult.get("secure_url");
+        logger.info("File stored successfully in Cloudinary at: {}", url);
+        return url;
     }
 }

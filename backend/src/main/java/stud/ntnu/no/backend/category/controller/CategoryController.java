@@ -8,6 +8,8 @@ import stud.ntnu.no.backend.category.dto.CategoryDTO;
 import stud.ntnu.no.backend.category.service.CategoryService;
 
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * REST controller for managing category-related HTTP requests.
@@ -17,6 +19,7 @@ import java.util.List;
 @RequestMapping("/api/categories")
 public class CategoryController {
 
+    private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
     private final CategoryService categoryService;
 
     /**
@@ -36,7 +39,10 @@ public class CategoryController {
      */
     @GetMapping("/top-five")
     public List<CategoryDTO> getTopFiveCategories() {
-        return categoryService.getTopFiveCategories();
+        logger.info("Request received to get top five categories");
+        List<CategoryDTO> categories = categoryService.getTopFiveCategories();
+        logger.debug("Returning {} top categories", categories.size());
+        return categories;
     }
     
     /**
@@ -46,6 +52,9 @@ public class CategoryController {
      */
     @GetMapping
     public List<CategoryDTO> getAllCategories() {
-        return categoryService.getAllCategories();
+        logger.info("Request received to get all categories");
+        List<CategoryDTO> categories = categoryService.getAllCategories();
+        logger.debug("Returning {} categories", categories.size());
+        return categories;
     }
 }

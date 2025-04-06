@@ -1,5 +1,7 @@
 package stud.ntnu.no.backend.itemimage.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.UUID;
 @Service("localFileStorageService")
 @ConditionalOnProperty(name = "app.storage.use-cloudinary", havingValue = "false", matchIfMissing = true)
 public class LocalFileStorageService implements FileStorageService {
+    private static final Logger logger = LoggerFactory.getLogger(LocalFileStorageService.class);
     private final Path fileStorageLocation;
 
     /**
@@ -32,7 +35,9 @@ public class LocalFileStorageService implements FileStorageService {
         this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
         try {
             Files.createDirectories(this.fileStorageLocation);
+            logger.info("Upload directory created at: {}", this.fileStorageLocation);
         } catch (IOException ex) {
+            logger.error("Could not create upload directory", ex);
             throw new RuntimeException("Could not create upload directory", ex);
         }
     }
@@ -47,9 +52,11 @@ public class LocalFileStorageService implements FileStorageService {
      */
     @Override
     public String storeFile(MultipartFile file, Long itemId) throws IOException {
+        logger.info("Storing file for item ID: {}", itemId);
         Path itemDirectory = fileStorageLocation.resolve(itemId.toString());
         if (!Files.exists(itemDirectory)) {
             Files.createDirectories(itemDirectory);
+            logger.info("Created directory for item ID: {}", itemId);
         }
 
         String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
@@ -59,6 +66,7 @@ public class LocalFileStorageService implements FileStorageService {
 
         Path targetLocation = itemDirectory.resolve(filename);
         Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+        logger.info("File stored successfully at: {}", targetLocation);
 
         return "/images/" + itemId + "/" + filename;
     }

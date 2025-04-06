@@ -3,6 +3,8 @@ package stud.ntnu.no.backend.message.controller;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * WebSocket controller for handling chat messages.
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class WebSocketController {
 
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketController.class);
+
     @MessageMapping("/chat.ping")
     @SendTo("/topic/pong")
     /**
@@ -20,6 +24,7 @@ public class WebSocketController {
      * @return the string "pong"
      */
     public String handlePing() {
+        logger.info("Received ping message");
         return "pong";
     }
 } 
