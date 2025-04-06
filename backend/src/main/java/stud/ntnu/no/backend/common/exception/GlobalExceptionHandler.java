@@ -1,5 +1,7 @@
 package stud.ntnu.no.backend.common.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +9,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import stud.ntnu.no.backend.history.exception.HistoryNotFoundException;
 import stud.ntnu.no.backend.history.exception.HistoryValidationException;
 import stud.ntnu.no.backend.item.exception.ItemNotFoundException;
@@ -18,6 +19,8 @@ import stud.ntnu.no.backend.favorite.exception.FavoriteNotFoundException;
 import stud.ntnu.no.backend.favorite.exception.FavoriteValidationException;
 import stud.ntnu.no.backend.itemimage.exception.ItemImageNotFoundException;
 import stud.ntnu.no.backend.itemimage.exception.ItemImageValidationException;
+import stud.ntnu.no.backend.itemimage.exception.EmptyFileException;
+import stud.ntnu.no.backend.itemimage.exception.InvalidFileTypeException;
 import stud.ntnu.no.backend.location.exception.LocationNotFoundException;
 import stud.ntnu.no.backend.location.exception.LocationValidationException;
 import stud.ntnu.no.backend.message.exception.MessageNotFoundException;
@@ -28,7 +31,6 @@ import stud.ntnu.no.backend.review.exception.ReviewNotFoundException;
 import stud.ntnu.no.backend.review.exception.ReviewValidationException;
 import stud.ntnu.no.backend.shippingoption.exception.ShippingOptionNotFoundException;
 import stud.ntnu.no.backend.shippingoption.exception.ShippingOptionValidationException;
-
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -42,6 +44,8 @@ import java.util.Map;
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * Handles {@code DataIntegrityViolationException}.
@@ -141,7 +145,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllUncaughtException(Exception ex) {
-        return buildErrorResponse("Unexpected error occurred: " + ex.getMessage(),
+        logger.error("Unexpected error occurred", ex);
+        return buildErrorResponse("An unexpected error occurred.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -153,13 +158,9 @@ public class GlobalExceptionHandler {
      * @return a response entity with error details
      */
     private ResponseEntity<Object> buildErrorResponse(String message, HttpStatus status) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", status.value());
-        body.put("error", status.getReasonPhrase());
-        body.put("message", message);
-
-        return new ResponseEntity<>(body, status);
+        logger.warn("Handling exception with message: {}", message);
+        ErrorResponse errorResponse = new ErrorResponse(message, LocalDateTime.now(), status.value());
+        return new ResponseEntity<>(errorResponse, status);
     }
 
     // Message exception handler
@@ -202,6 +203,16 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(EmptyFileException.class)
+    public ResponseEntity<Object> handleEmptyFileException(EmptyFileException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidFileTypeException.class)
+    public ResponseEntity<Object> handleInvalidFileTypeException(InvalidFileTypeException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+    }
+
     // Item exception handlers
     @ExceptionHandler(ItemNotFoundException.class)
     public ResponseEntity<Object> handleItemNotFoundException(ItemNotFoundException ex) {
@@ -224,8 +235,6 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-
-
     // ShippingOption exception handlers
     @ExceptionHandler(ShippingOptionNotFoundException.class)
     public ResponseEntity<Object> handleShippingOptionNotFoundException(ShippingOptionNotFoundException ex) {
@@ -239,29 +248,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(TransactionValidationException.class)
     public ResponseEntity<Object> handleTransactionValidationException(TransactionValidationException ex) {
-        return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(FavoriteValidationException.class)
     public ResponseEntity<Object> handleFavoriteValidationException(FavoriteValidationException ex) {
-        return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
-    /**
-     * Creates an error response.
-     *
-     * @param message the error message
-     * @param status  the HTTP status
-     * @return a response entity with error details
-     */
-    private ResponseEntity<Object> createErrorResponse(String message, HttpStatus status) {
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("timestamp", LocalDateTime.now());
-        errorResponse.put("status", status.value());
-        errorResponse.put("error", status.getReasonPhrase());
-        errorResponse.put("message", message);
-
-        return new ResponseEntity<>(errorResponse, status);
-    }
-
 }

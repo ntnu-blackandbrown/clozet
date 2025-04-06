@@ -1,15 +1,13 @@
 package stud.ntnu.no.backend.shippingoption.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import stud.ntnu.no.backend.common.exception.BaseException;
 
 /**
  * Exception thrown when a shipping option validation fails.
  * <p>
  * This exception is mapped to a 400 Bad Request HTTP status code.
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class ShippingOptionValidationException extends RuntimeException {
+public class ShippingOptionValidationException extends BaseException {
     /**
      * Constructs a new ShippingOptionValidationException with the specified detail message.
      *

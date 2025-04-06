@@ -1,15 +1,13 @@
 package stud.ntnu.no.backend.shippingoption.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import stud.ntnu.no.backend.common.exception.BaseException;
 
 /**
  * Exception thrown when a shipping option is not found.
  * <p>
  * This exception is mapped to a 404 Not Found HTTP status code.
  */
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class ShippingOptionNotFoundException extends RuntimeException {
+public class ShippingOptionNotFoundException extends BaseException {
     /**
      * Constructs a new ShippingOptionNotFoundException with the specified shipping option ID.
      *

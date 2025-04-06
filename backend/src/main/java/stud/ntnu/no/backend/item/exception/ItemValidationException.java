@@ -1,10 +1,8 @@
 package stud.ntnu.no.backend.item.exception;
 
+import stud.ntnu.no.backend.common.exception.BaseException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class ItemValidationException extends RuntimeException {
+public class ItemValidationException extends BaseException {
     public ItemValidationException(String message) {
         super(message);
     }

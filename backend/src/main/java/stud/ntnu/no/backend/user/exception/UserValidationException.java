@@ -1,13 +1,11 @@
 package stud.ntnu.no.backend.user.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import stud.ntnu.no.backend.common.exception.BaseException;
 
 /**
  * Exception thrown when user validation fails.
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class UserValidationException extends RuntimeException {
+public class UserValidationException extends BaseException {
     public UserValidationException(String message) {
         super(message);
     }
