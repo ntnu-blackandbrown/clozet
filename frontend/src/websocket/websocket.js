@@ -157,21 +157,26 @@ function sendMessage() {
     return
   }
 
+  const timestamp = new Date().toISOString()
+
   const msg = {
     senderId: sender.value,
     receiverId: receiver.value,
     content: messageContent.value,
-    createdAt: new Date().toISOString()
+    createdAt: timestamp
   }
 
   stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(msg))
 
+  // Add a client-side ID to help with deduplication
+  const clientMessageId = `client-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+
   messages.value.push({
-    id: Date.now(),
+    id: clientMessageId,
     senderId: msg.senderId,
     receiverId: msg.receiverId,
     content: msg.content,
-    timestamp: msg.createdAt,
+    timestamp: timestamp,
     type: 'sent'
   })
 

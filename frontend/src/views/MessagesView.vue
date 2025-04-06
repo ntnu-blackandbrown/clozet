@@ -77,10 +77,12 @@ const handleChatSelect = async (chatId) => {
     // Set the receiver ID in the WebSocket store
     if (selectedConversation.receiverId) {
       console.log('Setting receiver ID:', selectedConversation.receiverId.toString())
-      websocket.setReceiver(selectedConversation.receiverId.toString())
 
-      // Reset WebSocket messages to clear any old messages
+      // Clear WebSocket messages first to avoid duplicates
       websocket.clearMessages();
+
+      // Then set the receiver
+      websocket.setReceiver(selectedConversation.receiverId.toString())
     } else {
       console.error('Selected conversation has no receiverId')
     }
@@ -95,7 +97,7 @@ const handleChatSelect = async (chatId) => {
 
     // Ensure messages are sorted by timestamp
     const sortedMessages = mssgResponse.data.sort((a, b) =>
-      new Date(a.timestamp) - new Date(b.timestamp)
+      new Date(a.timestamp || a.createdAt) - new Date(b.timestamp || b.createdAt)
     );
 
     // Store messages using the chatId from the parameter
@@ -256,6 +258,45 @@ const filteredWebSocketMessages = computed(() => {
     return (msg.receiverId === currentReceiverId || msg.senderId === currentReceiverId);
   });
 });
+
+// Add this computed property to deduplicate messages between WebSocket and API sources
+const combinedMessages = computed(() => {
+  if (!activeChat.value) return [];
+
+  // Get API messages for this chat
+  const apiMessages = chatMessages.value[activeChat.value] || [];
+
+  // Create a unique key for each API message for duplicate detection
+  const messageKeys = new Set();
+  apiMessages.forEach(msg => {
+    const key = `${msg.senderId}-${msg.receiverId}-${msg.content}-${msg.timestamp || msg.createdAt}`;
+    messageKeys.add(key);
+  });
+
+  // Filter WebSocket messages to only include those that don't match API messages
+  const uniqueWebSocketMessages = filteredWebSocketMessages.value.filter(wsMsg => {
+    const key = `${wsMsg.senderId}-${wsMsg.receiverId}-${wsMsg.content}-${wsMsg.timestamp || wsMsg.createdAt}`;
+
+    // If this key exists in API messages, it's a duplicate
+    if (messageKeys.has(key)) {
+      return false;
+    }
+
+    // Otherwise, add it to the set and include it
+    messageKeys.add(key);
+    return true;
+  });
+
+  // Combine and sort all messages by timestamp
+  const allMessages = [...apiMessages, ...uniqueWebSocketMessages];
+
+  // Sort by timestamp (handling both API and WebSocket message formats)
+  return allMessages.sort((a, b) => {
+    const timeA = new Date(a.timestamp || a.createdAt).getTime();
+    const timeB = new Date(b.timestamp || b.createdAt).getTime();
+    return timeA - timeB;
+  });
+});
 </script>
 
 <template>
@@ -283,21 +324,12 @@ const filteredWebSocketMessages = computed(() => {
       <!-- Message history area -->
       <div class="message-history" v-if="activeChat">
         <div class="messages-list">
-          <!-- Historic messages from backend -->
-          <div v-for="(msg, index) in chatMessages[activeChat]" :key="'chat-'+index"
-               :class="['message', Number(msg.senderId) === authStore.user?.id ? 'message-sent' : 'message-received']">
+          <!-- Combined messages from API and WebSocket, without duplicates -->
+          <div v-for="(msg, index) in combinedMessages" :key="'msg-'+index"
+               :class="['message', (Number(msg.senderId) === authStore.user?.id || msg.type === 'sent') ? 'message-sent' : 'message-received']">
             <div class="message-content">{{ msg.content }}</div>
             <div class="message-footer">
-              <span class="message-time">{{ formatTime(msg.timestamp) }}</span>
-            </div>
-          </div>
-
-          <!-- WebSocket messages - filtered to only show those for the active conversation -->
-          <div v-for="(msg, index) in filteredWebSocketMessages" :key="'ws-'+index"
-               :class="['message', msg.type === 'sent' ? 'message-sent' : 'message-received']">
-            <div class="message-content">{{ msg.content }}</div>
-            <div class="message-footer">
-              <span class="message-time">{{ formatTime(msg.timestamp) }}</span>
+              <span class="message-time">{{ formatTime(msg.timestamp || msg.createdAt) }}</span>
             </div>
           </div>
         </div>
