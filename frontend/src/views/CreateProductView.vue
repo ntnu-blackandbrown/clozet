@@ -24,9 +24,10 @@ interface Location {
   name: string
 }
 
+
 interface User {
   id: number
-  username: string
+  usernameOrEmail: string
   email: string
   firstName?: string
   lastName?: string
@@ -539,7 +540,7 @@ const sendTestData = async () => {
           :category="categories.find((c: Category) => c.id === parseInt(categoryId))?.name || ''"
           :location="locations.find((l: Location) => l.id === parseInt(locationId))?.name || ''"
           :price="Number(price)"
-          :seller="userStore.user?.firstName || userStore.user?.username || 'Current User'"
+          :seller="userStore.user?.firstName || userStore.user?.usernameOrEmail || 'Current User'"
           :shipping_options="
             shippingOptions.find((s: ShippingOption) => s.id === parseInt(shippingOptionId))?.name || ''
           "

@@ -5,7 +5,7 @@ import { computed, ref } from 'vue'
 
 interface User {
   id: number
-  username: string
+  usernameOrEmail: string
   email: string
   firstName?: string
   lastName?: string
@@ -24,11 +24,11 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = computed(() => !!user.value)
   const userDetails = computed(() => user.value)
 
-  const login = async (username: string, password: string) => {
+  const login = async (usernameOrEmail: string, password: string) => {
     try {
       loading.value = true
 
-      await axios.post('/api/auth/login', { username, password })
+      await axios.post('/api/auth/login', { usernameOrEmail, password })
 
       await fetchUserInfo()
       return { success: true, message: 'Login successful' }
@@ -71,7 +71,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const register = async (
-    username: string,
+    usernameOrEmail: string,
     password: string,
     email: string,
     firstName: string,
@@ -80,7 +80,7 @@ export const useAuthStore = defineStore('auth', () => {
     console.log("In request register now, sending data to backend")
     try {
       loading.value = true
-      await axios.post('/api/auth/register', { username, password, email, firstName, lastName })
+      await axios.post('/api/auth/register', { usernameOrEmail, password, email, firstName, lastName })
       return { success: true, message: 'Registration successful' }
       console.log("Registration successful")
     } catch (error) {
