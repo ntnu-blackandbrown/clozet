@@ -54,8 +54,23 @@ onMounted(async () => {
         userId: authStore.user?.id?.toString() || ''
       }
     })
-    console.log(chats.value)
-    console.log(response.data)
+
+    // Log the entire response data structure
+    console.log('Full response data:', response.data)
+
+    // Log each conversation's details
+    response.data.forEach((conversation, index) => {
+      console.log(`Conversation ${index + 1}:`, {
+        id: conversation.id,
+        receiverId: conversation.receiverId,
+        senderId: conversation.senderId,
+        receiverName: conversation.receiverName,
+        latestMessage: conversation.latestMessage
+      })
+    })
+
+    chats.value = response.data
+    console.log('Updated chats value:', chats.value)
 
     // If there are conversations and no active chat, set the first one as active
     if (chats.value.length > 0 && !activeChat.value) {
