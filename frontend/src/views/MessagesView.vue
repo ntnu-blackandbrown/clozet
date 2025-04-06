@@ -178,22 +178,11 @@ const logConversations = () => {
 
     <!-- Right area with WebSocket chat functionality -->
     <div class="chat-content">
-      <!-- WebSocket connection status -->
-      <div :class="['status', websocket.connectionStatusClass]">Status: {{ websocket.connectionStatus }}</div>
-
       <!-- Chat header with active user info -->
       <div v-if="activeChat" class="chat-header">
         <h2>
           {{ receiverUsernames.get(chats.find(chat => chat.id === activeChat)?.receiverId) || 'Chat' }}
         </h2>
-      </div>
-
-      <!-- WebSocket control buttons (can be removed in production) -->
-      <div class="websocket-controls">
-        <button @click="websocket.connect">Connect</button>
-        <button @click="websocket.disconnect">Disconnect</button>
-        <button @click="websocket.checkConnection">Check Connection</button>
-        <button @click="logConversations">Log Conversations</button>
       </div>
 
       <!-- Message history area -->
@@ -256,23 +245,6 @@ const logConversations = () => {
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 1px solid #eee;
-}
-
-.websocket-controls {
-  margin-bottom: 15px;
-}
-
-.websocket-controls button {
-  margin-right: 10px;
-  padding: 8px 15px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.websocket-controls button:hover {
-  background-color: #e0e0e0;
 }
 
 .message-history {
