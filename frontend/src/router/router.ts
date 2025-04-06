@@ -11,11 +11,6 @@ const router = createRouter({
       component: () => import('@/views/HomeView.vue'),
     },
     {
-      path: '/websocket',
-      name: 'websocket',
-      component: () => import('@/views/WebSocket.vue'),
-    },
-    {
       path: '/reset-password',
       name: 'reset-password',
       component: () => import('@/views/ResetPasswordVerifier.vue'),
