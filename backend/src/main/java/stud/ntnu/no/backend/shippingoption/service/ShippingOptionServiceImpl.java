@@ -1,5 +1,7 @@
 package stud.ntnu.no.backend.shippingoption.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stud.ntnu.no.backend.shippingoption.dto.CreateShippingOptionDTO;
@@ -10,7 +12,6 @@ import stud.ntnu.no.backend.shippingoption.exception.ShippingOptionValidationExc
 import stud.ntnu.no.backend.shippingoption.mapper.ShippingOptionMapper;
 import stud.ntnu.no.backend.shippingoption.repository.ShippingOptionRepository;
 
-
 import java.util.List;
 
 /**
@@ -20,6 +21,8 @@ import java.util.List;
  */
 @Service
 public class ShippingOptionServiceImpl implements ShippingOptionService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ShippingOptionServiceImpl.class);
 
     private final ShippingOptionRepository shippingOptionRepository;
     private final ShippingOptionMapper shippingOptionMapper;
@@ -38,11 +41,13 @@ public class ShippingOptionServiceImpl implements ShippingOptionService {
 
     @Override
     public List<ShippingOptionDTO> getAllShippingOptions() {
+        logger.info("Fetching all shipping options");
         return shippingOptionMapper.toDtoList(shippingOptionRepository.findAll());
     }
 
     @Override
     public ShippingOptionDTO getShippingOption(Long id) {
+        logger.info("Fetching shipping option with id: {}", id);
         ShippingOption shippingOption = shippingOptionRepository.findById(id)
                 .orElseThrow(() -> new ShippingOptionNotFoundException(id));
         return shippingOptionMapper.toDto(shippingOption);
@@ -51,6 +56,7 @@ public class ShippingOptionServiceImpl implements ShippingOptionService {
     @Override
     @Transactional
     public ShippingOptionDTO createShippingOption(CreateShippingOptionDTO shippingOptionDTO) {
+        logger.info("Creating new shipping option with name: {}", shippingOptionDTO.getName());
         validateShippingOption(shippingOptionDTO);
         ShippingOption shippingOption = shippingOptionMapper.toEntity(shippingOptionDTO);
         shippingOption = shippingOptionRepository.save(shippingOption);
@@ -60,6 +66,7 @@ public class ShippingOptionServiceImpl implements ShippingOptionService {
     @Override
     @Transactional
     public ShippingOptionDTO updateShippingOption(Long id, CreateShippingOptionDTO shippingOptionDTO) {
+        logger.info("Updating shipping option with id: {}", id);
         ShippingOption shippingOption = shippingOptionRepository.findById(id)
                 .orElseThrow(() -> new ShippingOptionNotFoundException(id));
 
@@ -72,6 +79,7 @@ public class ShippingOptionServiceImpl implements ShippingOptionService {
     @Override
     @Transactional
     public void deleteShippingOption(Long id) {
+        logger.info("Deleting shipping option with id: {}", id);
         if (!shippingOptionRepository.existsById(id)) {
             throw new ShippingOptionNotFoundException(id);
         }
