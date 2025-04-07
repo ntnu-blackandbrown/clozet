@@ -2,20 +2,32 @@
 import { ref, defineEmits, defineProps, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/AuthStore'
 
+interface ShippingDetails {
+  firstName?: string
+  lastName?: string
+  streetAddress?: string
+  postalCode?: string
+  city?: string
+  country?: string
+  phone?: string
+}
+
 const props = defineProps<{
-  shippingOptionName: string
+  shippingOptionName: string,
+  initialValues?: ShippingDetails
 }>()
 
 const emit = defineEmits(['close', 'continue'])
 const authStore = useAuthStore()
 
-const firstName = ref(authStore.user?.firstName || '')
-const lastName = ref(authStore.user?.lastName || '')
-const streetAddress = ref('')
-const postalCode = ref('')
-const city = ref('')
-const country = ref('Norway')
-const phone = ref(authStore.user?.phoneNumber || '')
+// Initialize form values with initial values or defaults
+const firstName = ref(props.initialValues?.firstName || authStore.user?.firstName || '')
+const lastName = ref(props.initialValues?.lastName || authStore.user?.lastName || '')
+const streetAddress = ref(props.initialValues?.streetAddress || '')
+const postalCode = ref(props.initialValues?.postalCode || '')
+const city = ref(props.initialValues?.city || '')
+const country = ref(props.initialValues?.country || 'Norway')
+const phone = ref(props.initialValues?.phone || authStore.user?.phoneNumber || '')
 const error = ref('')
 const isProcessing = ref(false)
 

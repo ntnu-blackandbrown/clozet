@@ -112,6 +112,11 @@ const handleShippingContinue = (details: any) => {
   showVippsModal.value = true
 }
 
+const handleVippsBack = () => {
+  showVippsModal.value = false
+  showShippingModal.value = true
+}
+
 const handlePaymentComplete = (transactionData: TransactionData) => {
   isLoading.value = true
   showVippsModal.value = false
@@ -157,6 +162,7 @@ onMounted(async () => {
   <BaseModal v-if="showShippingModal" @close="showShippingModal = false">
     <ShippingDetailsModal
       :shipping-option-name="item.shippingOptionName"
+      :initial-values="shippingDetails"
       @close="showShippingModal = false"
       @continue="handleShippingContinue"
     />
@@ -172,7 +178,9 @@ onMounted(async () => {
       :buyer-id="authStore.user?.id || 0"
       :shipping-option-name="!isLocalPickup ? item.shippingOptionName : undefined"
       :shipping-cost="getShippingCost.value"
+      :shipping-phone-number="shippingDetails?.phone"
       @close="showVippsModal = false"
+      @back="handleVippsBack"
       @payment-complete="handlePaymentComplete"
     />
   </BaseModal>

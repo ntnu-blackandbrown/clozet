@@ -9,10 +9,11 @@ const props = defineProps<{
   sellerId: number,
   buyerId: number,
   shippingOptionName?: string,
-  shippingCost?: number
+  shippingCost?: number,
+  shippingPhoneNumber?: string
 }>()
 
-const emit = defineEmits(['close', 'paymentComplete'])
+const emit = defineEmits(['close', 'back', 'paymentComplete'])
 
 // Step tracking
 const currentStep = ref(1)
@@ -43,15 +44,13 @@ const nextStep = () => {
 
 // Go to previous step
 const prevStep = () => {
+  if (currentStep.value === 1) {
+    emit('back')
+    return
+  }
   currentStep.value--
   error.value = ''
 }
-
-// Calculate total price including shipping
-const totalPrice = computed(() => {
-  const shippingFee = props.shippingCost || 0
-  return props.itemPrice + shippingFee
-})
 
 // Process payment
 const processPayment = async () => {
@@ -89,6 +88,12 @@ const processPayment = async () => {
   }
 }
 
+// Calculate total price including shipping
+const totalPrice = computed(() => {
+  const shippingFee = props.shippingCost || 0
+  return props.itemPrice + shippingFee
+})
+
 // Format price for display
 const formattedPrice = (price: number) => {
   return price.toFixed(2) + ' NOK'
@@ -107,6 +112,11 @@ const formattedPrice = (price: number) => {
       <h3>Enter your phone number</h3>
       <p class="step-description">Please enter your Norwegian phone number connected to Vipps</p>
 
+      <div v-if="props.shippingPhoneNumber" class="shipping-phone-notice">
+        <p>Your shipping phone number is: <strong>{{ props.shippingPhoneNumber }}</strong></p>
+        <p class="hint">You can use the same number or enter a different one for Vipps payment</p>
+      </div>
+
       <div class="input-group">
         <input
           type="tel"
@@ -119,7 +129,7 @@ const formattedPrice = (price: number) => {
       <p v-if="error" class="error-message">{{ error }}</p>
 
       <div class="button-group">
-        <button @click="emit('close')" class="vipps-button cancel">Cancel</button>
+        <button @click="prevStep" class="vipps-button back">Back to Shipping</button>
         <button @click="nextStep" class="vipps-button next">Next</button>
       </div>
     </div>
@@ -150,7 +160,7 @@ const formattedPrice = (price: number) => {
           <span class="detail-value price">{{ formattedPrice(totalPrice) }}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Phone:</span>
+          <span class="detail-label">Vipps Phone:</span>
           <span class="detail-value">{{ phoneNumber }}</span>
         </div>
       </div>
@@ -340,5 +350,23 @@ const formattedPrice = (price: number) => {
 .total-row .detail-label,
 .total-row .detail-value {
   font-weight: 700;
+}
+
+.shipping-phone-notice {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border: 1px solid #e9ecef;
+}
+
+.shipping-phone-notice p {
+  margin: 0;
+}
+
+.shipping-phone-notice .hint {
+  color: #666;
+  font-size: 0.9em;
+  margin-top: 0.5rem;
 }
 </style>
