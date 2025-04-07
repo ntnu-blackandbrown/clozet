@@ -388,9 +388,6 @@ const combinedMessages = computed(() => {
 
     <!-- Right area with WebSocket chat functionality -->
     <div class="chat-content">
-      <!-- WebSocket connection status -->
-      <div :class="['status', websocket.connectionStatusClass]">Status: {{ websocket.connectionStatus }}</div>
-
       <!-- Chat header with active user info -->
       <div v-if="activeChat" class="chat-header">
         <h2>
@@ -668,27 +665,5 @@ const combinedMessages = computed(() => {
   align-items: center;
   height: 100%;
   color: #666;
-}
-
-.status {
-  padding: 8px 12px;
-  margin-bottom: 15px;
-  border-radius: 4px;
-  font-weight: bold;
-}
-
-.connected {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-}
-
-.disconnected {
-  background-color: #ffebee;
-  color: #c62828;
-}
-
-.connecting {
-  background-color: #fff8e1;
-  color: #ff8f00;
 }
 </style>
