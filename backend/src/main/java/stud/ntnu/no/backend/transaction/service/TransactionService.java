@@ -59,4 +59,12 @@ public interface TransactionService {
      * @return a list of TransactionDTOs
      */
     List<TransactionDTO> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
+    /**
+     * Retrieves transactions by buyerId.
+     *
+     * @param buyerId the ID of the buyer
+     * @return a list of TransactionDTOs
+     */
+    List<TransactionDTO> getTransactionsByBuyerId(String buyerId);
 }

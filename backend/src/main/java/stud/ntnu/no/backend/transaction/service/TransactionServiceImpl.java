@@ -109,4 +109,13 @@ public class TransactionServiceImpl implements TransactionService {
                 .map(transactionMapper::toDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<TransactionDTO> getTransactionsByBuyerId(String buyerId) {
+        logger.info("Retrieving transactions for buyerId: {}", buyerId);
+        return transactionRepository.findByBuyerId(buyerId)
+                .stream()
+                .map(transactionMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 }

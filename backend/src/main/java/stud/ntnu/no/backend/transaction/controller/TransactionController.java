@@ -110,4 +110,16 @@ public class TransactionController {
         logger.info("Fetching transactions between {} and {}", start, end);
         return ResponseEntity.ok(transactionService.findByCreatedAtBetween(start, end));
     }
+
+    /**
+     * Retrieves transactions by buyerId.
+     *
+     * @param buyerId the ID of the buyer
+     * @return a list of TransactionDTOs
+     */
+    @GetMapping("/buyer/{buyerId}")
+    public ResponseEntity<List<TransactionDTO>> getTransactionsByBuyerId(@PathVariable String buyerId) {
+        logger.info("Fetching transactions for buyerId: {}", buyerId);
+        return ResponseEntity.ok(transactionService.getTransactionsByBuyerId(buyerId));
+    }
 }
