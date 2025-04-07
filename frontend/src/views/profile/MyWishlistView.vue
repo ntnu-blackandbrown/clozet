@@ -4,10 +4,13 @@ import axios from '@/api/axios.ts'
 import ProductList from '@/components/product/ProductList.vue'
 import type { Product } from '@/types/product'
 import { useAuthStore } from '@/stores/AuthStore'
+import { useRoute } from 'vue-router'
 
 const authStore = useAuthStore()
 const items = ref<Product[]>([])
 const userId = authStore.user?.id
+const route = useRoute()
+const initialProductId = ref<number | null>(null)
 
 onMounted(async () => {
   try {
@@ -23,6 +26,11 @@ onMounted(async () => {
     items.value = allItems.filter((item: Product) =>
       favorites.some((fav: any) => fav.itemId === item.id)
     )
+
+    // Check if there's a product ID in the URL
+    if (route.params.id) {
+      initialProductId.value = parseInt(route.params.id as string)
+    }
   } catch (error) {
     console.error('Failed to fetch wishlist:', error)
     items.value = [] // fallback to empty list
@@ -33,7 +41,7 @@ onMounted(async () => {
 <template>
   <div class="my-wishlist-container">
     <h2>My Wishlist</h2>
-    <ProductList :items="items" />
+    <ProductList :items="items" route-base-path="/profile/wishlist/" :initial-product-id="initialProductId" />
   </div>
 </template>
 

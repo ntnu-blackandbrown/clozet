@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import ProductDisplay from '@/components/product/ProductDisplay.vue'
 import BaseModal from '@/components/modals/BaseModal.vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 interface ProductDisplayModalProps {
   productId: number
@@ -10,12 +10,23 @@ interface ProductDisplayModalProps {
 
 const props = defineProps<ProductDisplayModalProps>()
 const router = useRouter()
+const route = useRoute()
 
 const emit = defineEmits(['close'])
 
 const handleClose = () => {
-  // Update the URL to remove the product ID
-  router.replace('/')
+  // Get the base path from the current route
+  const currentPath = route.path
+  const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1)
+
+  // If we're on a profile page, go back to that profile page
+  if (currentPath.includes('/profile/')) {
+    router.replace(basePath.substring(0, basePath.length - 1)) // Remove trailing slash
+  } else {
+    // Default behavior - go to home
+    router.replace('/')
+  }
+
   emit('close')
 }
 </script>
