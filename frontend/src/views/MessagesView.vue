@@ -393,10 +393,6 @@ const combinedMessages = computed(() => {
         <h2>
           {{ receiverUsernames.get(findConversationByChatId(activeChat)?.receiverId) || 'Chat' }}
         </h2>
-        <!-- Typing indicator -->
-        <div v-if="websocket.isReceiverTyping(findConversationByChatId(activeChat)?.receiverId)" class="typing-indicator">
-          typing...
-        </div>
       </div>
 
       <!-- Message history area -->
@@ -455,6 +451,10 @@ const combinedMessages = computed(() => {
 
       <!-- Message input area -->
       <div class="message-input" v-if="activeChat">
+        <!-- Typing indicator -->
+        <div v-if="websocket.isReceiverTyping(findConversationByChatId(activeChat)?.receiverId)" class="typing-indicator">
+          {{ receiverUsernames.get(findConversationByChatId(activeChat)?.receiverId) }} is typing...
+        </div>
         <div class="form-group">
           <textarea v-model="websocket.messageContent"
                    @keypress.enter.prevent="websocket.sendMessage"
@@ -501,6 +501,8 @@ const combinedMessages = computed(() => {
   font-style: italic;
   font-size: 0.9em;
   animation: pulsate 1.5s infinite;
+  margin-bottom: 8px;
+  padding-left: 4px;
 }
 
 @keyframes pulsate {
