@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, computed } from 'vue'
 
 const props = defineProps<{
   itemTitle: string
@@ -16,9 +16,16 @@ const props = defineProps<{
 
 const emit = defineEmits(['close', 'viewPurchases'])
 
-const formattedPrice = (price: number) => {
-  return price.toFixed(2) + ' NOK'
-}
+const formattedPrice = computed(() => {
+  // Ensure the number is properly rounded to 2 decimal places
+  const roundedAmount = Math.round(props.totalAmount * 100) / 100
+  return new Intl.NumberFormat('no-NO', {
+    style: 'currency',
+    currency: 'NOK',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(roundedAmount)
+})
 </script>
 
 <template>
@@ -40,7 +47,7 @@ const formattedPrice = (price: number) => {
       </div>
       <div class="summary-item">
         <span class="label">Total Amount:</span>
-        <span class="value amount">{{ formattedPrice(totalAmount) }}</span>
+        <span class="value amount">{{ formattedPrice }}</span>
       </div>
     </div>
 

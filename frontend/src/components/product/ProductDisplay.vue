@@ -144,6 +144,13 @@ const getShippingCost = computed(() => {
   return item.value.shippingPrice || 0
 })
 
+// Calculate total price including shipping
+const totalPrice = computed(() => {
+  const basePrice = item.value?.price || 0
+  const shippingFee = getShippingCost.value || 0
+  return basePrice + shippingFee
+})
+
 onMounted(async () => {
   item.value = await getItemById()
 
@@ -189,7 +196,7 @@ onMounted(async () => {
   <BaseModal v-if="showSuccessModal" @close="handleContinueShopping">
     <PurchaseSuccessModal
       :item-title="item.title"
-      :total-amount="item.price + getShippingCost.value"
+      :total-amount="totalPrice"
       :shipping-address="!isLocalPickup ? shippingDetails : undefined"
       @view-purchases="handleViewPurchases"
       @close="handleContinueShopping"
