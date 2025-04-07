@@ -17,6 +17,7 @@ const chats = ref([]) // All conversations the user is in
 const chatMessages = ref({}) // Messages grouped by chatId
 const receiverDetails = ref({}) // Active receiver's details
 const receiverUsernames = ref(new Map()) // Map of receiverId -> username
+const itemDetails = ref({}) // Map of itemId -> item details
 
 // Pagination state
 const messagePage = ref(1)
@@ -47,6 +48,20 @@ const findConversationByChatId = (chatId) => {
   return chats.value.find(chat =>
     (chat.conversationId === chatId) || (chat.id === chatId)
   );
+}
+
+/**
+ * Fetch details for an item by its ID
+ */
+const fetchItemDetails = async (itemId) => {
+  try {
+    const response = await axios.get(`/api/items/${itemId}`)
+    itemDetails.value[itemId] = response.data
+    return response.data
+  } catch (error) {
+    console.error(`Failed to fetch details for item ${itemId}:`, error)
+    return null
+  }
 }
 
 /**
@@ -103,6 +118,11 @@ const handleChatSelect = async (chatId) => {
 
     if (selectedConversation.receiverId) {
       await fetchReceiverDetails(selectedConversation.receiverId)
+
+      // Fetch item details if we have an itemId
+      if (selectedConversation.itemId && !itemDetails.value[selectedConversation.itemId]) {
+        await fetchItemDetails(selectedConversation.itemId)
+      }
 
       // Mark messages from this receiver as read
       setTimeout(() => {
@@ -270,6 +290,11 @@ onMounted(async () => {
       } else {
         console.warn(`Conversation ${convo.conversationId || convo.id} has no receiverId`)
       }
+
+      // Step 2.5: Fetch item details if available
+      if (convo.itemId) {
+        await fetchItemDetails(convo.itemId)
+      }
     }
 
     // Step 3: Handle initial chat selection based on URL or first available
@@ -396,6 +421,22 @@ const getReceiverUsername = (conversation) => {
   // Return receiver name from conversation as fallback
   return conversation.receiverName || 'Unknown User';
 }
+
+// Get active item details for the current chat
+const activeItemDetails = computed(() => {
+  if (!activeChat.value) return null;
+
+  const currentChat = findConversationByChatId(activeChat.value);
+  if (!currentChat || !currentChat.itemId) return null;
+
+  return itemDetails.value[currentChat.itemId] || null;
+});
+
+// Function to handle Buy Item button click
+const handleBuyItem = () => {
+  if (!activeItemDetails.value) return;
+  router.push(`/product/${activeItemDetails.value.id}`);
+};
 </script>
 
 <template>
@@ -412,9 +453,24 @@ const getReceiverUsername = (conversation) => {
     <div class="chat-content">
       <!-- Chat header with active user info -->
       <div v-if="activeChat" class="chat-header">
-        <h2>
-          {{ getReceiverUsername(findConversationByChatId(activeChat)) }}
-        </h2>
+        <div class="user-info">
+          <h2>
+            {{ getReceiverUsername(findConversationByChatId(activeChat)) }}
+          </h2>
+          <div v-if="activeItemDetails" class="item-info">
+            <span class="item-label">Item:</span>
+            <span class="item-name">{{ activeItemDetails.title }}</span>
+          </div>
+        </div>
+        <div v-if="activeItemDetails" class="header-actions">
+          <button
+            class="buy-button"
+            @click="handleBuyItem"
+            :disabled="activeItemDetails.sellerId === authStore.user?.id || !activeItemDetails.isAvailable"
+          >
+            Buy Item
+          </button>
+        </div>
       </div>
 
       <!-- Message history area -->
@@ -515,7 +571,56 @@ const getReceiverUsername = (conversation) => {
   border-bottom: 1px solid #eee;
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+  font-size: 0.9em;
+}
+
+.item-label {
+  color: #666;
+  margin-right: 6px;
+  font-weight: 500;
+}
+
+.item-name {
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+}
+
+.buy-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.buy-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.buy-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .typing-indicator {
