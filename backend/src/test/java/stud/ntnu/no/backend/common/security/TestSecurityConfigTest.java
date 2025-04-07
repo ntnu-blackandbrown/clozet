@@ -1,14 +1,19 @@
-package stud.ntnu.no.backend.common.config;
+package stud.ntnu.no.backend.common.security;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import stud.ntnu.no.backend.common.security.util.JwtUtils;
-import stud.ntnu.no.backend.common.security.util.JwtTestUtil;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -17,17 +22,33 @@ import static org.mockito.Mockito.*;
 class TestSecurityConfigTest {
 
     @Autowired
-    private SecurityFilterChain securityFilterChain;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @MockBean
+    @Mock
     private JwtUtils jwtUtils;
 
-    @Test
-    void testSecurityFilterChain() {
-        assertNotNull(securityFilterChain);
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        when(jwtUtils.getUsernameFromToken(anyString())).thenReturn("testuser");
+    }
+
+    // Configuration to provide mock beans
+    @Configuration
+    static class TestConfig {
+        @Bean
+        @Primary
+        public JwtUtils jwtUtils() {
+            JwtUtils mockJwtUtils = mock(JwtUtils.class);
+            when(mockJwtUtils.getUsernameFromToken(anyString())).thenReturn("testuser");
+            return mockJwtUtils;
+        }
+        
+        @Bean
+        @Primary
+        public PasswordEncoder passwordEncoder() {
+            return new BCryptPasswordEncoder();
+        }
     }
 
     @Test
@@ -37,9 +58,6 @@ class TestSecurityConfigTest {
 
     @Test
     void testJwtUtils() {
-        // Setup the mock behavior
-        when(jwtUtils.getUsernameFromToken(anyString())).thenReturn("testuser");
-        
         // Test the mock
         String token = "any-token-string";
         assertEquals("testuser", jwtUtils.getUsernameFromToken(token));

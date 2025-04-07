@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.common.config;
+package stud.ntnu.no.backend.common.security;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

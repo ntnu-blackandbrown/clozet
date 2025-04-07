@@ -1,20 +1,16 @@
-package stud.ntnu.no.backend.common.security.util;
+package stud.ntnu.no.backend.common.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import java.security.Key;
 import java.util.Date;
 
 public class JwtTestUtil {
-    private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256); // Generate a secure key
-
     public static String createValidJwt() {
         return Jwts.builder()
                 .setSubject("testuser")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour expiration
-                .signWith(key) // Use the secure key
+                .signWith(SignatureAlgorithm.HS256, "secretkey") // Use a simple secret key for testing
                 .compact();
     }
 } 
