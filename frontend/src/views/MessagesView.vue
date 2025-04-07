@@ -374,6 +374,28 @@ const combinedMessages = computed(() => {
     return timeA - timeB;
   });
 });
+
+/**
+ * Get the username for a conversation's receiver
+ */
+const getReceiverUsername = (conversation) => {
+  if (!conversation) return '';
+
+  const numericReceiverId = Number(conversation.receiverId);
+  const username = receiverUsernames.value.get(numericReceiverId);
+
+  if (username) {
+    return username;
+  }
+
+  // If we don't have the username in our map, try to fetch it
+  if (numericReceiverId) {
+    fetchReceiverDetails(numericReceiverId);
+  }
+
+  // Return receiver name from conversation as fallback
+  return conversation.receiverName || 'Unknown User';
+}
 </script>
 
 <template>
@@ -391,7 +413,7 @@ const combinedMessages = computed(() => {
       <!-- Chat header with active user info -->
       <div v-if="activeChat" class="chat-header">
         <h2>
-          {{ receiverUsernames.get(findConversationByChatId(activeChat)?.receiverId) || 'Chat' }}
+          {{ getReceiverUsername(findConversationByChatId(activeChat)) }}
         </h2>
       </div>
 
@@ -453,7 +475,7 @@ const combinedMessages = computed(() => {
       <div class="message-input" v-if="activeChat">
         <!-- Typing indicator -->
         <div v-if="websocket.isReceiverTyping(findConversationByChatId(activeChat)?.receiverId)" class="typing-indicator">
-          {{ receiverUsernames.get(findConversationByChatId(activeChat)?.receiverId) }} is typing...
+          {{ getReceiverUsername(findConversationByChatId(activeChat)) }} is typing...
         </div>
         <div class="form-group">
           <textarea v-model="websocket.messageContent"
