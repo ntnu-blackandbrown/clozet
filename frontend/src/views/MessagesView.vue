@@ -5,6 +5,7 @@ import MessagesSidebar from '../components/messaging/MessagesSidebar.vue'
 import axios from '@/api/axios'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useWebsocket } from '@/websocket/websocket'
+import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
 
 // Core stores and router
 const router = useRouter()
@@ -24,6 +25,10 @@ const messagePage = ref(1)
 const messagePageSize = ref(20)
 const isLoadingMore = ref(false)
 const hasMoreMessages = ref(true)
+
+// Modal state
+const showProductModal = ref(false)
+const selectedProductId = ref(null)
 
 // Format timestamp for display
 const formatTime = (timestamp) => {
@@ -432,10 +437,35 @@ const activeItemDetails = computed(() => {
   return itemDetails.value[currentChat.itemId] || null;
 });
 
+// Additional computed properties for Buy Button logic
+const isCurrentUserSeller = computed(() => {
+  if (!activeItemDetails.value || !authStore.user?.id) return false;
+  return activeItemDetails.value.sellerId === authStore.user.id;
+});
+
+const isItemAvailable = computed(() => {
+  if (!activeItemDetails.value) return false;
+  return activeItemDetails.value.available !== false && activeItemDetails.value.isAvailable !== false;
+});
+
+const shouldDisableButtons = computed(() => {
+  return isCurrentUserSeller.value || !isItemAvailable.value;
+});
+
 // Function to handle Buy Item button click
 const handleBuyItem = () => {
   if (!activeItemDetails.value) return;
-  router.push(`/product/${activeItemDetails.value.id}`);
+
+  // Set the product ID and show the modal
+  selectedProductId.value = activeItemDetails.value.id;
+  showProductModal.value = true;
+};
+
+// Function to handle Show Product button click
+const handleShowProduct = (productId) => {
+  // Set the product ID and show the modal
+  selectedProductId.value = productId;
+  showProductModal.value = true;
 };
 </script>
 
@@ -447,6 +477,7 @@ const handleBuyItem = () => {
       :activeConversationId="activeChat"
       :receiver-usernames="receiverUsernames"
       @select-chat="handleChatSelect"
+      @show-product="handleShowProduct"
     />
 
     <!-- Right area with WebSocket chat functionality -->
@@ -459,14 +490,14 @@ const handleBuyItem = () => {
           </h2>
           <div v-if="activeItemDetails" class="item-info">
             <span class="item-label">Item:</span>
-            <span class="item-name">{{ activeItemDetails.title }}</span>
+            <span class="item-name" @click="handleShowProduct(activeItemDetails.id)" role="button">{{ activeItemDetails.title }}</span>
           </div>
         </div>
         <div v-if="activeItemDetails" class="header-actions">
           <button
             class="buy-button"
             @click="handleBuyItem"
-            :disabled="activeItemDetails.sellerId === authStore.user?.id || !activeItemDetails.isAvailable"
+            :disabled="shouldDisableButtons"
           >
             Buy Item
           </button>
@@ -549,6 +580,13 @@ const handleBuyItem = () => {
       </div>
     </div>
   </div>
+
+  <!-- Product Display Modal -->
+  <ProductDisplayModal
+    v-if="showProductModal && selectedProductId"
+    :productId="selectedProductId"
+    @close="showProductModal = false"
+  />
 </template>
 
 <style scoped>
@@ -595,6 +633,13 @@ const handleBuyItem = () => {
 .item-name {
   color: #1976d2;
   font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.item-name:hover {
+  color: #0d47a1;
 }
 
 .header-actions {

@@ -6,6 +6,7 @@ import type { Message, Conversation } from '@/types/messaging'
 
 interface ItemDTO {
   id: number
+  title: string
   images: { imageUrl: string }[]
 }
 
@@ -15,13 +16,21 @@ const props = defineProps<{
   receiverUsernames: Map<number, string>
 }>()
 
-const emit = defineEmits(['select-chat'])
+const emit = defineEmits(['select-chat', 'show-product'])
 const authStore = useAuthStore()
 const itemImages = ref<Map<number, string>>(new Map())
+const itemTitles = ref<Map<number, string>>(new Map())
+const itemIds = ref<Map<number, number>>(new Map()) // Map conversationItemId -> actual item ID
 
 // Get the chat ID for a conversation (conversationId or id)
 const getChatId = (conversation: Conversation) => {
   return conversation.conversationId || conversation.id;
+}
+
+// Function to emit event to show product
+const showProduct = (event: Event, itemId: number) => {
+  event.stopPropagation(); // Prevent triggering the conversation selection
+  emit('show-product', itemId);
 }
 
 // Filter conversations to ensure we don't show self-conversations
@@ -71,12 +80,19 @@ onMounted(async () => {
     try {
       if (conversation.itemId) {
         const response = await axios.get<ItemDTO>(`/api/items/${conversation.itemId}`)
+
+        if (response.data.id) {
+          itemIds.value.set(conversation.itemId, response.data.id)
+        }
         if (response.data.images && response.data.images.length > 0) {
           itemImages.value.set(conversation.itemId, response.data.images[0].imageUrl)
         }
+        if (response.data.title) {
+          itemTitles.value.set(conversation.itemId, response.data.title)
+        }
       }
     } catch (error) {
-      console.error(`Failed to fetch images for item ${conversation.itemId}:`, error)
+      console.error(`Failed to fetch details for item ${conversation.itemId}:`, error)
     }
   }
 })
@@ -115,6 +131,13 @@ onMounted(async () => {
         </div>
         <div class="chat-info">
           <div class="chat-name">{{ getReceiverUsername(conversation) }}</div>
+          <div
+            v-if="conversation.itemId && itemTitles.get(conversation.itemId)"
+            class="chat-item-name"
+            @click="(event) => showProduct(event, itemIds.get(conversation.itemId) || conversation.itemId)"
+          >
+            Item: {{ itemTitles.get(conversation.itemId) }}
+          </div>
           <div class="chat-preview">{{ getLatestMessage(conversation) }}</div>
         </div>
         <div class="chat-meta">
@@ -237,6 +260,20 @@ onMounted(async () => {
 .chat-name {
   font-weight: 600;
   margin-bottom: 4px;
+}
+
+.chat-item-name {
+  font-size: 12px;
+  color: #1976d2;
+  margin-bottom: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.chat-item-name:hover {
+  color: #0d47a1;
 }
 
 .chat-preview {
