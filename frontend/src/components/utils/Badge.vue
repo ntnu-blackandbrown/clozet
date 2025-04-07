@@ -20,8 +20,15 @@ const props = withDefaults(defineProps<BadgeProps>(), {
   borderColor: undefined,
 })
 
+const emit = defineEmits(['click'])
+
 const isHovered = ref(false)
 const isActive = ref(false)
+
+// Determine if badge is clickable
+const isClickable = computed(() => {
+  return ['category', 'location', 'shipping'].includes(props.type)
+})
 
 const currentIcon = computed(() => {
   if (props.type === 'price') return ''
@@ -38,6 +45,7 @@ const badgeStyle = computed(() => {
       border: props.borderColor
         ? `1px solid ${props.borderColor}`
         : `1px solid ${defaultColors.activeBorderColor}`,
+      cursor: isClickable.value ? 'pointer' : 'default'
     }
   } else if (isHovered.value && props.type !== 'price') {
     return {
@@ -46,6 +54,7 @@ const badgeStyle = computed(() => {
       border: props.borderColor
         ? `1px solid ${props.borderColor}`
         : `1px solid ${defaultColors.hoverBorderColor}`,
+      cursor: isClickable.value ? 'pointer' : 'default'
     }
   } else {
     return {
@@ -54,9 +63,16 @@ const badgeStyle = computed(() => {
       border: props.borderColor
         ? `1px solid ${props.borderColor}`
         : `1px solid ${defaultColors.borderColor}`,
+      cursor: isClickable.value ? 'pointer' : 'default'
     }
   }
 })
+
+const handleClick = () => {
+  if (isClickable.value) {
+    emit('click', { type: props.type, value: props.name })
+  }
+}
 
 const handleMouseEnter = () => {
   if (props.type !== 'price') {
@@ -92,6 +108,7 @@ const handleMouseUp = () => {
     @mouseleave="handleMouseLeave"
     @mousedown="handleMouseDown"
     @mouseup="handleMouseUp"
+    @click="handleClick"
   >
     <svg
       v-if="currentIcon"

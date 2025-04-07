@@ -3,7 +3,7 @@ import { ref, onMounted, watch, computed } from 'vue'
 import axios from '@/api/axios.ts'
 import type { Product, ProductDisplay } from '@/types/product'
 import ProductList from '@/components/product/ProductList.vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const props = defineProps({
   searchQuery: {
@@ -13,6 +13,7 @@ const props = defineProps({
 })
 
 const route = useRoute()
+const router = useRouter()
 const items = ref<Product[]>([])
 const detailedItems = ref<Map<number, ProductDisplay>>(new Map())
 const initialProductId = ref<number | null>(null)
@@ -171,11 +172,43 @@ watch(
   { immediate: true },
 )
 
+// Watch for query parameter changes
+watch(
+  () => route.query,
+  (newQuery) => {
+    // Update filters based on query parameters
+    if (newQuery.category) {
+      selectedCategory.value = newQuery.category as string
+    }
+    if (newQuery.location) {
+      selectedLocation.value = newQuery.location as string
+    }
+    if (newQuery.shipping) {
+      selectedShippingOption.value = newQuery.shipping as string
+    }
+  },
+  { immediate: true }
+)
+
+// Update URL when filters change
+watch([selectedCategory, selectedLocation, selectedShippingOption], ([category, location, shipping]) => {
+  const query: Record<string, string> = {}
+
+  if (category) query.category = category
+  if (location) query.location = location
+  if (shipping) query.shipping = shipping
+
+  // Replace the current URL with the new query parameters
+  router.replace({ query })
+}, { deep: true })
+
 // Reset filters function
 const resetFilters = () => {
   selectedLocation.value = ''
   selectedShippingOption.value = ''
   selectedCategory.value = ''
+  // Clear URL query parameters
+  router.replace({ query: {} })
 }
 </script>
 
