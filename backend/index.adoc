@@ -1,0 +1,605 @@
+= API Documentation
+:toc:
+
+This documentation is automatically generated from the snippet files in the 'target/generated-snippets' directory.
+
+== Auth Forgot Password
+
+=== Curl Request
+
+include::target/generated-snippets/auth-forgot-password/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/auth-forgot-password/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/auth-forgot-password/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/auth-forgot-password/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/auth-forgot-password/request-body.adoc[]
+
+=== Request Fields
+
+include::target/generated-snippets/auth-forgot-password/request-fields.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/auth-forgot-password/response-body.adoc[]
+
+=== Response Fields
+
+include::target/generated-snippets/auth-forgot-password/response-fields.adoc[]
+
+
+== Auth Login
+
+=== Curl Request
+
+include::target/generated-snippets/auth-login/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/auth-login/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/auth-login/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/auth-login/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/auth-login/request-body.adoc[]
+
+=== Request Fields
+
+include::target/generated-snippets/auth-login/request-fields.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/auth-login/response-body.adoc[]
+
+=== Response Fields
+
+include::target/generated-snippets/auth-login/response-fields.adoc[]
+
+
+== Auth Login Error
+
+=== Curl Request
+
+include::target/generated-snippets/auth-login-error/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/auth-login-error/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/auth-login-error/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/auth-login-error/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/auth-login-error/request-body.adoc[]
+
+=== Request Fields
+
+include::target/generated-snippets/auth-login-error/request-fields.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/auth-login-error/response-body.adoc[]
+
+=== Response Fields
+
+include::target/generated-snippets/auth-login-error/response-fields.adoc[]
+
+
+== Auth Logout
+
+=== Curl Request
+
+include::target/generated-snippets/auth-logout/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/auth-logout/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/auth-logout/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/auth-logout/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/auth-logout/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/auth-logout/response-body.adoc[]
+
+=== Response Fields
+
+include::target/generated-snippets/auth-logout/response-fields.adoc[]
+
+
+== Auth Register
+
+=== Curl Request
+
+include::target/generated-snippets/auth-register/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/auth-register/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/auth-register/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/auth-register/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/auth-register/request-body.adoc[]
+
+=== Request Fields
+
+include::target/generated-snippets/auth-register/request-fields.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/auth-register/response-body.adoc[]
+
+
+== Auth Reset Password
+
+=== Curl Request
+
+include::target/generated-snippets/auth-reset-password/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/auth-reset-password/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/auth-reset-password/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/auth-reset-password/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/auth-reset-password/request-body.adoc[]
+
+=== Request Fields
+
+include::target/generated-snippets/auth-reset-password/request-fields.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/auth-reset-password/response-body.adoc[]
+
+=== Response Fields
+
+include::target/generated-snippets/auth-reset-password/response-fields.adoc[]
+
+
+== Auth Reset Password Expired
+
+=== Curl Request
+
+include::target/generated-snippets/auth-reset-password-expired/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/auth-reset-password-expired/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/auth-reset-password-expired/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/auth-reset-password-expired/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/auth-reset-password-expired/request-body.adoc[]
+
+=== Request Fields
+
+include::target/generated-snippets/auth-reset-password-expired/request-fields.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/auth-reset-password-expired/response-body.adoc[]
+
+=== Response Fields
+
+include::target/generated-snippets/auth-reset-password-expired/response-fields.adoc[]
+
+
+== Auth Validate Reset Token
+
+=== Curl Request
+
+include::target/generated-snippets/auth-validate-reset-token/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/auth-validate-reset-token/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/auth-validate-reset-token/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/auth-validate-reset-token/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/auth-validate-reset-token/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/auth-validate-reset-token/response-body.adoc[]
+
+=== Response Fields
+
+include::target/generated-snippets/auth-validate-reset-token/response-fields.adoc[]
+
+
+== Auth Verify
+
+=== Curl Request
+
+include::target/generated-snippets/auth-verify/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/auth-verify/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/auth-verify/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/auth-verify/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/auth-verify/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/auth-verify/response-body.adoc[]
+
+=== Response Fields
+
+include::target/generated-snippets/auth-verify/response-fields.adoc[]
+
+
+== Auth Verify Invalid Token
+
+=== Curl Request
+
+include::target/generated-snippets/auth-verify-invalid-token/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/auth-verify-invalid-token/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/auth-verify-invalid-token/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/auth-verify-invalid-token/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/auth-verify-invalid-token/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/auth-verify-invalid-token/response-body.adoc[]
+
+=== Response Fields
+
+include::target/generated-snippets/auth-verify-invalid-token/response-fields.adoc[]
+
+
+== Authenticate User
+
+=== Curl Request
+
+include::target/generated-snippets/authenticate-user/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/authenticate-user/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/authenticate-user/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/authenticate-user/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/authenticate-user/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/authenticate-user/response-body.adoc[]
+
+
+== Authenticate User Invalid
+
+=== Curl Request
+
+include::target/generated-snippets/authenticate-user-invalid/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/authenticate-user-invalid/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/authenticate-user-invalid/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/authenticate-user-invalid/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/authenticate-user-invalid/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/authenticate-user-invalid/response-body.adoc[]
+
+
+== Logout User
+
+=== Curl Request
+
+include::target/generated-snippets/logout-user/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/logout-user/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/logout-user/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/logout-user/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/logout-user/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/logout-user/response-body.adoc[]
+
+
+== Register User
+
+=== Curl Request
+
+include::target/generated-snippets/register-user/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/register-user/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/register-user/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/register-user/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/register-user/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/register-user/response-body.adoc[]
+
+
+== Reset Password
+
+=== Curl Request
+
+include::target/generated-snippets/reset-password/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/reset-password/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/reset-password/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/reset-password/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/reset-password/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/reset-password/response-body.adoc[]
+
+
+== Reset Password Expired
+
+=== Curl Request
+
+include::target/generated-snippets/reset-password-expired/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/reset-password-expired/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/reset-password-expired/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/reset-password-expired/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/reset-password-expired/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/reset-password-expired/response-body.adoc[]
+
+
+== Reset Password Invalid
+
+=== Curl Request
+
+include::target/generated-snippets/reset-password-invalid/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/reset-password-invalid/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/reset-password-invalid/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/reset-password-invalid/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/reset-password-invalid/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/reset-password-invalid/response-body.adoc[]
+
+
+== Verify User
+
+=== Curl Request
+
+include::target/generated-snippets/verify-user/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/verify-user/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/verify-user/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/verify-user/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/verify-user/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/verify-user/response-body.adoc[]
+
+
+== Verify User Expired
+
+=== Curl Request
+
+include::target/generated-snippets/verify-user-expired/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/verify-user-expired/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/verify-user-expired/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/verify-user-expired/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/verify-user-expired/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/verify-user-expired/response-body.adoc[]
+
+
+== Verify User Invalid
+
+=== Curl Request
+
+include::target/generated-snippets/verify-user-invalid/curl-request.adoc[]
+
+=== Http Request
+
+include::target/generated-snippets/verify-user-invalid/http-request.adoc[]
+
+=== Http Response
+
+include::target/generated-snippets/verify-user-invalid/http-response.adoc[]
+
+=== Httpie Request
+
+include::target/generated-snippets/verify-user-invalid/httpie-request.adoc[]
+
+=== Request Body
+
+include::target/generated-snippets/verify-user-invalid/request-body.adoc[]
+
+=== Response Body
+
+include::target/generated-snippets/verify-user-invalid/response-body.adoc[]
+
+
