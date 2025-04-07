@@ -57,18 +57,27 @@ const fetchItemDetails = async (itemId: number) => {
   }
 }
 
+// Function to fetch details for all items
+const fetchAllItemDetails = async () => {
+  isLoadingDetails.value = true
+  const itemsNeedingDetails = items.value.filter(item => !detailedItems.value.has(item.id))
+  await Promise.all(itemsNeedingDetails.map(item => fetchItemDetails(item.id)))
+  isLoadingDetails.value = false
+}
+
 onMounted(async () => {
   try {
     const response = await axios.get('api/marketplace/items')
     items.value = response.data
+
+    // Fetch details for all items to populate shipping options
+    await fetchAllItemDetails()
 
     // Check if there's a product ID in the URL
     if (route.params.id) {
       const productId = parseInt(route.params.id as string)
       if (!isNaN(productId)) {
         initialProductId.value = productId
-        // Fetch details for the initial product
-        await fetchItemDetails(productId)
       }
     }
   } catch (error) {
@@ -201,6 +210,16 @@ watch([selectedCategory, selectedLocation, selectedShippingOption], ([category, 
   // Replace the current URL with the new query parameters
   router.replace({ query })
 }, { deep: true })
+
+// Watch for shipping filter changes
+watch(
+  selectedShippingOption,
+  async (newShippingOption) => {
+    if (newShippingOption) {
+      await fetchAllItemDetails()
+    }
+  }
+)
 
 // Reset filters function
 const resetFilters = () => {
