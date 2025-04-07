@@ -2,11 +2,12 @@ package stud.ntnu.no.backend.user.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import stud.ntnu.no.backend.config.TestConfig;
 import stud.ntnu.no.backend.user.entity.User;
 
 import java.util.Optional;
@@ -14,14 +15,18 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import(TestConfig.class)
+@ActiveProfiles("test")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(UserRepositoryTestConfig.class)
 @TestPropertySource(properties = {
-    "spring.jpa.hibernate.ddl-auto=create-drop",
+    "spring.main.allow-bean-definition-overriding=true",
     "spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1",
+    "spring.jpa.hibernate.ddl-auto=create-drop",
     "spring.datasource.username=sa",
     "spring.datasource.password=",
     "spring.datasource.driver-class-name=org.h2.Driver",
-    "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect"
+    "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
+    "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration"
 })
 public class UserRepositoryTest {
 
@@ -34,12 +39,7 @@ public class UserRepositoryTest {
     @Test
     public void testExistsByEmail_WhenEmailExists_ShouldReturnTrue() {
         // Arrange
-        User user = new User();
-        user.setEmail("test@example.com");
-        user.setUsername("testuser");
-        user.setPasswordHash("password_hash");
-        user.setActive(true);
-        entityManager.persist(user);
+        TestHelper.createUser(entityManager, "testuser", "test@example.com");
         entityManager.flush();
 
         // Act
@@ -61,12 +61,7 @@ public class UserRepositoryTest {
     @Test
     public void testFindByUsername_WhenUsernameExists_ShouldReturnUser() {
         // Arrange
-        User user = new User();
-        user.setEmail("test@example.com");
-        user.setUsername("testuser");
-        user.setPasswordHash("password_hash");
-        user.setActive(true);
-        entityManager.persist(user);
+        TestHelper.createUser(entityManager, "testuser", "test@example.com");
         entityManager.flush();
 
         // Act
@@ -89,12 +84,7 @@ public class UserRepositoryTest {
     @Test
     public void testFindByEmail_WhenEmailExists_ShouldReturnUser() {
         // Arrange
-        User user = new User();
-        user.setEmail("test@example.com");
-        user.setUsername("testuser");
-        user.setPasswordHash("password_hash");
-        user.setActive(true);
-        entityManager.persist(user);
+        TestHelper.createUser(entityManager, "testuser", "test@example.com");
         entityManager.flush();
 
         // Act
