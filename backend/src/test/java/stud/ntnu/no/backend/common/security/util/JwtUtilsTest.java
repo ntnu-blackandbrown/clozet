@@ -1,11 +1,14 @@
 package stud.ntnu.no.backend.common.security.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Base64;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,8 +19,9 @@ class JwtUtilsTest {
 
     private JwtUtils jwtUtils;
     private UserDetails userDetails;
-    // Using a much stronger secret key (at least 256 bits / 32 bytes)
-    private final String jwtSecret = "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6A7B8C9D0E1F2G3H4I5J6K7L8M9N0";
+    // Generate a proper secure key for HS512 algorithm
+    private final String jwtSecret = Base64.getEncoder().encodeToString(
+            Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded());
     private final int jwtExpirationMs = 60000; // 1 minute
     private final int jwtRefreshExpirationMs = 300000; // 5 minutes
     private final String testUsername = "testuser";
