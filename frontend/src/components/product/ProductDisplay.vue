@@ -164,6 +164,50 @@ onMounted(async () => {
   sellerId.value = item.value.sellerId
   images.value = await getImagesByItemId()
 })
+
+const handleContactSeller = async () => {
+  try {
+    if (!authStore.isLoggedIn || !authStore.user?.id || !sellerId.value) {
+      return
+    }
+
+    // Check existing conversations
+    const response = await axios.get('/api/conversations', {
+      params: {
+        userId: authStore.user.id.toString()
+      }
+    })
+
+    // Check if conversation already exists with this seller for this item
+    const existingConversation = response.data.find((conv: any) =>
+      (conv.senderId === authStore.user?.id?.toString() && conv.receiverId === sellerId.value?.toString() && conv.itemId === props.id) ||
+      (conv.receiverId === authStore.user?.id?.toString() && conv.senderId === sellerId.value?.toString() && conv.itemId === props.id)
+    )
+
+    if (existingConversation) {
+      // If conversation exists, navigate to it
+      const chatId = existingConversation.conversationId || existingConversation.id
+      router.push(`/messages/${chatId}`)
+    } else {
+      // Create new conversation by sending first message
+      const messageResponse = await axios.post('/api/messages', {
+        senderId: authStore.user.id.toString(),
+        receiverId: sellerId.value.toString(),
+        content: `Hi! I'm interested in your item: ${item.value?.title}`,
+        itemId: props.id
+      })
+
+      // The message response should include the conversation ID
+      const newMessageData = messageResponse.data
+      const chatId = newMessageData.conversationId || newMessageData.id
+
+      // Navigate to the messages view with the new conversation
+      router.push(`/messages/${chatId}`)
+    }
+  } catch (error) {
+    console.error('Error starting conversation:', error)
+  }
+}
 </script>
 
 <template>
@@ -245,7 +289,7 @@ onMounted(async () => {
         <Badge :name="item.shippingOptionName || 'N/A'" type="shipping" @click="handleBadgeClick" />
       </div>
       <div class="action-buttons">
-        <button class="contact-button" :disabled="shouldDisableButtons">Contact Seller</button>
+        <button class="contact-button" @click="handleContactSeller" :disabled="shouldDisableButtons">Contact Seller</button>
         <button class="buy-button" @click="handleBuyClick" :disabled="shouldDisableButtons">Buy Item</button>
         <WishlistButton :product-id="item.id" :purchased="item.purchased" :is-available="isItemAvailable" />
       </div>
@@ -387,6 +431,28 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   margin-bottom: 0.5rem;
+}
+
+
+.contact-button:disabled::after {
+  content: "Please log in to contact seller";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem;
+  background-color: #333;
+  color: white;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.contact-button:disabled:hover::after {
+  opacity: 1;
 }
 
 .info-label {
