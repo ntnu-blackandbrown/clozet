@@ -103,7 +103,29 @@ class ItemControllerTest {
                         Preprocessors.preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("[].id").description("Item ID"),
-                                fieldWithPath("[].title").description("Item title")
+                                fieldWithPath("[].title").description("Item title"),
+                                fieldWithPath("[].shortDescription").description("Short description of the item"),
+                                fieldWithPath("[].longDescription").description("Detailed description of the item"),
+                                fieldWithPath("[].price").description("Item price"),
+                                fieldWithPath("[].categoryId").description("Category ID"),
+                                fieldWithPath("[].categoryName").description("Category name"),
+                                fieldWithPath("[].sellerId").description("Seller ID"),
+                                fieldWithPath("[].sellerName").description("Seller name"),
+                                fieldWithPath("[].locationId").description("Location ID"),
+                                fieldWithPath("[].locationName").description("Location name"),
+                                fieldWithPath("[].shippingOptionId").description("Shipping option ID"),
+                                fieldWithPath("[].shippingOptionName").description("Shipping option name"),
+                                fieldWithPath("[].latitude").description("Latitude coordinate"),
+                                fieldWithPath("[].longitude").description("Longitude coordinate"),
+                                fieldWithPath("[].condition").description("Item condition"),
+                                fieldWithPath("[].size").description("Item size"),
+                                fieldWithPath("[].brand").description("Item brand"),
+                                fieldWithPath("[].color").description("Item color"),
+                                fieldWithPath("[].createdAt").description("Creation date and time"),
+                                fieldWithPath("[].updatedAt").description("Last update date and time"),
+                                fieldWithPath("[].images").description("Item images"),
+                                fieldWithPath("[].available").description("Item availability status"),
+                                fieldWithPath("[].vippsPaymentEnabled").description("Whether Vipps payment is enabled")
                         )
                 ));
                 
@@ -134,7 +156,33 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$[1].title").value("Inactive Item"))
                 .andDo(document("items-get-all-including-inactive",
                         Preprocessors.preprocessRequest(prettyPrint()),
-                        Preprocessors.preprocessResponse(prettyPrint())
+                        Preprocessors.preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id").description("Item ID"),
+                                fieldWithPath("[].title").description("Item title"),
+                                fieldWithPath("[].shortDescription").description("Short description of the item"),
+                                fieldWithPath("[].longDescription").description("Detailed description of the item"),
+                                fieldWithPath("[].price").description("Item price"),
+                                fieldWithPath("[].categoryId").description("Category ID"),
+                                fieldWithPath("[].categoryName").description("Category name"),
+                                fieldWithPath("[].sellerId").description("Seller ID"),
+                                fieldWithPath("[].sellerName").description("Seller name"),
+                                fieldWithPath("[].locationId").description("Location ID"),
+                                fieldWithPath("[].locationName").description("Location name"),
+                                fieldWithPath("[].shippingOptionId").description("Shipping option ID"),
+                                fieldWithPath("[].shippingOptionName").description("Shipping option name"),
+                                fieldWithPath("[].latitude").description("Latitude coordinate"),
+                                fieldWithPath("[].longitude").description("Longitude coordinate"),
+                                fieldWithPath("[].condition").description("Item condition"),
+                                fieldWithPath("[].size").description("Item size"),
+                                fieldWithPath("[].brand").description("Item brand"),
+                                fieldWithPath("[].color").description("Item color"),
+                                fieldWithPath("[].createdAt").description("Creation date and time"),
+                                fieldWithPath("[].updatedAt").description("Last update date and time"),
+                                fieldWithPath("[].images").description("Item images"),
+                                fieldWithPath("[].available").description("Item availability status"),
+                                fieldWithPath("[].vippsPaymentEnabled").description("Whether Vipps payment is enabled")
+                        )
                 ));
                 
         verify(itemService).getAllItems();
@@ -158,7 +206,33 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$.title").value("Test Item"))
                 .andDo(document("items-get-by-id",
                         Preprocessors.preprocessRequest(prettyPrint()),
-                        Preprocessors.preprocessResponse(prettyPrint())
+                        Preprocessors.preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("id").description("Item ID"),
+                                fieldWithPath("title").description("Item title"),
+                                fieldWithPath("shortDescription").description("Short description of the item"),
+                                fieldWithPath("longDescription").description("Detailed description of the item"),
+                                fieldWithPath("price").description("Item price"),
+                                fieldWithPath("categoryId").description("Category ID"),
+                                fieldWithPath("categoryName").description("Category name"),
+                                fieldWithPath("sellerId").description("Seller ID"),
+                                fieldWithPath("sellerName").description("Seller name"),
+                                fieldWithPath("locationId").description("Location ID"),
+                                fieldWithPath("locationName").description("Location name"),
+                                fieldWithPath("shippingOptionId").description("Shipping option ID"),
+                                fieldWithPath("shippingOptionName").description("Shipping option name"),
+                                fieldWithPath("latitude").description("Latitude coordinate"),
+                                fieldWithPath("longitude").description("Longitude coordinate"),
+                                fieldWithPath("condition").description("Item condition"),
+                                fieldWithPath("size").description("Item size"),
+                                fieldWithPath("brand").description("Item brand"),
+                                fieldWithPath("color").description("Item color"),
+                                fieldWithPath("createdAt").description("Creation date and time"),
+                                fieldWithPath("updatedAt").description("Last update date and time"),
+                                fieldWithPath("images").description("Item images"),
+                                fieldWithPath("available").description("Item availability status"),
+                                fieldWithPath("vippsPaymentEnabled").description("Whether Vipps payment is enabled")
+                        )
                 ));
                 
         verify(itemService).getItem(itemId);
@@ -188,7 +262,33 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$[0].title").value("Seller Item 1"))
                 .andDo(document("items-get-by-seller",
                         Preprocessors.preprocessRequest(prettyPrint()),
-                        Preprocessors.preprocessResponse(prettyPrint())
+                        Preprocessors.preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id").description("Item ID"),
+                                fieldWithPath("[].title").description("Item title"),
+                                fieldWithPath("[].shortDescription").description("Short description of the item"),
+                                fieldWithPath("[].longDescription").description("Detailed description of the item"),
+                                fieldWithPath("[].price").description("Item price"),
+                                fieldWithPath("[].categoryId").description("Category ID"),
+                                fieldWithPath("[].categoryName").description("Category name"),
+                                fieldWithPath("[].sellerId").description("Seller ID"),
+                                fieldWithPath("[].sellerName").description("Seller name"),
+                                fieldWithPath("[].locationId").description("Location ID"),
+                                fieldWithPath("[].locationName").description("Location name"),
+                                fieldWithPath("[].shippingOptionId").description("Shipping option ID"),
+                                fieldWithPath("[].shippingOptionName").description("Shipping option name"),
+                                fieldWithPath("[].latitude").description("Latitude coordinate"),
+                                fieldWithPath("[].longitude").description("Longitude coordinate"),
+                                fieldWithPath("[].condition").description("Item condition"),
+                                fieldWithPath("[].size").description("Item size"),
+                                fieldWithPath("[].brand").description("Item brand"),
+                                fieldWithPath("[].color").description("Item color"),
+                                fieldWithPath("[].createdAt").description("Creation date and time"),
+                                fieldWithPath("[].updatedAt").description("Last update date and time"),
+                                fieldWithPath("[].images").description("Item images"),
+                                fieldWithPath("[].available").description("Item availability status"),
+                                fieldWithPath("[].vippsPaymentEnabled").description("Whether Vipps payment is enabled")
+                        )
                 ));
                 
         verify(itemService).getItemsBySeller(sellerId);
@@ -200,10 +300,23 @@ class ItemControllerTest {
         CreateItemDTO createItemDTO = new CreateItemDTO();
         createItemDTO.setTitle("New Item");
         createItemDTO.setCategoryId(1L);
+        createItemDTO.setShortDescription("Short description");
+        createItemDTO.setLongDescription("Long description for the item");
+        createItemDTO.setPrice(99.99);
+        createItemDTO.setLocationId(1L);
+        createItemDTO.setCondition("NEW");
+        createItemDTO.setShippingOptionId(1L);
+        createItemDTO.setLatitude(59.9171);
+        createItemDTO.setLongitude(10.7274);
+        createItemDTO.setSize("M");
+        createItemDTO.setBrand("Test Brand");
+        createItemDTO.setColor("Blue");
         
         ItemDTO createdItem = new ItemDTO();
         createdItem.setId(1L);
         createdItem.setTitle("New Item");
+        createdItem.setShortDescription("Short description");
+        createdItem.setPrice(99.99);
         
         when(itemService.createItem(any(CreateItemDTO.class), anyLong())).thenReturn(createdItem);
 
@@ -219,7 +332,46 @@ class ItemControllerTest {
                         Preprocessors.preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("title").description("Item title"),
-                                fieldWithPath("categoryId").description("Category ID")
+                                fieldWithPath("categoryId").description("Category ID"),
+                                fieldWithPath("shortDescription").description("Short description of the item"),
+                                fieldWithPath("longDescription").description("Detailed description of the item"),
+                                fieldWithPath("price").description("Item price"),
+                                fieldWithPath("locationId").description("Location ID"),
+                                fieldWithPath("condition").description("Item condition"),
+                                fieldWithPath("shippingOptionId").description("Shipping option ID"),
+                                fieldWithPath("latitude").description("Latitude coordinate"),
+                                fieldWithPath("longitude").description("Longitude coordinate"),
+                                fieldWithPath("size").description("Item size"),
+                                fieldWithPath("brand").description("Item brand"),
+                                fieldWithPath("color").description("Item color"),
+                                fieldWithPath("vippsPaymentEnabled").description("Whether Vipps payment is enabled").optional(),
+                                fieldWithPath("images").description("Item images").optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("Item ID"),
+                                fieldWithPath("title").description("Item title"),
+                                fieldWithPath("shortDescription").description("Short description of the item"),
+                                fieldWithPath("longDescription").description("Detailed description of the item"),
+                                fieldWithPath("price").description("Item price"),
+                                fieldWithPath("categoryId").description("Category ID"),
+                                fieldWithPath("categoryName").description("Category name"),
+                                fieldWithPath("sellerId").description("Seller ID"),
+                                fieldWithPath("sellerName").description("Seller name"),
+                                fieldWithPath("locationId").description("Location ID"),
+                                fieldWithPath("locationName").description("Location name"),
+                                fieldWithPath("shippingOptionId").description("Shipping option ID"),
+                                fieldWithPath("shippingOptionName").description("Shipping option name"),
+                                fieldWithPath("latitude").description("Latitude coordinate"),
+                                fieldWithPath("longitude").description("Longitude coordinate"),
+                                fieldWithPath("condition").description("Item condition"),
+                                fieldWithPath("size").description("Item size"),
+                                fieldWithPath("brand").description("Item brand"),
+                                fieldWithPath("color").description("Item color"),
+                                fieldWithPath("createdAt").description("Creation date and time"),
+                                fieldWithPath("updatedAt").description("Last update date and time"),
+                                fieldWithPath("images").description("Item images"),
+                                fieldWithPath("available").description("Item availability status"),
+                                fieldWithPath("vippsPaymentEnabled").description("Whether Vipps payment is enabled")
                         )
                 ));
                 
@@ -234,10 +386,23 @@ class ItemControllerTest {
         CreateItemDTO updateItemDTO = new CreateItemDTO();
         updateItemDTO.setTitle("Updated Item");
         updateItemDTO.setCategoryId(2L);
+        updateItemDTO.setShortDescription("Updated short description");
+        updateItemDTO.setLongDescription("Updated long description for the item");
+        updateItemDTO.setPrice(129.99);
+        updateItemDTO.setLocationId(1L);
+        updateItemDTO.setCondition("USED");
+        updateItemDTO.setShippingOptionId(1L);
+        updateItemDTO.setLatitude(59.9171);
+        updateItemDTO.setLongitude(10.7274);
+        updateItemDTO.setSize("L");
+        updateItemDTO.setBrand("Updated Brand");
+        updateItemDTO.setColor("Red");
         
         ItemDTO updatedItem = new ItemDTO();
         updatedItem.setId(itemId);
         updatedItem.setTitle("Updated Item");
+        updatedItem.setShortDescription("Updated short description");
+        updatedItem.setPrice(129.99);
         
         when(itemService.updateItem(eq(itemId), any(CreateItemDTO.class), anyLong())).thenReturn(updatedItem);
 
@@ -250,7 +415,50 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$.title").value("Updated Item"))
                 .andDo(document("items-update",
                         Preprocessors.preprocessRequest(prettyPrint()),
-                        Preprocessors.preprocessResponse(prettyPrint())
+                        Preprocessors.preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("title").description("Item title"),
+                                fieldWithPath("categoryId").description("Category ID"),
+                                fieldWithPath("shortDescription").description("Short description of the item"),
+                                fieldWithPath("longDescription").description("Detailed description of the item"),
+                                fieldWithPath("price").description("Item price"),
+                                fieldWithPath("locationId").description("Location ID"),
+                                fieldWithPath("condition").description("Item condition"),
+                                fieldWithPath("shippingOptionId").description("Shipping option ID"),
+                                fieldWithPath("latitude").description("Latitude coordinate"),
+                                fieldWithPath("longitude").description("Longitude coordinate"),
+                                fieldWithPath("size").description("Item size"),
+                                fieldWithPath("brand").description("Item brand"),
+                                fieldWithPath("color").description("Item color"),
+                                fieldWithPath("vippsPaymentEnabled").description("Whether Vipps payment is enabled").optional(),
+                                fieldWithPath("images").description("Item images").optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("Item ID"),
+                                fieldWithPath("title").description("Item title"),
+                                fieldWithPath("shortDescription").description("Short description of the item"),
+                                fieldWithPath("longDescription").description("Detailed description of the item"),
+                                fieldWithPath("price").description("Item price"),
+                                fieldWithPath("categoryId").description("Category ID"),
+                                fieldWithPath("categoryName").description("Category name"),
+                                fieldWithPath("sellerId").description("Seller ID"),
+                                fieldWithPath("sellerName").description("Seller name"),
+                                fieldWithPath("locationId").description("Location ID"),
+                                fieldWithPath("locationName").description("Location name"),
+                                fieldWithPath("shippingOptionId").description("Shipping option ID"),
+                                fieldWithPath("shippingOptionName").description("Shipping option name"),
+                                fieldWithPath("latitude").description("Latitude coordinate"),
+                                fieldWithPath("longitude").description("Longitude coordinate"),
+                                fieldWithPath("condition").description("Item condition"),
+                                fieldWithPath("size").description("Item size"),
+                                fieldWithPath("brand").description("Item brand"),
+                                fieldWithPath("color").description("Item color"),
+                                fieldWithPath("createdAt").description("Creation date and time"),
+                                fieldWithPath("updatedAt").description("Last update date and time"),
+                                fieldWithPath("images").description("Item images"),
+                                fieldWithPath("available").description("Item availability status"),
+                                fieldWithPath("vippsPaymentEnabled").description("Whether Vipps payment is enabled")
+                        )
                 ));
                 
         verify(itemService).updateItem(eq(itemId), any(CreateItemDTO.class), eq(123L));

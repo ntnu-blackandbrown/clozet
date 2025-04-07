@@ -9,13 +9,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.core.MethodParameter;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.ModelAndViewContainer;
 import stud.ntnu.no.backend.history.dto.HistoryDTO;
 import stud.ntnu.no.backend.history.service.HistoryService;
 import stud.ntnu.no.backend.user.entity.User;
@@ -24,7 +30,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -58,9 +64,22 @@ class HistoryControllerTest {
     void setUp(RestDocumentationContextProvider restDocumentation) {
         // Setup authentication with mock user
         when(mockUser.getId()).thenReturn(123L);
+        when(authentication.getPrincipal()).thenReturn(mockUser);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         
         mockMvc = MockMvcBuilders.standaloneSetup(historyController)
+                .setCustomArgumentResolvers(new HandlerMethodArgumentResolver() {
+                    @Override
+                    public boolean supportsParameter(MethodParameter parameter) {
+                        return parameter.getParameterAnnotation(AuthenticationPrincipal.class) != null;
+                    }
+
+                    @Override
+                    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+                                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
+                        return mockUser;
+                    }
+                })
                 .apply(documentationConfiguration(restDocumentation)
                         .operationPreprocessors()
                         .withRequestDefaults(prettyPrint())
@@ -79,7 +98,7 @@ class HistoryControllerTest {
         historyDTO.setItemId(itemId);
         historyDTO.setViewedAt(LocalDateTime.now());
         
-        when(historyService.addToHistory(anyLong(), anyLong())).thenReturn(historyDTO);
+        when(historyService.addToHistory(eq(123L), eq(itemId))).thenReturn(historyDTO);
 
         // When/Then
         mockMvc.perform(post("/api/history/add/" + itemId))
@@ -94,18 +113,20 @@ class HistoryControllerTest {
                                 fieldWithPath("id").description("History entry ID"),
                                 fieldWithPath("userId").description("User ID"),
                                 fieldWithPath("itemId").description("Item ID"),
-                                fieldWithPath("viewedAt").description("Timestamp when the item was viewed")
+                                fieldWithPath("viewedAt").description("Timestamp when the item was viewed"),
+                                fieldWithPath("itemTitle").description("Title of the viewed item"),
+                                fieldWithPath("active").description("Whether the history entry is active")
                         )
                 ));
                 
-        verify(historyService).addToHistory(anyLong(), eq(itemId));
+        verify(historyService).addToHistory(eq(123L), eq(itemId));
     }
 
     @Test
     void removeFromHistory_ShouldReturnNoContent() throws Exception {
         // Given
         Long itemId = 101L;
-        doNothing().when(historyService).removeFromHistory(anyLong(), anyLong());
+        doNothing().when(historyService).removeFromHistory(eq(123L), eq(itemId));
 
         // When/Then
         mockMvc.perform(delete("/api/history/remove/" + itemId))
@@ -115,13 +136,13 @@ class HistoryControllerTest {
                         Preprocessors.preprocessResponse(prettyPrint())
                 ));
                 
-        verify(historyService).removeFromHistory(anyLong(), eq(itemId));
+        verify(historyService).removeFromHistory(eq(123L), eq(itemId));
     }
 
     @Test
     void deleteHistory_ShouldReturnNoContent() throws Exception {
         // Given
-        doNothing().when(historyService).deleteHistory(anyLong());
+        doNothing().when(historyService).deleteHistory(eq(123L));
 
         // When/Then
         mockMvc.perform(delete("/api/history/clear"))
@@ -131,14 +152,14 @@ class HistoryControllerTest {
                         Preprocessors.preprocessResponse(prettyPrint())
                 ));
                 
-        verify(historyService).deleteHistory(anyLong());
+        verify(historyService).deleteHistory(eq(123L));
     }
 
     @Test
     void pauseHistory_ShouldReturnOk() throws Exception {
         // Given
         boolean pause = true;
-        doNothing().when(historyService).pauseHistory(anyLong(), eq(pause));
+        doNothing().when(historyService).pauseHistory(eq(123L), eq(pause));
 
         // When/Then
         mockMvc.perform(post("/api/history/pause/" + pause))
@@ -148,7 +169,7 @@ class HistoryControllerTest {
                         Preprocessors.preprocessResponse(prettyPrint())
                 ));
                 
-        verify(historyService).pauseHistory(anyLong(), eq(pause));
+        verify(historyService).pauseHistory(eq(123L), eq(pause));
     }
 
     @Test
@@ -168,7 +189,7 @@ class HistoryControllerTest {
         
         List<HistoryDTO> historyList = Arrays.asList(historyDTO1, historyDTO2);
         
-        when(historyService.getUserHistory(anyLong())).thenReturn(historyList);
+        when(historyService.getUserHistory(eq(123L))).thenReturn(historyList);
 
         // When/Then
         mockMvc.perform(get("/api/history"))
@@ -185,10 +206,12 @@ class HistoryControllerTest {
                                 fieldWithPath("[].id").description("History entry ID"),
                                 fieldWithPath("[].userId").description("User ID"),
                                 fieldWithPath("[].itemId").description("Item ID"),
-                                fieldWithPath("[].viewedAt").description("Timestamp when the item was viewed")
+                                fieldWithPath("[].viewedAt").description("Timestamp when the item was viewed"),
+                                fieldWithPath("[].itemTitle").description("Title of the viewed item"),
+                                fieldWithPath("[].active").description("Whether the history entry is active")
                         )
                 ));
                 
-        verify(historyService).getUserHistory(anyLong());
+        verify(historyService).getUserHistory(eq(123L));
     }
 } 

@@ -80,7 +80,13 @@ class CategoryControllerTest {
                         Preprocessors.preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("[].id").description("Category ID"),
-                                fieldWithPath("[].name").description("Category name")
+                                fieldWithPath("[].name").description("Category name"),
+                                fieldWithPath("[].description").description("Category description"),
+                                fieldWithPath("[].parentId").description("Parent category ID"),
+                                fieldWithPath("[].createdAt").description("Date and time when category was created"),
+                                fieldWithPath("[].updatedAt").description("Date and time when category was last updated"),
+                                fieldWithPath("[].subcategoryIds").description("List of subcategory IDs"),
+                                fieldWithPath("[].parentName").description("Name of the parent category")
                         )
                 ));
                 
@@ -114,7 +120,13 @@ class CategoryControllerTest {
                         Preprocessors.preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("[].id").description("Category ID"),
-                                fieldWithPath("[].name").description("Category name")
+                                fieldWithPath("[].name").description("Category name"),
+                                fieldWithPath("[].description").description("Category description"),
+                                fieldWithPath("[].parentId").description("Parent category ID"),
+                                fieldWithPath("[].createdAt").description("Date and time when category was created"),
+                                fieldWithPath("[].updatedAt").description("Date and time when category was last updated"),
+                                fieldWithPath("[].subcategoryIds").description("List of subcategory IDs"),
+                                fieldWithPath("[].parentName").description("Name of the parent category")
                         )
                 ));
                 
