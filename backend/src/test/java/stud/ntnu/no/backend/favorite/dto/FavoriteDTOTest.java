@@ -1,7 +1,6 @@
 package stud.ntnu.no.backend.favorite.dto;
 
 import org.junit.jupiter.api.Test;
-import stud.ntnu.no.backend.favorite.dto.FavoriteDTO;
 
 import java.time.LocalDateTime;
 
@@ -10,182 +9,104 @@ import static org.junit.jupiter.api.Assertions.*;
 class FavoriteDTOTest {
 
     @Test
-    void testDefaultConstructor() {
-        // Act
-        FavoriteDTO favoriteDTO = new FavoriteDTO();
-        
-        // Assert
-        assertNull(favoriteDTO.getId());
-        assertNull(favoriteDTO.getUserId());
-        assertNull(favoriteDTO.getItemId());
-        assertNull(favoriteDTO.getCreatedAt());
-        assertNull(favoriteDTO.getUpdatedAt());
-        assertFalse(favoriteDTO.isActive()); // Default value is false since not initialized
+    void testEmptyConstructor() {
+        FavoriteDTO dto = new FavoriteDTO();
+        assertNull(dto.getId());
+        assertNull(dto.getUserId());
+        assertNull(dto.getItemId());
+        assertFalse(dto.isActive());
+        assertNull(dto.getCreatedAt());
+        assertNull(dto.getUpdatedAt());
     }
-    
+
     @Test
     void testParameterizedConstructor() {
-        // Arrange
         Long id = 1L;
-        String userId = "1";
-        Long itemId = 2L;
+        String userId = "user123";
+        Long itemId = 456L;
         boolean active = true;
         LocalDateTime createdAt = LocalDateTime.now();
-        LocalDateTime updatedAt = LocalDateTime.now();
+        LocalDateTime updatedAt = LocalDateTime.now().plusHours(1);
+
+        FavoriteDTO dto = new FavoriteDTO(id, userId, itemId, active, createdAt, updatedAt);
         
-        // Act
-        FavoriteDTO favoriteDTO = new FavoriteDTO(id, userId, itemId, active, createdAt, updatedAt);
-        
-        // Assert
-        assertEquals(id, favoriteDTO.getId());
-        assertEquals(userId, favoriteDTO.getUserId());
-        assertEquals(itemId, favoriteDTO.getItemId());
-        assertEquals(createdAt, favoriteDTO.getCreatedAt());
-        assertEquals(updatedAt, favoriteDTO.getUpdatedAt());
-        assertTrue(favoriteDTO.isActive());
+        assertEquals(id, dto.getId());
+        assertEquals(userId, dto.getUserId());
+        assertEquals(itemId, dto.getItemId());
+        assertEquals(active, dto.isActive());
+        assertEquals(createdAt, dto.getCreatedAt());
+        assertEquals(updatedAt, dto.getUpdatedAt());
     }
-    
+
     @Test
-    void testSettersAndGetters() {
-        // Arrange
-        FavoriteDTO favoriteDTO = new FavoriteDTO();
+    void testGettersAndSetters() {
+        FavoriteDTO dto = new FavoriteDTO();
+        
         Long id = 1L;
-        String userId = "1";
-        Long itemId = 2L;
+        String userId = "user123";
+        Long itemId = 456L;
         boolean active = true;
         LocalDateTime createdAt = LocalDateTime.now();
-        LocalDateTime updatedAt = LocalDateTime.now();
+        LocalDateTime updatedAt = LocalDateTime.now().plusHours(1);
         
-        // Act
-        favoriteDTO.setId(id);
-        favoriteDTO.setUserId(userId);
-        favoriteDTO.setItemId(itemId);
-        favoriteDTO.setActive(active);
-        favoriteDTO.setCreatedAt(createdAt);
-        favoriteDTO.setUpdatedAt(updatedAt);
+        dto.setId(id);
+        dto.setUserId(userId);
+        dto.setItemId(itemId);
+        dto.setActive(active);
+        dto.setCreatedAt(createdAt);
+        dto.setUpdatedAt(updatedAt);
         
-        // Assert
-        assertEquals(id, favoriteDTO.getId());
-        assertEquals(userId, favoriteDTO.getUserId());
-        assertEquals(itemId, favoriteDTO.getItemId());
-        assertEquals(createdAt, favoriteDTO.getCreatedAt());
-        assertEquals(updatedAt, favoriteDTO.getUpdatedAt());
-        assertTrue(favoriteDTO.isActive());
+        assertEquals(id, dto.getId());
+        assertEquals(userId, dto.getUserId());
+        assertEquals(itemId, dto.getItemId());
+        assertEquals(active, dto.isActive());
+        assertEquals(createdAt, dto.getCreatedAt());
+        assertEquals(updatedAt, dto.getUpdatedAt());
     }
-    
+
     @Test
-    void testEquals_withSameObject() {
-        // Arrange
-        LocalDateTime now = LocalDateTime.now();
-        FavoriteDTO favoriteDTO = new FavoriteDTO(1L, "1", 2L, true, now, now);
+    void testEqualsAndHashCode() {
+        LocalDateTime createdAt = LocalDateTime.of(2023, 1, 1, 12, 0);
+        LocalDateTime updatedAt = LocalDateTime.of(2023, 1, 1, 13, 0);
         
-        // Act & Assert
-        assertEquals(favoriteDTO, favoriteDTO);
-    }
-    
-    @Test
-    void testEquals_withEquivalentObject() {
-        // Arrange
-        LocalDateTime now = LocalDateTime.now();
-        FavoriteDTO favoriteDTO1 = new FavoriteDTO(1L, "1", 2L, true, now, now);
-        FavoriteDTO favoriteDTO2 = new FavoriteDTO(1L, "1", 2L, true, now, now);
+        FavoriteDTO dto1 = new FavoriteDTO(1L, "user123", 456L, true, createdAt, updatedAt);
+        FavoriteDTO dto2 = new FavoriteDTO(1L, "user123", 456L, true, createdAt, updatedAt);
+        FavoriteDTO dto3 = new FavoriteDTO(2L, "user123", 456L, true, createdAt, updatedAt);
+        FavoriteDTO dto4 = new FavoriteDTO(1L, "user456", 456L, true, createdAt, updatedAt);
+        FavoriteDTO dto5 = new FavoriteDTO(1L, "user123", 789L, true, createdAt, updatedAt);
+        FavoriteDTO dto6 = new FavoriteDTO(1L, "user123", 456L, false, createdAt, updatedAt);
         
-        // Act & Assert
-        assertEquals(favoriteDTO1, favoriteDTO2);
-        assertEquals(favoriteDTO2, favoriteDTO1);
-    }
-    
-    @Test
-    void testEquals_withDifferentObject() {
-        // Arrange
-        LocalDateTime now = LocalDateTime.now();
-        FavoriteDTO favoriteDTO = new FavoriteDTO(1L, "1", 2L, true, now, now);
+        // Test equals
+        assertEquals(dto1, dto2);
+        assertNotEquals(dto1, dto3);
+        assertNotEquals(dto1, dto4);
+        assertNotEquals(dto1, dto5);
+        assertNotEquals(dto1, dto6);
+        assertNotEquals(dto1, null);
+        assertNotEquals(dto1, new Object());
+        assertEquals(dto1, dto1); // Same object
         
-        // Act & Assert
-        assertNotEquals(favoriteDTO, "String");
-    }
-    
-    @Test
-    void testEquals_withDifferentId() {
-        // Arrange
-        LocalDateTime now = LocalDateTime.now();
-        FavoriteDTO favoriteDTO1 = new FavoriteDTO(1L, "1", 2L, true, now, now);
-        FavoriteDTO favoriteDTO2 = new FavoriteDTO(2L, "1", 2L, true, now, now);
-        
-        // Act & Assert
-        assertNotEquals(favoriteDTO1, favoriteDTO2);
-    }
-    
-    @Test
-    void testEquals_withDifferentUserId() {
-        // Arrange
-        LocalDateTime now = LocalDateTime.now();
-        FavoriteDTO favoriteDTO1 = new FavoriteDTO(1L, "1", 2L, true, now, now);
-        FavoriteDTO favoriteDTO2 = new FavoriteDTO(1L, "2", 2L, true, now, now);
-        
-        // Act & Assert
-        assertNotEquals(favoriteDTO1, favoriteDTO2);
-    }
-    
-    @Test
-    void testEquals_withDifferentItemId() {
-        // Arrange
-        LocalDateTime now = LocalDateTime.now();
-        FavoriteDTO favoriteDTO1 = new FavoriteDTO(1L, "1", 2L, true, now, now);
-        FavoriteDTO favoriteDTO2 = new FavoriteDTO(1L, "1", 3L, true, now, now);
-        
-        // Act & Assert
-        assertNotEquals(favoriteDTO1, favoriteDTO2);
-    }
-    
-    @Test
-    void testEquals_withDifferentIsActive() {
-        // Arrange
-        LocalDateTime now = LocalDateTime.now();
-        FavoriteDTO favoriteDTO1 = new FavoriteDTO(1L, "1", 2L, true, now, now);
-        FavoriteDTO favoriteDTO2 = new FavoriteDTO(1L, "1", 2L, false, now, now);
-        
-        // Act & Assert
-        assertNotEquals(favoriteDTO1, favoriteDTO2);
-    }
-    
-    @Test
-    void testEquals_withDifferentUpdatedAt() {
-        // Arrange
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime later = now.plusHours(1);
-        FavoriteDTO favoriteDTO1 = new FavoriteDTO(1L, "1", 2L, true, now, now);
-        FavoriteDTO favoriteDTO2 = new FavoriteDTO(1L, "1", 2L, true, now, later);
-        
-        // Act & Assert
-        assertNotEquals(favoriteDTO1, favoriteDTO2);
-    }
-    
-    @Test
-    void testHashCode() {
-        // Arrange
-        LocalDateTime now = LocalDateTime.now();
-        FavoriteDTO favoriteDTO1 = new FavoriteDTO(1L, "1", 2L, true, now, now);
-        FavoriteDTO favoriteDTO2 = new FavoriteDTO(1L, "1", 2L, true, now, now);
-        
-        // Act & Assert
-        assertEquals(favoriteDTO1.hashCode(), favoriteDTO2.hashCode());
+        // Test hashCode
+        assertEquals(dto1.hashCode(), dto2.hashCode());
+        assertNotEquals(dto1.hashCode(), dto3.hashCode());
+        assertNotEquals(dto1.hashCode(), dto4.hashCode());
+        assertNotEquals(dto1.hashCode(), dto5.hashCode());
+        assertNotEquals(dto1.hashCode(), dto6.hashCode());
     }
     
     @Test
     void testToString() {
-        // Arrange
-        LocalDateTime now = LocalDateTime.now();
-        FavoriteDTO favoriteDTO = new FavoriteDTO(1L, "1", 2L, true, now, now);
+        LocalDateTime createdAt = LocalDateTime.of(2023, 1, 1, 12, 0);
+        LocalDateTime updatedAt = LocalDateTime.of(2023, 1, 1, 13, 0);
         
-        // Act
-        String toString = favoriteDTO.toString();
+        FavoriteDTO dto = new FavoriteDTO(1L, "user123", 456L, true, createdAt, updatedAt);
+        String toString = dto.toString();
         
-        // Assert
-        // Just verify that the string contains the field names and values
-        assertTrue(toString.contains("FavoriteDTO"));
         assertTrue(toString.contains("id=1"));
-        assertTrue(toString.contains("userId='1'"));
-        assertTrue(toString.contains("itemId=2"));
+        assertTrue(toString.contains("userId='user123'"));
+        assertTrue(toString.contains("itemId=456"));
+        assertTrue(toString.contains("active=true"));
+        assertTrue(toString.contains("createdAt=" + createdAt));
+        assertTrue(toString.contains("updatedAt=" + updatedAt));
     }
 } 
