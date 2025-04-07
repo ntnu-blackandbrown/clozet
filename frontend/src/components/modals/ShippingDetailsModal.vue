@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits, defineProps, onMounted } from 'vue'
+import { ref, defineEmits, defineProps, computed } from 'vue'
 import { useAuthStore } from '@/stores/AuthStore'
 
 interface ShippingDetails {
@@ -31,6 +31,32 @@ const phone = ref(props.initialValues?.phone || authStore.user?.phoneNumber || '
 const error = ref('')
 const isProcessing = ref(false)
 
+// Check if international shipping
+const isInternationalShipping = computed(() => {
+  return props.shippingOptionName === 'International Shipping'
+})
+
+// List of countries (you can expand this list as needed)
+const countries = [
+  'Norway',
+  'Sweden',
+  'Denmark',
+  'Finland',
+  'Germany',
+  'France',
+  'United Kingdom',
+  'Spain',
+  'Italy',
+  'Netherlands',
+  'Belgium',
+  'Poland',
+  'Austria',
+  'Switzerland',
+  'Ireland',
+  'Portugal',
+  // Add more European countries as needed
+]
+
 // Form validation
 const validateForm = () => {
   if (!firstName.value || !lastName.value || !streetAddress.value ||
@@ -39,8 +65,8 @@ const validateForm = () => {
     return false
   }
 
-  // Norwegian postal code validation (4 digits)
-  if (!/^\d{4}$/.test(postalCode.value)) {
+  // Norwegian postal code validation only for Norway
+  if (country.value === 'Norway' && !/^\d{4}$/.test(postalCode.value)) {
     error.value = 'Please enter a valid Norwegian postal code (4 digits)'
     return false
   }
@@ -113,6 +139,28 @@ const handleContinue = () => {
       </div>
 
       <div class="form-group">
+        <label for="country">Country</label>
+        <select
+          v-if="isInternationalShipping"
+          id="country"
+          v-model="country"
+          class="form-input"
+        >
+          <option v-for="countryName in countries" :key="countryName" :value="countryName">
+            {{ countryName }}
+          </option>
+        </select>
+        <input
+          v-else
+          type="text"
+          id="country"
+          v-model="country"
+          class="form-input"
+          readonly
+        />
+      </div>
+
+      <div class="form-group">
         <label for="streetAddress">Street Address</label>
         <input
           type="text"
@@ -131,8 +179,8 @@ const handleContinue = () => {
             id="postalCode"
             v-model="postalCode"
             class="form-input"
-            placeholder="0000"
-            maxlength="4"
+            :placeholder="country === 'Norway' ? '0000' : 'Enter postal code'"
+            :maxlength="country === 'Norway' ? 4 : undefined"
           />
         </div>
         <div class="form-group">
@@ -145,17 +193,6 @@ const handleContinue = () => {
             placeholder="Enter your city"
           />
         </div>
-      </div>
-
-      <div class="form-group">
-        <label for="country">Country</label>
-        <input
-          type="text"
-          id="country"
-          v-model="country"
-          class="form-input"
-          readonly
-        />
       </div>
 
       <div class="form-group">
@@ -290,5 +327,23 @@ label {
     flex-direction: column;
     gap: 1rem;
   }
+}
+
+select.form-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+  padding-right: 2.5rem;
+}
+
+select.form-input:focus {
+  border-color: #4CAF50;
+  outline: none;
+}
+
+select.form-input option {
+  padding: 0.5rem;
 }
 </style>
