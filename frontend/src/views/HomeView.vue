@@ -4,7 +4,8 @@ import { useRouter, useRoute } from 'vue-router'
 import ProductListView from '@/views/ProductListView.vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
+import axios from '@/api/axios'
 
 const router = useRouter()
 const route = useRoute()
@@ -13,6 +14,9 @@ const showLoginModal = ref(false)
 const initialAuthMode = ref('login') // Default to login mode
 const searchQuery = ref('')
 const debouncedSearchQuery = ref('')
+const topCategories = ref([])
+const isLoadingCategories = ref(false)
+const categoryError = ref(null)
 
 // Simple debounce for search input
 let debounceTimer = null
@@ -24,11 +28,12 @@ const handleSearchInput = (e) => {
 }
 
 // Check if we should show the login/register modal based on the route
-onMounted(() => {
+onMounted(async () => {
   if (route.path === '/login' || route.path === '/register') {
     showLoginModal.value = true
     initialAuthMode.value = route.path === '/login' ? 'login' : 'register'
   }
+  await fetchTopCategories()
 })
 
 // Watch for route changes to handle login/register routes
@@ -75,6 +80,37 @@ const clearSearch = () => {
   searchQuery.value = ''
   debouncedSearchQuery.value = ''
 }
+
+const fetchTopCategories = async () => {
+  isLoadingCategories.value = true
+  categoryError.value = null
+
+  try {
+    const response = await axios.get('/api/categories/top-five')
+    topCategories.value = response.data
+    console.log('Fetched top categories:', response.data)
+  } catch (error) {
+    console.error('Error fetching top categories:', error)
+    categoryError.value = 'Failed to load categories'
+    topCategories.value = []
+  } finally {
+    isLoadingCategories.value = false
+  }
+}
+
+// Computed property to handle the case where no categories are returned
+const displayCategories = computed(() => {
+  if (topCategories.value && topCategories.value.length > 0) {
+    return topCategories.value
+  }
+  // Fallback categories if none are returned from API
+  return [
+    { id: 1, name: 'Tops' },
+    { id: 2, name: 'Bottoms' },
+    { id: 3, name: 'Dresses' },
+    { id: 4, name: 'Accessories' }
+  ]
+})
 </script>
 
 <template>
@@ -115,12 +151,13 @@ const clearSearch = () => {
       </div>
 
       <div class="categories-section">
-        <h4>Popular Categories</h4>
+        <h4>
+          Popular Categories
+          <span v-if="isLoadingCategories" class="loading-indicator">(Loading...)</span>
+        </h4>
+        <div v-if="categoryError" class="error-message">{{ categoryError }}</div>
         <div class="badge-container">
-          <Badge type="category" name="Tops" />
-          <Badge type="category" name="Bottoms" />
-          <Badge type="category" name="Dresses" />
-          <Badge type="category" name="Accessories" />
+          <Badge v-for="category in displayCategories" :key="category.id" type="category" :name="category.name" />
         </div>
       </div>
     </div>
@@ -178,7 +215,6 @@ const clearSearch = () => {
   object-fit: contain;
   border-radius: var(--border-radius-lg);
 }
-
 
 .hero-section {
   text-align: left;
@@ -323,6 +359,19 @@ h3 {
   cursor: pointer;
   font-size: 0.9rem;
   margin-left: 8px;
+}
+
+.loading-indicator {
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: normal;
+  margin-left: 0.5rem;
+}
+
+.error-message {
+  color: #e53e3e;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
 }
 
 @media (max-width: 1024px) {
