@@ -22,7 +22,6 @@ const isLoadingDetails = ref(false)
 const selectedLocation = ref<string>('')
 const selectedShippingOption = ref<string>('')
 const selectedCategory = ref<string>('')
-const showOnlyAvailable = ref<boolean>(false)
 
 // Unique filter options
 const locations = computed(() => {
@@ -149,14 +148,6 @@ const filteredItems = computed(() => {
     })
   }
 
-  // Apply availability filter
-  if (showOnlyAvailable.value) {
-    filtered = filtered.filter(item => {
-      const detailedItem = detailedItems.value.get(item.id)
-      return detailedItem?.available ?? true // Default to true if detailed info not loaded
-    })
-  }
-
   return filtered
 })
 
@@ -185,7 +176,6 @@ const resetFilters = () => {
   selectedLocation.value = ''
   selectedShippingOption.value = ''
   selectedCategory.value = ''
-  showOnlyAvailable.value = false
 }
 </script>
 
@@ -223,13 +213,6 @@ const resetFilters = () => {
             {{ option }}
           </option>
         </select>
-      </div>
-
-      <div class="filter-group checkbox">
-        <label>
-          <input type="checkbox" v-model="showOnlyAvailable">
-          Show only available items
-        </label>
       </div>
 
       <button class="reset-button" @click="resetFilters">
@@ -279,12 +262,6 @@ const resetFilters = () => {
   border-radius: 4px;
   min-width: 200px;
   background-color: white;
-}
-
-.filter-group.checkbox {
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 .reset-button {
