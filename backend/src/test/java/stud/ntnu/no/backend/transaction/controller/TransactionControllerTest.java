@@ -91,7 +91,12 @@ class TransactionControllerTest {
                                 fieldWithPath("[].id").description("Transaction ID"),
                                 fieldWithPath("[].buyerId").description("Buyer ID"),
                                 fieldWithPath("[].sellerId").description("Seller ID"),
-                                fieldWithPath("[].itemId").description("Item ID")
+                                fieldWithPath("[].itemId").description("Item ID"),
+                                fieldWithPath("[].amount").description("Transaction amount"),
+                                fieldWithPath("[].status").description("Transaction status"),
+                                fieldWithPath("[].paymentMethod").description("Payment method used"),
+                                fieldWithPath("[].createdAt").description("Date and time when transaction was created"),
+                                fieldWithPath("[].updatedAt").description("Date and time when transaction was last updated")
                         )
                 ));
                 
@@ -123,7 +128,12 @@ class TransactionControllerTest {
                                 fieldWithPath("id").description("Transaction ID"),
                                 fieldWithPath("buyerId").description("Buyer ID"),
                                 fieldWithPath("sellerId").description("Seller ID"),
-                                fieldWithPath("itemId").description("Item ID")
+                                fieldWithPath("itemId").description("Item ID"),
+                                fieldWithPath("amount").description("Transaction amount"),
+                                fieldWithPath("status").description("Transaction status"),
+                                fieldWithPath("paymentMethod").description("Payment method used"),
+                                fieldWithPath("createdAt").description("Date and time when transaction was created"),
+                                fieldWithPath("updatedAt").description("Date and time when transaction was last updated")
                         )
                 ));
                 
@@ -137,12 +147,18 @@ class TransactionControllerTest {
         request.setBuyerId("user101");
         request.setSellerId("user201");
         request.setItemId(301L);
+        request.setAmount(50.0);
+        request.setStatus("PENDING");
+        request.setPaymentMethod("CREDIT_CARD");
         
         TransactionDTO createdTransaction = new TransactionDTO();
         createdTransaction.setId(1L);
         createdTransaction.setBuyerId("user101");
         createdTransaction.setSellerId("user201");
         createdTransaction.setItemId(301L);
+        createdTransaction.setAmount(50.0);
+        createdTransaction.setStatus("PENDING");
+        createdTransaction.setPaymentMethod("CREDIT_CARD");
         
         when(transactionService.createTransaction(any(CreateTransactionRequest.class))).thenReturn(createdTransaction);
 
@@ -159,13 +175,21 @@ class TransactionControllerTest {
                         requestFields(
                                 fieldWithPath("buyerId").description("Buyer ID"),
                                 fieldWithPath("sellerId").description("Seller ID"),
-                                fieldWithPath("itemId").description("Item ID")
+                                fieldWithPath("itemId").description("Item ID"),
+                                fieldWithPath("amount").description("Transaction amount"),
+                                fieldWithPath("status").description("Transaction status"),
+                                fieldWithPath("paymentMethod").description("Payment method used")
                         ),
                         responseFields(
                                 fieldWithPath("id").description("Transaction ID"),
                                 fieldWithPath("buyerId").description("Buyer ID"),
                                 fieldWithPath("sellerId").description("Seller ID"),
-                                fieldWithPath("itemId").description("Item ID")
+                                fieldWithPath("itemId").description("Item ID"),
+                                fieldWithPath("amount").description("Transaction amount"),
+                                fieldWithPath("status").description("Transaction status"),
+                                fieldWithPath("paymentMethod").description("Payment method used"),
+                                fieldWithPath("createdAt").description("Date and time when transaction was created"),
+                                fieldWithPath("updatedAt").description("Date and time when transaction was last updated")
                         )
                 ));
                 
@@ -179,6 +203,7 @@ class TransactionControllerTest {
         
         UpdateTransactionRequest request = new UpdateTransactionRequest();
         request.setStatus("COMPLETED");
+        request.setPaymentMethod("PAYPAL");
         
         TransactionDTO updatedTransaction = new TransactionDTO();
         updatedTransaction.setId(transactionId);
@@ -186,6 +211,8 @@ class TransactionControllerTest {
         updatedTransaction.setSellerId("user201");
         updatedTransaction.setItemId(301L);
         updatedTransaction.setStatus("COMPLETED");
+        updatedTransaction.setAmount(50.0);
+        updatedTransaction.setPaymentMethod("PAYPAL");
         
         when(transactionService.updateTransaction(eq(transactionId), any(UpdateTransactionRequest.class)))
                 .thenReturn(updatedTransaction);
@@ -201,14 +228,19 @@ class TransactionControllerTest {
                         Preprocessors.preprocessRequest(prettyPrint()),
                         Preprocessors.preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("status").description("Transaction status")
+                                fieldWithPath("status").description("Transaction status"),
+                                fieldWithPath("paymentMethod").description("Payment method used")
                         ),
                         responseFields(
                                 fieldWithPath("id").description("Transaction ID"),
                                 fieldWithPath("buyerId").description("Buyer ID"),
                                 fieldWithPath("sellerId").description("Seller ID"),
                                 fieldWithPath("itemId").description("Item ID"),
-                                fieldWithPath("status").description("Transaction status")
+                                fieldWithPath("amount").description("Transaction amount"),
+                                fieldWithPath("status").description("Transaction status"),
+                                fieldWithPath("paymentMethod").description("Payment method used"),
+                                fieldWithPath("createdAt").description("Date and time when transaction was created"),
+                                fieldWithPath("updatedAt").description("Date and time when transaction was last updated")
                         )
                 ));
                 
@@ -269,7 +301,12 @@ class TransactionControllerTest {
                                 fieldWithPath("[].id").description("Transaction ID"),
                                 fieldWithPath("[].buyerId").description("Buyer ID"),
                                 fieldWithPath("[].sellerId").description("Seller ID"),
-                                fieldWithPath("[].itemId").description("Item ID")
+                                fieldWithPath("[].itemId").description("Item ID"),
+                                fieldWithPath("[].amount").description("Transaction amount"),
+                                fieldWithPath("[].status").description("Transaction status"),
+                                fieldWithPath("[].paymentMethod").description("Payment method used"),
+                                fieldWithPath("[].createdAt").description("Date and time when transaction was created"),
+                                fieldWithPath("[].updatedAt").description("Date and time when transaction was last updated")
                         )
                 ));
                 
