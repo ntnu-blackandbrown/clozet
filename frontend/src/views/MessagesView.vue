@@ -263,12 +263,28 @@ const filteredWebSocketMessages = computed(() => {
 const combinedMessages = computed(() => {
   if (!activeChat.value) return [];
 
-  // Get API messages for this chat
+  // Find the current conversation
+  const currentConversation = chats.value.find(chat =>
+    (chat.conversationId === activeChat.value) || (chat.id === activeChat.value)
+  );
+
+  if (!currentConversation) return [];
+
+  const currentReceiverId = currentConversation.receiverId?.toString();
+  const currentSenderId = authStore.user?.id?.toString();
+
+  // Get API messages for the active chat
   const apiMessages = chatMessages.value[activeChat.value] || [];
+
+  // Filter API messages to ensure they belong to the current conversation
+  const filteredApiMessages = apiMessages.filter(msg =>
+    (msg.senderId === currentSenderId && msg.receiverId === currentReceiverId) ||
+    (msg.senderId === currentReceiverId && msg.receiverId === currentSenderId)
+  );
 
   // Create a unique key for each API message for duplicate detection
   const messageKeys = new Set();
-  apiMessages.forEach(msg => {
+  filteredApiMessages.forEach(msg => {
     const key = `${msg.senderId}-${msg.receiverId}-${msg.content}-${msg.timestamp || msg.createdAt}`;
     messageKeys.add(key);
   });
@@ -276,21 +292,15 @@ const combinedMessages = computed(() => {
   // Filter WebSocket messages to only include those that don't match API messages
   const uniqueWebSocketMessages = filteredWebSocketMessages.value.filter(wsMsg => {
     const key = `${wsMsg.senderId}-${wsMsg.receiverId}-${wsMsg.content}-${wsMsg.timestamp || wsMsg.createdAt}`;
-
-    // If this key exists in API messages, it's a duplicate
     if (messageKeys.has(key)) {
       return false;
     }
-
-    // Otherwise, add it to the set and include it
     messageKeys.add(key);
     return true;
   });
 
   // Combine and sort all messages by timestamp
-  const allMessages = [...apiMessages, ...uniqueWebSocketMessages];
-
-  // Sort by timestamp (handling both API and WebSocket message formats)
+  const allMessages = [...filteredApiMessages, ...uniqueWebSocketMessages];
   return allMessages.sort((a, b) => {
     const timeA = new Date(a.timestamp || a.createdAt).getTime();
     const timeB = new Date(b.timestamp || b.createdAt).getTime();
