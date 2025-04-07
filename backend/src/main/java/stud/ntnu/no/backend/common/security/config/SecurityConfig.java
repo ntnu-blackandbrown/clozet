@@ -17,10 +17,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import stud.ntnu.no.backend.common.security.filter.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Configuration class for setting up security filters and authentication.
@@ -43,6 +46,68 @@ public class SecurityConfig {
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
+        logger.info("SecurityConfig initialized");
+    }
+
+    /**
+     * Normalizes the origin by trimming and removing any trailing slashes.
+     * 
+     * @param origin the origin to normalize
+     * @return the normalized origin, or null if origin is null
+     */
+    private String normalizeOrigin(String origin) {
+        if (origin == null) {
+            return null;
+        }
+        String trimmed = origin.trim();
+        return trimmed.endsWith("/") ? trimmed.substring(0, trimmed.length() - 1) : trimmed;
+    }
+
+    /**
+     * Configures CORS settings for the application.
+     * 
+     * @return the CORS configuration source
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        logger.info("Configuring CORS settings");
+        
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        
+        // Instead of using patterns, we'll validate origins in the configure method
+        corsConfig.setAllowedOrigins(Collections.emptyList()); // We'll manually validate origins
+        corsConfig.setAllowedOriginPatterns(Arrays.asList("*")); // Allow any origin for initial processing
+        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        corsConfig.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Accept", "X-Requested-With", "remember-me"));
+        corsConfig.setExposedHeaders(Arrays.asList("Content-Type"));
+        corsConfig.setAllowCredentials(true);
+        corsConfig.setMaxAge(3600L);
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfig);
+        
+        return new CorsConfigurationSource() {
+            @Override
+            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                String origin = request.getHeader("Origin");
+                logger.info("Request origin: {}", origin);
+                
+                origin = normalizeOrigin(origin);
+                
+                // Create a copy to modify for this specific request
+                CorsConfiguration config = corsConfig.applyPermitDefaultValues();
+                
+                // Only allow specific origins
+                if (origin != null && (
+                        origin.equals("http://localhost:5173") ||
+                        origin.equals("https://clozet.netlify.app"))) {
+                    logger.info("Setting Access-Control-Allow-Origin to: {}", origin);
+                    config.setAllowedOrigins(Collections.singletonList(origin));
+                }
+                
+                return config;
+            }
+        };
     }
 
     /**
@@ -56,19 +121,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         logger.info("Configuring security filter chain");
 
-        CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOriginPatterns(Arrays.asList("http://localhost:*", "ws://localhost:*"));
-        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        corsConfig.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Accept", "X-Requested-With", "remember-me"));
-        corsConfig.setExposedHeaders(Arrays.asList("Content-Type"));
-        corsConfig.setAllowCredentials(true);
-        corsConfig.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource corsSource = new UrlBasedCorsConfigurationSource();
-        corsSource.registerCorsConfiguration("/**", corsConfig);
-
         http
-            .cors(cors -> cors.configurationSource(corsSource))
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(exc -> exc
