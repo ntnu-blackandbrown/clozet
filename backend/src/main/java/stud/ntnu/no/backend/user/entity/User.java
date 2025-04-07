@@ -34,7 +34,6 @@ public class User {
   @Column(nullable = false)
   private boolean isActive;
 
-  // Felter for e-postverifisering:
   private String verificationToken;
   private LocalDateTime verificationTokenExpiry;
 
