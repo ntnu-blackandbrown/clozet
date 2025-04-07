@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.config;
+package stud.ntnu.no.backend.common.config;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

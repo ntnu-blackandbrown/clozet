@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.config;
+package stud.ntnu.no.backend.common.config;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
