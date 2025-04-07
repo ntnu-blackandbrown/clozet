@@ -11,13 +11,22 @@ const userId = authStore.user?.id
 
 onMounted(async () => {
   try {
-    const response = await axios.get(`api/favorites/user/${userId}`)
-    items.value = response.data
+    // First get user's favorites
+    const favResponse = await axios.get(`api/favorites/user/${userId}`)
+    const favorites = favResponse.data
+
+    // Then get marketplace items
+    const marketPlaceResponse = await axios.get(`api/marketplace/items`)
+    const allItems = marketPlaceResponse.data
+
+    // Filter items to only include those that exist in favorites
+    items.value = allItems.filter((item: Product) =>
+      favorites.some((fav: any) => fav.itemId === item.id)
+    )
   } catch (error) {
     console.error('Failed to fetch wishlist:', error)
     items.value = [] // fallback to empty list
   }
-  console.log(items.value)
 })
 </script>
 
