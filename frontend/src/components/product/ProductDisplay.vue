@@ -4,6 +4,7 @@ import Badge from '@/components/utils/Badge.vue'
 import WishlistButton from '@/components/utils/WishlistButton.vue'
 import axios from '@/api/axios'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/AuthStore'
 
 interface ProductDisplayProps {
   id: number
@@ -11,7 +12,7 @@ interface ProductDisplayProps {
 
 const props = defineProps<ProductDisplayProps>()
 const router = useRouter()
-
+const authStore = useAuthStore()
 const getItemById = async () => {
   const item = await axios.get(`api/items/${props.id}`)
   return item.data
@@ -64,7 +65,8 @@ const handleBuyClick = async () => {
     const response = await axios.post('/api/transactions', {
       // Assuming the transaction requires item ID and seller ID
       itemId: item.value.id,
-      sellerId: sellerId.value
+      sellerId: sellerId.value,
+      buyerId: authStore.user?.id
     });
     console.log('Transaction created:', response.data);
   } catch (error) {
