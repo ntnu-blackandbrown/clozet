@@ -12,6 +12,9 @@ import stud.ntnu.no.backend.message.dto.CreateMessageRequest;
 import stud.ntnu.no.backend.message.dto.MessageDTO;
 import stud.ntnu.no.backend.message.service.MessageService;
 
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  * WebSocket controller for handling chat messages.
  * <p>
@@ -52,14 +55,61 @@ public class WebSocketMessageController {
     /**
      * Marks a message as read via WebSocket.
      *
-     * @param messageId the ID of the message to mark as read
+     * @param readStatus the map containing messageId and read status
      */
     @MessageMapping("/chat.markRead")
-    public void markMessageAsRead(@Payload Long messageId) {
+    public void markMessageAsRead(@Payload Map<String, Object> readStatus) {
+        Long messageId = null;
+        
+        // Extract message ID from payload
+        if (readStatus.containsKey("messageId")) {
+            messageId = Long.valueOf(readStatus.get("messageId").toString());
+        }
+        
         logger.info("Marking message as read: {}", messageId);
-        MessageDTO updatedMessage = messageService.markAsRead(messageId);
-
-        // Notify clients that message has been marked as read
-        messagingTemplate.convertAndSend("/topic/messages.read", updatedMessage);
+        
+        if (messageId != null) {
+            MessageDTO updatedMessage = messageService.markAsRead(messageId);
+            
+            // Notify clients that message has been marked as read
+            messagingTemplate.convertAndSend("/topic/messages.read", updatedMessage);
+        } else {
+            logger.warn("No message ID provided in read status update");
+        }
+    }
+    
+    /**
+     * Confirms delivery of a message.
+     *
+     * @param confirmationData the map containing messageId and delivery confirmation
+     */
+    @MessageMapping("/chat.confirmDelivery")
+    public void confirmDelivery(@Payload Map<String, Object> confirmationData) {
+        if (confirmationData.containsKey("messageId")) {
+            String messageId = confirmationData.get("messageId").toString();
+            logger.info("Message delivery confirmed: {}", messageId);
+            
+            // Notify clients of delivery confirmation
+            messagingTemplate.convertAndSend("/topic/messages.delivered", confirmationData);
+        }
+    }
+    
+    /**
+     * Broadcasts typing status updates.
+     *
+     * @param typingStatus the map containing userId, receiverId and typing status
+     */
+    @MessageMapping("/chat.typing")
+    public void broadcastTypingStatus(@Payload Map<String, Object> typingStatus) {
+        if (typingStatus.containsKey("userId") && typingStatus.containsKey("receiverId")) {
+            String userId = typingStatus.get("userId").toString();
+            String receiverId = typingStatus.get("receiverId").toString();
+            boolean isTyping = Boolean.parseBoolean(typingStatus.get("isTyping").toString());
+            
+            logger.info("User {} typing status (to {}): {}", userId, receiverId, isTyping);
+            
+            // Forward typing status to all clients
+            messagingTemplate.convertAndSend("/topic/messages.typing", typingStatus);
+        }
     }
 }

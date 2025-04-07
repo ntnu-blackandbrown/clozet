@@ -1,10 +1,11 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import MessagesSidebar from '../components/messaging/MessagesSidebar.vue'
 import axios from '@/api/axios'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useWebsocket } from '@/websocket/websocket'
+import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
 
 // Core stores and router
 const router = useRouter()
@@ -17,6 +18,17 @@ const chats = ref([]) // All conversations the user is in
 const chatMessages = ref({}) // Messages grouped by chatId
 const receiverDetails = ref({}) // Active receiver's details
 const receiverUsernames = ref(new Map()) // Map of receiverId -> username
+const itemDetails = ref({}) // Map of itemId -> item details
+
+// Pagination state
+const messagePage = ref(1)
+const messagePageSize = ref(20)
+const isLoadingMore = ref(false)
+const hasMoreMessages = ref(true)
+
+// Modal state
+const showProductModal = ref(false)
+const selectedProductId = ref(null)
 
 // Format timestamp for display
 const formatTime = (timestamp) => {
@@ -41,6 +53,20 @@ const findConversationByChatId = (chatId) => {
   return chats.value.find(chat =>
     (chat.conversationId === chatId) || (chat.id === chatId)
   );
+}
+
+/**
+ * Fetch details for an item by its ID
+ */
+const fetchItemDetails = async (itemId) => {
+  try {
+    const response = await axios.get(`/api/items/${itemId}`)
+    itemDetails.value[itemId] = response.data
+    return response.data
+  } catch (error) {
+    console.error(`Failed to fetch details for item ${itemId}:`, error)
+    return null
+  }
 }
 
 /**
@@ -87,11 +113,53 @@ const handleChatSelect = async (chatId) => {
       console.error('Selected conversation has no receiverId')
     }
 
-    // Fetch chat messages
+    // Reset pagination state
+    messagePage.value = 1
+    hasMoreMessages.value = true
+    chatMessages.value[chatId] = []
+
+    // Fetch first page of chat messages
+    await loadMessages(chatId, true)
+
+    if (selectedConversation.receiverId) {
+      await fetchReceiverDetails(selectedConversation.receiverId)
+
+      // Fetch item details if we have an itemId
+      if (selectedConversation.itemId && !itemDetails.value[selectedConversation.itemId]) {
+        await fetchItemDetails(selectedConversation.itemId)
+      }
+
+      // Mark messages from this receiver as read
+      setTimeout(() => {
+        websocket.markAllAsRead();
+      }, 1000); // Small delay to ensure WebSocket connection is ready
+    }
+  } catch (error) {
+    console.error('Failed to fetch messages for conversation:', error)
+  }
+}
+
+/**
+ * Load messages for the active chat with pagination
+ * @param {string} chatId - The ID of the chat
+ * @param {boolean} reset - Whether to reset existing messages
+ */
+const loadMessages = async (chatId, reset = false) => {
+  if (isLoadingMore.value || !hasMoreMessages.value) return
+
+  try {
+    isLoadingMore.value = true
+
+    const selectedConversation = findConversationByChatId(chatId)
+    if (!selectedConversation) return
+
+    // Fetch chat messages with pagination
     const mssgResponse = await axios.get('/api/messages', {
       params: {
         senderId: authStore.user?.id?.toString(),
-        receiverId: selectedConversation.receiverId?.toString()
+        receiverId: selectedConversation.receiverId?.toString(),
+        page: messagePage.value,
+        size: messagePageSize.value
       }
     })
 
@@ -100,14 +168,38 @@ const handleChatSelect = async (chatId) => {
       new Date(a.timestamp || a.createdAt) - new Date(b.timestamp || b.createdAt)
     );
 
-    // Store messages using the chatId from the parameter
-    chatMessages.value[chatId] = sortedMessages;
-
-    if (selectedConversation.receiverId) {
-      await fetchReceiverDetails(selectedConversation.receiverId)
+    // If no messages returned, we've reached the end
+    if (sortedMessages.length === 0) {
+      hasMoreMessages.value = false
+      isLoadingMore.value = false
+      return
     }
+
+    // Update pagination
+    messagePage.value += 1
+
+    // Store messages
+    if (reset) {
+      chatMessages.value[chatId] = sortedMessages
+    } else {
+      // Prepend older messages
+      chatMessages.value[chatId] = [...sortedMessages, ...chatMessages.value[chatId]]
+    }
+
   } catch (error) {
-    console.error('Failed to fetch messages for conversation:', error)
+    console.error('Failed to fetch messages:', error)
+  } finally {
+    isLoadingMore.value = false
+  }
+}
+
+/**
+ * Load more messages when user scrolls to top of message history
+ */
+const handleScrollToTop = async (event) => {
+  const { scrollTop } = event.target
+  if (scrollTop < 50 && !isLoadingMore.value && hasMoreMessages.value && activeChat.value) {
+    await loadMessages(activeChat.value)
   }
 }
 
@@ -203,6 +295,11 @@ onMounted(async () => {
       } else {
         console.warn(`Conversation ${convo.conversationId || convo.id} has no receiverId`)
       }
+
+      // Step 2.5: Fetch item details if available
+      if (convo.itemId) {
+        await fetchItemDetails(convo.itemId)
+      }
     }
 
     // Step 3: Handle initial chat selection based on URL or first available
@@ -263,12 +360,28 @@ const filteredWebSocketMessages = computed(() => {
 const combinedMessages = computed(() => {
   if (!activeChat.value) return [];
 
-  // Get API messages for this chat
+  // Find the current conversation
+  const currentConversation = chats.value.find(chat =>
+    (chat.conversationId === activeChat.value) || (chat.id === activeChat.value)
+  );
+
+  if (!currentConversation) return [];
+
+  const currentReceiverId = currentConversation.receiverId?.toString();
+  const currentSenderId = authStore.user?.id?.toString();
+
+  // Get API messages for the active chat
   const apiMessages = chatMessages.value[activeChat.value] || [];
+
+  // Filter API messages to ensure they belong to the current conversation
+  const filteredApiMessages = apiMessages.filter(msg =>
+    (msg.senderId === currentSenderId && msg.receiverId === currentReceiverId) ||
+    (msg.senderId === currentReceiverId && msg.receiverId === currentSenderId)
+  );
 
   // Create a unique key for each API message for duplicate detection
   const messageKeys = new Set();
-  apiMessages.forEach(msg => {
+  filteredApiMessages.forEach(msg => {
     const key = `${msg.senderId}-${msg.receiverId}-${msg.content}-${msg.timestamp || msg.createdAt}`;
     messageKeys.add(key);
   });
@@ -276,27 +389,84 @@ const combinedMessages = computed(() => {
   // Filter WebSocket messages to only include those that don't match API messages
   const uniqueWebSocketMessages = filteredWebSocketMessages.value.filter(wsMsg => {
     const key = `${wsMsg.senderId}-${wsMsg.receiverId}-${wsMsg.content}-${wsMsg.timestamp || wsMsg.createdAt}`;
-
-    // If this key exists in API messages, it's a duplicate
     if (messageKeys.has(key)) {
       return false;
     }
-
-    // Otherwise, add it to the set and include it
     messageKeys.add(key);
     return true;
   });
 
   // Combine and sort all messages by timestamp
-  const allMessages = [...apiMessages, ...uniqueWebSocketMessages];
-
-  // Sort by timestamp (handling both API and WebSocket message formats)
+  const allMessages = [...filteredApiMessages, ...uniqueWebSocketMessages];
   return allMessages.sort((a, b) => {
     const timeA = new Date(a.timestamp || a.createdAt).getTime();
     const timeB = new Date(b.timestamp || b.createdAt).getTime();
     return timeA - timeB;
   });
 });
+
+/**
+ * Get the username for a conversation's receiver
+ */
+const getReceiverUsername = (conversation) => {
+  if (!conversation) return '';
+
+  const numericReceiverId = Number(conversation.receiverId);
+  const username = receiverUsernames.value.get(numericReceiverId);
+
+  if (username) {
+    return username;
+  }
+
+  // If we don't have the username in our map, try to fetch it
+  if (numericReceiverId) {
+    fetchReceiverDetails(numericReceiverId);
+  }
+
+  // Return receiver name from conversation as fallback
+  return conversation.receiverName || 'Unknown User';
+}
+
+// Get active item details for the current chat
+const activeItemDetails = computed(() => {
+  if (!activeChat.value) return null;
+
+  const currentChat = findConversationByChatId(activeChat.value);
+  if (!currentChat || !currentChat.itemId) return null;
+
+  return itemDetails.value[currentChat.itemId] || null;
+});
+
+// Additional computed properties for Buy Button logic
+const isCurrentUserSeller = computed(() => {
+  if (!activeItemDetails.value || !authStore.user?.id) return false;
+  return activeItemDetails.value.sellerId === authStore.user.id;
+});
+
+const isItemAvailable = computed(() => {
+  if (!activeItemDetails.value) return false;
+  return activeItemDetails.value.available !== false && activeItemDetails.value.isAvailable !== false;
+});
+
+const shouldDisableButtons = computed(() => {
+  return isCurrentUserSeller.value || !isItemAvailable.value;
+});
+
+// Function to handle Buy Item button click
+const handleBuyItem = () => {
+  if (!activeItemDetails.value) return;
+
+  // Set the product ID and show the modal
+  selectedProductId.value = activeItemDetails.value.id;
+  showProductModal.value = true;
+};
+
+// Function to handle Show Product button click
+const handleShowProduct = (productId) => {
+  // Set the product ID and show the modal
+  selectedProductId.value = productId;
+  showProductModal.value = true;
+};
 </script>
 
 <template>
@@ -307,22 +477,46 @@ const combinedMessages = computed(() => {
       :activeConversationId="activeChat"
       :receiver-usernames="receiverUsernames"
       @select-chat="handleChatSelect"
+      @show-product="handleShowProduct"
     />
 
     <!-- Right area with WebSocket chat functionality -->
     <div class="chat-content">
-      <!-- WebSocket connection status -->
-      <div :class="['status', websocket.connectionStatusClass]">Status: {{ websocket.connectionStatus }}</div>
-
       <!-- Chat header with active user info -->
       <div v-if="activeChat" class="chat-header">
-        <h2>
-          {{ receiverUsernames.get(findConversationByChatId(activeChat)?.receiverId) || 'Chat' }}
-        </h2>
+        <div class="user-info">
+          <h2>
+            {{ getReceiverUsername(findConversationByChatId(activeChat)) }}
+          </h2>
+          <div v-if="activeItemDetails" class="item-info">
+            <span class="item-label">Item:</span>
+            <span class="item-name" @click="handleShowProduct(activeItemDetails.id)" role="button">{{ activeItemDetails.title }}</span>
+          </div>
+        </div>
+        <div v-if="activeItemDetails" class="header-actions">
+          <button
+            class="buy-button"
+            @click="handleBuyItem"
+            :disabled="shouldDisableButtons"
+          >
+            Buy Item
+          </button>
+        </div>
       </div>
 
       <!-- Message history area -->
-      <div class="message-history" v-if="activeChat">
+      <div class="message-history" v-if="activeChat" @scroll="handleScrollToTop">
+        <!-- Loading indicator -->
+        <div v-if="isLoadingMore" class="loading-indicator">
+          <div class="loading-spinner"></div>
+          <div>Loading older messages...</div>
+        </div>
+
+        <!-- End of message history indicator -->
+        <div v-if="!hasMoreMessages && chatMessages[activeChat]?.length > 0" class="end-of-history">
+          Beginning of conversation
+        </div>
+
         <div class="messages-list">
           <!-- Combined messages from API and WebSocket, without duplicates -->
           <div v-for="(msg, index) in combinedMessages" :key="'msg-'+index"
@@ -330,6 +524,35 @@ const combinedMessages = computed(() => {
             <div class="message-content">{{ msg.content }}</div>
             <div class="message-footer">
               <span class="message-time">{{ formatTime(msg.timestamp || msg.createdAt) }}</span>
+
+              <!-- Message status indicators (only for sent messages) -->
+              <span v-if="Number(msg.senderId) === authStore.user?.id || msg.type === 'sent'" class="message-status">
+                <!-- Failed message with retry option -->
+                <span v-if="websocket.failedMessages.has(msg.id)" class="message-failed" @click="websocket.retryMessage(msg.id)">
+                  <i class="fas fa-exclamation-circle"></i>
+                  <span class="retry-text">Tap to retry</span>
+                </span>
+
+                <!-- Sending indicator -->
+                <span v-else-if="msg.status === 'sending'" class="message-sending">
+                  <i class="fas fa-circle-notch fa-spin"></i>
+                </span>
+
+                <!-- Delivered indicator -->
+                <span v-else-if="websocket.deliveredMessages.has(msg.id)" class="message-delivered">
+                  <i class="fas fa-check"></i>
+                </span>
+
+                <!-- Read indicator -->
+                <span v-else-if="websocket.readMessages.has(msg.id)" class="message-read">
+                  <i class="fas fa-check-double"></i>
+                </span>
+
+                <!-- Sent indicator (default) -->
+                <span v-else class="message-sent-indicator">
+                  <i class="fas fa-check"></i>
+                </span>
+              </span>
             </div>
           </div>
         </div>
@@ -337,13 +560,18 @@ const combinedMessages = computed(() => {
 
       <!-- Message input area -->
       <div class="message-input" v-if="activeChat">
+        <!-- Typing indicator -->
+        <div v-if="websocket.isReceiverTyping(findConversationByChatId(activeChat)?.receiverId)" class="typing-indicator">
+          {{ getReceiverUsername(findConversationByChatId(activeChat)) }} is typing...
+        </div>
         <div class="form-group">
           <textarea v-model="websocket.messageContent"
                    @keypress.enter.prevent="websocket.sendMessage"
+                   @input="websocket.handleTyping"
                    placeholder="Type a message..."></textarea>
         </div>
         <button @click="websocket.sendMessage"
-                :disabled="!websocket.connected">Send Message</button>
+                :disabled="!websocket.messageContent.trim()">Send Message</button>
       </div>
 
       <!-- No chat selected state -->
@@ -352,6 +580,13 @@ const combinedMessages = computed(() => {
       </div>
     </div>
   </div>
+
+  <!-- Product Display Modal -->
+  <ProductDisplayModal
+    v-if="showProductModal && selectedProductId"
+    :productId="selectedProductId"
+    @close="showProductModal = false"
+  />
 </template>
 
 <style scoped>
@@ -372,6 +607,80 @@ const combinedMessages = computed(() => {
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+  font-size: 0.9em;
+}
+
+.item-label {
+  color: #666;
+  margin-right: 6px;
+  font-weight: 500;
+}
+
+.item-name {
+  color: #1976d2;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.item-name:hover {
+  color: #0d47a1;
+}
+
+.header-actions {
+  display: flex;
+}
+
+.buy-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.buy-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.buy-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.typing-indicator {
+  color: #666;
+  font-style: italic;
+  font-size: 0.9em;
+  animation: pulsate 1.5s infinite;
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+@keyframes pulsate {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
 }
 
 .message-history {
@@ -381,6 +690,39 @@ const combinedMessages = computed(() => {
   border: 1px solid #eee;
   border-radius: 4px;
   padding: 15px;
+}
+
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  margin-right: 10px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.end-of-history {
+  text-align: center;
+  padding: 10px;
+  font-size: 0.9em;
+  color: #9e9e9e;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed #e0e0e0;
 }
 
 .messages-list {
@@ -419,6 +761,48 @@ const combinedMessages = computed(() => {
   word-break: break-word;
 }
 
+.message-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8em;
+  margin-top: 5px;
+  color: #666;
+}
+
+.message-status {
+  display: flex;
+  align-items: center;
+}
+
+.message-failed {
+  color: #f44336;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.retry-text {
+  margin-left: 4px;
+  font-size: 0.8em;
+}
+
+.message-sending {
+  color: #9e9e9e;
+}
+
+.message-delivered {
+  color: #2196f3;
+}
+
+.message-read {
+  color: #4caf50;
+}
+
+.message-sent-indicator {
+  color: #9e9e9e;
+}
+
 .message-input {
   display: flex;
   flex-direction: column;
@@ -455,27 +839,5 @@ const combinedMessages = computed(() => {
   align-items: center;
   height: 100%;
   color: #666;
-}
-
-.status {
-  padding: 8px 12px;
-  margin-bottom: 15px;
-  border-radius: 4px;
-  font-weight: bold;
-}
-
-.connected {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-}
-
-.disconnected {
-  background-color: #ffebee;
-  color: #c62828;
-}
-
-.connecting {
-  background-color: #fff8e1;
-  color: #ff8f00;
 }
 </style>

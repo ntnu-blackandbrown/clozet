@@ -32,6 +32,15 @@ const messageContent = ref('')
 const logs = ref([])
 const messages = ref([])
 
+// New state for enhanced messaging features
+const deliveredMessages = ref(new Set())
+const readMessages = ref(new Set())
+const failedMessages = ref(new Set())
+const typingUsers = ref(new Map()) // userId -> {timestamp, timeoutId}
+const isTyping = ref(false)
+const typingTimeout = ref(null)
+const pendingMessages = ref([]) // For offline queueing
+
 let stompClient = null
 let messageCount = 0
 const connected = ref(false)
@@ -67,6 +76,9 @@ function connect() {
     updateConnectionStatus('connected', 'Connected')
     log(`Connected: ${frame}`, 'message-received')
     subscribeToTopics()
+
+    // Process any pending offline messages
+    processPendingMessages()
   }, (error) => {
     connected.value = false
     updateConnectionStatus('disconnected', 'Connection Failed')
@@ -100,6 +112,9 @@ function subscribeToTopics() {
         })
 
         log(`Received message #${messageCount}:<br>ID: ${message.id}<br>From: ${message.senderId}<br>To: ${message.receiverId}<br>Content: ${message.content}<br>Time: ${message.createdAt}`, 'message-received')
+
+        // Automatically send delivery confirmation
+        sendDeliveryConfirmation(message.id)
       }
     } catch (e) {
       log(`Error parsing message: ${e.message}`, 'error')
@@ -110,8 +125,55 @@ function subscribeToTopics() {
     try {
       const message = JSON.parse(msg.body)
       log(`Message read:<br>ID: ${message.id}<br>Read: ${message.read}`, 'message-received')
+
+      // Add to read messages set
+      readMessages.value.add(message.id)
     } catch (e) {
       log(`Error parsing read status: ${e.message}`, 'error')
+    }
+  })
+
+  stompClient.subscribe('/topic/messages.delivered', (msg) => {
+    try {
+      const { messageId } = JSON.parse(msg.body)
+      log(`Message delivered: ${messageId}`, 'message-received')
+
+      // Mark message as delivered
+      deliveredMessages.value.add(messageId)
+    } catch (e) {
+      log(`Error parsing delivery status: ${e.message}`, 'error')
+    }
+  })
+
+  stompClient.subscribe('/topic/messages.typing', (msg) => {
+    try {
+      const { userId, isTyping: userIsTyping } = JSON.parse(msg.body)
+
+      // Only process if message is from the current receiver
+      if (userId === receiver.value) {
+        if (userIsTyping) {
+          // Set typing status with timeout to automatically clear after 3 seconds
+          const now = Date.now()
+
+          // Clear existing timeout if any
+          if (typingUsers.value.has(userId) && typingUsers.value.get(userId).timeoutId) {
+            clearTimeout(typingUsers.value.get(userId).timeoutId)
+          }
+
+          // Set new timeout
+          const timeoutId = setTimeout(() => {
+            typingUsers.value.delete(userId)
+          }, 3000)
+
+          // Update typing users map
+          typingUsers.value.set(userId, { timestamp: now, timeoutId })
+        } else {
+          // Remove typing status
+          typingUsers.value.delete(userId)
+        }
+      }
+    } catch (e) {
+      log(`Error parsing typing status: ${e.message}`, 'error')
     }
   })
 
@@ -125,6 +187,17 @@ function subscribeToTopics() {
   })
 }
 
+function sendDeliveryConfirmation(messageId) {
+  if (connected.value && stompClient) {
+    const confirmation = {
+      messageId,
+      receiverId: sender.value,
+      timestamp: new Date().toISOString()
+    }
+    stompClient.send('/app/chat.confirmDelivery', {}, JSON.stringify(confirmation))
+    log(`Sent delivery confirmation for message ${messageId}`, 'info')
+  }
+}
 
 function sendMessage() {
   console.log('Attempting to send message...')
@@ -133,25 +206,6 @@ function sendMessage() {
   console.log('Receiver ID:', receiver.value, typeof receiver.value)
   console.log('Message content:', messageContent.value, typeof messageContent.value)
 
-  if (!connected.value || !stompClient) {
-    log('Not connected. Connect first.', 'error')
-    return
-  }
-
-  // Check each field individually to identify which one is causing the issue
-  if (!sender.value) {
-    log('Sender ID is missing', 'error')
-    return
-  }
-  if (!receiver.value) {
-    log('Receiver ID is missing', 'error')
-    return
-  }
-  if (!messageContent.value) {
-    log('Message content is missing', 'error')
-    return
-  }
-
   if (!sender.value || !receiver.value || !messageContent.value) {
     log('Fill all fields', 'error')
     return
@@ -159,29 +213,124 @@ function sendMessage() {
 
   const timestamp = new Date().toISOString()
 
+  // Generate a client ID for this message
+  const clientMessageId = `client-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+
   const msg = {
+    id: clientMessageId, // Include client ID
     senderId: sender.value,
     receiverId: receiver.value,
     content: messageContent.value,
     createdAt: timestamp
   }
 
-  stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(msg))
-
-  // Add a client-side ID to help with deduplication
-  const clientMessageId = `client-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
-
+  // Add to local state immediately
   messages.value.push({
-    id: clientMessageId,
-    senderId: msg.senderId,
-    receiverId: msg.receiverId,
-    content: msg.content,
-    timestamp: timestamp,
-    type: 'sent'
+    ...msg,
+    type: 'sent',
+    status: 'sending'
   })
 
+  // Clear typing indicator
+  sendTypingStatus(false)
+  clearTimeout(typingTimeout.value)
+  isTyping.value = false
+
+  // If not connected, queue the message for later
+  if (!connected.value || !stompClient) {
+    log('Not connected. Message queued for later.', 'warning')
+    pendingMessages.value.push(msg)
+    failedMessages.value.add(clientMessageId)
+    return
+  }
+
+  // Send via WebSocket
+  stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(msg))
   log(`Sent:<br>From: ${msg.senderId}<br>To: ${msg.receiverId}<br>Content: ${msg.content}`, 'message-sent')
   messageContent.value = ''
+}
+
+// Retry sending a failed message
+function retryMessage(messageId) {
+  const messageIndex = messages.value.findIndex(m => m.id === messageId)
+  if (messageIndex === -1) return
+
+  const message = messages.value[messageIndex]
+
+  // Update status
+  messages.value[messageIndex] = { ...message, status: 'sending' }
+
+  // If connected, send message
+  if (connected.value && stompClient) {
+    stompClient.send('/app/chat.sendMessage', {}, JSON.stringify({
+      id: message.id,
+      senderId: message.senderId,
+      receiverId: message.receiverId,
+      content: message.content,
+      createdAt: message.timestamp || message.createdAt
+    }))
+
+    // Remove from failed messages
+    failedMessages.value.delete(messageId)
+  } else {
+    // If not connected, keep in failed state
+    messages.value[messageIndex] = { ...message, status: 'failed' }
+  }
+}
+
+// Process any pending messages when connection is established
+function processPendingMessages() {
+  if (!connected.value || !stompClient) return
+
+  const messagesToSend = [...pendingMessages.value]
+  pendingMessages.value = []
+
+  messagesToSend.forEach(msg => {
+    stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(msg))
+    failedMessages.value.delete(msg.id)
+
+    // Update message status
+    const messageIndex = messages.value.findIndex(m => m.id === msg.id)
+    if (messageIndex !== -1) {
+      messages.value[messageIndex] = { ...messages.value[messageIndex], status: 'sent' }
+    }
+  })
+
+  if (messagesToSend.length > 0) {
+    log(`Sent ${messagesToSend.length} queued messages`, 'info')
+  }
+}
+
+// Send typing status
+function sendTypingStatus(isTyping) {
+  if (connected.value && stompClient && sender.value && receiver.value) {
+    const status = {
+      userId: sender.value,
+      receiverId: receiver.value,
+      isTyping,
+      timestamp: new Date().toISOString()
+    }
+    stompClient.send('/app/chat.typing', {}, JSON.stringify(status))
+  }
+}
+
+// Handle user typing
+function handleTyping() {
+  if (!isTyping.value) {
+    isTyping.value = true
+    sendTypingStatus(true)
+  }
+
+  // Clear existing timeout
+  if (typingTimeout.value) {
+    clearTimeout(typingTimeout.value)
+  }
+
+  // Set new timeout to stop typing indicator after 3 seconds of inactivity
+  typingTimeout.value = setTimeout(() => {
+    isTyping.value = false
+    sendTypingStatus(false)
+  }, 3000)
 }
 
 function pingServer() {
@@ -215,10 +364,41 @@ function markMessagesAsRead(senderId) {
     const readStatus = {
       senderId: senderId,
       receiverId: sender.value,
-      read: true
+      read: true,
+      timestamp: new Date().toISOString()
     }
     stompClient.send('/app/chat.markRead', {}, JSON.stringify(readStatus))
     log(`Marked messages from ${senderId} as read`, 'info')
+  }
+}
+
+// Mark all unread messages as read for the current chat
+function markAllAsRead() {
+  if (!connected.value || !stompClient || !receiver.value) return
+
+  // Get messages from current receiver that need to be marked as read
+  const unreadMessages = messages.value.filter(m =>
+    m.senderId === receiver.value &&
+    !readMessages.value.has(m.id)
+  )
+
+  // Mark each message as read
+  unreadMessages.forEach(msg => {
+    readMessages.value.add(msg.id)
+
+    const readStatus = {
+      messageId: msg.id,
+      senderId: receiver.value,
+      receiverId: sender.value,
+      read: true,
+      timestamp: new Date().toISOString()
+    }
+
+    stompClient.send('/app/chat.markRead', {}, JSON.stringify(readStatus))
+  })
+
+  if (unreadMessages.length > 0) {
+    log(`Marked ${unreadMessages.length} messages as read`, 'info')
   }
 }
 
@@ -234,11 +414,19 @@ return {
   checkConnection,
   clearMessages,
   markMessagesAsRead,
+  markAllAsRead,
   logs,
   connectionStatus,
   connectionStatusClass,
   connected,
   messages,
-  updateSender
+  updateSender,
+  deliveredMessages,
+  readMessages,
+  failedMessages,
+  typingUsers,
+  retryMessage,
+  handleTyping,
+  isReceiverTyping: (receiverId) => typingUsers.value.has(receiverId)
 }
 })
