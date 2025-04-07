@@ -1,0 +1,5 @@
+# H2 Database files
+data/*.db
+data/*.trace.db
+
+# ... existing code ... 

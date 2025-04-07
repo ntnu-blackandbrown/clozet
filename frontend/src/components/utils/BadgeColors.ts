@@ -53,18 +53,7 @@ export const badgeColors = {
     activeColor: '#A3B7AC',
     activeTextColor: '#3A4951',
     activeBorderColor: '#3A4951',
-  },
-  availability: {
-    color: '#E4EAE7',
-    textColor: '#2D353F',
-    borderColor: '#2D353F',
-    hoverColor: '#D4DAE7',
-    hoverTextColor: '#2D353F',
-    hoverBorderColor: '#2D353F',
-    activeColor: '#C4CAE7',
-    activeTextColor: '#2D353F',
-    activeBorderColor: '#2D353F',
-  },
+  }
 } as const
 
 export type BadgeType = keyof typeof badgeColors

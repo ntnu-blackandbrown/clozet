@@ -15,6 +15,7 @@ class MessageDTOTest {
         assertNull(dto.getId());
         assertNull(dto.getSenderId());
         assertNull(dto.getReceiverId());
+        assertNull(dto.getItemId());
         assertNull(dto.getContent());
         assertNull(dto.getCreatedAt());
         assertFalse(dto.isRead());
@@ -25,15 +26,17 @@ class MessageDTOTest {
         Long id = 1L;
         String senderId = "sender123";
         String receiverId = "receiver456";
+        Long itemId = 789L;
         String content = "Hello, is this still available?";
         LocalDateTime createdAt = LocalDateTime.now();
         boolean isRead = false;
         
-        MessageDTO dto = new MessageDTO(id, senderId, receiverId, content, createdAt, isRead);
+        MessageDTO dto = new MessageDTO(id, senderId, receiverId, itemId, content, createdAt, isRead);
         
         assertEquals(id, dto.getId());
         assertEquals(senderId, dto.getSenderId());
         assertEquals(receiverId, dto.getReceiverId());
+        assertEquals(itemId, dto.getItemId());
         assertEquals(content, dto.getContent());
         assertEquals(createdAt, dto.getCreatedAt());
         assertEquals(isRead, dto.isRead());
@@ -46,6 +49,7 @@ class MessageDTOTest {
         Long id = 1L;
         String senderId = "sender123";
         String receiverId = "receiver456";
+        Long itemId = 789L;
         String content = "Hello, is this still available?";
         LocalDateTime createdAt = LocalDateTime.now();
         boolean isRead = false;
@@ -53,6 +57,7 @@ class MessageDTOTest {
         dto.setId(id);
         dto.setSenderId(senderId);
         dto.setReceiverId(receiverId);
+        dto.setItemId(itemId);
         dto.setContent(content);
         dto.setCreatedAt(createdAt);
         dto.setRead(isRead);
@@ -60,6 +65,7 @@ class MessageDTOTest {
         assertEquals(id, dto.getId());
         assertEquals(senderId, dto.getSenderId());
         assertEquals(receiverId, dto.getReceiverId());
+        assertEquals(itemId, dto.getItemId());
         assertEquals(content, dto.getContent());
         assertEquals(createdAt, dto.getCreatedAt());
         assertEquals(isRead, dto.isRead());

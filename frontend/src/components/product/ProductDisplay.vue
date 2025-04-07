@@ -3,12 +3,14 @@ import { ref, onMounted } from 'vue'
 import Badge from '@/components/utils/Badge.vue'
 import WishlistButton from '@/components/utils/WishlistButton.vue'
 import axios from '@/api/axios'
+import { useRouter } from 'vue-router'
 
 interface ProductDisplayProps {
   id: number
 }
 
 const props = defineProps<ProductDisplayProps>()
+const router = useRouter()
 
 const getItemById = async () => {
   const item = await axios.get(`api/items/${props.id}`)
@@ -32,6 +34,28 @@ const formatDate = (dateString: string) => {
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+  })
+}
+
+const handleBadgeClick = (event: { type: string; value: string }) => {
+  let queryParams = {}
+
+  switch (event.type) {
+    case 'category':
+      queryParams = { category: event.value }
+      break
+    case 'location':
+      queryParams = { location: event.value }
+      break
+    case 'shipping':
+      queryParams = { shipping: event.value }
+      break
+  }
+
+  // Navigate to product list with the appropriate filter
+  router.push({
+    path: '/',
+    query: queryParams
   })
 }
 
@@ -67,8 +91,8 @@ onMounted(async () => {
       </div>
       <div id="product-description">
         <p>{{ item.longDescription }}</p>
-        <Badge :name="item.categoryName || 'N/A'" type="category" />
-        <Badge :name="item.locationName || 'N/A'" type="location" />
+        <Badge :name="item.categoryName || 'N/A'" type="category" @click="handleBadgeClick" />
+        <Badge :name="item.locationName || 'N/A'" type="location" @click="handleBadgeClick" />
         <Badge
           :name="item.price.toString() || 'N/A'"
           :currency="item.currency || 'NOK'"
@@ -78,8 +102,7 @@ onMounted(async () => {
       </div>
       <div id="seller-info">
         <Badge :name="item.sellerName || 'N/A'" type="seller" />
-        <Badge :name="item.shippingOptionName || 'N/A'" type="shipping" />
-        <Badge :name="item.available ? 'Available' : 'Not Available'" type="availability" />
+        <Badge :name="item.shippingOptionName || 'N/A'" type="shipping" @click="handleBadgeClick" />
       </div>
       <div class="action-buttons">
         <button class="contact-button">Contact Seller</button>

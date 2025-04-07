@@ -72,6 +72,19 @@ public class CategoryServiceImpl implements CategoryService {
         logger.info("Fetching top five categories");
         Pageable topFive = PageRequest.of(0, 5);
         List<Category> topCategories = categoryRepository.findTopCategoriesByFavoriteCount(topFive);
+        
+        // If no categories with favorites, fall back to categories by item count
+        if (topCategories.isEmpty()) {
+            logger.info("No categories with favorites found, falling back to item count based ranking");
+            topCategories = categoryRepository.findTopCategoriesByItemCount(topFive);
+            
+            // If still empty, just get any categories
+            if (topCategories.isEmpty()) {
+                logger.info("No categories with items found, falling back to any categories");
+                topCategories = categoryRepository.findAll(topFive).getContent();
+            }
+        }
+        
         List<CategoryDTO> categoryDTOs = categoryMapper.toDtoList(topCategories);
         logger.debug("Found {} top categories", categoryDTOs.size());
         return categoryDTOs;
