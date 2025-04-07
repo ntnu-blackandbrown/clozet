@@ -64,7 +64,7 @@ const handleBadgeClick = (event: { type: string; value: string }) => {
 const handleBuyClick = async () => {
   isLoading.value = true; // Show loading popup
   try {
-    const response = await axios.post('/api/transactions', {
+    const response = await axios.post('/api/transactions/purchase', {
       // Assuming the transaction requires item ID and seller ID
       itemId: item.value.id,
       sellerId: sellerId.value,
