@@ -2,8 +2,12 @@ package stud.ntnu.no.backend.favorite.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import stud.ntnu.no.backend.category.entity.Category;
 import stud.ntnu.no.backend.favorite.entity.Favorite;
 import stud.ntnu.no.backend.item.entity.Item;
@@ -15,6 +19,15 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@ActiveProfiles("test")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(FavoriteRepositoryTestConfig.class)
+@TestPropertySource(properties = {
+    "spring.main.allow-bean-definition-overriding=true",
+    "spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1",
+    "spring.jpa.hibernate.ddl-auto=create-drop",
+    "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration"
+})
 public class FavoriteRepositoryTest {
 
     @Autowired
@@ -26,15 +39,16 @@ public class FavoriteRepositoryTest {
     @Test
     public void testFindByUserId_WhenUserHasFavorites_ShouldReturnFavorites() {
         // Arrange
-        User user = createUser("user1", "user1@example.com");
-        User seller = createUser("seller", "seller@example.com");
+        User user = TestHelper.createUser(entityManager, "user1", "user1@example.com");
+        User seller = TestHelper.createUser(entityManager, "seller", "seller@example.com");
         
-        Category category = new Category();
-        category.setName("Test Category");
-        entityManager.persist(category);
+        Category category = TestHelper.createCategory(entityManager, "Test Category");
         
-        Item item1 = createItem("Item 1", seller, category);
-        Item item2 = createItem("Item 2", seller, category);
+        Item item1 = TestHelper.createBasicItem(entityManager, "Item 1", seller, category);
+        entityManager.persist(item1);
+        
+        Item item2 = TestHelper.createBasicItem(entityManager, "Item 2", seller, category);
+        entityManager.persist(item2);
         
         Favorite favorite1 = new Favorite();
         favorite1.setUser(user);
@@ -61,15 +75,14 @@ public class FavoriteRepositoryTest {
     @Test
     public void testFindByItemId_WhenItemHasFavorites_ShouldReturnFavorites() {
         // Arrange
-        User user1 = createUser("user1", "user1@example.com");
-        User user2 = createUser("user2", "user2@example.com");
-        User seller = createUser("seller", "seller@example.com");
+        User user1 = TestHelper.createUser(entityManager, "user1", "user1@example.com");
+        User user2 = TestHelper.createUser(entityManager, "user2", "user2@example.com");
+        User seller = TestHelper.createUser(entityManager, "seller", "seller@example.com");
         
-        Category category = new Category();
-        category.setName("Test Category");
-        entityManager.persist(category);
+        Category category = TestHelper.createCategory(entityManager, "Test Category");
         
-        Item item = createItem("Test Item", seller, category);
+        Item item = TestHelper.createBasicItem(entityManager, "Test Item", seller, category);
+        entityManager.persist(item);
         
         Favorite favorite1 = new Favorite();
         favorite1.setUser(user1);
@@ -96,14 +109,13 @@ public class FavoriteRepositoryTest {
     @Test
     public void testExistsByUserIdAndItemId_WhenFavoriteExists_ShouldReturnTrue() {
         // Arrange
-        User user = createUser("user", "user@example.com");
-        User seller = createUser("seller", "seller@example.com");
+        User user = TestHelper.createUser(entityManager, "user", "user@example.com");
+        User seller = TestHelper.createUser(entityManager, "seller", "seller@example.com");
         
-        Category category = new Category();
-        category.setName("Test Category");
-        entityManager.persist(category);
+        Category category = TestHelper.createCategory(entityManager, "Test Category");
         
-        Item item = createItem("Test Item", seller, category);
+        Item item = TestHelper.createBasicItem(entityManager, "Test Item", seller, category);
+        entityManager.persist(item);
         
         Favorite favorite = new Favorite();
         favorite.setUser(user);
@@ -123,14 +135,12 @@ public class FavoriteRepositoryTest {
     @Test
     public void testExistsByUserIdAndItemId_WhenFavoriteDoesNotExist_ShouldReturnFalse() {
         // Arrange
-        User user = createUser("user", "user@example.com");
-        User seller = createUser("seller", "seller@example.com");
+        User user = TestHelper.createUser(entityManager, "user", "user@example.com");
+        User seller = TestHelper.createUser(entityManager, "seller", "seller@example.com");
         
-        Category category = new Category();
-        category.setName("Test Category");
-        entityManager.persist(category);
+        Category category = TestHelper.createCategory(entityManager, "Test Category");
         
-        Item item = createItem("Test Item", seller, category);
+        Item item = TestHelper.createBasicItem(entityManager, "Test Item", seller, category);
         entityManager.persist(item);
         entityManager.flush();
 
@@ -139,36 +149,5 @@ public class FavoriteRepositoryTest {
 
         // Assert
         assertThat(exists).isFalse();
-    }
-    
-    // Helper methods
-    private User createUser(String username, String email) {
-        User user = new User();
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPasswordHash("password");
-        user.setActive(true);
-        entityManager.persist(user);
-        return user;
-    }
-    
-    private Item createItem(String title, User seller, Category category) {
-        Item item = new Item();
-        item.setTitle(title);
-        item.setSeller(seller);
-        item.setCategory(category);
-        item.setShortDescription("Short description");
-        item.setLongDescription("Long description");
-        item.setPrice(100.0);
-        item.setCondition("New");
-        item.setSize("M");
-        item.setBrand("Brand");
-        item.setColor("Black");
-        item.setLatitude(0.0);
-        item.setLongitude(0.0);
-        item.setAvailable(true);
-        item.setVippsPaymentEnabled(true);
-        entityManager.persist(item);
-        return item;
     }
 } 
