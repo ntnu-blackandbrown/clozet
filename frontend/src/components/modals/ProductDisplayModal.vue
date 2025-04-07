@@ -19,8 +19,12 @@ const handleClose = () => {
   const currentPath = route.path
   const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1)
 
+  // If we're on a messages page, don't redirect
+  if (currentPath.includes('/messages/')) {
+    // Just emit close event without changing the route
+  }
   // If we're on a profile page, go back to that profile page
-  if (currentPath.includes('/profile/')) {
+  else if (currentPath.includes('/profile/')) {
     router.replace(basePath.substring(0, basePath.length - 1)) // Remove trailing slash
   } else {
     // Default behavior - go to home
