@@ -100,6 +100,12 @@ const isLocalPickup = computed(() => {
 })
 
 const handleBuyClick = () => {
+  if (!item.value?.vippsPaymentEnabled) {
+    // Show message when Vipps is not enabled
+    alert('Please contact the seller to purchase this product')
+    return
+  }
+
   if (isLocalPickup.value) {
     // Skip shipping details for local pickup
     showVippsModal.value = true
@@ -165,8 +171,8 @@ onMounted(async () => {
     <p>Processing your purchase...</p>
   </div>
 
-  <!-- ShippingDetailsModal component -->
-  <BaseModal v-if="showShippingModal" @close="showShippingModal = false">
+  <!-- ShippingDetailsModal component - only show if Vipps is enabled -->
+  <BaseModal v-if="showShippingModal && item.vippsPaymentEnabled" @close="showShippingModal = false">
     <ShippingDetailsModal
       :shipping-option-name="item.shippingOptionName"
       :initial-values="shippingDetails"
@@ -175,8 +181,8 @@ onMounted(async () => {
     />
   </BaseModal>
 
-  <!-- VippsPaymentModal component -->
-  <BaseModal v-if="showVippsModal" @close="showVippsModal = false">
+  <!-- VippsPaymentModal component - only show if Vipps is enabled -->
+  <BaseModal v-if="showVippsModal && item.vippsPaymentEnabled" @close="showVippsModal = false">
     <VippsPaymentModal
       :item-id="item.id"
       :item-title="item.title"
