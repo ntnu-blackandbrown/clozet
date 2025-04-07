@@ -84,7 +84,10 @@ class FavoriteControllerTest {
                         responseFields(
                                 fieldWithPath("[].id").description("Favorite ID"),
                                 fieldWithPath("[].userId").description("User ID"),
-                                fieldWithPath("[].itemId").description("Item ID")
+                                fieldWithPath("[].itemId").description("Item ID"),
+                                fieldWithPath("[].active").description("Whether the favorite is active"),
+                                fieldWithPath("[].createdAt").description("Date and time when favorite was created"),
+                                fieldWithPath("[].updatedAt").description("Date and time when favorite was last updated")
                         )
                 ));
                 
@@ -113,7 +116,10 @@ class FavoriteControllerTest {
                         responseFields(
                                 fieldWithPath("id").description("Favorite ID"),
                                 fieldWithPath("userId").description("User ID"),
-                                fieldWithPath("itemId").description("Item ID")
+                                fieldWithPath("itemId").description("Item ID"),
+                                fieldWithPath("active").description("Whether the favorite is active"),
+                                fieldWithPath("createdAt").description("Date and time when favorite was created"),
+                                fieldWithPath("updatedAt").description("Date and time when favorite was last updated")
                         )
                 ));
                 
@@ -150,7 +156,10 @@ class FavoriteControllerTest {
                         responseFields(
                                 fieldWithPath("[].id").description("Favorite ID"),
                                 fieldWithPath("[].userId").description("User ID"),
-                                fieldWithPath("[].itemId").description("Item ID")
+                                fieldWithPath("[].itemId").description("Item ID"),
+                                fieldWithPath("[].active").description("Whether the favorite is active"),
+                                fieldWithPath("[].createdAt").description("Date and time when favorite was created"),
+                                fieldWithPath("[].updatedAt").description("Date and time when favorite was last updated")
                         )
                 ));
                 
@@ -184,12 +193,16 @@ class FavoriteControllerTest {
                         Preprocessors.preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("userId").description("User ID for the favorite"),
-                                fieldWithPath("itemId").description("Item ID for the favorite")
+                                fieldWithPath("itemId").description("Item ID for the favorite"),
+                                fieldWithPath("active").description("Whether the favorite is active").optional()
                         ),
                         responseFields(
                                 fieldWithPath("id").description("Created favorite ID"),
                                 fieldWithPath("userId").description("User ID"),
-                                fieldWithPath("itemId").description("Item ID")
+                                fieldWithPath("itemId").description("Item ID"),
+                                fieldWithPath("active").description("Whether the favorite is active"),
+                                fieldWithPath("createdAt").description("Date and time when favorite was created"),
+                                fieldWithPath("updatedAt").description("Date and time when favorite was last updated")
                         )
                 ));
                 
@@ -223,12 +236,16 @@ class FavoriteControllerTest {
                         Preprocessors.preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("userId").description("User ID for the favorite"),
-                                fieldWithPath("itemId").description("Updated item ID for the favorite")
+                                fieldWithPath("itemId").description("Updated item ID for the favorite"),
+                                fieldWithPath("active").description("Whether the favorite is active").optional()
                         ),
                         responseFields(
                                 fieldWithPath("id").description("Favorite ID"),
                                 fieldWithPath("userId").description("User ID"),
-                                fieldWithPath("itemId").description("Updated item ID")
+                                fieldWithPath("itemId").description("Updated item ID"),
+                                fieldWithPath("active").description("Whether the favorite is active"),
+                                fieldWithPath("createdAt").description("Date and time when favorite was created"),
+                                fieldWithPath("updatedAt").description("Date and time when favorite was last updated")
                         )
                 ));
                 
