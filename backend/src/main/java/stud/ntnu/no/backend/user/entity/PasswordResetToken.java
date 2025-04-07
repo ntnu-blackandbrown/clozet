@@ -27,7 +27,6 @@ public class PasswordResetToken {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // For JPA
     protected PasswordResetToken() {}
 
     /**

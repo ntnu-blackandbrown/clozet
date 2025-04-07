@@ -1,4 +1,4 @@
-package stud.ntnu.no.backend.config;
+package stud.ntnu.no.backend.common.security;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +32,8 @@ public class TestSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+
+    //mini omment
     @Bean
     public JwtUtils jwtUtils() {
         JwtUtils mockJwtUtils = mock(JwtUtils.class);
