@@ -122,4 +122,16 @@ public class TransactionController {
         logger.info("Fetching transactions for buyerId: {}", buyerId);
         return ResponseEntity.ok(transactionService.getTransactionsByBuyerId(buyerId));
     }
+
+    /**
+     * Processes a purchase transaction and deactivates the item.
+     *
+     * @param dto the CreateTransactionRequest
+     * @return the created TransactionDTO
+     */
+    @PostMapping("/purchase")
+    public ResponseEntity<TransactionDTO> purchaseItem(@RequestBody CreateTransactionRequest dto) {
+        logger.info("Processing purchase for item ID: {}", dto.getItemId());
+        return new ResponseEntity<>(transactionService.handlePurchaseTransaction(dto), HttpStatus.CREATED);
+    }
 }
