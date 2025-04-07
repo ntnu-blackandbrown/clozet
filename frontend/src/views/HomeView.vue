@@ -128,7 +128,9 @@ const displayCategories = computed(() => {
               placeholder="Search for a product..."
               v-model="searchQuery"
               @input="handleSearchInput"
+              aria-label="Search for products"
             />
+
             <button v-if="searchQuery" @click="clearSearch" class="clear-search-btn">Clear</button>
             <!-- Inline SVG icon -->
             <svg

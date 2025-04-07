@@ -18,6 +18,32 @@ const detailedItems = ref<Map<number, ProductDisplay>>(new Map())
 const initialProductId = ref<number | null>(null)
 const isLoadingDetails = ref(false)
 
+// Filter states
+const selectedLocation = ref<string>('')
+const selectedShippingOption = ref<string>('')
+const selectedCategory = ref<string>('')
+const showOnlyAvailable = ref<boolean>(false)
+
+// Unique filter options
+const locations = computed(() => {
+  const uniqueLocations = new Set(items.value.map(item => item.location).filter(Boolean))
+  return Array.from(uniqueLocations)
+})
+
+const categories = computed(() => {
+  const uniqueCategories = new Set(items.value.map(item => item.category).filter(Boolean))
+  return Array.from(uniqueCategories)
+})
+
+const shippingOptions = computed(() => {
+  const uniqueOptions = new Set(
+    Array.from(detailedItems.value.values())
+      .map(item => item.shippingOptionName)
+      .filter(Boolean)
+  )
+  return Array.from(uniqueOptions)
+})
+
 // Fetch detailed item information for a specific item
 const fetchItemDetails = async (itemId: number) => {
   try {
@@ -74,39 +100,64 @@ watch(
   }
 )
 
-// Filter items based on search query
+// Updated filtering logic
 const filteredItems = computed(() => {
-  if (!props.searchQuery.trim()) {
-    return items.value
+  let filtered = items.value
+
+  // Apply search query filter
+  if (props.searchQuery.trim()) {
+    const query = props.searchQuery.toLowerCase().trim()
+    filtered = filtered.filter(item => {
+      const basicMatch =
+        item.title?.toLowerCase().includes(query) ||
+        item.category?.toLowerCase().includes(query) ||
+        item.location?.toLowerCase().includes(query)
+
+      if (basicMatch) return true
+
+      const detailedItem = detailedItems.value.get(item.id)
+      if (detailedItem) {
+        return (
+          detailedItem.brand?.toLowerCase().includes(query) ||
+          detailedItem.color?.toLowerCase().includes(query) ||
+          detailedItem.condition?.toLowerCase().includes(query) ||
+          detailedItem.size?.toLowerCase().includes(query) ||
+          detailedItem.longDescription?.toLowerCase().includes(query) ||
+          detailedItem.sellerName?.toLowerCase().includes(query) ||
+          detailedItem.shippingOptionName?.toLowerCase().includes(query)
+        )
+      }
+      return false
+    })
   }
 
-  const query = props.searchQuery.toLowerCase().trim()
+  // Apply location filter
+  if (selectedLocation.value) {
+    filtered = filtered.filter(item => item.location === selectedLocation.value)
+  }
 
-  return items.value.filter(item => {
-    // Basic search on all items using the fields always available
-    const basicMatch =
-      item.title?.toLowerCase().includes(query) ||
-      item.category?.toLowerCase().includes(query) ||
-      item.location?.toLowerCase().includes(query);
+  // Apply category filter
+  if (selectedCategory.value) {
+    filtered = filtered.filter(item => item.category === selectedCategory.value)
+  }
 
-    if (basicMatch) return true;
+  // Apply shipping option filter
+  if (selectedShippingOption.value) {
+    filtered = filtered.filter(item => {
+      const detailedItem = detailedItems.value.get(item.id)
+      return detailedItem?.shippingOptionName === selectedShippingOption.value
+    })
+  }
 
-    // Advanced search on items that have detailed information
-    const detailedItem = detailedItems.value.get(item.id);
-    if (detailedItem) {
-      return (
-        detailedItem.brand?.toLowerCase().includes(query) ||
-        detailedItem.color?.toLowerCase().includes(query) ||
-        detailedItem.condition?.toLowerCase().includes(query) ||
-        detailedItem.size?.toLowerCase().includes(query) ||
-        detailedItem.longDescription?.toLowerCase().includes(query) ||
-        detailedItem.sellerName?.toLowerCase().includes(query) ||
-        detailedItem.shippingOptionName?.toLowerCase().includes(query)
-      );
-    }
+  // Apply availability filter
+  if (showOnlyAvailable.value) {
+    filtered = filtered.filter(item => {
+      const detailedItem = detailedItems.value.get(item.id)
+      return detailedItem?.available ?? true // Default to true if detailed info not loaded
+    })
+  }
 
-    return false;
-  });
+  return filtered
 })
 
 // Watch for changes in the route to handle product ID
@@ -128,11 +179,64 @@ watch(
   },
   { immediate: true },
 )
+
+// Reset filters function
+const resetFilters = () => {
+  selectedLocation.value = ''
+  selectedShippingOption.value = ''
+  selectedCategory.value = ''
+  showOnlyAvailable.value = false
+}
 </script>
 
 <template>
   <div>
     <h1>Browse products</h1>
+
+    <!-- Filters section -->
+    <div class="filters-container">
+      <div class="filter-group">
+        <label for="location">Location:</label>
+        <select id="location" v-model="selectedLocation">
+          <option value="">All locations</option>
+          <option v-for="location in locations" :key="location" :value="location">
+            {{ location }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="category">Category:</label>
+        <select id="category" v-model="selectedCategory">
+          <option value="">All categories</option>
+          <option v-for="category in categories" :key="category" :value="category">
+            {{ category }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="shipping">Shipping option:</label>
+        <select id="shipping" v-model="selectedShippingOption">
+          <option value="">All shipping options</option>
+          <option v-for="option in shippingOptions" :key="option" :value="option">
+            {{ option }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group checkbox">
+        <label>
+          <input type="checkbox" v-model="showOnlyAvailable">
+          Show only available items
+        </label>
+      </div>
+
+      <button class="reset-button" @click="resetFilters">
+        Reset filters
+      </button>
+    </div>
+
     <div v-if="isLoadingDetails" class="loading-indicator">
       Loading additional product details...
     </div>
@@ -146,5 +250,54 @@ watch(
   color: #666;
   margin-bottom: 1rem;
   font-size: 0.9rem;
+}
+
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-weight: 500;
+  color: #333;
+}
+
+.filter-group select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 200px;
+  background-color: white;
+}
+
+.filter-group.checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reset-button {
+  padding: 0.5rem 1rem;
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  align-self: flex-end;
+}
+
+.reset-button:hover {
+  background-color: #d0d0d0;
 }
 </style>
