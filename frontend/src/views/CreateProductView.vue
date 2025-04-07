@@ -7,7 +7,7 @@ import { useShippingOptionStore } from '@/stores/ShippingOption'
 import axios from '@/api/axios'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
-
+import { useLocationStore } from '@/stores/Location'
 // Define interfaces for TypeScript
 interface Category {
   id: number
@@ -41,6 +41,7 @@ const router = useRouter()
 const userStore = useAuthStore()
 const categoryStore = useCategoryStore()
 const shippingOptionStore = useShippingOptionStore()
+const locationStore = useLocationStore()
 
 // Form validation schema
 const productSchema = yup.object({
@@ -97,11 +98,7 @@ const categories = ref<Category[]>([])
 const shippingOptions = ref<ShippingOption[]>([])
 
 // Locations (to be fetched from backend)
-const locations = ref<Location[]>([
-  { id: 1, name: 'Oslo' },
-  { id: 2, name: 'Bergen' },
-  { id: 3, name: 'Trondheim' },
-])
+const locations = ref<Location[]>([])
 
 //on mount, fetch categories
 onMounted(async () => {
@@ -109,6 +106,8 @@ onMounted(async () => {
   categories.value = categoryStore.categories
   await shippingOptionStore.fetchShippingOptions()
   shippingOptions.value = shippingOptionStore.shippingOptions
+  await locationStore.fetchLocations()
+  locations.value = locationStore.locations
 })
 
 // Condition options
