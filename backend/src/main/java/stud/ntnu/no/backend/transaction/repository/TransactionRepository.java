@@ -19,4 +19,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
      * @return a list of transactions
      */
     List<Transaction> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
+    /**
+     * Finds transactions by buyerId.
+     *
+     * @param buyerId the ID of the buyer
+     * @return a list of transactions
+     */
+    List<Transaction> findByBuyerId(String buyerId);
 }

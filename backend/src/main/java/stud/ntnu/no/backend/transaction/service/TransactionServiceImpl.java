@@ -12,6 +12,8 @@ import stud.ntnu.no.backend.transaction.exception.TransactionNotFoundException;
 import stud.ntnu.no.backend.transaction.exception.TransactionValidationException;
 import stud.ntnu.no.backend.transaction.mapper.TransactionMapper;
 import stud.ntnu.no.backend.transaction.repository.TransactionRepository;
+import stud.ntnu.no.backend.item.entity.Item;
+import stud.ntnu.no.backend.item.repository.ItemRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,17 +30,21 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final TransactionMapper transactionMapper;
+    private final ItemRepository itemRepository;
 
     /**
      * Constructs a new TransactionServiceImpl with the specified dependencies.
      *
      * @param transactionRepository the TransactionRepository
      * @param transactionMapper the TransactionMapper
+     * @param itemRepository the ItemRepository
      */
     public TransactionServiceImpl(TransactionRepository transactionRepository, 
-                                  TransactionMapper transactionMapper) {
+                                  TransactionMapper transactionMapper,
+                                  ItemRepository itemRepository) {
         this.transactionRepository = transactionRepository;
         this.transactionMapper = transactionMapper;
+        this.itemRepository = itemRepository;
     }
 
     @Override
@@ -108,5 +114,38 @@ public class TransactionServiceImpl implements TransactionService {
                 .stream()
                 .map(transactionMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TransactionDTO> getTransactionsByBuyerId(String buyerId) {
+        logger.info("Retrieving transactions for buyerId: {}", buyerId);
+        return transactionRepository.findByBuyerId(buyerId)
+                .stream()
+                .map(transactionMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public TransactionDTO handlePurchaseTransaction(CreateTransactionRequest request) {
+        logger.info("Handling purchase transaction for item ID: {}", request.getItemId());
+
+        // Convert request to entity and set any default values
+        Transaction transaction = transactionMapper.toEntity(request);
+        transaction.setCreatedAt(LocalDateTime.now());
+
+        // Save the transaction
+        Transaction savedTransaction = transactionRepository.save(transaction);
+
+        // Deactivate the item
+        Item item = transaction.getItem();
+        if (item != null) {
+            item.setAvailable(false);
+            itemRepository.save(item);
+            logger.info("Item ID: {} set to unavailable", item.getId());
+        }
+
+        // Return the saved transaction as DTO
+        return transactionMapper.toDTO(savedTransaction);
     }
 }

@@ -12,6 +12,7 @@ interface ProductCardProps {
   location: string
   isVippsPaymentEnabled: boolean
   isWishlisted: boolean
+  isAvailable?: boolean
 }
 
 const props = defineProps<ProductCardProps>()
@@ -19,23 +20,39 @@ const props = defineProps<ProductCardProps>()
 const emit = defineEmits(['click'])
 
 const handleClick = () => {
-  emit('click', props.id)
+  if (props.isAvailable !== false) {
+    emit('click', props.id)
+  }
 }
 </script>
 
 <template>
-  <div class="product-card" @click="handleClick">
+  <div
+    class="product-card"
+    :class="{ 'sold': isAvailable === false }"
+    @click="handleClick"
+  >
     <div class="product-image">
       <img :src="props.image" :alt="props.title" />
       <div class="wishlist-container">
-        <WishlistButton :product-id="props.id" :is-wishlisted="props.isWishlisted" @click.stop />
+        <WishlistButton
+          :product-id="props.id"
+          :is-wishlisted="props.isWishlisted"
+          :is-available="props.isAvailable"
+          @click.stop
+        />
+      </div>
+      <div v-if="isAvailable === false" class="sold-overlay">
+        <span>SOLD</span>
       </div>
     </div>
     <div class="product-info">
       <h3>{{ title }}</h3>
       <Badge :name="props.price.toString()" type="price" :currency="'NOK'" />
       <Badge :name="props.category" type="category" />
-      <button class="view-details">View Details</button>
+      <button class="view-details" :disabled="isAvailable === false">
+        {{ isAvailable === false ? 'Sold' : 'View Details' }}
+      </button>
     </div>
   </div>
 </template>
@@ -120,5 +137,41 @@ const handleClick = () => {
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 50%;
   padding: 4px;
+}
+
+.product-card.sold {
+  opacity: 0.8;
+  cursor: default;
+}
+
+.product-card.sold:hover {
+  transform: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sold-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sold-overlay span {
+  background-color: #ff4b4b;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.view-details:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 </style>

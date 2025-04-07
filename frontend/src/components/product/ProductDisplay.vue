@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import Badge from '@/components/utils/Badge.vue'
 import WishlistButton from '@/components/utils/WishlistButton.vue'
+import VippsPaymentModal from '@/components/modals/VippsPaymentModal.vue'
+import ShippingDetailsModal from '@/components/modals/ShippingDetailsModal.vue'
+import PurchaseSuccessModal from '@/components/modals/PurchaseSuccessModal.vue'
+import BaseModal from '@/components/modals/BaseModal.vue'
 import axios from '@/api/axios'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/AuthStore'
 
 interface ProductDisplayProps {
   id: number
@@ -11,7 +16,7 @@ interface ProductDisplayProps {
 
 const props = defineProps<ProductDisplayProps>()
 const router = useRouter()
-
+const authStore = useAuthStore()
 const getItemById = async () => {
   const item = await axios.get(`api/items/${props.id}`)
   return item.data
@@ -25,6 +30,25 @@ const location = ref<any>(null)
 const sellerId = ref<number>(0)
 const item = ref<any>(null)
 const images = ref<any>(null)
+const showShippingModal = ref(false)
+const showVippsModal = ref(false)
+const showSuccessModal = ref(false)
+const isLoading = ref(false)
+const shippingDetails = ref<any>(null)
+const transactionDetails = ref<any>(null)
+
+// Define transaction data interface
+interface TransactionData {
+  id: number
+  itemId: number
+  sellerId: number
+  buyerId: number
+  status: string
+  amount: number
+  createdAt: string
+  updatedAt: string
+  paymentMethod: string
+}
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString)
@@ -59,6 +83,80 @@ const handleBadgeClick = (event: { type: string; value: string }) => {
   })
 }
 
+const isCurrentUserSeller = computed(() => {
+  return authStore.user?.id === sellerId.value
+})
+
+const isItemAvailable = computed(() => {
+  return item.value?.available !== false && item.value?.isAvailable !== false
+})
+
+const shouldDisableButtons = computed(() => {
+  return isCurrentUserSeller.value || !isItemAvailable.value
+})
+
+const isLocalPickup = computed(() => {
+  return item.value?.shippingOptionName === 'Local Pickup'
+})
+
+const handleBuyClick = () => {
+  if (!item.value?.vippsPaymentEnabled) {
+    // Show message when Vipps is not enabled
+    alert('Please contact the seller to purchase this product')
+    return
+  }
+
+  if (isLocalPickup.value) {
+    // Skip shipping details for local pickup
+    showVippsModal.value = true
+  } else {
+    // Show shipping details first for other shipping methods
+    showShippingModal.value = true
+  }
+}
+
+const handleShippingContinue = (details: any) => {
+  shippingDetails.value = details
+  showShippingModal.value = false
+  showVippsModal.value = true
+}
+
+const handleVippsBack = () => {
+  showVippsModal.value = false
+  showShippingModal.value = true
+}
+
+const handlePaymentComplete = (transactionData: TransactionData) => {
+  transactionDetails.value = transactionData
+  showVippsModal.value = false
+  showSuccessModal.value = true
+}
+
+const handleViewPurchases = () => {
+  showSuccessModal.value = false
+  router.push('/profile/purchases')
+}
+
+const handleContinueShopping = () => {
+  showSuccessModal.value = false
+  router.push('/')
+}
+
+// Helper function to get shipping cost
+const getShippingCost = computed(() => {
+  if (!item.value || isLocalPickup.value) {
+    return 0
+  }
+  return item.value.shippingPrice || 0
+})
+
+// Calculate total price including shipping
+const totalPrice = computed(() => {
+  const basePrice = item.value?.price || 0
+  const shippingFee = getShippingCost.value || 0
+  return basePrice + shippingFee
+})
+
 onMounted(async () => {
   item.value = await getItemById()
 
@@ -69,6 +167,48 @@ onMounted(async () => {
 </script>
 
 <template>
+  <div v-if="isLoading" class="loading-popup">
+    <p>Processing your purchase...</p>
+  </div>
+
+  <!-- ShippingDetailsModal component - only show if Vipps is enabled -->
+  <BaseModal v-if="showShippingModal && item.vippsPaymentEnabled" @close="showShippingModal = false">
+    <ShippingDetailsModal
+      :shipping-option-name="item.shippingOptionName"
+      :initial-values="shippingDetails"
+      @close="showShippingModal = false"
+      @continue="handleShippingContinue"
+    />
+  </BaseModal>
+
+  <!-- VippsPaymentModal component - only show if Vipps is enabled -->
+  <BaseModal v-if="showVippsModal && item.vippsPaymentEnabled" @close="showVippsModal = false">
+    <VippsPaymentModal
+      :item-id="item.id"
+      :item-title="item.title"
+      :item-price="item.price"
+      :seller-id="sellerId"
+      :buyer-id="authStore.user?.id || 0"
+      :shipping-option-name="!isLocalPickup ? item.shippingOptionName : undefined"
+      :shipping-cost="getShippingCost.value"
+      :shipping-phone-number="shippingDetails?.phone"
+      @close="showVippsModal = false"
+      @back="handleVippsBack"
+      @payment-complete="handlePaymentComplete"
+    />
+  </BaseModal>
+
+  <!-- Success Modal -->
+  <BaseModal v-if="showSuccessModal" @close="handleContinueShopping">
+    <PurchaseSuccessModal
+      :item-title="item.title"
+      :total-amount="totalPrice"
+      :shipping-address="!isLocalPickup ? shippingDetails : undefined"
+      @view-purchases="handleViewPurchases"
+      @close="handleContinueShopping"
+    />
+  </BaseModal>
+
   <div v-if="item" class="product-display">
     <div class="product-image-container">
       <div class="gallery-container" v-if="images && images.length > 0">
@@ -105,8 +245,9 @@ onMounted(async () => {
         <Badge :name="item.shippingOptionName || 'N/A'" type="shipping" @click="handleBadgeClick" />
       </div>
       <div class="action-buttons">
-        <button class="contact-button">Contact Seller</button>
-        <WishlistButton :product-id="item.id" :purchased="item.purchased" />
+        <button class="contact-button" :disabled="shouldDisableButtons">Contact Seller</button>
+        <button class="buy-button" @click="handleBuyClick" :disabled="shouldDisableButtons">Buy Item</button>
+        <WishlistButton :product-id="item.id" :purchased="item.purchased" :is-available="isItemAvailable" />
       </div>
       <div class="product-details-list">
         <p class="detail-item">
@@ -224,8 +365,14 @@ onMounted(async () => {
   transition: background-color 0.2s ease;
 }
 
-.contact-button:hover {
+.contact-button:hover:not(:disabled) {
   background-color: #5a4b7d;
+}
+
+.contact-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 #product-info {
@@ -281,5 +428,42 @@ onMounted(async () => {
 
 .detail-value {
   color: #3a4951;
+}
+
+.loading-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5rem;
+  z-index: 1000;
+}
+
+.buy-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.buy-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.buy-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 </style>

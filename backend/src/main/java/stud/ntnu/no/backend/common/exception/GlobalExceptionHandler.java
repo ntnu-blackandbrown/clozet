@@ -31,6 +31,8 @@ import stud.ntnu.no.backend.review.exception.ReviewNotFoundException;
 import stud.ntnu.no.backend.review.exception.ReviewValidationException;
 import stud.ntnu.no.backend.shippingoption.exception.ShippingOptionNotFoundException;
 import stud.ntnu.no.backend.shippingoption.exception.ShippingOptionValidationException;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
+import org.apache.catalina.connector.ClientAbortException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -254,5 +256,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(FavoriteValidationException.class)
     public ResponseEntity<Object> handleFavoriteValidationException(FavoriteValidationException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AsyncRequestNotUsableException.class)
+    public ResponseEntity<Object> handleAsyncRequestNotUsableException(AsyncRequestNotUsableException ex) {
+        logger.debug("Client disconnected from async request: {}", ex.getMessage());
+        return buildErrorResponse("Client disconnected", HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @ExceptionHandler(ClientAbortException.class)
+    public ResponseEntity<Object> handleClientAbortException(ClientAbortException ex) {
+        logger.debug("Client aborted connection: {}", ex.getMessage());
+        return buildErrorResponse("Client disconnected", HttpStatus.SERVICE_UNAVAILABLE);
     }
 }

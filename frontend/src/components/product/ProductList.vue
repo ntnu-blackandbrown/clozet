@@ -56,6 +56,7 @@ watch(
         :location="item.location"
         :isVippsPaymentEnabled="item.vippsPaymentEnabled"
         :isWishlisted="item.wishlisted"
+        :isAvailable="item.isAvailable"
         @click="openProductModal(item.id)"
       />
     </div>
