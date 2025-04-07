@@ -67,25 +67,24 @@ const handleCloseAuthModal = () => {
             <img src="@/assets/light-green.png" alt="Clozet Logo" class="logo-image" />
           </RouterLink>
           <nav class="main-nav">
+            <RouterLink to="/" class="nav-link">Home</RouterLink>
             <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
             <RouterLink v-if="isLoggedIn" to="/messages">Messages</RouterLink>
             <RouterLink v-if="isLoggedIn" to="/forgot-password">Forgot Password</RouterLink>
+            <RouterLink v-if="userDetails?.role === 'ADMIN'" to="/admin" class="nav-link">Admin Dashboard</RouterLink>
           </nav>
         </div>
 
         <div class="auth-section">
-          <!-- User info when logged in -->
-          <div v-if="isLoggedIn" class="user-info">
-            <span class="welcome-msg"
-              >Hei, {{ userDetails?.firstName || userDetails?.username }}!</span
-            >
-            <button @click="logout" class="logout-button">Log Out</button>
-          </div>
-
-          <!-- Login/register buttons when not logged in -->
-          <div v-else class="auth-buttons">
-            <button @click="handleLoginClick" class="login-button">Login / Register</button>
-          </div>
+          <template v-if="isLoggedIn">
+            <RouterLink v-if="userDetails?.role === 'ADMIN'" to="/admin" class="nav-link admin-link">Admin Dashboard</RouterLink>
+            <RouterLink to="/profile" class="nav-link">My Profile</RouterLink>
+            <RouterLink to="/messages" class="nav-link">Messages</RouterLink>
+            <button @click="logout" class="logout-btn">Log Out</button>
+          </template>
+          <template v-else>
+            <button @click="handleLoginClick" class="login-btn">Log In</button>
+          </template>
         </div>
       </div>
     </header>
@@ -482,5 +481,19 @@ main {
   .grid {
     grid-template-columns: 1fr;
   }
+}
+
+.admin-link {
+  background-color: #BF616A;
+  color: white;
+  font-weight: 600;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin-right: 16px;
+}
+
+.admin-link:hover {
+  background-color: #a5545c;
+  color: white;
 }
 </style>
