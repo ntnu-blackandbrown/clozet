@@ -1,7 +1,5 @@
 package stud.ntnu.no.backend.user.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +17,6 @@ import stud.ntnu.no.backend.user.service.UserProfileService;
 @RestController
 @RequestMapping("/api/users/profile")
 public class UserImageController {
-
-    private static final Logger logger = LoggerFactory.getLogger(UserImageController.class);
 
     private final UserProfileService userProfileService;
 
@@ -45,7 +41,7 @@ public class UserImageController {
     public ResponseEntity<?> uploadProfileImage(
             @RequestParam("file") MultipartFile file,
             @RequestParam("userId") Long userId) {
-        logger.debug("Uploading profile image for user ID: {}", userId);
+
         try {
             String imageUrl = userProfileService.uploadProfilePicture(file, userId);
             return ResponseEntity.ok().body(imageUrl);
@@ -69,7 +65,6 @@ public class UserImageController {
      */
     @GetMapping("/{userId}/image")
     public ResponseEntity<?> getProfileImage(@PathVariable Long userId) {
-        logger.debug("Retrieving profile image for user ID: {}", userId);
         try {
             String imageUrl = userProfileService.getProfilePictureUrl(userId);
             if (imageUrl == null) {
@@ -90,7 +85,6 @@ public class UserImageController {
      */
     @DeleteMapping("/{userId}/image")
     public ResponseEntity<?> deleteProfileImage(@PathVariable Long userId) {
-        logger.debug("Deleting profile image for user ID: {}", userId);
         try {
             userProfileService.deleteProfilePicture(userId);
             return ResponseEntity.ok().build();

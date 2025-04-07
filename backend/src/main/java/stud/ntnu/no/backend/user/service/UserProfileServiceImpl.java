@@ -1,7 +1,5 @@
 package stud.ntnu.no.backend.user.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +16,6 @@ import java.util.Set;
  */
 @Service
 public class UserProfileServiceImpl implements UserProfileService {
-    private static final Logger logger = LoggerFactory.getLogger(UserProfileServiceImpl.class);
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
             "image/jpeg", "image/png", "image/jpg", "image/gif");
     
@@ -42,7 +39,6 @@ public class UserProfileServiceImpl implements UserProfileService {
      */
     @Override
     public String uploadProfilePicture(MultipartFile file, Long userId) throws Exception {
-        logger.debug("Uploading profile picture for user ID: {}", userId);
         validateFile(file);
         
         User user = userRepository.findById(userId)
@@ -61,7 +57,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     
     @Override
     public void deleteProfilePicture(Long userId) {
-        logger.debug("Deleting profile picture for user ID: {}", userId);
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         
@@ -72,7 +67,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     
     @Override
     public String getProfilePictureUrl(Long userId) {
-        logger.debug("Retrieving profile picture URL for user ID: {}", userId);
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         
@@ -80,7 +74,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
     
     private void validateFile(MultipartFile file) {
-        logger.debug("Validating file upload");
         if (file.isEmpty()) {
             throw new EmptyFileException("Failed to store empty file");
         }

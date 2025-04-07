@@ -30,9 +30,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Implementation of UserService for managing users.
  */
@@ -44,8 +41,6 @@ public class UserServiceImpl extends UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final VerificationTokenRepository verificationTokenRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     
     @Value("${app.email.verification-expiry-hours:24}")
     private int verificationExpiryHours;
@@ -65,7 +60,6 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public User getCurrentUser() {
-        logger.info("Getting current user");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new RuntimeException("No authenticated user found");
@@ -87,7 +81,6 @@ public class UserServiceImpl extends UserService {
      */
     @Override
     public List<UserDTO> getAllUsers() {
-        logger.info("Getting all users");
         return userRepository.findAll().stream()
                 .map(userMapper::toDto)
                 .collect(Collectors.toList());
@@ -95,7 +88,6 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public UserDTO getUserById(Long id) {
-        logger.info("Getting user by ID: {}", id);
         return userRepository.findById(id)
                 .map(userMapper::toDto)
                 .orElseThrow(() -> new UserNotFoundException(id));
@@ -103,7 +95,6 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public UserDTO getUserByUsername(String username) {
-        logger.info("Getting user by username: {}", username);
         return userRepository.findByUsername(username)
                 .map(userMapper::toDto)
                 .orElseThrow(() -> new UserNotFoundException("Username " + username + " not found"));
@@ -112,7 +103,6 @@ public class UserServiceImpl extends UserService {
     @Transactional
     @Override
     public UserDTO createUser(RegisterUserDTO registerUserDTO) {
-        logger.info("Creating user: {}", registerUserDTO);
         if (registerUserDTO == null) {
             throw new UserValidationException("User registration data cannot be null");
         }
@@ -135,7 +125,6 @@ public class UserServiceImpl extends UserService {
     @Transactional
     @Override
     public void createUserAndSendVerificationEmail(RegisterUserDTO registerUserDTO) {
-        logger.info("Creating user and sending verification email: {}", registerUserDTO);
         if (registerUserDTO == null) {
             throw new UserValidationException("User registration data cannot be null");
         }
@@ -170,7 +159,6 @@ public class UserServiceImpl extends UserService {
     @Transactional
     @Override
     public UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
-        logger.info("Updating user with ID: {}", id);
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
@@ -208,7 +196,6 @@ public class UserServiceImpl extends UserService {
     @Transactional
     @Override
     public void deleteUser(Long id) {
-        logger.info("Deleting user with ID: {}", id);
         if (!userRepository.existsById(id)) {
             throw new UserNotFoundException(id);
         }
@@ -217,7 +204,6 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public UserDTO login(LoginDTO loginDTO) {
-        logger.info("Logging in user: {}", loginDTO.getUsernameOrEmail());
         String usernameOrEmail = loginDTO.getUsernameOrEmail();
 
         if (usernameOrEmail.contains("@")) {
@@ -236,7 +222,6 @@ public class UserServiceImpl extends UserService {
     @Transactional
     @Override
     public void changePassword(String username, ChangePasswordDTO changePasswordDTO) {
-        logger.info("Changing password for user: {}", username);
         System.out.println("UserServiceImpl.changePassword - Username: " + username);
         System.out.println("UserServiceImpl.changePassword - Current Password: " +
             (changePasswordDTO.getCurrentPassword() != null ? "******" : "null"));
