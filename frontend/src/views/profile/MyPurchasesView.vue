@@ -29,7 +29,7 @@ const fetchImageForItem = async (item: any): Promise<Product> => {
 
 onMounted(async () => {
   try {
-    const response = await axios.get(`api/transactions/${authStore.user?.id}`)
+    const response = await axios.get(`api/transactions/buyer/${authStore.user?.id}`)
     const purchasedItems = response.data
 
     // Fetch additional details from the marketplace if necessary

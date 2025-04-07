@@ -26,6 +26,7 @@ const location = ref<any>(null)
 const sellerId = ref<number>(0)
 const item = ref<any>(null)
 const images = ref<any>(null)
+const isLoading = ref(false)
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString)
@@ -61,15 +62,26 @@ const handleBadgeClick = (event: { type: string; value: string }) => {
 }
 
 const handleBuyClick = async () => {
+  isLoading.value = true; // Show loading popup
   try {
     const response = await axios.post('/api/transactions', {
       // Assuming the transaction requires item ID and seller ID
       itemId: item.value.id,
       sellerId: sellerId.value,
-      buyerId: authStore.user?.id
+      buyerId: authStore.user?.id,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      amount: item.value.price
     });
     console.log('Transaction created:', response.data);
+    // Simulate a delay before redirecting to 'My Purchases' view
+    setTimeout(() => {
+      isLoading.value = false; // Hide loading popup
+      router.push('/profile/purchases');
+    }, 2000); // 2-second delay
   } catch (error) {
+    isLoading.value = false; // Hide loading popup on error
     console.error('Error creating transaction:', error);
   }
 }
@@ -84,6 +96,9 @@ onMounted(async () => {
 </script>
 
 <template>
+  <div v-if="isLoading" class="loading-popup">
+    <p>Processing your purchase...</p>
+  </div>
   <div v-if="item" class="product-display">
     <div class="product-image-container">
       <div class="gallery-container" v-if="images && images.length > 0">
@@ -297,5 +312,20 @@ onMounted(async () => {
 
 .detail-value {
   color: #3a4951;
+}
+
+.loading-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5rem;
+  z-index: 1000;
 }
 </style>
