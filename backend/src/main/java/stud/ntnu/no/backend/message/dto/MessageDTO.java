@@ -11,6 +11,7 @@ public class MessageDTO {
     private Long id;
     private String senderId;
     private String receiverId;
+    private Long itemId;
     private String content;
     private LocalDateTime createdAt;
     private boolean isRead;
@@ -25,14 +26,16 @@ public class MessageDTO {
      * @param id the ID of the message
      * @param senderId the ID of the sender
      * @param receiverId the ID of the receiver
+     * @param itemId the ID of the item associated with the message
      * @param content the content of the message
      * @param createdAt the creation time of the message
      * @param isRead the read status of the message
      */
-    public MessageDTO(Long id, String senderId, String receiverId, String content, LocalDateTime createdAt, boolean isRead) {
+    public MessageDTO(Long id, String senderId, String receiverId, Long itemId, String content, LocalDateTime createdAt, boolean isRead) {
         this.id = id;
         this.senderId = senderId;
         this.receiverId = receiverId;
+        this.itemId = itemId;
         this.content = content;
         this.createdAt = createdAt;
         this.isRead = isRead;
@@ -90,6 +93,24 @@ public class MessageDTO {
      */
     public void setReceiverId(String receiverId) {
         this.receiverId = receiverId;
+    }
+    
+    /**
+     * Returns the ID of the item associated with the message.
+     *
+     * @return the item ID
+     */
+    public Long getItemId() {
+        return itemId;
+    }
+
+    /**
+     * Sets the ID of the item associated with the message.
+     *
+     * @param itemId the item ID to set
+     */
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
     }
 
     /**
