@@ -93,6 +93,49 @@ const router = createRouter({
         },
       ],
     },
+    // Admin dashboard routes
+    {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('@/views/admin/AdminDashboard.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+      children: [
+        {
+          path: '',
+          redirect: '/admin/overview',
+        },
+        {
+          path: 'overview',
+          name: 'admin-overview',
+          component: () => import('@/views/admin/AdminOverview.vue'),
+        },
+        {
+          path: 'categories',
+          name: 'admin-categories',
+          component: () => import('@/views/admin/categories/CategoryManagement.vue'),
+        },
+        {
+          path: 'locations',
+          name: 'admin-locations',
+          component: () => import('@/views/admin/locations/LocationManagement.vue'),
+        },
+        {
+          path: 'shipping',
+          name: 'admin-shipping',
+          component: () => import('@/views/admin/shipping/ShippingManagement.vue'),
+        },
+        {
+          path: 'users',
+          name: 'admin-users',
+          component: () => import('@/views/admin/users/UserManagement.vue'),
+        },
+        {
+          path: 'transactions',
+          name: 'admin-transactions',
+          component: () => import('@/views/admin/transactions/TransactionManagement.vue'),
+        }
+      ],
+    },
   ],
 })
 
@@ -102,6 +145,9 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.requiresAuth && !authStore.isLoggedIn) {
     // Redirect to home page if trying to access protected route while not logged in
+    next('/')
+  } else if (to.meta.requiresAdmin && authStore.userDetails?.role !== 'ADMIN') {
+    // Redirect to home page if trying to access admin route while not an admin
     next('/')
   } else {
     next()
