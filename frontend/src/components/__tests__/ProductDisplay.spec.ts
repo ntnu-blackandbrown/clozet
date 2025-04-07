@@ -70,7 +70,7 @@ describe('ProductDisplay', () => {
 
     await flushPromises()
     const badges = wrapper.findAllComponents({ name: 'Badge' })
-    expect(badges.length).toBeGreaterThanOrEqual(6)
+    expect(badges.length).toBeGreaterThanOrEqual(5)
   })
 
   it('renders WishlistButton with correct props', async () => {

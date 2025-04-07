@@ -16,11 +16,7 @@ export const badgeIcons = {
     <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
     <circle cx="5.5" cy="18.5" r="2.5"></circle>
     <circle cx="18.5" cy="18.5" r="2.5"></circle>
-  `,
-  availability: `
-    <circle cx="12" cy="12" r="10"></circle>
-    <polyline points="12 6 12 12 16 14"></polyline>
-  `,
+  `
 } as const
 
 export type BadgeType = keyof typeof badgeIcons | 'price'
