@@ -11,6 +11,7 @@ export interface Product {
   color?: string
   condition?: string
   size?: string
+  isAvailable?: boolean
 }
 
 export interface ProductDisplay {
