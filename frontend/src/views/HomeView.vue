@@ -11,6 +11,17 @@ const route = useRoute()
 const authStore = useAuthStore()
 const showLoginModal = ref(false)
 const initialAuthMode = ref('login') // Default to login mode
+const searchQuery = ref('')
+const debouncedSearchQuery = ref('')
+
+// Simple debounce for search input
+let debounceTimer = null
+const handleSearchInput = (e) => {
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    debouncedSearchQuery.value = e.target.value
+  }, 300)
+}
 
 // Check if we should show the login/register modal based on the route
 onMounted(() => {
@@ -59,6 +70,11 @@ watch(
   },
   { immediate: true },
 )
+
+const clearSearch = () => {
+  searchQuery.value = ''
+  debouncedSearchQuery.value = ''
+}
 </script>
 
 <template>
@@ -70,7 +86,14 @@ watch(
 
         <div class="search-create-container">
           <div class="search-wrapper">
-            <input class="search-bar" type="text" placeholder="Search for a product..." />
+            <input
+              class="search-bar"
+              type="text"
+              placeholder="Search for a product..."
+              v-model="searchQuery"
+              @input="handleSearchInput"
+            />
+            <button v-if="searchQuery" @click="clearSearch" class="clear-search-btn">Clear</button>
             <!-- Inline SVG icon -->
             <svg
               class="search-icon"
@@ -107,7 +130,7 @@ watch(
   </div>
   <div class="featured-section">
     <div class="featured-products">
-      <ProductListView />
+      <ProductListView :search-query="debouncedSearchQuery" />
     </div>
   </div>
   <LoginRegisterModal
@@ -291,6 +314,15 @@ h3 {
   transform: translateY(0);
   background-color: #262d36;
   box-shadow: var(--box-shadow-light);
+}
+
+.clear-search-btn {
+  background: none;
+  border: none;
+  color: #2d353f;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: 8px;
 }
 
 @media (max-width: 1024px) {
