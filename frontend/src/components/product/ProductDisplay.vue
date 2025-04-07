@@ -59,6 +59,19 @@ const handleBadgeClick = (event: { type: string; value: string }) => {
   })
 }
 
+const handleBuyClick = async () => {
+  try {
+    const response = await axios.post('/api/transactions', {
+      // Assuming the transaction requires item ID and seller ID
+      itemId: item.value.id,
+      sellerId: sellerId.value
+    });
+    console.log('Transaction created:', response.data);
+  } catch (error) {
+    console.error('Error creating transaction:', error);
+  }
+}
+
 onMounted(async () => {
   item.value = await getItemById()
 
@@ -106,6 +119,7 @@ onMounted(async () => {
       </div>
       <div class="action-buttons">
         <button class="contact-button">Contact Seller</button>
+        <button class="buy-button" @click="handleBuyClick">Buy Item</button>
         <WishlistButton :product-id="item.id" :purchased="item.purchased" />
       </div>
       <div class="product-details-list">
