@@ -87,56 +87,56 @@ jobs:
       # If you need the .jar for debugging or other release steps, add it back
       # and optionally restrict it to run only on main/pull requests.
 
-  deploy-backend:
-    name: Deploy Backend to Heroku
-    runs-on: ubuntu-latest
-    needs: package-backend
-    if: github.ref == 'refs/heads/main'
-    env:
-      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+deploy-backend:
+  name: Deploy Backend to Heroku
+  runs-on: ubuntu-latest
+  needs: package-backend
+  if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/task/check-deployment'
+  env:
+    HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+    HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+  steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21'
-          distribution: 'temurin'
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
 
-      - name: Build Backend
-        working-directory: backend
-        run: mvn clean install -DskipTests
+    - name: Build Backend
+      working-directory: backend
+      run: mvn clean install -DskipTests
 
-      - name: Prepare Heroku Deploy Folder
-        run: |
-          mkdir deploy
-          cp -a backend/. deploy/
-          echo "web: java -Dserver.port=$PORT -jar target/*.jar" > deploy/Procfile
-          echo "java.runtime.version = 21" > deploy/system.properties
+    - name: Prepare Heroku Deploy Folder
+      run: |
+        mkdir deploy
+        cp -a backend/. deploy/
+        echo "web: java -Dserver.port=$PORT -jar target/*.jar" > deploy/Procfile
+        echo "java.runtime.version = 21" > deploy/system.properties
 
-      - name: Set up Git and Push to Heroku
-        run: |
-          curl https://cli-assets.heroku.com/install.sh | sh
-          export PATH="$PATH:/app/.heroku/bin"
+    - name: Set up Git and Push to Heroku
+      run: |
+        curl https://cli-assets.heroku.com/install.sh | sh
+        export PATH="$PATH:/app/.heroku/bin"
 
-          heroku buildpacks:clear -a $HEROKU_APP_NAME
-          heroku buildpacks:set heroku/java -a $HEROKU_APP_NAME
+        heroku buildpacks:clear -a $HEROKU_APP_NAME
+        heroku buildpacks:set heroku/java -a $HEROKU_APP_NAME
 
-          cd deploy
-          git init
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git
+        cd deploy
+        git init
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git
 
-          git add .
-          if ! git commit -m "Deploy from GitHub Actions"; then
-            echo "⚠️ No changes to commit. Continuing anyway..."
-          fi
+        git add .
+        if ! git commit -m "Deploy from GitHub Actions"; then
+          echo "⚠️ No changes to commit. Continuing anyway..."
+        fi
 
-          if ! git push heroku master --force; then
-            echo "⚠️ Git push failed (possibly nothing new to push), continuing..."
-          fi
+        if ! git push heroku master --force; then
+          echo "⚠️ Git push failed (possibly nothing new to push), continuing..."
+        fi
