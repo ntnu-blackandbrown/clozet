@@ -7,6 +7,8 @@ import stud.ntnu.no.backend.location.entity.Location;
 import stud.ntnu.no.backend.shippingoption.entity.ShippingOption;
 import stud.ntnu.no.backend.user.entity.User;
 
+import java.time.LocalDateTime;
+
 /**
  * Helper class for providing test entities.
  */
@@ -40,6 +42,9 @@ public class TestHelper {
     public static Location createLocation(TestEntityManager entityManager, String name) {
         Location location = new Location();
         location.setCity(name);
+        location.setRegion("Oslo Region");
+        location.setLatitude(59.9139);
+        location.setLongitude(10.7522);
         entityManager.persist(location);
         return location;
     }
@@ -91,6 +96,11 @@ public class TestHelper {
         item.setLongitude(0.0);
         item.setAvailable(true);
         item.setVippsPaymentEnabled(true);
+        
+        // Set timestamp fields
+        LocalDateTime now = LocalDateTime.now();
+        item.setCreatedAt(now);
+        item.setUpdatedAt(now);
         
         return item;
     }
