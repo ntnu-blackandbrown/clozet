@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import Badge from '@/components/utils/Badge.vue'
 import WishlistButton from '@/components/utils/WishlistButton.vue'
 import axios from '@/api/axios'
@@ -60,6 +60,10 @@ const handleBadgeClick = (event: { type: string; value: string }) => {
     query: queryParams
   })
 }
+
+const isCurrentUserSeller = computed(() => {
+  return authStore.user?.id === sellerId.value
+})
 
 const handleBuyClick = async () => {
   isLoading.value = true; // Show loading popup
@@ -135,8 +139,8 @@ onMounted(async () => {
         <Badge :name="item.shippingOptionName || 'N/A'" type="shipping" @click="handleBadgeClick" />
       </div>
       <div class="action-buttons">
-        <button class="contact-button">Contact Seller</button>
-        <button class="buy-button" @click="handleBuyClick">Buy Item</button>
+        <button class="contact-button" :disabled="isCurrentUserSeller">Contact Seller</button>
+        <button class="buy-button" @click="handleBuyClick" :disabled="isCurrentUserSeller">Buy Item</button>
         <WishlistButton :product-id="item.id" :purchased="item.purchased" />
       </div>
       <div class="product-details-list">
@@ -255,8 +259,14 @@ onMounted(async () => {
   transition: background-color 0.2s ease;
 }
 
-.contact-button:hover {
+.contact-button:hover:not(:disabled) {
   background-color: #5a4b7d;
+}
+
+.contact-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 #product-info {
@@ -327,5 +337,27 @@ onMounted(async () => {
   color: white;
   font-size: 1.5rem;
   z-index: 1000;
+}
+
+.buy-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.buy-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.buy-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 </style>
