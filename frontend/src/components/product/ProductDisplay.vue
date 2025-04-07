@@ -2,6 +2,8 @@
 import { ref, onMounted, computed } from 'vue'
 import Badge from '@/components/utils/Badge.vue'
 import WishlistButton from '@/components/utils/WishlistButton.vue'
+import VippsPaymentModal from '@/components/modals/VippsPaymentModal.vue'
+import BaseModal from '@/components/modals/BaseModal.vue'
 import axios from '@/api/axios'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
@@ -26,7 +28,21 @@ const location = ref<any>(null)
 const sellerId = ref<number>(0)
 const item = ref<any>(null)
 const images = ref<any>(null)
+const showVippsModal = ref(false)
 const isLoading = ref(false)
+
+// Define transaction data interface
+interface TransactionData {
+  id: number
+  itemId: number
+  sellerId: number
+  buyerId: number
+  status: string
+  amount: number
+  createdAt: string
+  updatedAt: string
+  paymentMethod: string
+}
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString)
@@ -73,29 +89,19 @@ const shouldDisableButtons = computed(() => {
   return isCurrentUserSeller.value || !isItemAvailable.value
 })
 
-const handleBuyClick = async () => {
-  isLoading.value = true; // Show loading popup
-  try {
-    const response = await axios.post('/api/transactions/purchase', {
-      // Assuming the transaction requires item ID and seller ID
-      itemId: item.value.id,
-      sellerId: sellerId.value,
-      buyerId: authStore.user?.id,
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      amount: item.value.price
-    });
-    console.log('Transaction created:', response.data);
-    // Simulate a delay before redirecting to 'My Purchases' view
-    setTimeout(() => {
-      isLoading.value = false; // Hide loading popup
-      router.push('/profile/purchases');
-    }, 2000); // 2-second delay
-  } catch (error) {
-    isLoading.value = false; // Hide loading popup on error
-    console.error('Error creating transaction:', error);
-  }
+const handleBuyClick = () => {
+  showVippsModal.value = true
+}
+
+const handlePaymentComplete = (transactionData: TransactionData) => {
+  isLoading.value = true
+  showVippsModal.value = false
+
+  // Show loading for a short time to indicate successful payment
+  setTimeout(() => {
+    isLoading.value = false
+    router.push('/profile/purchases')
+  }, 1500)
 }
 
 onMounted(async () => {
@@ -111,6 +117,20 @@ onMounted(async () => {
   <div v-if="isLoading" class="loading-popup">
     <p>Processing your purchase...</p>
   </div>
+
+  <!-- VippsPaymentModal component -->
+  <BaseModal v-if="showVippsModal" @close="showVippsModal = false">
+    <VippsPaymentModal
+      :item-id="item.id"
+      :item-title="item.title"
+      :item-price="item.price"
+      :seller-id="sellerId"
+      :buyer-id="authStore.user?.id || 0"
+      @close="showVippsModal = false"
+      @payment-complete="handlePaymentComplete"
+    />
+  </BaseModal>
+
   <div v-if="item" class="product-display">
     <div class="product-image-container">
       <div class="gallery-container" v-if="images && images.length > 0">
