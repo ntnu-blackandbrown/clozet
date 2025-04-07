@@ -4,6 +4,7 @@ import Badge from '@/components/utils/Badge.vue'
 import WishlistButton from '@/components/utils/WishlistButton.vue'
 import VippsPaymentModal from '@/components/modals/VippsPaymentModal.vue'
 import ShippingDetailsModal from '@/components/modals/ShippingDetailsModal.vue'
+import PurchaseSuccessModal from '@/components/modals/PurchaseSuccessModal.vue'
 import BaseModal from '@/components/modals/BaseModal.vue'
 import axios from '@/api/axios'
 import { useRouter } from 'vue-router'
@@ -31,8 +32,10 @@ const item = ref<any>(null)
 const images = ref<any>(null)
 const showShippingModal = ref(false)
 const showVippsModal = ref(false)
+const showSuccessModal = ref(false)
 const isLoading = ref(false)
 const shippingDetails = ref<any>(null)
+const transactionDetails = ref<any>(null)
 
 // Define transaction data interface
 interface TransactionData {
@@ -118,22 +121,19 @@ const handleVippsBack = () => {
 }
 
 const handlePaymentComplete = (transactionData: TransactionData) => {
-  isLoading.value = true
+  transactionDetails.value = transactionData
   showVippsModal.value = false
+  showSuccessModal.value = true
+}
 
-  // Add shipping details to the transaction if applicable
-  const completeTransaction = {
-    ...transactionData,
-    shippingDetails: shippingDetails.value
-  }
+const handleViewPurchases = () => {
+  showSuccessModal.value = false
+  router.push('/profile/purchases')
+}
 
-  console.log('Transaction completed:', completeTransaction)
-
-  // Show loading for a short time to indicate successful payment
-  setTimeout(() => {
-    isLoading.value = false
-    router.push('/profile/purchases')
-  }, 1500)
+const handleContinueShopping = () => {
+  showSuccessModal.value = false
+  router.push('/')
 }
 
 // Helper function to get shipping cost
@@ -182,6 +182,17 @@ onMounted(async () => {
       @close="showVippsModal = false"
       @back="handleVippsBack"
       @payment-complete="handlePaymentComplete"
+    />
+  </BaseModal>
+
+  <!-- Success Modal -->
+  <BaseModal v-if="showSuccessModal" @close="handleContinueShopping">
+    <PurchaseSuccessModal
+      :item-title="item.title"
+      :total-amount="item.price + getShippingCost.value"
+      :shipping-address="!isLocalPickup ? shippingDetails : undefined"
+      @view-purchases="handleViewPurchases"
+      @close="handleContinueShopping"
     />
   </BaseModal>
 
