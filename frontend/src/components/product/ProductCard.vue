@@ -35,7 +35,12 @@ const handleClick = () => {
     <div class="product-image">
       <img :src="props.image" :alt="props.title" />
       <div class="wishlist-container">
-        <WishlistButton :product-id="props.id" :is-wishlisted="props.isWishlisted" @click.stop />
+        <WishlistButton
+          :product-id="props.id"
+          :is-wishlisted="props.isWishlisted"
+          :is-available="props.isAvailable"
+          @click.stop
+        />
       </div>
       <div v-if="isAvailable === false" class="sold-overlay">
         <span>SOLD</span>

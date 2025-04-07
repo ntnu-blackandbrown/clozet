@@ -8,11 +8,13 @@ const authStore = useAuthStore()
 interface WishlistButtonProps {
   productId?: number
   isWishlisted?: boolean
+  isAvailable?: boolean
 }
 
 const props = withDefaults(defineProps<WishlistButtonProps>(), {
   productId: 0,
   isWishlisted: false,
+  isAvailable: true,
 })
 
 const isWishlisted = ref(props.isWishlisted)
@@ -66,11 +68,11 @@ const toggleWishlist = async () => {
     class="wishlist-button"
     :class="{
       wishlisted: isWishlisted,
-      'disabled': !authStore.isLoggedIn
+      'disabled': !authStore.isLoggedIn || !props.isAvailable
     }"
     @click="toggleWishlist"
-    :disabled="!authStore.isLoggedIn"
-    aria-label="Add to wishlist"
+    :disabled="!authStore.isLoggedIn || !props.isAvailable"
+    :aria-label="props.isAvailable ? 'Add to wishlist' : 'Item is sold'"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
