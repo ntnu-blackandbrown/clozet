@@ -12,6 +12,26 @@ const userId = authStore.user?.id
 const route = useRoute()
 const initialProductId = ref<number | null>(null)
 
+// Fetch image URL for a single item
+const fetchImageForItem = async (item: any): Promise<Product> => {
+  try {
+    const imagesResponse = await axios.get(`api/images/item/${item.id}`)
+    const images = imagesResponse.data
+
+    return {
+      ...item,
+      // Set the image URL to the first image if available, otherwise null
+      image: images && images.length > 0 ? images[0].imageUrl : '/default-product-image.jpg'
+    }
+  } catch (error) {
+    console.error(`Failed to fetch images for item ${item.id}:`, error)
+    return {
+      ...item,
+      image: '/default-product-image.jpg'
+    }
+  }
+}
+
 onMounted(async () => {
   try {
     // First get user's favorites
@@ -23,9 +43,16 @@ onMounted(async () => {
     const allItems = marketPlaceResponse.data
 
     // Filter items to only include those that exist in favorites
-    items.value = allItems.filter((item: Product) =>
+    const filteredItems = allItems.filter((item: Product) =>
       favorites.some((fav: any) => fav.itemId === item.id)
     )
+
+    // Fetch images for filtered items
+    const itemsWithImages = await Promise.all(
+      filteredItems.map((item: any) => fetchImageForItem(item))
+    )
+
+    items.value = itemsWithImages
 
     // Check if there's a product ID in the URL
     if (route.params.id) {
