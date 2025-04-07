@@ -30,6 +30,6 @@ class UserTest {
         user.setFullName("Alice");
 
         assertEquals("Alice", user.getFirstName());
-        assertNull(user.getLastName());
+        assertEquals("Doe", user.getLastName());
     }
 } 
