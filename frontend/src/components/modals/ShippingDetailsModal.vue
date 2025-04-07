@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import { ref, defineEmits, defineProps } from 'vue'
+import { ref, defineEmits, defineProps, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/AuthStore'
 
 const props = defineProps<{
   shippingOptionName: string
 }>()
 
 const emit = defineEmits(['close', 'continue'])
+const authStore = useAuthStore()
 
-const firstName = ref('')
-const lastName = ref('')
+const firstName = ref(authStore.user?.firstName || '')
+const lastName = ref(authStore.user?.lastName || '')
 const streetAddress = ref('')
 const postalCode = ref('')
 const city = ref('')
 const country = ref('Norway')
-const phone = ref('')
+const phone = ref(authStore.user?.phoneNumber || '')
 const error = ref('')
 const isProcessing = ref(false)
 
@@ -82,6 +84,7 @@ const handleContinue = () => {
             v-model="firstName"
             class="form-input"
             placeholder="Enter your first name"
+            :disabled="!!authStore.user?.firstName"
           />
         </div>
         <div class="form-group">
@@ -92,6 +95,7 @@ const handleContinue = () => {
             v-model="lastName"
             class="form-input"
             placeholder="Enter your last name"
+            :disabled="!!authStore.user?.lastName"
           />
         </div>
       </div>
