@@ -40,7 +40,7 @@ const activeConversation = computed(() => {
 
 const getLatestMessage = (conversation: Conversation) => {
   if (!conversation.listOfMessages || conversation.listOfMessages.length === 0) {
-    return 'No messages yet'
+    return conversation.lastMessage || 'Start a conversation'
   }
   // Sort messages by createdAt in descending order and get the first one
   const sortedMessages = [...conversation.listOfMessages].sort(
