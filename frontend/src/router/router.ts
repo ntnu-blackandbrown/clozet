@@ -72,8 +72,18 @@ const router = createRouter({
           component: () => import('@/views/profile/MyPostsView.vue'),
         },
         {
+          path: 'posts/:id',
+          name: 'my-posts-detail',
+          component: () => import('@/views/profile/MyPostsView.vue'),
+        },
+        {
           path: 'wishlist',
           name: 'my-wishlist',
+          component: () => import('@/views/profile/MyWishlistView.vue'),
+        },
+        {
+          path: 'wishlist/:id',
+          name: 'my-wishlist-detail',
           component: () => import('@/views/profile/MyWishlistView.vue'),
         },
         {

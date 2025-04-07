@@ -10,6 +10,7 @@ const router = useRouter()
 const props = defineProps<{
   items: Product[]
   initialProductId?: number | null
+  routeBasePath?: string
 }>()
 
 const selectedProductId = ref<number | null>(null)
@@ -21,8 +22,8 @@ const openProductModal = (productId: number) => {
   selectedProductId.value = productId
   showProductModal.value = true
 
-  // Update the URL without navigating away from the current page
-  router.replace(`/products/${productId}`)
+  const basePath = props.routeBasePath || '/products/'
+  router.replace(`${basePath}${productId}`)
 }
 
 // Watch for changes in the initialProductId prop

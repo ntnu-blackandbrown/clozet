@@ -7,6 +7,10 @@ vi.mock('vue-router', () => ({
   useRouter: () => ({
     replace: vi.fn(),
   }),
+  useRoute: () => ({
+    path: '/products/123',
+    params: { id: '123' }
+  }),
 }))
 
 describe('ProductDisplayModal', () => {

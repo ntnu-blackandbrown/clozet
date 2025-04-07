@@ -22,29 +22,37 @@ public class ItemImageMapper {
     /**
      * Converts an ItemImage entity to an ItemImageDTO.
      *
-     * @param itemImage The ItemImage entity to convert
+     * @param entity The ItemImage entity to convert
      * @return The converted ItemImageDTO
      */
-    public ItemImageDTO toDto(ItemImage itemImage) {
+    public ItemImageDTO toDTO(ItemImage entity) {
+        if (entity == null) {
+            return null;
+        }
+        
         return new ItemImageDTO(
-                itemImage.getId(),
-                itemImage.getItem() != null ? itemImage.getItem().getId() : null,
-                itemImage.getImageUrl(),
-                itemImage.isPrimary(),
-                itemImage.getDisplayOrder()
+            entity.getId(),
+            entity.getItem() != null ? entity.getItem().getId() : null,
+            entity.getImageUrl(),
+            entity.isPrimary(),
+            entity.getDisplayOrder()
         );
     }
 
     /**
      * Converts a list of ItemImage entities to a list of ItemImageDTOs.
      *
-     * @param itemImages The list of ItemImage entities to convert
+     * @param entities The list of ItemImage entities to convert
      * @return The list of converted ItemImageDTOs
      */
-    public List<ItemImageDTO> toDtoList(List<ItemImage> itemImages) {
-        return itemImages.stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+    public List<ItemImageDTO> toDTOList(List<ItemImage> entities) {
+        if (entities == null) {
+            return null;
+        }
+        
+        return entities.stream()
+            .map(this::toDTO)
+            .collect(Collectors.toList());
     }
 
     /**

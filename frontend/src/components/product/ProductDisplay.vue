@@ -2,7 +2,8 @@
 import { ref, onMounted } from 'vue'
 import Badge from '@/components/utils/Badge.vue'
 import WishlistButton from '@/components/utils/WishlistButton.vue'
-import axios from 'axios'
+import axios from '@/api/axios'
+
 interface ProductDisplayProps {
   id: number
 }
@@ -10,14 +11,18 @@ interface ProductDisplayProps {
 const props = defineProps<ProductDisplayProps>()
 
 const getItemById = async () => {
-  const item = await axios.get(`/api/items/${props.id}`)
+  const item = await axios.get(`api/items/${props.id}`)
   return item.data
+}
+const getImagesByItemId = async() => {
+  const images = await axios.get(`api/images/item/${props.id}`)
+  return images.data
 }
 
 const location = ref<any>(null)
 const sellerId = ref<number>(0)
-
 const item = ref<any>(null)
+const images = ref<any>(null)
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString)
@@ -32,22 +37,24 @@ const formatDate = (dateString: string) => {
 
 onMounted(async () => {
   item.value = await getItemById()
+
   location.value = item.value.latitude + ',' + item.value.longitude
   sellerId.value = item.value.sellerId
+  images.value = await getImagesByItemId()
 })
 </script>
 
 <template>
   <div v-if="item" class="product-display">
     <div class="product-image-container">
-      <div class="gallery-container">
-        <div v-for="(image, index) in item.images || []" :key="index" class="gallery-item">
-          <img :src="image" :alt="'Product image ' + (index + 1)" class="gallery-image" />
+      <div class="gallery-container" v-if="images && images.length > 0">
+        <div v-for="(image, index) in images" :key="index" class="gallery-item">
+          <img :src="image.imageUrl" :alt="'Product image ' + (index + 1)" class="gallery-image" />
         </div>
       </div>
       <div class="main-image-container">
         <img
-          :src="item.images?.[0] || '/default-product-image.jpg'"
+          :src="images?.[0]?.imageUrl || '/default-product-image.jpg'"
           :alt="'Main product image'"
           class="main-image"
         />

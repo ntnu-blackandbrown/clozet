@@ -12,7 +12,13 @@ public class ItemImageDTO {
     private int displayOrder;
 
     /**
-     * Constructor to create an ItemImageDTO with all fields.
+     * Default constructor
+     */
+    public ItemImageDTO() {
+    }
+
+    /**
+     * Constructor with fields
      *
      * @param id The ID of the image
      * @param itemId The ID of the item
@@ -20,7 +26,6 @@ public class ItemImageDTO {
      * @param isPrimary The primary status of the image
      * @param displayOrder The display order of the image
      */
-    // Constructor
     public ItemImageDTO(Long id, Long itemId, String imageUrl, boolean isPrimary, int displayOrder) {
         this.id = id;
         this.itemId = itemId;
@@ -48,7 +53,7 @@ public class ItemImageDTO {
     }
 
     /**
-     * Retrieves the item ID.
+     * Retrieves the ID of the item.
      *
      * @return The ID of the item
      */
@@ -57,7 +62,7 @@ public class ItemImageDTO {
     }
 
     /**
-     * Sets the item ID.
+     * Sets the ID of the item.
      *
      * @param itemId The ID of the item
      */
