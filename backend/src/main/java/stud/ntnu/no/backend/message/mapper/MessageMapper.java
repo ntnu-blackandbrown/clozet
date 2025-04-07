@@ -32,6 +32,7 @@ public class MessageMapper {
                 message.getId(),
                 message.getSenderId(),
                 message.getReceiverId(),
+                message.getItem() != null ? message.getItem().getId() : null,
                 message.getContent(),
                 message.getCreatedAt(),
                 message.isRead()
