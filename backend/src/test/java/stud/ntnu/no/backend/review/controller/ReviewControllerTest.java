@@ -90,7 +90,11 @@ class ReviewControllerTest {
                                 fieldWithPath("[].reviewerId").description("Reviewer ID"),
                                 fieldWithPath("[].revieweeId").description("Reviewee ID"),
                                 fieldWithPath("[].rating").description("Rating (1-5)"),
-                                fieldWithPath("[].comment").description("Review comment")
+                                fieldWithPath("[].comment").description("Review comment"),
+                                fieldWithPath("[].createdAt").description("Date when review was created"),
+                                fieldWithPath("[].revieweeUsername").description("Username of the reviewee"),
+                                fieldWithPath("[].reviewerUsername").description("Username of the reviewer"),
+                                fieldWithPath("[].transactionId").description("ID of the associated transaction")
                         )
                 ));
                 
@@ -125,7 +129,11 @@ class ReviewControllerTest {
                                 fieldWithPath("reviewerId").description("Reviewer ID"),
                                 fieldWithPath("revieweeId").description("Reviewee ID"),
                                 fieldWithPath("rating").description("Rating (1-5)"),
-                                fieldWithPath("comment").description("Review comment")
+                                fieldWithPath("comment").description("Review comment"),
+                                fieldWithPath("createdAt").description("Date when review was created"),
+                                fieldWithPath("revieweeUsername").description("Username of the reviewee"),
+                                fieldWithPath("reviewerUsername").description("Username of the reviewer"),
+                                fieldWithPath("transactionId").description("ID of the associated transaction")
                         )
                 ));
                 
@@ -170,7 +178,11 @@ class ReviewControllerTest {
                                 fieldWithPath("[].reviewerId").description("Reviewer ID"),
                                 fieldWithPath("[].revieweeId").description("Reviewee ID"),
                                 fieldWithPath("[].rating").description("Rating (1-5)"),
-                                fieldWithPath("[].comment").description("Review comment")
+                                fieldWithPath("[].comment").description("Review comment"),
+                                fieldWithPath("[].createdAt").description("Date when review was created"),
+                                fieldWithPath("[].revieweeUsername").description("Username of the reviewee"),
+                                fieldWithPath("[].reviewerUsername").description("Username of the reviewer"),
+                                fieldWithPath("[].transactionId").description("ID of the associated transaction")
                         )
                 ));
                 
@@ -215,7 +227,11 @@ class ReviewControllerTest {
                                 fieldWithPath("[].reviewerId").description("Reviewer ID"),
                                 fieldWithPath("[].revieweeId").description("Reviewee ID"),
                                 fieldWithPath("[].rating").description("Rating (1-5)"),
-                                fieldWithPath("[].comment").description("Review comment")
+                                fieldWithPath("[].comment").description("Review comment"),
+                                fieldWithPath("[].createdAt").description("Date when review was created"),
+                                fieldWithPath("[].revieweeUsername").description("Username of the reviewee"),
+                                fieldWithPath("[].reviewerUsername").description("Username of the reviewer"),
+                                fieldWithPath("[].transactionId").description("ID of the associated transaction")
                         )
                 ));
                 
@@ -256,14 +272,22 @@ class ReviewControllerTest {
                                 fieldWithPath("revieweeId").description("Reviewee ID"),
                                 fieldWithPath("rating").description("Rating (1-5)"),
                                 fieldWithPath("comment").description("Review comment"),
-                                fieldWithPath("id").description("Review ID").optional()
+                                fieldWithPath("id").description("Review ID").optional(),
+                                fieldWithPath("transactionId").description("ID of the associated transaction").optional(),
+                                fieldWithPath("revieweeUsername").description("Username of the reviewee").optional(),
+                                fieldWithPath("reviewerUsername").description("Username of the reviewer").optional(),
+                                fieldWithPath("createdAt").description("Date when review was created").optional()
                         ),
                         responseFields(
                                 fieldWithPath("id").description("Created review ID"),
                                 fieldWithPath("reviewerId").description("Reviewer ID"),
                                 fieldWithPath("revieweeId").description("Reviewee ID"),
                                 fieldWithPath("rating").description("Rating (1-5)"),
-                                fieldWithPath("comment").description("Review comment")
+                                fieldWithPath("comment").description("Review comment"),
+                                fieldWithPath("createdAt").description("Date when review was created"),
+                                fieldWithPath("revieweeUsername").description("Username of the reviewee"),
+                                fieldWithPath("reviewerUsername").description("Username of the reviewer"),
+                                fieldWithPath("transactionId").description("ID of the associated transaction")
                         )
                 ));
                 
@@ -306,14 +330,22 @@ class ReviewControllerTest {
                                 fieldWithPath("revieweeId").description("Reviewee ID"),
                                 fieldWithPath("rating").description("Updated rating (1-5)"),
                                 fieldWithPath("comment").description("Updated review comment"),
-                                fieldWithPath("id").description("Review ID").optional()
+                                fieldWithPath("id").description("Review ID").optional(),
+                                fieldWithPath("transactionId").description("ID of the associated transaction").optional(),
+                                fieldWithPath("revieweeUsername").description("Username of the reviewee").optional(),
+                                fieldWithPath("reviewerUsername").description("Username of the reviewer").optional(),
+                                fieldWithPath("createdAt").description("Date when review was created").optional()
                         ),
                         responseFields(
                                 fieldWithPath("id").description("Review ID"),
                                 fieldWithPath("reviewerId").description("Reviewer ID"),
                                 fieldWithPath("revieweeId").description("Reviewee ID"),
                                 fieldWithPath("rating").description("Updated rating (1-5)"),
-                                fieldWithPath("comment").description("Updated review comment")
+                                fieldWithPath("comment").description("Updated review comment"),
+                                fieldWithPath("createdAt").description("Date when review was created"),
+                                fieldWithPath("revieweeUsername").description("Username of the reviewee"),
+                                fieldWithPath("reviewerUsername").description("Username of the reviewer"),
+                                fieldWithPath("transactionId").description("ID of the associated transaction")
                         )
                 ));
                 
