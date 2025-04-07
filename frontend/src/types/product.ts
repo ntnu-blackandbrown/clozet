@@ -12,6 +12,7 @@ export interface Product {
   condition?: string
   size?: string
   isAvailable?: boolean
+  purchased?: boolean
 }
 
 export interface ProductDisplay {

@@ -65,6 +65,14 @@ const isCurrentUserSeller = computed(() => {
   return authStore.user?.id === sellerId.value
 })
 
+const isItemAvailable = computed(() => {
+  return item.value?.available !== false && item.value?.isAvailable !== false
+})
+
+const shouldDisableButtons = computed(() => {
+  return isCurrentUserSeller.value || !isItemAvailable.value
+})
+
 const handleBuyClick = async () => {
   isLoading.value = true; // Show loading popup
   try {
@@ -139,9 +147,9 @@ onMounted(async () => {
         <Badge :name="item.shippingOptionName || 'N/A'" type="shipping" @click="handleBadgeClick" />
       </div>
       <div class="action-buttons">
-        <button class="contact-button" :disabled="isCurrentUserSeller">Contact Seller</button>
-        <button class="buy-button" @click="handleBuyClick" :disabled="isCurrentUserSeller">Buy Item</button>
-        <WishlistButton :product-id="item.id" :purchased="item.purchased" />
+        <button class="contact-button" :disabled="shouldDisableButtons">Contact Seller</button>
+        <button class="buy-button" @click="handleBuyClick" :disabled="shouldDisableButtons">Buy Item</button>
+        <WishlistButton :product-id="item.id" :purchased="item.purchased" :is-available="isItemAvailable" />
       </div>
       <div class="product-details-list">
         <p class="detail-item">

@@ -17,13 +17,15 @@ const fetchImageForItem = async (item: any): Promise<Product> => {
 
     return {
       ...item,
-      image: images && images.length > 0 ? images[0].imageUrl : '/default-product-image.jpg'
+      image: images && images.length > 0 ? images[0].imageUrl : '/default-product-image.jpg',
+      isAvailable: false // Set isAvailable to false since these are purchased items
     }
   } catch (error) {
     console.error(`Failed to fetch images for item ${item.id}:`, error)
     return {
       ...item,
-      image: '/default-product-image.jpg'
+      image: '/default-product-image.jpg',
+      isAvailable: false // Set isAvailable to false since these are purchased items
     }
   }
 }
@@ -42,7 +44,8 @@ const fetchItemById = async (itemId: number): Promise<Product | null> => {
       location: item.location?.name || 'Unknown',
       vippsPaymentEnabled: item.vippsPaymentEnabled || false,
       wishlisted: false, // We don't have this info for purchased items
-      image: '/default-product-image.jpg' // Will be populated by fetchImageForItem
+      image: '/default-product-image.jpg', // Will be populated by fetchImageForItem
+      isAvailable: false // Set isAvailable to false since these are purchased items
     }
   } catch (error) {
     console.error(`Failed to fetch item ${itemId}:`, error)
@@ -55,7 +58,8 @@ const fetchItemById = async (itemId: number): Promise<Product | null> => {
       location: 'Unknown',
       vippsPaymentEnabled: false,
       wishlisted: false,
-      image: '/default-product-image.jpg'
+      image: '/default-product-image.jpg',
+      isAvailable: false // Set isAvailable to false since these are purchased items
     }
   }
 }
