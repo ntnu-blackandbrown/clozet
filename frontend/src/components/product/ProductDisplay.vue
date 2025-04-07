@@ -79,7 +79,6 @@ onMounted(async () => {
       <div id="seller-info">
         <Badge :name="item.sellerName || 'N/A'" type="seller" />
         <Badge :name="item.shippingOptionName || 'N/A'" type="shipping" />
-        <Badge :name="item.available ? 'Available' : 'Not Available'" type="availability" />
       </div>
       <div class="action-buttons">
         <button class="contact-button">Contact Seller</button>
