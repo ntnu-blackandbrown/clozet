@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits, defineProps } from 'vue'
+import { ref, defineEmits, defineProps, computed } from 'vue'
 import axios from '@/api/axios'
 
 const props = defineProps<{
@@ -7,7 +7,9 @@ const props = defineProps<{
   itemTitle: string,
   itemPrice: number,
   sellerId: number,
-  buyerId: number
+  buyerId: number,
+  shippingOptionName?: string,
+  shippingCost?: number
 }>()
 
 const emit = defineEmits(['close', 'paymentComplete'])
@@ -45,6 +47,12 @@ const prevStep = () => {
   error.value = ''
 }
 
+// Calculate total price including shipping
+const totalPrice = computed(() => {
+  const shippingFee = props.shippingCost || 0
+  return props.itemPrice + shippingFee
+})
+
 // Process payment
 const processPayment = async () => {
   if (pincode.value.length !== 4) {
@@ -67,7 +75,7 @@ const processPayment = async () => {
       status: 'completed',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      amount: props.itemPrice,
+      amount: totalPrice.value,
       paymentMethod: 'vipps',
       phoneNumber: phoneNumber.value
     })
@@ -126,8 +134,20 @@ const formattedPrice = (price: number) => {
           <span class="detail-value">{{ itemTitle }}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Amount:</span>
-          <span class="detail-value price">{{ formattedPrice(itemPrice) }}</span>
+          <span class="detail-label">Item Price:</span>
+          <span class="detail-value">{{ formattedPrice(itemPrice) }}</span>
+        </div>
+        <div v-if="shippingCost && shippingCost > 0" class="detail-row">
+          <span class="detail-label">Shipping Cost:</span>
+          <span class="detail-value">{{ formattedPrice(shippingCost) }}</span>
+        </div>
+        <div v-if="shippingOptionName" class="detail-row">
+          <span class="detail-label">Shipping Method:</span>
+          <span class="detail-value">{{ shippingOptionName }}</span>
+        </div>
+        <div class="detail-row total-row">
+          <span class="detail-label">Total Amount:</span>
+          <span class="detail-value price">{{ formattedPrice(totalPrice) }}</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Phone:</span>
@@ -308,5 +328,17 @@ const formattedPrice = (price: number) => {
 .detail-value.price {
   font-weight: 700;
   color: #FF5B24;
+}
+
+.total-row {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e0e0e0;
+  font-size: 1.1em;
+}
+
+.total-row .detail-label,
+.total-row .detail-value {
+  font-weight: 700;
 }
 </style>

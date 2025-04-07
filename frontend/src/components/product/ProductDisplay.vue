@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import Badge from '@/components/utils/Badge.vue'
 import WishlistButton from '@/components/utils/WishlistButton.vue'
 import VippsPaymentModal from '@/components/modals/VippsPaymentModal.vue'
+import ShippingDetailsModal from '@/components/modals/ShippingDetailsModal.vue'
 import BaseModal from '@/components/modals/BaseModal.vue'
 import axios from '@/api/axios'
 import { useRouter } from 'vue-router'
@@ -28,8 +29,10 @@ const location = ref<any>(null)
 const sellerId = ref<number>(0)
 const item = ref<any>(null)
 const images = ref<any>(null)
+const showShippingModal = ref(false)
 const showVippsModal = ref(false)
 const isLoading = ref(false)
+const shippingDetails = ref<any>(null)
 
 // Define transaction data interface
 interface TransactionData {
@@ -89,7 +92,23 @@ const shouldDisableButtons = computed(() => {
   return isCurrentUserSeller.value || !isItemAvailable.value
 })
 
+const isLocalPickup = computed(() => {
+  return item.value?.shippingOptionName === 'Local Pickup'
+})
+
 const handleBuyClick = () => {
+  if (isLocalPickup.value) {
+    // Skip shipping details for local pickup
+    showVippsModal.value = true
+  } else {
+    // Show shipping details first for other shipping methods
+    showShippingModal.value = true
+  }
+}
+
+const handleShippingContinue = (details: any) => {
+  shippingDetails.value = details
+  showShippingModal.value = false
   showVippsModal.value = true
 }
 
@@ -97,12 +116,28 @@ const handlePaymentComplete = (transactionData: TransactionData) => {
   isLoading.value = true
   showVippsModal.value = false
 
+  // Add shipping details to the transaction if applicable
+  const completeTransaction = {
+    ...transactionData,
+    shippingDetails: shippingDetails.value
+  }
+
+  console.log('Transaction completed:', completeTransaction)
+
   // Show loading for a short time to indicate successful payment
   setTimeout(() => {
     isLoading.value = false
     router.push('/profile/purchases')
   }, 1500)
 }
+
+// Helper function to get shipping cost
+const getShippingCost = computed(() => {
+  if (!item.value || isLocalPickup.value) {
+    return 0
+  }
+  return item.value.shippingPrice || 0
+})
 
 onMounted(async () => {
   item.value = await getItemById()
@@ -118,6 +153,15 @@ onMounted(async () => {
     <p>Processing your purchase...</p>
   </div>
 
+  <!-- ShippingDetailsModal component -->
+  <BaseModal v-if="showShippingModal" @close="showShippingModal = false">
+    <ShippingDetailsModal
+      :shipping-option-name="item.shippingOptionName"
+      @close="showShippingModal = false"
+      @continue="handleShippingContinue"
+    />
+  </BaseModal>
+
   <!-- VippsPaymentModal component -->
   <BaseModal v-if="showVippsModal" @close="showVippsModal = false">
     <VippsPaymentModal
@@ -126,6 +170,8 @@ onMounted(async () => {
       :item-price="item.price"
       :seller-id="sellerId"
       :buyer-id="authStore.user?.id || 0"
+      :shipping-option-name="!isLocalPickup ? item.shippingOptionName : undefined"
+      :shipping-cost="getShippingCost.value"
       @close="showVippsModal = false"
       @payment-complete="handlePaymentComplete"
     />
