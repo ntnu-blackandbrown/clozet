@@ -484,15 +484,15 @@ public class DatabaseInitializer {
         "https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?q=80&w=1000",
         "https://images.unsplash.com/photo-1505022610485-0249ba5b3675?q=80&w=1000",
         "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1000",
-        "https://images.unsplash.com/photo-1561052072-1055e5d9f41f?q=80&w=1000",
+        "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1000",
         "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?q=80&w=1000",
         "https://images.unsplash.com/photo-1591369822096-ffd140ec948f?q=80&w=1000",
         "https://images.unsplash.com/photo-1544441893-675973e31985?q=80&w=1000",
         "https://images.unsplash.com/photo-1588117260148-b47818741c74?q=80&w=1000",
         "https://images.unsplash.com/photo-1613461920867-9ea115fee900?q=80&w=1000",
-        "https://images.unsplash.com/photo-1618413133517-0e029d333fb4?q=80&w=1000",
+        "https://images.unsplash.com/photo-1613461920867-9ea115fee900?q=80&w=1000",
         "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?q=80&w=1000",
-        "https://images.unsplash.com/photo-1508623662323-33ef159db7f4?q=80&w=1000"
+        "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?q=80&w=1000",
     };
     
     // Associate category keys with appropriate items for more realistic data
