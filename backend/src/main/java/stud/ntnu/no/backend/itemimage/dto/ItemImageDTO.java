@@ -6,6 +6,7 @@ package stud.ntnu.no.backend.itemimage.dto;
  */
 public class ItemImageDTO {
     private Long id;
+    private Long itemId;
     private String imageUrl;
     private boolean isPrimary;
     private int displayOrder;
@@ -20,12 +21,14 @@ public class ItemImageDTO {
      * Constructor with fields
      *
      * @param id The ID of the image
+     * @param itemId The ID of the item
      * @param imageUrl The URL of the image
      * @param isPrimary The primary status of the image
      * @param displayOrder The display order of the image
      */
-    public ItemImageDTO(Long id, String imageUrl, boolean isPrimary, int displayOrder) {
+    public ItemImageDTO(Long id, Long itemId, String imageUrl, boolean isPrimary, int displayOrder) {
         this.id = id;
+        this.itemId = itemId;
         this.imageUrl = imageUrl;
         this.isPrimary = isPrimary;
         this.displayOrder = displayOrder;
@@ -47,6 +50,24 @@ public class ItemImageDTO {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * Retrieves the ID of the item.
+     *
+     * @return The ID of the item
+     */
+    public Long getItemId() {
+        return itemId;
+    }
+
+    /**
+     * Sets the ID of the item.
+     *
+     * @param itemId The ID of the item
+     */
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
     }
 
     /**

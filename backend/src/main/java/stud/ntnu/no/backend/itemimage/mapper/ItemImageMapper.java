@@ -32,6 +32,7 @@ public class ItemImageMapper {
         
         return new ItemImageDTO(
             entity.getId(),
+            entity.getItem() != null ? entity.getItem().getId() : null,
             entity.getImageUrl(),
             entity.isPrimary(),
             entity.getDisplayOrder()
