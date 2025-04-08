@@ -1,5 +1,20 @@
 spring:
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: false
+
   mail:
+    enabled: false
     host: smtp.mailgun.org
     port: 587
     username: postmaster@sandbox25f0009567d5425391596f541e2cc221.mailgun.org
@@ -9,22 +24,37 @@ spring:
         smtp:
           auth: true
           starttls.enable: true
+
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
 
+server:
+  port: ${PORT:8080}
+
 app:
   email:
     from: postmaster@sandbox25f0009567d5425391596f541e2cc221.mailgun.org
-    base-url: https://clozet.netlify.app/  # bytt til frontend-produksjonsdomene om nødvendig
+    base-url: https://clozet.netlify.app/
     verification-expiry-hours: 24
     password-reset-expiry-hours: 1
   upload:
     dir: uploads
   storage:
-    use-cloudinary: true
+    use-cloudinary: false
   cloudinary:
+    enabled: false
     cloud-name: dmoe4eqt4
     api-key: 298875699675921
     api-secret: 1kAWETGi8leIYAugHlCtvH7rBAg
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure: DEBUG
+    org.springframework.boot: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate: INFO
+    stud.ntnu.no.backend: DEBUG
+    org.springframework.context.support: TRACE
+    org.springframework.beans.factory: DEBUG

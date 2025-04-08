@@ -4,6 +4,6 @@ import axios from 'axios'
 axios.defaults.withCredentials = true
 
 // Base URL configuration
-axios.defaults.baseURL = 'http://localhost:8080' // adjust to your backend URL
+axios.defaults.baseURL = 'https://clozet-backend-083bdce61007.herokuapp.com/' // adjust to your backend URL
 
 export default axios
