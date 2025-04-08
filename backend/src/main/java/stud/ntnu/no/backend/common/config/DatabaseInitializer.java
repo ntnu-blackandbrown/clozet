@@ -47,6 +47,12 @@ public class DatabaseInitializer {
   @Autowired private LocationRepository locationRepository;
   @Autowired private ItemRepository itemRepository;
   @Autowired private ItemImageRepository itemImageRepository;
+  @Autowired private MessageRepository messageRepository;
+  @Autowired private FavoriteRepository favoriteRepository;
+  @Autowired private TransactionRepository transactionRepository;
+  @Autowired private ShippingOptionRepository shippingOptionRepository;
+  @Autowired private VerificationTokenRepository verificationTokenRepository;
+  @Autowired private PasswordResetTokenRepository passwordResetTokenRepository;
 
   @Bean
   @Transactional
@@ -69,13 +75,28 @@ public class DatabaseInitializer {
     };
   }
 
-  private void cleanDatabase() {
+  protected void cleanDatabase() {
+    logger.info("Cleaning database - removing existing records");
+  
+    // Delete referencing entities first
+    messageRepository.deleteAllInBatch();     // 💬 uses items
+    favoriteRepository.deleteAllInBatch();    // 💗 might also reference items
+    transactionRepository.deleteAllInBatch(); // 💳 references items
+    
     itemImageRepository.deleteAllInBatch();
     itemRepository.deleteAllInBatch();
+  
+    shippingOptionRepository.deleteAllInBatch();
     locationRepository.deleteAllInBatch();
     categoryRepository.deleteAllInBatch();
+    
+    verificationTokenRepository.deleteAllInBatch();
+    passwordResetTokenRepository.deleteAllInBatch();
     userRepository.deleteAllInBatch();
+  
+    logger.info("Database cleaned successfully");
   }
+  
 
   private User createUser(String email, String username, String role) {
     User user = new User();
