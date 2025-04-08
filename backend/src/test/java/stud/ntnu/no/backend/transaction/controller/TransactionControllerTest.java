@@ -312,4 +312,110 @@ class TransactionControllerTest {
                 
         verify(transactionService).findByCreatedAtBetween(any(LocalDateTime.class), any(LocalDateTime.class));
     }
+
+    @Test
+    void getTransactionsByBuyerId_ShouldReturnTransactionsForBuyer() throws Exception {
+        // Given
+        String buyerId = "user101";
+        
+        TransactionDTO transaction1 = new TransactionDTO();
+        transaction1.setId(1L);
+        transaction1.setBuyerId(buyerId);
+        transaction1.setSellerId("user201");
+        transaction1.setItemId(301L);
+        
+        TransactionDTO transaction2 = new TransactionDTO();
+        transaction2.setId(2L);
+        transaction2.setBuyerId(buyerId);
+        transaction2.setSellerId("user202");
+        transaction2.setItemId(302L);
+        
+        List<TransactionDTO> transactions = Arrays.asList(transaction1, transaction2);
+        
+        when(transactionService.getTransactionsByBuyerId(buyerId)).thenReturn(transactions);
+
+        // When/Then
+        mockMvc.perform(get("/api/transactions/buyer/" + buyerId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].buyerId").value(buyerId))
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[1].buyerId").value(buyerId))
+                .andDo(document("transactions-get-by-buyer-id",
+                        Preprocessors.preprocessRequest(prettyPrint()),
+                        Preprocessors.preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("buyerId").description("ID of the buyer")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].id").description("Transaction ID"),
+                                fieldWithPath("[].buyerId").description("Buyer ID"),
+                                fieldWithPath("[].sellerId").description("Seller ID"),
+                                fieldWithPath("[].itemId").description("Item ID"),
+                                fieldWithPath("[].amount").description("Transaction amount"),
+                                fieldWithPath("[].status").description("Transaction status"),
+                                fieldWithPath("[].paymentMethod").description("Payment method used"),
+                                fieldWithPath("[].createdAt").description("Date and time when transaction was created"),
+                                fieldWithPath("[].updatedAt").description("Date and time when transaction was last updated")
+                        )
+                ));
+                
+        verify(transactionService).getTransactionsByBuyerId(buyerId);
+    }
+
+    @Test
+    void purchaseItem_ShouldReturnCreatedTransaction() throws Exception {
+        // Given
+        CreateTransactionRequest request = new CreateTransactionRequest();
+        request.setBuyerId("user101");
+        request.setSellerId("user201");
+        request.setItemId(301L);
+        request.setAmount(50.0);
+        request.setStatus("PENDING");
+        request.setPaymentMethod("CREDIT_CARD");
+        
+        TransactionDTO createdTransaction = new TransactionDTO();
+        createdTransaction.setId(1L);
+        createdTransaction.setBuyerId("user101");
+        createdTransaction.setSellerId("user201");
+        createdTransaction.setItemId(301L);
+        createdTransaction.setAmount(50.0);
+        createdTransaction.setStatus("PENDING");
+        createdTransaction.setPaymentMethod("CREDIT_CARD");
+        
+        when(transactionService.handlePurchaseTransaction(any(CreateTransactionRequest.class))).thenReturn(createdTransaction);
+
+        // When/Then
+        mockMvc.perform(post("/api/transactions/purchase")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.buyerId").value("user101"))
+                .andDo(document("transaction-purchase",
+                        Preprocessors.preprocessRequest(prettyPrint()),
+                        Preprocessors.preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("buyerId").description("Buyer ID"),
+                                fieldWithPath("sellerId").description("Seller ID"),
+                                fieldWithPath("itemId").description("Item ID"),
+                                fieldWithPath("amount").description("Transaction amount"),
+                                fieldWithPath("status").description("Transaction status"),
+                                fieldWithPath("paymentMethod").description("Payment method used")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("Transaction ID"),
+                                fieldWithPath("buyerId").description("Buyer ID"),
+                                fieldWithPath("sellerId").description("Seller ID"),
+                                fieldWithPath("itemId").description("Item ID"),
+                                fieldWithPath("amount").description("Transaction amount"),
+                                fieldWithPath("status").description("Transaction status"),
+                                fieldWithPath("paymentMethod").description("Payment method used"),
+                                fieldWithPath("createdAt").description("Date and time when transaction was created"),
+                                fieldWithPath("updatedAt").description("Date and time when transaction was last updated")
+                        )
+                ));
+                
+        verify(transactionService).handlePurchaseTransaction(any(CreateTransactionRequest.class));
+    }
 } 
