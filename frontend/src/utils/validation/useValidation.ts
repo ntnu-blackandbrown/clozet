@@ -16,7 +16,7 @@ export function useValidatedForm<T extends Record<string, any>>(schema: Schema, 
   // Initialize form with validation schema and handle the type casting
   const { handleSubmit, errors, resetForm, values } = useForm({
     validationSchema: schema,
-    initialValues: initialValues as any
+    initialValues: initialValues as any,
   })
 
   // Computes if the form is valid by checking all errors and required fields
@@ -59,7 +59,7 @@ export function useValidatedForm<T extends Record<string, any>>(schema: Schema, 
     statusType,
     setStatus,
     clearStatus,
-    values: values as T
+    values: values as T,
   }
 }
 

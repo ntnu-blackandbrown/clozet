@@ -67,7 +67,10 @@ export const shippingDetailsSchema = yup.object({
 export const vippsPaymentSchema = yup.object({
   phoneNumber: yup
     .string()
-    .matches(/^\+47[0-9]{8}$/, 'Please enter a valid Norwegian phone number (+47 followed by 8 digits)')
+    .matches(
+      /^\+47[0-9]{8}$/,
+      'Please enter a valid Norwegian phone number (+47 followed by 8 digits)',
+    )
     .required('Phone number is required'),
   pincode: yup
     .string()
