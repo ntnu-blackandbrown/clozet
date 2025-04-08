@@ -128,14 +128,12 @@ public class SecurityConfig {
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             )
             .authorizeHttpRequests(auth -> auth
-                // Tillat bruk av register, verify, og passordreset
-                .requestMatchers("/api/users/**", "/api/users/verify", "/api/password/**", "/api/prod-test/verification").permitAll()
-                // Evt. /api/auth/** og H2 console
+                // Allow only authentication-related endpoints without authentication
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/test-image/upload").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/ws/**").permitAll()
-                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/h2-console/**").permitAll() // Keeping H2 console accessible
+                .requestMatchers("/api/prod-test/verification").permitAll() // Verification test endpoint
+                .requestMatchers("/ws/**").permitAll() // WebSocket endpoints for testing
+                // Require authentication for all other API endpoints
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
