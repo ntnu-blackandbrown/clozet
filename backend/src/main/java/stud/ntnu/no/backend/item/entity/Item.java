@@ -16,6 +16,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Entity representing an item that can be sold or traded on the platform.
+ * <p>
+ * An item represents a physical good that a user (seller) has listed for sale or trade.
+ * Each item belongs to a specific category, has a location, shipping options, and 
+ * various descriptive attributes that help potential buyers understand what is being offered.
+ * </p>
+ * <p>
+ * Items have relationships with several other entities including users (sellers), 
+ * favorites (from interested buyers), browsing history, images, transactions, and messages.
+ * </p>
+ */
 @Entity
 @Table(name = "items", indexes = {
     @Index(name = "idx_seller_id", columnList = "seller_id"),
@@ -24,85 +36,179 @@ import java.util.Set;
     @Index(name = "idx_shipping_option_id", columnList = "shipping_option_id")
 })
 public class Item {
+  /**
+   * The unique identifier for the item.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  /**
+   * The user who is selling this item.
+   * Required field that cannot be null.
+   */
   @ManyToOne
   @JoinColumn(name = "seller_id", nullable = false)
   private User seller;
 
+  /**
+   * The category to which this item belongs.
+   * Required field that cannot be null.
+   */
   @ManyToOne
   @JoinColumn(name = "category_id", nullable = false)
   private Category category;
 
+  /**
+   * The physical location associated with this item.
+   * Required field that cannot be null.
+   */
   @ManyToOne
   @JoinColumn(name = "location_id", nullable = false)
   private Location location;
 
+  /**
+   * The shipping option available for this item.
+   * Required field that cannot be null.
+   */
   @ManyToOne
   @JoinColumn(name = "shipping_option_id", nullable = false)
   private ShippingOption shippingOption;
 
+  /**
+   * The title or name of the item.
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private String title;
 
+  /**
+   * A brief description of the item.
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private String shortDescription;
 
+  /**
+   * A detailed description of the item.
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private String longDescription;
 
+  /**
+   * The price of the item in the default currency.
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private double price;
 
+  /**
+   * The latitude coordinate of the item's location.
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private double latitude;
 
+  /**
+   * The longitude coordinate of the item's location.
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private double longitude;
 
+  /**
+   * The physical condition of the item (e.g., "New", "Used", "Like New").
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private String condition;
 
+  /**
+   * The size of the item, applicable for clothing, furniture, etc.
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private String size;
 
+  /**
+   * The brand or manufacturer of the item.
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private String brand;
 
+  /**
+   * The color of the item.
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private String color;
 
+  /**
+   * Flag indicating whether the item is still available for purchase.
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private boolean isAvailable;
 
+  /**
+   * Flag indicating whether Vipps payment is enabled for this item.
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private boolean isVippsPaymentEnabled;
 
+  /**
+   * The timestamp when the item was created.
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private LocalDateTime createdAt;
 
+  /**
+   * The timestamp when the item was last updated.
+   * Required field that cannot be null.
+   */
   @Column(nullable = false)
   private LocalDateTime updatedAt;
 
+  /**
+   * Collection of users who have favorited this item.
+   */
   @OneToMany(mappedBy = "item")
   private Set<Favorite> favorites = new HashSet<>();
 
+  /**
+   * Collection of images associated with this item.
+   * Uses cascade to ensure that when an item is deleted, its images are also deleted.
+   */
   @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ItemImage> images;
 
-  // Similarly for history relationships:
+  /**
+   * Collection of history records for this item.
+   * Uses cascade to ensure that when an item is deleted, its history records are also deleted.
+   */
   @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<History> histories;
 
+  /**
+   * Collection of transactions involving this item.
+   */
   @OneToMany(mappedBy = "item")
   private List<Transaction> transactions;
 
+  /**
+   * Collection of messages related to this item.
+   */
   @OneToMany(mappedBy = "item")
   private List<Message> messages;
 
-  // Constructors
+  /**
+   * Default constructor.
+   * Initializes the favorites collection.
+   */
   public Item() {
     this.favorites = new HashSet<>();
   }
