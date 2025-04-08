@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import axios from '@/api/axios'
+import { LocationService } from '@/api/services/LocationService'
 
 interface Location {
   id: number
@@ -15,7 +15,7 @@ export const useLocationStore = defineStore('locations', () => {
   const fetchLocations = async () => {
     try {
       loading.value = true
-      const response = await axios.get('/api/locations')
+      const response = await LocationService.getAllLocations()
       locations.value = response.data
     } catch (err) {
       error.value = 'Failed to fetch locations'

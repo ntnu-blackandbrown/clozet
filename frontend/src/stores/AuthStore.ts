@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import axios from '@/api/axios' // axios
 import type { AxiosError } from 'axios'
 import { computed, ref } from 'vue'
+import { AuthService } from '@/api/services/AuthService'
 
 interface User {
   id: number
@@ -19,7 +19,6 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(null)
 
   const loading = ref(false)
-  const error = ref<string | null>(null)
 
   const isLoggedIn = computed(() => !!user.value)
   const userDetails = computed(() => user.value)
@@ -28,9 +27,10 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       loading.value = true
 
-      await axios.post('/api/auth/login', { usernameOrEmail, password })
+      await AuthService.login(usernameOrEmail, password)
 
       await fetchUserInfo()
+
       return { success: true, message: 'Login successful' }
     } catch (error: unknown) {
       console.error('Login error:', error)
@@ -44,7 +44,9 @@ export const useAuthStore = defineStore('auth', () => {
   const fetchUserInfo = async () => {
     try {
       loading.value = true
-      const response = await axios.get('/api/me')
+
+      const response = await AuthService.getCurrentUser()
+
       user.value = response.data
       return response.data
     } catch (error) {
@@ -58,7 +60,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const logout = async () => {
     try {
-      await axios.post('/api/auth/logout', {})
+      await AuthService.logout()
       user.value = null
       token.value = null
       return { success: true, message: 'Logout successful' }
@@ -77,16 +79,13 @@ export const useAuthStore = defineStore('auth', () => {
     firstName: string,
     lastName: string,
   ) => {
-    console.log("In request register now, sending data to backend")
     try {
       loading.value = true
-      await axios.post('/api/auth/register', { usernameOrEmail, password, email, firstName, lastName })
+      await AuthService.register(usernameOrEmail, password, email, firstName, lastName)
       return { success: true, message: 'Registration successful' }
-      console.log("Registration successful")
     } catch (error) {
       console.error('Registration error:', error)
       return { success: false, message: 'Registration failed' }
-      console.log("Registration failed")
     } finally {
       loading.value = false
     }
