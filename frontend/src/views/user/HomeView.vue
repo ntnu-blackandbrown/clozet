@@ -1,7 +1,7 @@
 <script setup>
 import Badge from '@/components/utils/Badge.vue'
 import { useRouter, useRoute } from 'vue-router'
-import ProductListView from '@/views/ProductListView.vue'
+import ProductListView from '@/views/user/ProductListView.vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
 import { ref, onMounted, watch, computed } from 'vue'

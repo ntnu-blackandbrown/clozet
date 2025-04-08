@@ -1,5 +1,5 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import ProductListView from '@/views/ProductListView.vue'
+import ProductListView from '@/views/user/ProductListView.vue'
 import ProductList from '@/components/product/ProductList.vue' // ✅ import real component
 import axios from '@/api/axios.ts'
 import { vi, describe, it, beforeEach, expect } from 'vitest'
