@@ -1,44 +1,70 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { nextTick } from 'vue'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import router from '@/router/router'
-import { describe, it, expect, beforeEach } from 'vitest'
-import { createPinia, setActivePinia } from 'pinia'
-import { useAuthStore } from '@/stores/AuthStore'
-import { vi } from 'vitest'
 
-// Mock the auth store
+// --- Mock AuthStore ---
+// We replace the useAuthStore implementation so we can control its return value.
+let fakeAuthStore: any
+
 vi.mock('@/stores/AuthStore', () => ({
-  useAuthStore: () => ({
-    isLoggedIn: false,
-    user: null,
-  }),
+  useAuthStore: () => fakeAuthStore,
 }))
 
-describe('Router', () => {
-  beforeEach(async () => {
-    const pinia = createPinia()
-    setActivePinia(pinia)
-    // Reset router to a known state before each test.
-    router.push('/')
-    await router.isReady()
+describe('Router Navigation Guard', () => {
+  beforeEach(() => {
+    // For each test, reset the fake auth store to default: logged out.
+    fakeAuthStore = {
+      user: null,
+      isLoggedIn: false,
+      userDetails: {},
+    }
+    // Reset router to initial state by pushing to home (assuming home is public)
+    router.push({ name: 'home' })
   })
 
-  it('should have a route named "home"', () => {
-    const homeRoute = router.getRoutes().find((r) => r.name === 'home')
-    expect(homeRoute).toBeDefined()
+  it('redirects to "/" when accessing a protected route (requiresAuth) while not logged in', async () => {
+    // Attempt to navigate to the messages route which requires authentication.
+    await router.push({ name: 'messages' })
+    // Wait for the router to process the navigation guard.
+    await nextTick()
+    // Expect redirection to the home route.
+    expect(router.currentRoute.value.name).toBe('home')
   })
 
-  it('resolves the "create-product" route', async () => {
-    await router.push('/create-product')
-    await router.isReady()
-    expect(router.currentRoute.value.name).toBe('create-product')
+  it('redirects to "/" when accessing an admin route while not an admin', async () => {
+    // Simulate a logged in user, but with non-admin privileges.
+    fakeAuthStore.user = { id: 2 }
+    fakeAuthStore.isLoggedIn = true
+    fakeAuthStore.userDetails = { role: 'USER' } // Not admin
+
+    // Attempt to navigate to an admin route.
+    await router.push({ name: 'admin' })
+    await nextTick()
+    // Expect redirection to home.
+    expect(router.currentRoute.value.name).toBe('home')
   })
 
-  it('has nested profile routes including "profile-settings"', () => {
-    const profileRoute = router.getRoutes().find((r) => r.name === 'profile')
-    expect(profileRoute).toBeDefined()
-    const children = profileRoute?.children
-    expect(children).toBeDefined()
-    const settingsRoute = children?.find((child) => child.name === 'profile-settings')
-    expect(settingsRoute).toBeDefined()
+  it('allows navigation to admin routes when user is an admin', async () => {
+    // Simulate a logged in admin user.
+    fakeAuthStore.user = { id: 2 }
+    fakeAuthStore.isLoggedIn = true
+    fakeAuthStore.userDetails = { role: 'ADMIN' }
+
+    // Navigate to an admin route.
+    await router.push({ name: 'admin' })
+    await nextTick()
+    // Expect navigation to succeed.
+    expect(router.currentRoute.value.name).toBe('admin')
+  })
+
+  it('allows navigation to public routes without authentication', async () => {
+    // User is not logged in.
+    fakeAuthStore.user = null
+    fakeAuthStore.isLoggedIn = false
+
+    // Navigate to the home route.
+    await router.push({ name: 'home' })
+    await nextTick()
+    expect(router.currentRoute.value.name).toBe('home')
   })
 })
