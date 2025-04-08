@@ -98,6 +98,11 @@ const fetchTopCategories = async () => {
   }
 }
 
+// Function to handle category badge click
+const handleCategoryClick = (categoryName) => {
+  router.push({ path: '/', query: { category: categoryName } })
+}
+
 // Computed property to handle the case where no categories are returned
 const displayCategories = computed(() => {
   if (topCategories.value && topCategories.value.length > 0) {
@@ -164,6 +169,7 @@ const displayCategories = computed(() => {
             :key="category.id"
             type="category"
             :name="category.name"
+            @click="handleCategoryClick(category.name)"
           />
         </div>
       </div>
