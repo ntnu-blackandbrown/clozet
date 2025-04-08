@@ -116,7 +116,6 @@ jobs:
         run: |
           mkdir deploy
           cp -a backend/. deploy/
-          echo "web: java -Dserver.port=$PORT -jar target/*.jar" > deploy/Procfile
           echo "java.runtime.version = 21" > deploy/system.properties
 
       - name: Set up Git and Push to Heroku

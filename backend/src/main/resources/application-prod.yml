@@ -42,8 +42,9 @@ app:
   upload:
     dir: uploads
   storage:
-    use-cloudinary: true
+    use-cloudinary: false
   cloudinary:
+    enabled: false
     cloud-name: dmoe4eqt4
     api-key: 298875699675921
     api-secret: 1kAWETGi8leIYAugHlCtvH7rBAg
@@ -55,3 +56,5 @@ logging:
     org.springframework.security: DEBUG
     org.hibernate: INFO
     stud.ntnu.no.backend: DEBUG
+    org.springframework.context.support: TRACE
+    org.springframework.beans.factory: DEBUG
