@@ -4,7 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import ProductListView from '@/views/user/ProductListView.vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch, computed, nextTick } from 'vue'
 import { CategoryService } from '@/api/services/CategoryService'
 
 const router = useRouter()
@@ -17,6 +17,7 @@ const debouncedSearchQuery = ref('')
 const topCategories = ref([])
 const isLoadingCategories = ref(false)
 const categoryError = ref(null)
+const productListSection = ref(null)
 
 // Simple debounce for search input
 let debounceTimer = null
@@ -98,6 +99,18 @@ const fetchTopCategories = async () => {
   }
 }
 
+// Function to handle category badge click
+const handleCategoryClick = async (categoryName) => {
+  // Update the route first
+  await router.push({ path: '/', query: { category: categoryName } })
+
+  // Scroll to the product list section after the DOM updates
+  await nextTick()
+  if (productListSection.value) {
+    productListSection.value.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
 // Computed property to handle the case where no categories are returned
 const displayCategories = computed(() => {
   if (topCategories.value && topCategories.value.length > 0) {
@@ -164,6 +177,7 @@ const displayCategories = computed(() => {
             :key="category.id"
             type="category"
             :name="category.name"
+            @click="handleCategoryClick(category.name)"
           />
         </div>
       </div>
@@ -172,7 +186,7 @@ const displayCategories = computed(() => {
       <img src="@/assets/images/homepage.png" alt="Clozet Homepage" class="homepage-image" />
     </div>
   </div>
-  <div class="featured-section">
+  <div class="featured-section" ref="productListSection">
     <div class="featured-products">
       <ProductListView :search-query="debouncedSearchQuery" />
     </div>
