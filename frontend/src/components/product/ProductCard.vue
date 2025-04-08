@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
 import WishlistButton from '@/components/utils/WishlistButton.vue'
 import Badge from '@/components/utils/Badge.vue'
 

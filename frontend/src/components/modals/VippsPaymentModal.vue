@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits, defineProps, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useValidatedForm, useValidatedField, vippsPaymentSchema } from '@/utils/validation'
 import { TransactionService } from '@/api/services/TransactionService'
 
