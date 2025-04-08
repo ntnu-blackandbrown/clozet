@@ -1,6 +1,6 @@
 import { nextTick } from 'vue'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import router from '@/router/router'
+import router from '@/router/router.js'
 
 // --- Mock AuthStore ---
 // We replace the useAuthStore implementation so we can control its return value.

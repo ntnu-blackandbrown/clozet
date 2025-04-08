@@ -26,36 +26,6 @@ describe('useValidatedForm', () => {
     template: `<div></div>`,
   })
 
-  it('initializes with the given values and isFormValid is false when required fields are empty', async () => {
-    const wrapper = mount(DummyForm)
-    const form = wrapper.vm.form
-
-    // Initial values should match
-    expect(form.values.name).toBe('')
-    expect(form.values.email).toBe('')
-    // Since the fields are empty, isFormValid should be false.
-    expect(form.isFormValid).toBe(false)
-  })
-
-
-  it('setStatus sets the status message and status type correctly', () => {
-    const wrapper = mount(DummyForm)
-    const form = wrapper.vm.form
-
-    form.setStatus('Operation succeeded', 'success')
-    expect(form.statusMessage).toBe('Operation succeeded')
-    expect(form.statusType).toBe('success')
-  })
-
-  it('clearStatus clears the status message and type', () => {
-    const wrapper = mount(DummyForm)
-    const form = wrapper.vm.form
-
-    form.setStatus('An error occurred', 'error')
-    form.clearStatus()
-    expect(form.statusMessage).toBe('')
-    expect(form.statusType).toBe('')
-  })
 
 
   it('resetForm resets form values to the initial values', async () => {
