@@ -25,7 +25,7 @@ const selectedCategory = ref<string>('')
 
 // Pagination state
 const currentPage = ref(1)
-const itemsPerPage = ref(12) // Adjust as needed
+const itemsPerPage = ref(24)
 
 // Unique filter options
 const locations = computed(() => {
@@ -375,21 +375,6 @@ const goToPage = (page: number) => {
       <button @click="nextPage" :disabled="currentPage === totalPages" class="page-button">
         Next
       </button>
-
-       <!-- Optional: Page number buttons -->
-       <!--
-       <div class="page-numbers">
-         <button
-           v-for="page in totalPages"
-           :key="page"
-           @click="goToPage(page)"
-           :class="{ 'page-button': true, 'active': currentPage === page }"
-           :disabled="currentPage === page"
-         >
-           {{ page }}
-         </button>
-       </div>
-       -->
     </div>
      <div v-else-if="filteredItems.length === 0 && !isLoadingDetails" class="no-results">
         No products found matching your criteria.
