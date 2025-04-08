@@ -1,11 +1,17 @@
 spring:
-  flyway:
-    enabled: false
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: false
 
   mail:
     host: smtp.mailgun.org
@@ -17,6 +23,7 @@ spring:
         smtp:
           auth: true
           starttls.enable: true
+
   servlet:
     multipart:
       max-file-size: 10MB
@@ -28,7 +35,7 @@ server:
 app:
   email:
     from: postmaster@sandbox25f0009567d5425391596f541e2cc221.mailgun.org
-    base-url: https://clozet.netlify.app/  # bytt til frontend-produksjonsdomene om nødvendig
+    base-url: https://clozet.netlify.app/
     verification-expiry-hours: 24
     password-reset-expiry-hours: 1
   upload:
