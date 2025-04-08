@@ -19,8 +19,8 @@ import java.util.function.Function;
  * information from JWT tokens.
  * </p>
  * 
- * @author YourName
- * @version 1.0
+ *
+ * 
  */
 @Component
 public class JwtUtils {

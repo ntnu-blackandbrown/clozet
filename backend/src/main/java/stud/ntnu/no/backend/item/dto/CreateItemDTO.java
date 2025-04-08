@@ -15,8 +15,6 @@ import java.util.List;
  *
  * <p>All required fields are validated with appropriate constraints.</p>
  *
- * @author kdm-kev-NTNU
- * @version 1.0
  */
 public class CreateItemDTO {
     @NotBlank(message = "Title is required")

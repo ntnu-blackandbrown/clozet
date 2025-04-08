@@ -17,8 +17,8 @@ import stud.ntnu.no.backend.user.repository.UserRepository;
  * This service implements UserDetailsService and provides user details for authentication.
  * </p>
  * 
- * @author YourName
- * @version 1.0
+ *
+ * 
  */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
