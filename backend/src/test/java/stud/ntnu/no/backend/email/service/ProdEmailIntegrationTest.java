@@ -12,9 +12,8 @@ import stud.ntnu.no.backend.common.service.EmailService;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @SpringBootTest
-@ActiveProfiles("test") // Changed to test for consistency, we'll only switch to prod when explicitly running
+@ActiveProfiles("prod") // Changed to test for consistency, we'll only switch to prod when explicitly running
 @Tag("prod")
-@Disabled("Run manually when testing production email integration")
 public class ProdEmailIntegrationTest {
 
     @Autowired
