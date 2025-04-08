@@ -5,6 +5,7 @@ import BaseModal from '@/components/modals/BaseModal.vue'
 import { useRouter } from 'vue-router'
 import axios from '@/api/axios'
 import { useValidatedForm, useValidatedField, loginSchema, registerSchema } from '@/utils/validation'
+import * as yup from 'yup'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -41,17 +42,54 @@ const toggleText = computed(() =>
   isLogin.value ? 'Need an account? Register' : 'Already have an account? Login',
 )
 
-// Use the current schema based on login/register mode
-const currentSchema = computed(() => (isLogin.value ? loginSchema : registerSchema))
+// Interface for form values
+interface FormValues {
+  username: string;
+  password: string;
+  confirmPassword: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
 
-// Use our validation hook
+// Create a custom login schema without password validation
+const loginSchemaNoPasswordValidation = yup.object({
+  username: yup.string().required('Username is required'),
+  password: yup.string().required('Password is required'), // Minimal validation, just requiring it's not empty
+})
+
+// Use the current schema based on login/register mode
+const currentSchema = computed(() => (isLogin.value ? loginSchemaNoPasswordValidation : registerSchema))
+
+// Set up initial form values
+const initialValues: FormValues = {
+  username: '',
+  password: '',
+  confirmPassword: '',
+  firstName: '',
+  lastName: '',
+  email: ''
+}
+
 const {
   handleSubmit,
   errors,
   resetForm,
-  isFormValid,
-  isSubmitting
-} = useValidatedForm(currentSchema.value)
+  isFormValid: originalIsFormValid,
+  isSubmitting,
+  values
+} = useValidatedForm<FormValues>(currentSchema.value, initialValues)
+
+// Custom form validation for login mode
+const isFormValid = computed(() => {
+  if (isLogin.value) {
+    // For login, only check username and password
+    return values.username && values.password &&
+           !errors.value.username && !errors.value.password;
+  }
+  // For registration, use the original validation
+  return originalIsFormValid.value;
+})
 
 // Define form fields with validation
 const { value: username, errorMessage: usernameError } = useValidatedField('username')
