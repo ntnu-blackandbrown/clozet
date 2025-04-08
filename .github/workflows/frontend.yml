@@ -3,13 +3,13 @@ name: Frontend CI/CD
 on:
   push:
     branches: 
-      - develop
+      - develop-2.0
       - main
       - 'feature/**'
       - 'task/**'
   pull_request:
     branches:
-      - develop
+      - develop-2.0
       - main
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with: 
@@ -38,9 +38,11 @@ jobs:
       - name: Build frontend
         run: npm run build
 
-      # Removed "Upload dist" to avoid artifact storage usage
-      # If you need to keep a build artifact for debugging, add it back
-      # but condition it with `if: github.ref == 'refs/heads/main'`.
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
 
   test-frontend:
     name: Test Frontend (Unit + E2E)
@@ -51,66 +53,52 @@ jobs:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
-      
+
       - name: Install deps
         run: npm install
-      
-      - name: Build frontend
-        run: npm run build
-      
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+
       - name: Run unit tests
         run: npm run test:unit
 
-      # Removed coverage upload since it’s not necessary for deployment.
-      # If you want coverage artifacts, add them back and scope it to main or PRs only.
-
-  package-frontend:
-    name: Package Frontend
+  build-and-deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
     needs: test-frontend
+    if: github.ref == 'refs/heads/main'
     defaults:
       run:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
-      
+
       - name: Install deps
         run: npm install
-      
-      - name: Build dist
-        run: npm run build
 
-      # Removed "Upload build" because the next job does a fresh build anyway.
-
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    needs: package-frontend
-    if: github.ref == 'refs/heads/main'    # Only deploy on main
-    defaults:
-      run:
-        working-directory: frontend
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build Vue app
-        run: npm run build
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
 
       - name: Deploy to Netlify
         env:
