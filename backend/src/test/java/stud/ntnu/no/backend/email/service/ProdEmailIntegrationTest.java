@@ -12,6 +12,7 @@ import stud.ntnu.no.backend.common.service.EmailService;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @SpringBootTest
+@Disabled("Run manually to test email sending in production")
 public class ProdEmailIntegrationTest {
 
     @Autowired
