@@ -3,13 +3,13 @@ name: Frontend CI/CD
 on:
   push:
     branches: 
-      - develop
+      - develop-2.0
       - main
       - 'feature/**'
       - 'task/**'
   pull_request:
     branches:
-      - develop
+      - develop-2.0
       - main
 
 jobs:
