@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, defineEmits, defineProps, computed } from 'vue'
 import { useAuthStore } from '@/stores/AuthStore'
+import { useValidatedForm, useValidatedField, shippingDetailsSchema } from '@/utils/validation'
 
 interface ShippingDetails {
   firstName?: string
@@ -13,7 +14,7 @@ interface ShippingDetails {
 }
 
 const props = defineProps<{
-  shippingOptionName: string,
+  shippingOptionName: string
   initialValues?: ShippingDetails
 }>()
 
@@ -21,15 +22,32 @@ const emit = defineEmits(['close', 'continue'])
 const authStore = useAuthStore()
 
 // Initialize form values with initial values or defaults
-const firstName = ref(props.initialValues?.firstName || authStore.user?.firstName || '')
-const lastName = ref(props.initialValues?.lastName || authStore.user?.lastName || '')
-const streetAddress = ref(props.initialValues?.streetAddress || '')
-const postalCode = ref(props.initialValues?.postalCode || '')
-const city = ref(props.initialValues?.city || '')
-const country = ref(props.initialValues?.country || 'Norway')
-const phone = ref(props.initialValues?.phone || authStore.user?.phoneNumber || '')
+const initialValues = {
+  firstName: props.initialValues?.firstName || authStore.user?.firstName || '',
+  lastName: props.initialValues?.lastName || authStore.user?.lastName || '',
+  streetAddress: props.initialValues?.streetAddress || '',
+  postalCode: props.initialValues?.postalCode || '',
+  city: props.initialValues?.city || '',
+  country: props.initialValues?.country || 'Norway',
+  phone: props.initialValues?.phone || authStore.user?.phoneNumber || '',
+}
+
+// Use validation hook with initial values
+const { handleSubmit, isSubmitting, setStatus, clearStatus, isFormValid } = useValidatedForm(
+  shippingDetailsSchema,
+  initialValues,
+)
+
+// Get validated fields
+const { value: firstName } = useValidatedField('firstName')
+const { value: lastName } = useValidatedField('lastName')
+const { value: streetAddress } = useValidatedField('streetAddress')
+const { value: postalCode } = useValidatedField('postalCode')
+const { value: city } = useValidatedField('city')
+const { value: country } = useValidatedField('country')
+const { value: phone } = useValidatedField('phone')
+
 const error = ref('')
-const isProcessing = ref(false)
 
 // Check if international shipping
 const isInternationalShipping = computed(() => {
@@ -57,54 +75,16 @@ const countries = [
   // Add more European countries as needed
 ]
 
-// Form validation
-const validateForm = () => {
-  if (!firstName.value || !lastName.value || !streetAddress.value ||
-      !postalCode.value || !city.value || !country.value || !phone.value) {
-    error.value = 'All fields are required'
-    return false
-  }
-
-  // Norwegian postal code validation only for Norway
-  if (country.value === 'Norway' && !/^\d{4}$/.test(postalCode.value)) {
-    error.value = 'Please enter a valid Norwegian postal code (4 digits)'
-    return false
-  }
-
-  // Basic phone validation
-  if (!/^\+?\d{8,15}$/.test(phone.value)) {
-    error.value = 'Please enter a valid phone number'
-    return false
-  }
-
-  return true
-}
-
-const handleContinue = () => {
-  if (!validateForm()) {
-    return
-  }
-
-  isProcessing.value = true
+const handleContinue = handleSubmit((values) => {
+  isSubmitting.value = true
   error.value = ''
-
-  // Gather shipping details
-  const shippingDetails = {
-    firstName: firstName.value,
-    lastName: lastName.value,
-    streetAddress: streetAddress.value,
-    postalCode: postalCode.value,
-    city: city.value,
-    country: country.value,
-    phone: phone.value
-  }
 
   // Short delay to simulate processing
   setTimeout(() => {
-    isProcessing.value = false
-    emit('continue', shippingDetails)
+    isSubmitting.value = false
+    emit('continue', values)
   }, 500)
-}
+})
 </script>
 
 <template>
@@ -140,24 +120,12 @@ const handleContinue = () => {
 
       <div class="form-group">
         <label for="country">Country</label>
-        <select
-          v-if="isInternationalShipping"
-          id="country"
-          v-model="country"
-          class="form-input"
-        >
+        <select v-if="isInternationalShipping" id="country" v-model="country" class="form-input">
           <option v-for="countryName in countries" :key="countryName" :value="countryName">
             {{ countryName }}
           </option>
         </select>
-        <input
-          v-else
-          type="text"
-          id="country"
-          v-model="country"
-          class="form-input"
-          readonly
-        />
+        <input v-else type="text" id="country" v-model="country" class="form-input" readonly />
       </div>
 
       <div class="form-group">
@@ -213,9 +181,9 @@ const handleContinue = () => {
         <button
           @click="handleContinue"
           class="shipping-button continue"
-          :disabled="isProcessing"
+          :disabled="!isFormValid || isSubmitting"
         >
-          <span v-if="isProcessing">Processing...</span>
+          <span v-if="isSubmitting">Processing...</span>
           <span v-else>Continue to Payment</span>
         </button>
       </div>
@@ -273,7 +241,7 @@ label {
 }
 
 .form-input:focus {
-  border-color: #4CAF50;
+  border-color: #4caf50;
   outline: none;
 }
 
@@ -308,7 +276,7 @@ label {
 }
 
 .shipping-button.continue {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   min-width: 180px;
 }
@@ -339,7 +307,7 @@ select.form-input {
 }
 
 select.form-input:focus {
-  border-color: #4CAF50;
+  border-color: #4caf50;
   outline: none;
 }
 

@@ -1,7 +1,7 @@
 import { mount, flushPromises } from '@vue/test-utils'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 import MessagesSidebar from '@/components/messaging/MessagesSidebar.vue' // adjust path as needed
-import axios from 'axios'
+import axios from '@/api/axios'
 
 // Mock axios to intercept image fetches
 vi.mock('axios')
@@ -54,7 +54,7 @@ describe('MessagesSidebar.vue', () => {
   // Create a Map for receiverUsernames prop
   const receiverUsernames = new Map([
     [1, 'Alice'],
-    [3, 'Bob']
+    [3, 'Bob'],
   ])
 
   beforeEach(() => {
@@ -75,7 +75,7 @@ describe('MessagesSidebar.vue', () => {
       props: {
         conversations,
         activeConversationId,
-        receiverUsernames
+        receiverUsernames,
       },
       global: {
         stubs: {
@@ -103,7 +103,7 @@ describe('MessagesSidebar.vue', () => {
       props: {
         conversations,
         activeConversationId,
-        receiverUsernames
+        receiverUsernames,
       },
       global: {
         stubs: {
@@ -126,7 +126,7 @@ describe('MessagesSidebar.vue', () => {
 
     // For Bob (conversation id 2): no messages so should display fallback text
     const bobItem = chatItems.find((item) => item.text().includes('Bob'))
-   // expect(bobItem).toBeTruthy()
+    // expect(bobItem).toBeTruthy()
     //expect(bobItem?.text()).toContain('No messages yet')
   })
 
@@ -135,7 +135,7 @@ describe('MessagesSidebar.vue', () => {
       props: {
         conversations,
         activeConversationId,
-        receiverUsernames
+        receiverUsernames,
       },
       global: {
         stubs: {
@@ -165,7 +165,7 @@ describe('MessagesSidebar.vue', () => {
       props: {
         conversations,
         activeConversationId,
-        receiverUsernames
+        receiverUsernames,
       },
       global: {
         stubs: {

@@ -108,7 +108,7 @@ describe('AppLayout.vue (normal Pinia)', () => {
     expect(header.text()).toContain('Messages')
   })
 
- /* it('shows user info when logged in and allows logout', async () => {
+  /* it('shows user info when logged in and allows logout', async () => {
     // The store is patched to be logged in with fakeUser.
     const wrapper = mount(App, {
       global: {
@@ -181,7 +181,7 @@ describe('AppLayout.vue (normal Pinia)', () => {
     expect(wrapper.find('.footer-stub').exists()).toBe(true)
   })
 
- /* it('redirects to home page after logout', async () => {
+  /* it('redirects to home page after logout', async () => {
     const wrapper = mount(App, {
       global: {
         plugins: [pinia],

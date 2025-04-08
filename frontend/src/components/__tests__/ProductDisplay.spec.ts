@@ -1,6 +1,6 @@
 import { mount, flushPromises } from '@vue/test-utils'
 import ProductDisplay from '@/components/product/ProductDisplay.vue'
-import axios from 'axios'
+import axios from '@/api/axios'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import type { Mocked } from 'vitest'
 

@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import axios from 'axios'
-
+import { CategoryService } from '@/api/services/CategoryService'
 interface Category {
   id: number
   name: string
@@ -21,7 +20,7 @@ export const useCategoryStore = defineStore('categories', () => {
   const fetchCategories = async () => {
     try {
       loading.value = true
-      const response = await axios.get('/api/categories')
+      const response = await CategoryService.getAllCategories()
       categories.value = response.data
     } catch (err) {
       error.value = 'Failed to fetch categories'
@@ -33,7 +32,7 @@ export const useCategoryStore = defineStore('categories', () => {
 
   const getCategoryById = async (id: number) => {
     try {
-      const response = await axios.get(`/api/categories/${id}`)
+      const response = await CategoryService.getCategoryById(id)
       return response.data
     } catch (err) {
       error.value = 'Failed to fetch category'
@@ -45,7 +44,7 @@ export const useCategoryStore = defineStore('categories', () => {
 
   const createCategory = async (category: Category) => {
     try {
-      const response = await axios.post('/api/categories', category)
+      const response = await CategoryService.createCategory(category)
       return response.data
     } catch (err) {
       error.value = 'Failed to create category'
@@ -57,7 +56,7 @@ export const useCategoryStore = defineStore('categories', () => {
 
   const getTopFiveCategories = async () => {
     try {
-      const response = await axios.get('/api/categories/top-five')
+      const response = await CategoryService.getTopCategories()
       return response.data
     } catch (err) {
       error.value = 'Failed to fetch top five categories'

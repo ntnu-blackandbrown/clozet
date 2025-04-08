@@ -45,7 +45,7 @@ const badgeStyle = computed(() => {
       border: props.borderColor
         ? `1px solid ${props.borderColor}`
         : `1px solid ${defaultColors.activeBorderColor}`,
-      cursor: isClickable.value ? 'pointer' : 'default'
+      cursor: isClickable.value ? 'pointer' : 'default',
     }
   } else if (isHovered.value && props.type !== 'price') {
     return {
@@ -54,7 +54,7 @@ const badgeStyle = computed(() => {
       border: props.borderColor
         ? `1px solid ${props.borderColor}`
         : `1px solid ${defaultColors.hoverBorderColor}`,
-      cursor: isClickable.value ? 'pointer' : 'default'
+      cursor: isClickable.value ? 'pointer' : 'default',
     }
   } else {
     return {
@@ -63,7 +63,7 @@ const badgeStyle = computed(() => {
       border: props.borderColor
         ? `1px solid ${props.borderColor}`
         : `1px solid ${defaultColors.borderColor}`,
-      cursor: isClickable.value ? 'pointer' : 'default'
+      cursor: isClickable.value ? 'pointer' : 'default',
     }
   }
 })

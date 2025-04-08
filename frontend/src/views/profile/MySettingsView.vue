@@ -4,7 +4,8 @@ import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useRouter } from 'vue-router'
-import axios from '@/api/axios'
+import { AuthService } from '@/api/services/AuthService'
+
 const authStore = useAuthStore()
 const router = useRouter()
 
@@ -71,7 +72,7 @@ const handleSaveChanges = handleSubmit(async (values) => {
   statusType.value = 'info'
 
   try {
-    await axios.put(`/api/users/${authStore.user.id}`, values)
+    await AuthService.updateUser(authStore.user.id, values)
     setUserValues()
     statusMessage.value = 'Changes saved successfully! Please log in again.'
     statusType.value = 'success'

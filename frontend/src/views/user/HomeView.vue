@@ -1,11 +1,11 @@
 <script setup>
 import Badge from '@/components/utils/Badge.vue'
 import { useRouter, useRoute } from 'vue-router'
-import ProductListView from '@/views/ProductListView.vue'
+import ProductListView from '@/views/user/ProductListView.vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
 import { ref, onMounted, watch, computed } from 'vue'
-import axios from '@/api/axios'
+import { CategoryService } from '@/api/services/CategoryService'
 
 const router = useRouter()
 const route = useRoute()
@@ -86,7 +86,7 @@ const fetchTopCategories = async () => {
   categoryError.value = null
 
   try {
-    const response = await axios.get('/api/categories/top-five')
+    const response = await CategoryService.getTopCategories()
     topCategories.value = response.data
     console.log('Fetched top categories:', response.data)
   } catch (error) {
@@ -108,7 +108,7 @@ const displayCategories = computed(() => {
     { id: 1, name: 'Tops' },
     { id: 2, name: 'Bottoms' },
     { id: 3, name: 'Dresses' },
-    { id: 4, name: 'Accessories' }
+    { id: 4, name: 'Accessories' },
   ]
 })
 </script>
@@ -159,7 +159,12 @@ const displayCategories = computed(() => {
         </h4>
         <div v-if="categoryError" class="error-message">{{ categoryError }}</div>
         <div class="badge-container">
-          <Badge v-for="category in displayCategories" :key="category.id" type="category" :name="category.name" />
+          <Badge
+            v-for="category in displayCategories"
+            :key="category.id"
+            type="category"
+            :name="category.name"
+          />
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import axios from '@/api/axios'
+import { UserService } from '@/api/services/UserService'
 
 // State
 const users = ref([])
@@ -14,7 +14,7 @@ const fetchUsers = async () => {
   try {
     isLoading.value = true
     error.value = null
-    const response = await axios.get('/api/users')
+    const response = await UserService.getAllUsers()
     users.value = response.data
     isLoading.value = false
   } catch (err) {
@@ -26,7 +26,7 @@ const fetchUsers = async () => {
 
 // Filter users based on search and role
 const filteredUsers = computed(() => {
-  return users.value.filter(user => {
+  return users.value.filter((user) => {
     const matchesSearch =
       searchQuery.value === '' ||
       user.username?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -34,8 +34,7 @@ const filteredUsers = computed(() => {
       `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchQuery.value.toLowerCase())
 
     const matchesRole =
-      selectedRole.value === 'all' ||
-      user.role?.toLowerCase() === selectedRole.value.toLowerCase()
+      selectedRole.value === 'all' || user.role?.toLowerCase() === selectedRole.value.toLowerCase()
 
     return matchesSearch && matchesRole
   })
@@ -45,12 +44,12 @@ const filteredUsers = computed(() => {
 const toggleUserStatus = async (user) => {
   try {
     isLoading.value = true
-    await axios.put(`/api/users/${user.id}`, {
-      active: !user.active
+    await UserService.updateUser(user.id, {
+      active: !user.active,
     })
 
     // Update local state
-    const index = users.value.findIndex(u => u.id === user.id)
+    const index = users.value.findIndex((u) => u.id === user.id)
     if (index !== -1) {
       users.value[index].active = !user.active
     }
@@ -67,12 +66,12 @@ const toggleUserStatus = async (user) => {
 const changeUserRole = async (user, newRole) => {
   try {
     isLoading.value = true
-    await axios.put(`/api/users/${user.id}`, {
-      role: newRole
+    await UserService.updateUser(user.id, {
+      role: newRole,
     })
 
     // Update local state
-    const index = users.value.findIndex(u => u.id === user.id)
+    const index = users.value.findIndex((u) => u.id === user.id)
     if (index !== -1) {
       users.value[index].role = newRole
     }
@@ -128,7 +127,7 @@ onMounted(() => {
           v-model="searchQuery"
           placeholder="Search users by name, username or email..."
           class="search-input"
-        >
+        />
       </div>
 
       <div class="filter-container">
@@ -181,10 +180,7 @@ onMounted(() => {
             </td>
             <td>{{ formatDate(user.createdAt) }}</td>
             <td class="actions">
-              <button
-                @click="toggleUserStatus(user)"
-                class="btn-secondary btn-small"
-              >
+              <button @click="toggleUserStatus(user)" class="btn-secondary btn-small">
                 {{ user.active ? 'Deactivate' : 'Activate' }}
               </button>
             </td>
@@ -301,7 +297,8 @@ onMounted(() => {
   border-collapse: collapse;
 }
 
-.admin-table th, .admin-table td {
+.admin-table th,
+.admin-table td {
   text-align: left;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -391,8 +388,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .empty-state {
@@ -419,7 +420,8 @@ onMounted(() => {
     gap: 1rem;
   }
 
-  .admin-table th, .admin-table td {
+  .admin-table th,
+  .admin-table td {
     padding: 0.75rem 0.5rem;
     font-size: 0.875rem;
   }

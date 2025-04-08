@@ -48,7 +48,7 @@ describe('MyPurchasesView.vue', () => {
 
     expect(wrapper.text()).toContain('My Purchases')
     //expect(wrapper.text()).toContain('Count: 1')
-   // expect(mockedAxios.get).toHaveBeenCalledWith(`api/transactions/${authStore.user?.id}`)
+    // expect(mockedAxios.get).toHaveBeenCalledWith(`api/transactions/${authStore.user?.id}`)
   })
 
   it('renders empty purchases list if API returns none', async () => {
@@ -67,7 +67,7 @@ describe('MyPurchasesView.vue', () => {
     })
 
     await flushPromises()
-   // expect(wrapper.text()).toContain('Count: 0')
+    // expect(wrapper.text()).toContain('Count: 0')
   })
 
   it('handles API failure gracefully', async () => {

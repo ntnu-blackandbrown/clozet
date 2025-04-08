@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import axios from '@/api/axios'
 import { useAuthStore } from '@/stores/AuthStore'
+import { FavoritesService } from '@/api/services/FavoritesService'
 
 const authStore = useAuthStore()
 
@@ -22,11 +22,13 @@ const favoriteId = ref<number | null>(null)
 
 const fetchFavoriteId = async () => {
   try {
-    const response = await axios.get(`api/favorites/user/${authStore.user?.id}`)
-    const favorites = response.data
-    const favorite = favorites.find((f: any) => f.itemId === props.productId)
-    if (favorite) {
-      favoriteId.value = favorite.id
+    if (authStore.user?.id) {
+      const response = await FavoritesService.getUserFavorites(authStore.user.id)
+      const favorites = response.data
+      const favorite = favorites.find((f: any) => f.itemId === props.productId)
+      if (favorite) {
+        favoriteId.value = favorite.id
+      }
     }
   } catch (error) {
     console.error('Failed to fetch favorite ID:', error)
@@ -46,16 +48,13 @@ const toggleWishlist = async () => {
   isWishlisted.value = !isWishlisted.value
   // TODO: Implement actual wishlist functionality with backend
   console.log('current state of isWishlisted: ', isWishlisted.value)
-  if(isWishlisted.value){
-    const response = await axios.post(`api/favorites`, {
-      userId: authStore.user?.id,
-      itemId: props.productId,
-    })
+  if (isWishlisted.value && authStore.user?.id) {
+    const response = await FavoritesService.addFavorite(authStore.user.id, props.productId)
     console.log('response: ', response)
     favoriteId.value = response.data.id // Store the favorite ID from the response
   } else {
     if (favoriteId.value) {
-      const response = await axios.delete(`api/favorites/${favoriteId.value}`)
+      const response = await FavoritesService.removeFavorite(favoriteId.value)
       console.log('response: ', response)
       favoriteId.value = null
     }
@@ -68,7 +67,7 @@ const toggleWishlist = async () => {
     class="wishlist-button"
     :class="{
       wishlisted: isWishlisted,
-      'disabled': !authStore.isLoggedIn || !props.isAvailable
+      disabled: !authStore.isLoggedIn || !props.isAvailable,
     }"
     @click="toggleWishlist"
     :disabled="!authStore.isLoggedIn || !props.isAvailable"

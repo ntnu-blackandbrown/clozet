@@ -67,17 +67,19 @@ const handleCloseAuthModal = () => {
             <img src="@/assets/light-green.png" alt="Clozet Logo" class="logo-image" />
           </RouterLink>
           <nav class="main-nav">
-            <RouterLink to="/" class="nav-link">Home</RouterLink>
             <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
             <RouterLink v-if="isLoggedIn" to="/messages">Messages</RouterLink>
-            <RouterLink v-if="isLoggedIn" to="/forgot-password">Forgot Password</RouterLink>
-            <RouterLink v-if="userDetails?.role === 'ADMIN'" to="/admin" class="nav-link">Admin Dashboard</RouterLink>
+            <RouterLink v-if="userDetails?.role === 'ADMIN'" to="/admin" class="nav-link"
+              >Admin Dashboard</RouterLink
+            >
           </nav>
         </div>
 
         <div class="auth-section">
           <template v-if="isLoggedIn">
-            <RouterLink v-if="userDetails?.role === 'ADMIN'" to="/admin" class="nav-link admin-link">Admin Dashboard</RouterLink>
+            <RouterLink v-if="userDetails?.role === 'ADMIN'" to="/admin" class="nav-link admin-link"
+              >Admin Dashboard</RouterLink
+            >
             <RouterLink to="/profile" class="nav-link">My Profile</RouterLink>
             <RouterLink to="/messages" class="nav-link">Messages</RouterLink>
             <button @click="logout" class="logout-btn">Log Out</button>
@@ -484,7 +486,7 @@ main {
 }
 
 .admin-link {
-  background-color: #BF616A;
+  background-color: #bf616a;
   color: white;
   font-weight: 600;
   border-radius: 4px;

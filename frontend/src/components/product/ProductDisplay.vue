@@ -6,10 +6,10 @@ import VippsPaymentModal from '@/components/modals/VippsPaymentModal.vue'
 import ShippingDetailsModal from '@/components/modals/ShippingDetailsModal.vue'
 import PurchaseSuccessModal from '@/components/modals/PurchaseSuccessModal.vue'
 import BaseModal from '@/components/modals/BaseModal.vue'
-import axios from '@/api/axios'
+import { MessagingService } from '@/api/services/MessagingService'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
-
+import { ProductService } from '@/api/services/ProductService'
 interface ProductDisplayProps {
   id: number
 }
@@ -18,11 +18,11 @@ const props = defineProps<ProductDisplayProps>()
 const router = useRouter()
 const authStore = useAuthStore()
 const getItemById = async () => {
-  const item = await axios.get(`api/items/${props.id}`)
+  const item = await ProductService.getItemById(props.id)
   return item.data
 }
-const getImagesByItemId = async() => {
-  const images = await axios.get(`api/images/item/${props.id}`)
+const getImagesByItemId = async () => {
+  const images = await ProductService.getItemImages(props.id)
   return images.data
 }
 
@@ -79,7 +79,7 @@ const handleBadgeClick = (event: { type: string; value: string }) => {
   // Navigate to product list with the appropriate filter
   router.push({
     path: '/',
-    query: queryParams
+    query: queryParams,
   })
 }
 
@@ -172,16 +172,17 @@ const handleContactSeller = async () => {
     }
 
     // Check existing conversations
-    const response = await axios.get('/api/conversations', {
-      params: {
-        userId: authStore.user.id.toString()
-      }
-    })
+    const response = await MessagingService.getUserConversations(authStore.user.id)
 
     // Check if conversation already exists with this seller for this item
-    const existingConversation = response.data.find((conv: any) =>
-      (conv.senderId === authStore.user?.id?.toString() && conv.receiverId === sellerId.value?.toString() && conv.itemId === props.id) ||
-      (conv.receiverId === authStore.user?.id?.toString() && conv.senderId === sellerId.value?.toString() && conv.itemId === props.id)
+    const existingConversation = response.data.find(
+      (conv: any) =>
+        (conv.senderId === authStore.user?.id?.toString() &&
+          conv.receiverId === sellerId.value?.toString() &&
+          conv.itemId === props.id) ||
+        (conv.receiverId === authStore.user?.id?.toString() &&
+          conv.senderId === sellerId.value?.toString() &&
+          conv.itemId === props.id),
     )
 
     if (existingConversation) {
@@ -190,11 +191,11 @@ const handleContactSeller = async () => {
       router.push(`/messages/${chatId}`)
     } else {
       // Create new conversation by sending first message
-      const messageResponse = await axios.post('/api/messages', {
+      const messageResponse = await MessagingService.sendMessage({
         senderId: authStore.user.id.toString(),
         receiverId: sellerId.value.toString(),
         content: `Hi! I'm interested in your item: ${item.value?.title}`,
-        itemId: props.id
+        itemId: props.id,
       })
 
       // The message response should include the conversation ID
@@ -216,7 +217,10 @@ const handleContactSeller = async () => {
   </div>
 
   <!-- ShippingDetailsModal component - only show if Vipps is enabled -->
-  <BaseModal v-if="showShippingModal && item.vippsPaymentEnabled" @close="showShippingModal = false">
+  <BaseModal
+    v-if="showShippingModal && item.vippsPaymentEnabled"
+    @close="showShippingModal = false"
+  >
     <ShippingDetailsModal
       :shipping-option-name="item.shippingOptionName"
       :initial-values="shippingDetails"
@@ -289,9 +293,21 @@ const handleContactSeller = async () => {
         <Badge :name="item.shippingOptionName || 'N/A'" type="shipping" @click="handleBadgeClick" />
       </div>
       <div class="action-buttons">
-        <button class="contact-button" @click="handleContactSeller" :disabled="shouldDisableButtons">Contact Seller</button>
-        <button class="buy-button" @click="handleBuyClick" :disabled="shouldDisableButtons">Buy Item</button>
-        <WishlistButton :product-id="item.id" :purchased="item.purchased" :is-available="isItemAvailable" />
+        <button
+          class="contact-button"
+          @click="handleContactSeller"
+          :disabled="shouldDisableButtons"
+        >
+          Contact Seller
+        </button>
+        <button class="buy-button" @click="handleBuyClick" :disabled="shouldDisableButtons">
+          Buy Item
+        </button>
+        <WishlistButton
+          :product-id="item.id"
+          :purchased="item.purchased"
+          :is-available="isItemAvailable"
+        />
       </div>
       <div class="product-details-list">
         <p class="detail-item">
@@ -433,9 +449,8 @@ const handleContactSeller = async () => {
   margin-bottom: 0.5rem;
 }
 
-
 .contact-button:disabled::after {
-  content: "Please log in to contact seller";
+  content: 'Please log in to contact seller';
   position: absolute;
   bottom: 100%;
   left: 50%;
@@ -512,7 +527,7 @@ const handleContactSeller = async () => {
 }
 
 .buy-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 0.375rem;

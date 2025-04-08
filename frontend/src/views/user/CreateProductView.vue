@@ -4,10 +4,10 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useCategoryStore } from '@/stores/Category'
 import { useShippingOptionStore } from '@/stores/ShippingOption'
-import axios from '@/api/axios'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useLocationStore } from '@/stores/Location'
+import { ProductService } from '@/api/services/ProductService'
 // Define interfaces for TypeScript
 interface Category {
   id: number
@@ -23,7 +23,6 @@ interface Location {
   id: number
   name: string
 }
-
 
 interface User {
   id: number
@@ -126,12 +125,15 @@ const { handleSubmit, errors, resetForm } = useForm({
 
 // Setup form fields with proper typing
 const { value: title, errorMessage: titleError } = useField<string>('title')
-const { value: shortDescription, errorMessage: shortDescriptionError } = useField<string>('shortDescription')
-const { value: longDescription, errorMessage: longDescriptionError } = useField<string>('longDescription')
+const { value: shortDescription, errorMessage: shortDescriptionError } =
+  useField<string>('shortDescription')
+const { value: longDescription, errorMessage: longDescriptionError } =
+  useField<string>('longDescription')
 const { value: price, errorMessage: priceError } = useField<string>('price')
 const { value: categoryId, errorMessage: categoryIdError } = useField<string>('categoryId')
 const { value: locationId, errorMessage: locationIdError } = useField<string>('locationId')
-const { value: shippingOptionId, errorMessage: shippingOptionIdError } = useField<string>('shippingOptionId')
+const { value: shippingOptionId, errorMessage: shippingOptionIdError } =
+  useField<string>('shippingOptionId')
 const { value: condition, errorMessage: conditionError } = useField<string>('condition')
 const { value: size, errorMessage: sizeError } = useField<string>('size')
 const { value: brand, errorMessage: brandError } = useField<string>('brand')
@@ -203,7 +205,7 @@ const addImages = (files: File[]) => {
   })
 }
 
-const removeImage = (index: number  ) => {
+const removeImage = (index: number) => {
   imageFiles.value.splice(index, 1)
   imagePreviews.value.splice(index, 1)
 }
@@ -234,11 +236,7 @@ const onSubmit = handleSubmit(async (values) => {
     }
 
     // 1. Create the item first
-    const response = await axios.post('/api/items', payload, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+    const response = await ProductService.createItem(payload)
 
     const itemId = response.data.id
     testResult.value = `Success! Item created with ID: ${itemId}`
@@ -250,11 +248,7 @@ const onSubmit = handleSubmit(async (values) => {
       formData.append('file', file)
       formData.append('itemId', itemId.toString())
 
-      await axios.post('/api/images/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
+      await ProductService.uploadImages(formData)
     }
 
     testResult.value += ' and images uploaded successfully.'
@@ -272,7 +266,6 @@ const onSubmit = handleSubmit(async (values) => {
   }
 })
 
-
 const handlePreview = () => {
   showPreview.value = true
 }
@@ -286,7 +279,8 @@ const sendTestData = async () => {
     const mockData = {
       title: 'Test Product',
       shortDescription: 'This is a test product',
-      longDescription: 'This is a longer description for the test product. It contains more details about the product.',
+      longDescription:
+        'This is a longer description for the test product. It contains more details about the product.',
       price: 299.99,
       categoryId: 1,
       locationId: 1,
@@ -297,11 +291,11 @@ const sendTestData = async () => {
       size: 'M',
       brand: 'Test Brand',
       color: 'Blue',
-      isVippsPaymentEnabled: true
+      isVippsPaymentEnabled: true,
     }
 
     // Send the request to the backend
-    const response = await axios.post('/api/items', mockData)
+    const response = await ProductService.createItem(mockData)
 
     testResult.value = `Success! Item created with ID: ${response.data.id}`
     console.log('Test data sent successfully:', response.data)
@@ -321,7 +315,11 @@ const sendTestData = async () => {
       <h2>Test API Connection</h2>
       <p>Click the button below to send test data to the backend:</p>
       <button @click="sendTestData" class="test-button">Send Test Data</button>
-      <div v-if="testResult" class="test-result" :class="{ 'success': testResult.includes('Success') }">
+      <div
+        v-if="testResult"
+        class="test-result"
+        :class="{ success: testResult.includes('Success') }"
+      >
         {{ testResult }}
       </div>
     </div>
@@ -382,7 +380,9 @@ const sendTestData = async () => {
             </div>
           </div>
         </div>
-        <span class="error-message" v-if="imageFiles.length === 0">At least one image is required</span>
+        <span class="error-message" v-if="imageFiles.length === 0"
+          >At least one image is required</span
+        >
       </section>
 
       <!-- Basic Information -->
@@ -403,7 +403,9 @@ const sendTestData = async () => {
             type="text"
             :class="{ error: shortDescriptionError }"
           />
-          <span class="error-message" v-if="shortDescriptionError">{{ shortDescriptionError }}</span>
+          <span class="error-message" v-if="shortDescriptionError">{{
+            shortDescriptionError
+          }}</span>
         </div>
 
         <div class="form-group">
@@ -508,7 +510,9 @@ const sendTestData = async () => {
               {{ option.name }}
             </option>
           </select>
-          <span class="error-message" v-if="shippingOptionIdError">{{ shippingOptionIdError }}</span>
+          <span class="error-message" v-if="shippingOptionIdError">{{
+            shippingOptionIdError
+          }}</span>
         </div>
 
         <div class="form-group">
@@ -541,7 +545,8 @@ const sendTestData = async () => {
           :price="Number(price)"
           :seller="userStore.user?.firstName || userStore.user?.usernameOrEmail || 'Current User'"
           :shipping_options="
-            shippingOptions.find((s: ShippingOption) => s.id === parseInt(shippingOptionId))?.name || ''
+            shippingOptions.find((s: ShippingOption) => s.id === parseInt(shippingOptionId))
+              ?.name || ''
           "
           :status="'Available'"
           :created_at="new Date().toLocaleDateString()"

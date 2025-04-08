@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MessagesView from '../views/MessagesView.vue'
+import MessagesView from '../views/user/MessagesView.vue'
 import { useAuthStore } from '@/stores/AuthStore'
 
 const router = createRouter({
@@ -8,42 +8,37 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('@/views/HomeView.vue'),
+      component: () => import('@/views/user/HomeView.vue'),
     },
     {
       path: '/reset-password',
       name: 'reset-password',
-      component: () => import('@/views/ResetPasswordVerifier.vue'),
+      component: () => import('@/views/verification/ResetPasswordVerifier.vue'),
     },
     {
       path: '/verify',
-      name: 'toker-verifier',
-      component: () => import('@/views/TokerVerifier.vue'),
+      name: 'registration-verifier',
+      component: () => import('@/views/verification/RegisterationVerifier.vue'),
     },
     {
       path: '/products/:id',
       name: 'product-detail',
-      component: () => import('@/views/HomeView.vue'),
+      component: () => import('@/views/user/HomeView.vue'),
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/HomeView.vue'),
+      component: () => import('@/views/user/HomeView.vue'),
     },
     {
       path: '/register',
       name: 'register',
-      component: () => import('@/views/HomeView.vue'),
-    },
-    {
-      path: '/forgot-password',
-      name: 'forgot-password',
-      component: () => import('@/views/ForgotPasswordView.vue'),
+      component: () => import('@/views/user/HomeView.vue'),
     },
     {
       path: '/create-product',
       name: 'create-product',
-      component: () => import('@/views/CreateProductView.vue'),
+      component: () => import('@/views/user/CreateProductView.vue'),
     },
     {
       path: '/messages/:chatId?',
@@ -54,7 +49,7 @@ const router = createRouter({
     {
       path: '/profile',
       name: 'profile',
-      component: () => import('@/views/UserProfileView.vue'),
+      component: () => import('@/views/user/UserProfileView.vue'),
       meta: { requiresAuth: true },
       children: [
         {
@@ -90,6 +85,11 @@ const router = createRouter({
           path: 'purchases',
           name: 'my-purchases',
           component: () => import('@/views/profile/MyPurchasesView.vue'),
+        },
+        {
+          path: 'change-password',
+          name: 'change-password',
+          component: () => import('@/views/profile/ChangePasswordView.vue'),
         },
       ],
     },
@@ -133,7 +133,7 @@ const router = createRouter({
           path: 'transactions',
           name: 'admin-transactions',
           component: () => import('@/views/admin/transactions/TransactionManagement.vue'),
-        }
+        },
       ],
     },
   ],

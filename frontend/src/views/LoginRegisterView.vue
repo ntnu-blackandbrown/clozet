@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useField, useForm } from 'vee-validate'
-import * as yup from 'yup'
 import { useAuthStore } from '@/stores/AuthStore'
 import BaseModal from '@/components/modals/BaseModal.vue'
 import { useRouter } from 'vue-router'
-import axios from '@/api/axios'
+import {
+  useValidatedForm,
+  useValidatedField,
+  loginSchema,
+  registerSchema,
+} from '@/utils/validation'
+import { AuthService } from '@/api/services/AuthService'
+import * as yup from 'yup'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -22,7 +27,6 @@ const props = defineProps({
 })
 
 const isLogin = ref(props.initialMode === 'login')
-const isSubmitting = ref(false)
 const statusMessage = ref('')
 const statusType = ref('')
 const debugInfo = ref('')
@@ -43,65 +47,64 @@ const toggleText = computed(() =>
   isLogin.value ? 'Need an account? Register' : 'Already have an account? Login',
 )
 
-// Login schema
-const loginSchema = yup.object({
+// Interface for form values
+interface FormValues {
+  username: string
+  password: string
+  confirmPassword: string
+  firstName: string
+  lastName: string
+  email: string
+}
+
+// Create a custom login schema without password validation
+const loginSchemaNoPasswordValidation = yup.object({
   username: yup.string().required('Username is required'),
-  password: yup.string().required('Password is required'),
+  password: yup.string().required('Password is required'), // Minimal validation, just requiring it's not empty
 })
 
-// Register schema
-const registerSchema = yup.object({
-  username: yup.string().required('Username is required'),
-  firstName: yup.string().required('First name is required'),
-  lastName: yup.string().required('Last name is required'),
-  email: yup.string().email('Invalid email').required('Email is required'),
-  password: yup
-    .string()
-    .required('Password is required')
-    .min(8, 'Password must be at least 8 characters')
-    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .matches(/[0-9]/, 'Password must contain at least one number'),
-  confirmPassword: yup
-    .string()
-    .required('Please confirm your password')
-    .oneOf([yup.ref('password')], 'Passwords must match'),
-})
+// Use the current schema based on login/register mode
+const currentSchema = computed(() =>
+  isLogin.value ? loginSchemaNoPasswordValidation : registerSchema,
+)
 
-const currentSchema = computed(() => (isLogin.value ? loginSchema : registerSchema))
+// Set up initial form values
+const initialValues: FormValues = {
+  username: '',
+  password: '',
+  confirmPassword: '',
+  firstName: '',
+  lastName: '',
+  email: '',
+}
 
-const { handleSubmit, errors, resetForm } = useForm({
-  validationSchema: currentSchema,
+const {
+  handleSubmit,
+  errors,
+  resetForm,
+  isFormValid: originalIsFormValid,
+  isSubmitting,
+  values,
+} = useValidatedForm<FormValues>(currentSchema.value, initialValues)
+
+// Custom form validation for login mode
+const isFormValid = computed(() => {
+  if (isLogin.value) {
+    // For login, only check username and password
+    return values.username && values.password && !errors.value.username && !errors.value.password
+  }
+  // For registration, use the original validation
+  return originalIsFormValid.value
 })
 
 // Define form fields with validation
-const { value: username, errorMessage: usernameError } = useField('username')
-const { value: password, errorMessage: passwordError } = useField('password')
-const { value: confirmPassword, errorMessage: confirmPasswordError } = useField('confirmPassword')
-const { value: firstName, errorMessage: firstNameError } = useField('firstName')
-const { value: lastName, errorMessage: lastNameError } = useField('lastName')
-const { value: email, errorMessage: emailError } = useField('email')
-
-const isFormValid = computed(() => {
-  if (isLogin.value) {
-    return !errors.value.username && !errors.value.password && username.value && password.value
-  } else {
-    return (
-      !errors.value.username &&
-      !errors.value.firstName &&
-      !errors.value.lastName &&
-      !errors.value.email &&
-      !errors.value.password &&
-      !errors.value.confirmPassword &&
-      username.value &&
-      firstName.value &&
-      lastName.value &&
-      email.value &&
-      password.value &&
-      confirmPassword.value
-    )
-  }
-})
+const { value: username, errorMessage: usernameError } = useValidatedField('username')
+const { value: password, errorMessage: passwordError } = useValidatedField('password')
+const { value: confirmPassword, errorMessage: confirmPasswordError } =
+  useValidatedField('confirmPassword')
+const { value: firstName, errorMessage: firstNameError } = useValidatedField('firstName')
+const { value: lastName, errorMessage: lastNameError } = useValidatedField('lastName')
+const { value: email, errorMessage: emailError } = useValidatedField('email')
 
 const toggleForm = () => {
   isLogin.value = !isLogin.value
@@ -128,9 +131,9 @@ const submit = handleSubmit(async (values) => {
     if (isLogin.value) {
       // Login using AuthStore (JWT cookie approach)
       debugInfo.value = `POST til /api/auth/login med ${JSON.stringify({ username: values.username, password: values.password })}`
-      const result = await authStore.login(values.username, values.password)
+      const result = await AuthService.login(values.username, values.password)
 
-      if (result.success) {
+      if (result.status === 200) {
         statusMessage.value = `Innlogging vellykket!`
         statusType.value = 'success'
         setTimeout(() => {
@@ -142,7 +145,7 @@ const submit = handleSubmit(async (values) => {
       }
     } else {
       // Direct registration with correct endpoint
-      console.log("Registering now")
+      console.log('Registering now')
       const userData = {
         username: values.username,
         email: values.email,
@@ -151,14 +154,20 @@ const submit = handleSubmit(async (values) => {
         lastName: values.lastName,
         role: 'USER',
       }
-      console.log("userData", userData)
-      console.log("Sending request now")
+      console.log('userData', userData)
+      console.log('Sending request now')
 
       debugInfo.value = `POST til /api/auth/register med ${JSON.stringify(userData)}`
 
-      const response = await authStore.register(userData.username, userData.password, userData.email, userData.firstName, userData.lastName)
+      const response = await AuthService.register(
+        userData.username,
+        userData.password,
+        userData.email,
+        userData.firstName,
+        userData.lastName,
+      )
 
-      if (response.success) {
+      if (response.status === 200) {
         statusMessage.value = `Registeration sucessful! Please check your email for verification`
       }
     }
@@ -269,7 +278,7 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #4caf50;
   box-shadow: 0 0 0 3px rgba(150, 187, 124, 0.2);
 }
 
@@ -288,7 +297,7 @@ button[type='submit'] {
   width: 100%;
   padding: 0.75rem;
   margin-top: 1rem;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
@@ -317,7 +326,7 @@ button[type='submit']:disabled {
 .toggle-form {
   background: none;
   border: none;
-  color: #2196F3;
+  color: #2196f3;
   font-size: 0.95rem;
   margin-top: 1.5rem;
   cursor: pointer;
@@ -327,7 +336,7 @@ button[type='submit']:disabled {
 }
 
 .toggle-form:hover:not(:disabled) {
-  color: #1976D2;
+  color: #1976d2;
   background-color: rgba(80, 125, 188, 0.1);
 }
 

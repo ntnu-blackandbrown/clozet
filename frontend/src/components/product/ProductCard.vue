@@ -27,11 +27,7 @@ const handleClick = () => {
 </script>
 
 <template>
-  <div
-    class="product-card"
-    :class="{ 'sold': isAvailable === false }"
-    @click="handleClick"
-  >
+  <div class="product-card" :class="{ sold: isAvailable === false }" @click="handleClick">
     <div class="product-image">
       <img :src="props.image" :alt="props.title" />
       <div class="wishlist-container">

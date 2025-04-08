@@ -9,7 +9,7 @@ vi.mock('vue-router', () => ({
   }),
   useRoute: () => ({
     path: '/products/123',
-    params: { id: '123' }
+    params: { id: '123' },
   }),
 }))
 

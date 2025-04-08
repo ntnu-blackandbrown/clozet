@@ -45,6 +45,13 @@ const openProductModal = (productId) => {
       >
         My Purchases
       </RouterLink>
+      <RouterLink
+        to="/profile/change-password"
+        class="nav-link"
+        :class="{ active: route.path === '/profile/change-password' }"
+      >
+        Change Password
+      </RouterLink>
     </nav>
 
     <!-- Content Area -->

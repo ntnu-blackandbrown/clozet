@@ -122,7 +122,13 @@ describe('AuthStore', () => {
 
   it('userDetails reflects user state', async () => {
     const store = useAuthStore()
-    store.user = { id: 1, usernameOrEmail: 'test', email: 'test@test.com', active: true, role: 'USER' }
+    store.user = {
+      id: 1,
+      usernameOrEmail: 'test',
+      email: 'test@test.com',
+      active: true,
+      role: 'USER',
+    }
     expect(store.userDetails).toEqual(store.user)
   })
 })

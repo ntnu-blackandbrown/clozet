@@ -1,15 +1,6 @@
-/*
-    private Long id;
-    private String name;
-    private String description;
-    private int estimatedDays;
-    private double price;
-    private boolean isTracked;
-*/
-
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import axios from 'axios'
+import { ShippingService } from '@/api/services/ShippingService'
 
 interface ShippingOption {
   id: number
@@ -28,7 +19,7 @@ export const useShippingOptionStore = defineStore('shippingOption', () => {
   const fetchShippingOptions = async () => {
     try {
       loading.value = true
-      const response = await axios.get('/api/shipping-options')
+      const response = await ShippingService.getAllShippingOptions()
       shippingOptions.value = response.data
     } catch (err) {
       error.value = 'Failed to fetch shipping options'
