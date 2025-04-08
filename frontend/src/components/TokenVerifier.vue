@@ -8,8 +8,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import axios from '@/api/axios'
-
+import { AuthService } from '@/api/services/AuthService'
 const props = defineProps({
   verifyEndpoint: {
     type: String,
@@ -42,7 +41,7 @@ onMounted(async () => {
 
   loading.value = true
   try {
-    await axios.get(`${import.meta.env.VITE_API_BASE_URL}${props.verifyEndpoint}?token=${token.value}`)
+    await AuthService.verifyToken(props.verifyEndpoint, token.value)
 
     // Redirect with or without token based on prop
     if (props.includeTokenInRedirect) {
