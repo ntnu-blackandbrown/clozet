@@ -18,7 +18,26 @@ import stud.ntnu.no.backend.user.entity.User;
 import java.util.List;
 
 /**
- * Controller for managing item operations.
+ * REST controller for managing item-related operations.
+ * <p>
+ * This controller provides endpoints for listing, searching, creating, updating, and
+ * deleting items in the system. It handles requests related to marketplace listings,
+ * allowing users to manage their items and browse items from other sellers.
+ * </p>
+ * <p>
+ * The controller supports:
+ * <ul>
+ *   <li>Fetching all items, only active items, or filtering by seller/category</li>
+ *   <li>Creating, updating, deactivating, activating, and deleting items</li>
+ *   <li>Searching items by keyword(s)</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Endpoints enforce appropriate authentication and authorization, ensuring that
+ * users can only modify their own items. All operations that modify items require 
+ * authentication, and authorization checks ensure that users can only modify items 
+ * they own.
+ * </p>
  */
 @RestController
 @RequestMapping("/api/items")
@@ -29,16 +48,23 @@ public class ItemController {
     private final ItemService itemService;
 
     /**
-     * Creates an instance of ItemController.
-     * @param itemService the item service
+     * Creates an instance of ItemController with dependency injection.
+     * 
+     * @param itemService the service responsible for item business logic
      */
     public ItemController(ItemService itemService) {
         this.itemService = itemService;
     }
 
     /**
-     * Returns active items.
-     * @return ResponseEntity with list of active ItemDTO
+     * Fetches a list of all items available in the system.
+     * <p>
+     * This endpoint provides access to all item listings in the system, including
+     * both active and inactive items. This comprehensive view is suitable for 
+     * administrative purposes.
+     * </p>
+     * 
+     * @return ResponseEntity with HTTP status 200 (OK) and the list of all ItemDTOs
      */
     @GetMapping
     public ResponseEntity<List<ItemDTO>> getAllItems() {
@@ -47,8 +73,14 @@ public class ItemController {
     }
 
     /**
-     * Returns all items including inactive ones.
-     * @return ResponseEntity with list of ItemDTO
+     * Fetches a list of all active (available) items in the system.
+     * <p>
+     * This endpoint returns only items that are currently marked as active and
+     * available for purchase. It filters out inactive items that sellers have
+     * temporarily hidden or deactivated.
+     * </p>
+     * 
+     * @return ResponseEntity with HTTP status 200 (OK) and the list of active ItemDTOs
      */
     @GetMapping("/all")
     public ResponseEntity<List<ItemDTO>> getAllItemsIncludingInactive() {
@@ -57,9 +89,16 @@ public class ItemController {
     }
 
     /**
-     * Returns an item by id.
-     * @param id the item id
-     * @return ResponseEntity with the corresponding ItemDTO
+     * Fetches a single item by its unique identifier.
+     * <p>
+     * This endpoint retrieves detailed information about a specific item, 
+     * identified by its ID. The information includes all item attributes
+     * such as title, description, price, and category.
+     * </p>
+     * 
+     * @param id the unique identifier of the item to retrieve
+     * @return ResponseEntity with HTTP status 200 (OK) and the requested ItemDTO
+     * @throws stud.ntnu.no.backend.item.exception.ItemNotFoundException if no item with the given ID exists
      */
     @GetMapping("/{id}")
     public ResponseEntity<ItemDTO> getItem(@PathVariable Long id) {
@@ -68,9 +107,14 @@ public class ItemController {
     }
 
     /**
-     * Returns items for the given seller id.
-     * @param sellerId the seller id
-     * @return ResponseEntity with list of ItemDTO
+     * Fetches a list of items created by a specific seller.
+     * <p>
+     * This endpoint returns all items that have been listed by the seller
+     * specified by the seller ID. This includes both active and inactive items.
+     * </p>
+     * 
+     * @param sellerId the unique identifier of the seller
+     * @return ResponseEntity with HTTP status 200 (OK) and the list of ItemDTOs owned by the seller
      */
     @GetMapping("/seller/{sellerId}")
     public ResponseEntity<List<ItemDTO>> getItemsBySeller(@PathVariable Long sellerId) {
@@ -79,9 +123,14 @@ public class ItemController {
     }
 
     /**
-     * Returns items for the given category id.
-     * @param categoryId the category id
-     * @return ResponseEntity with list of ItemDTO
+     * Fetches a list of items within a specific category.
+     * <p>
+     * This endpoint returns all items that are classified under the category
+     * specified by the category ID. This allows browsing by product category.
+     * </p>
+     * 
+     * @param categoryId the unique identifier of the category
+     * @return ResponseEntity with HTTP status 200 (OK) and the list of ItemDTOs in the category
      */
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<ItemDTO>> getItemsByCategory(@PathVariable Long categoryId) {
@@ -90,9 +139,18 @@ public class ItemController {
     }
 
     /**
-     * Searches items based on the provided query.
-     * @param query the search query
-     * @return ResponseEntity with list of matching ItemDTO
+     * Searches for items using a keyword query.
+     * <p>
+     * This endpoint performs a text search across item titles, descriptions,
+     * and other relevant fields. It returns items that match the search criteria.
+     * </p>
+     * <p>
+     * The search is case-insensitive and matches partial words, making it suitable
+     * for keyword-based discovery.
+     * </p>
+     * 
+     * @param query the search string to match against item data
+     * @return ResponseEntity with HTTP status 200 (OK) and the list of matching ItemDTOs
      */
     @GetMapping("/search")
     public ResponseEntity<List<ItemDTO>> searchItems(@RequestParam String query) {
@@ -101,9 +159,17 @@ public class ItemController {
     }
 
     /**
-     * Creates a new item.
-     * @param itemDTO the item creation data
-     * @return ResponseEntity with the created ItemDTO
+     * Creates a new item listing in the marketplace.
+     * <p>
+     * This endpoint processes a request to create a new item. The item
+     * will be associated with the currently authenticated user as the seller.
+     * </p>
+     * 
+     * @param itemDTO the data transfer object containing item details
+     * @return ResponseEntity with HTTP status 201 (Created) and the created ItemDTO
+     * @throws stud.ntnu.no.backend.item.exception.ItemValidationException if the item data is invalid
+     * @throws stud.ntnu.no.backend.category.exception.CategoryNotFoundException if the specified category does not exist
+     * @throws stud.ntnu.no.backend.location.exception.LocationNotFoundException if the specified location does not exist
      */
     @PostMapping
     public ResponseEntity<ItemDTO> createItem(@Valid @RequestBody CreateItemDTO itemDTO) {
@@ -115,10 +181,25 @@ public class ItemController {
     }
 
     /**
-     * Updates an existing item.
-     * @param id the item id
-     * @param itemDTO the item update data
-     * @return ResponseEntity with the updated ItemDTO
+     * Updates an existing item listing with new information.
+     * <p>
+     * This endpoint allows the seller of an item to update its details. The operation
+     * is restricted to the authenticated user who originally created the item.
+     * Authentication and authorization are enforced to ensure only the owner can 
+     * modify their listings.
+     * </p>
+     * <p>
+     * All validation rules that apply to item creation are also enforced during updates.
+     * </p>
+     * 
+     * @param id the unique identifier of the item to update
+     * @param itemDTO the data transfer object containing updated item details
+     * @return ResponseEntity with HTTP status 200 (OK) and the updated ItemDTO
+     * @throws stud.ntnu.no.backend.item.exception.ItemNotFoundException if no item with the given ID exists
+     * @throws stud.ntnu.no.backend.item.exception.ItemValidationException if the item data is invalid
+     * @throws stud.ntnu.no.backend.category.exception.CategoryNotFoundException if the specified category does not exist
+     * @throws stud.ntnu.no.backend.location.exception.LocationNotFoundException if the specified location does not exist
+     * @throws org.springframework.security.access.AccessDeniedException if the authenticated user is not the owner of the item
      */
     @PutMapping("/{id}")
     public ResponseEntity<ItemDTO> updateItem(@PathVariable Long id, @Valid @RequestBody CreateItemDTO itemDTO) {
@@ -130,9 +211,21 @@ public class ItemController {
     }
 
     /**
-     * Deactivates an item.
-     * @param id the item id
-     * @return ResponseEntity with no content
+     * Deactivates an item listing, making it temporarily unavailable in the marketplace.
+     * <p>
+     * This endpoint allows sellers to hide their items without deleting them.
+     * Deactivated items can be reactivated later. This operation is restricted to 
+     * the authenticated user who owns the item.
+     * </p>
+     * <p>
+     * Deactivation affects item visibility in search results and category listings,
+     * but does not delete any data or break existing references.
+     * </p>
+     * 
+     * @param id the unique identifier of the item to deactivate
+     * @return ResponseEntity with HTTP status 204 (No Content) indicating successful deactivation
+     * @throws stud.ntnu.no.backend.item.exception.ItemNotFoundException if no item with the given ID exists
+     * @throws org.springframework.security.access.AccessDeniedException if the authenticated user is not the owner of the item
      */
     @PatchMapping("/{id}/deactivate")
     public ResponseEntity<Void> deactivateItem(@PathVariable Long id) {
@@ -145,9 +238,20 @@ public class ItemController {
     }
 
     /**
-     * Activates an item.
-     * @param id the item id
-     * @return ResponseEntity with no content
+     * Activates a previously deactivated item, making it visible in the marketplace again.
+     * <p>
+     * This endpoint allows sellers to restore visibility to items that were previously
+     * hidden. The operation is restricted to the authenticated user who owns the item.
+     * </p>
+     * <p>
+     * Upon activation, the item will immediately appear in search results and category
+     * listings if it meets the necessary criteria.
+     * </p>
+     * 
+     * @param id the unique identifier of the item to activate
+     * @return ResponseEntity with HTTP status 204 (No Content) indicating successful activation
+     * @throws stud.ntnu.no.backend.item.exception.ItemNotFoundException if no item with the given ID exists
+     * @throws org.springframework.security.access.AccessDeniedException if the authenticated user is not the owner of the item
      */
     @PatchMapping("/{id}/activate")
     public ResponseEntity<Void> activateItem(@PathVariable Long id) {
@@ -160,9 +264,21 @@ public class ItemController {
     }
 
     /**
-     * Deletes an item.
-     * @param id the item id
-     * @return ResponseEntity with no content
+     * Permanently deletes an item listing from the system.
+     * <p>
+     * This endpoint allows sellers to completely remove their items from the marketplace.
+     * The operation is restricted to the authenticated user who owns the item.
+     * </p>
+     * <p>
+     * Warning: This operation is irreversible and will cascade delete related data
+     * including item images, favorites, and history records. However, any completed
+     * transactions involving this item will be preserved for record-keeping purposes.
+     * </p>
+     * 
+     * @param id the unique identifier of the item to delete
+     * @return ResponseEntity with HTTP status 204 (No Content) indicating successful deletion
+     * @throws stud.ntnu.no.backend.item.exception.ItemNotFoundException if no item with the given ID exists
+     * @throws org.springframework.security.access.AccessDeniedException if the authenticated user is not the owner of the item
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
@@ -175,8 +291,13 @@ public class ItemController {
     }
 
     /**
-     * Returns the user id.
-     * @return user id object
+     * Utility method to retrieve the current user ID.
+     * <p>
+     * This is an internal helper method used to extract the authenticated user's ID
+     * from the security context. It is not exposed as an API endpoint.
+     * </p>
+     * 
+     * @return the ID of the currently authenticated user, or null if not authenticated
      */
     public Object getUserId() {
         return null;

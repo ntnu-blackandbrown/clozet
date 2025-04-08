@@ -6,7 +6,25 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * DTO for transferring item information.
+ * Data Transfer Object (DTO) for transferring complete item information.
+ * <p>
+ * This class represents a comprehensive view of an item with all its attributes and associated data.
+ * It includes details such as basic item information (title, descriptions, price),
+ * category information, seller information, location details, physical attributes,
+ * availability status, payment options, timestamps, and associated images.
+ * </p>
+ * <p>
+ * The ItemDTO is used for:
+ * <ul>
+ *   <li>Returning detailed item data in API responses</li>
+ *   <li>Transferring complete item information between service layers</li>
+ *   <li>Displaying item details in user interfaces</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Unlike the {@link ItemMarketPlaceDTO} which provides a simplified view for marketplace browsing,
+ * this DTO contains all information about an item, including administrative details.
+ * </p>
  */
 public class ItemDTO {
     private Long id;

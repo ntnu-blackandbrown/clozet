@@ -16,8 +16,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of the CategoryService interface.
- * Handles business logic for category operations and interacts with the repository layer.
+ * Implementation of the CategoryService interface for managing category operations.
+ * <p>
+ * This service handles business logic for category management, including creation,
+ * retrieval, update, and deletion operations. It interacts with the repository layer
+ * for database operations and uses a mapper for entity-DTO conversions.
+ * </p>
+ * <p>
+ * Key responsibilities include:
+ * <ul>
+ *   <li>Managing the lifecycle of category records</li>
+ *   <li>Ensuring data integrity and validation</li>
+ *   <li>Providing specialized query operations like finding top categories</li>
+ *   <li>Handling timestamps for creation and updates</li>
+ * </ul>
+ * </p>
  */
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -28,9 +41,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * Constructor for dependency injection.
+     * <p>
+     * Initializes the service with required dependencies allowing for loose coupling
+     * and easier testing.
+     * </p>
      *
-     * @param categoryRepository Repository for database operations
-     * @param categoryMapper Mapper for entity-DTO conversions
+     * @param categoryRepository Repository for database operations on categories
+     * @param categoryMapper Mapper for entity-DTO conversions to separate data layers
      */
     public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
         this.categoryRepository = categoryRepository;
@@ -39,6 +56,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * {@inheritDoc}
+     * <p>
+     * Implementation retrieves all categories from the repository without filtering.
+     * Categories are mapped to DTOs before being returned to the caller.
+     * </p>
      */
     @Override
     public List<CategoryDTO> getAllCategories() {
@@ -50,6 +71,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * {@inheritDoc}
+     * <p>
+     * Implementation performs a repository lookup by primary key and throws a
+     * specific exception if the category is not found, ensuring clear error messages.
+     * </p>
+     * 
+     * @throws CategoryNotFoundException with detailed message when the category is not found
      */
     @Override
     public CategoryDTO getCategory(Long id) {
@@ -64,7 +91,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * {@inheritDoc}
-     * Uses a pageable request to limit results to top 5.
+     * <p>
+     * Implementation uses a multi-level fallback approach to find popular categories:
+     * </p>
+     * <ol>
+     *   <li>First tries to find categories with the most favorites</li>
+     *   <li>If none found, falls back to categories with the most items</li>
+     *   <li>If still none, returns any categories up to 5</li>
+     * </ol>
+     * <p>
+     * Uses Spring's PageRequest for efficient pagination limited to top 5 results.
+     * </p>
      */
     @Override
     @Transactional(readOnly = true)
@@ -92,7 +129,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * {@inheritDoc}
-     * Sets creation and update timestamps automatically.
+     * <p>
+     * Implementation ensures proper initialization of timestamp fields:
+     * </p>
+     * <ul>
+     *   <li>Sets creation timestamp to current time</li>
+     *   <li>Sets update timestamp to current time</li>
+     * </ul>
+     * <p>
+     * Delegates to the repository for persistence and returns the created
+     * category with its generated ID.
+     * </p>
      */
     @Override
     @Transactional
@@ -108,7 +155,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * {@inheritDoc}
-     * Updates only non-null fields and sets the updatedAt timestamp.
+     * <p>
+     * Implementation uses a selective update approach:
+     * </p>
+     * <ul>
+     *   <li>Only updates fields that are not null in the DTO</li>
+     *   <li>Preserves existing values for fields not specified in the update</li>
+     *   <li>Always updates the updatedAt timestamp to track the latest change</li>
+     * </ul>
+     * 
+     * @throws CategoryNotFoundException if the category to update cannot be found
      */
     @Override
     @Transactional
@@ -135,7 +191,20 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * {@inheritDoc}
-     * Verifies existence before deletion to provide clear error messages.
+     * <p>
+     * Implementation performs a pre-deletion check to:
+     * </p>
+     * <ul>
+     *   <li>Verify the category exists before attempting deletion</li>
+     *   <li>Provide a clear error message if the category doesn't exist</li>
+     * </ul>
+     * <p>
+     * Note: This implementation does not check for related items, which could
+     * lead to database constraint violations if there are items associated with
+     * the category. In production, additional checks should be added.
+     * </p>
+     * 
+     * @throws CategoryNotFoundException if the category to delete cannot be found
      */
     @Override
     @Transactional
