@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="email-styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Clozet Account</title>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Clozet</h1>
+<body style="font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; background-color: #c6d7d0; color: #333; margin: 0; padding: 20px;">
+    <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); padding: 32px;">
+        <div style="text-align: center; border-bottom: 1px solid #eee; padding-bottom: 16px; margin-bottom: 24px;">
+            <img src="cid:logo" alt="Clozet" style="width: 120px; height: auto; border-radius: 50%;">
+            <h1 style="color: #374649; font-size: 28px; margin: 10px 0 0 0;">Clozet</h1>
         </div>
-        <div class="content">
-            <h2>Confirm Your Account</h2>
-            <p>Hello!</p>
-            <p>Thanks for signing up for Clozet. To activate your account, please click the button below:</p>
-            <a href="${verificationLink}" class="button">Verify My Account</a>
-            <p>If the button doesn’t work, copy and paste this URL into your browser:</p>
-            <p><a href="${verificationLink}">${verificationLink}</a></p>
-            <p>This link is valid for ${expiryHours} hour(s).</p>
-            <p>If you didn’t sign up for Clozet, you can safely ignore this email.</p>
+        <div style="padding: 0 16px;">
+            <h2 style="color: #374649; font-size: 22px; margin-bottom: 16px;">Confirm Your Account</h2>
+            <p style="font-size: 16px; line-height: 1.6; margin: 8px 0;">Hello!</p>
+            <p style="font-size: 16px; line-height: 1.6; margin: 8px 0;">Thanks for signing up for Clozet. To activate your account, please click the button below:</p>
+            <div style="text-align: center; margin: 24px 0;">
+                <a href="${verificationLink}" style="display: inline-block; background-color: #374649; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">Verify My Account</a>
+            </div>
+            <p style="font-size: 16px; line-height: 1.6; margin: 8px 0;">If the button doesn't work, copy and paste this URL into your browser:</p>
+            <p style="font-size: 16px; line-height: 1.6; margin: 8px 0;"><a href="${verificationLink}" style="color: #374649; text-decoration: underline;">${verificationLink}</a></p>
+            <p style="font-size: 16px; line-height: 1.6; margin: 8px 0;">This link is valid for ${expiryHours} hour(s).</p>
+            <p style="font-size: 16px; line-height: 1.6; margin: 8px 0;">If you didn't sign up for Clozet, you can safely ignore this email.</p>
         </div>
-        <div class="footer">
-            <p>© ${currentYear} Clozet. All rights reserved.</p>
+        <div style="text-align: center; font-size: 14px; color: #aaa; margin-top: 32px; padding-top: 16px; border-top: 1px solid #eee;">
+            <p style="margin: 5px 0;">© ${currentYear} Clozet. All rights reserved.</p>
         </div>
     </div>
 </body>
