@@ -65,9 +65,10 @@ public class DatabaseInitializer {
 
       Category category = createCategory("Clothing", "All clothing items");
       Location location = createLocation("Oslo", "Oslo", 59.9139, 10.7522);
+      ShippingOption shippingOption = createShippingOption("Standard Shipping", 99.0);
 
       for (int i = 0; i < 5; i++) {
-        Item item = createItem(seller, category, location, "Demo Item " + i);
+        Item item = createItem(seller, category, location, shippingOption, "Demo Item " + i);
         createItemImage(item, "https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=1000", true);
       }
 
@@ -130,11 +131,19 @@ public class DatabaseInitializer {
     return locationRepository.save(l);
   }
 
-  private Item createItem(User seller, Category cat, Location loc, String title) {
+  private ShippingOption createShippingOption(String name, double price) {
+    ShippingOption option = new ShippingOption();
+    option.setName(name);
+    option.setPrice(price);
+    return shippingOptionRepository.save(option);
+  }
+
+  private Item createItem(User seller, Category cat, Location loc, ShippingOption shippingOption, String title) {
     Item i = new Item();
     i.setSeller(seller);
     i.setCategory(cat);
     i.setLocation(loc);
+    i.setShippingOption(shippingOption);
     i.setTitle(title);
     i.setShortDescription("Short desc for " + title);
     i.setLongDescription("Long description with size, color, and brand info.");
