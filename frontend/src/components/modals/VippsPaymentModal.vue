@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, defineEmits, defineProps, computed } from 'vue'
-import axios from '@/api/axios'
 import { useValidatedForm, useValidatedField, vippsPaymentSchema } from '@/utils/validation'
+import { TransactionService } from '@/api/services/TransactionService'
 
 const props = defineProps<{
   itemId: number,
@@ -76,7 +76,7 @@ const processPayment = handleSubmit(async (values) => {
     await new Promise(resolve => setTimeout(resolve, 2000))
 
     // Create transaction
-    const response = await axios.post('/api/transactions/purchase', {
+    const response = await TransactionService.createPurchase({
       itemId: props.itemId,
       sellerId: props.sellerId,
       buyerId: props.buyerId,

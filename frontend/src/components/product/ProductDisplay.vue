@@ -6,10 +6,10 @@ import VippsPaymentModal from '@/components/modals/VippsPaymentModal.vue'
 import ShippingDetailsModal from '@/components/modals/ShippingDetailsModal.vue'
 import PurchaseSuccessModal from '@/components/modals/PurchaseSuccessModal.vue'
 import BaseModal from '@/components/modals/BaseModal.vue'
-import axios from '@/api/axios'
+import { MessagingService } from '@/api/services/MessagingService'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
-
+import { ProductService } from '@/api/services/ProductService'
 interface ProductDisplayProps {
   id: number
 }
@@ -18,11 +18,11 @@ const props = defineProps<ProductDisplayProps>()
 const router = useRouter()
 const authStore = useAuthStore()
 const getItemById = async () => {
-  const item = await axios.get(`api/items/${props.id}`)
+  const item = await ProductService.getItemById(props.id)
   return item.data
 }
 const getImagesByItemId = async() => {
-  const images = await axios.get(`api/images/item/${props.id}`)
+  const images = await ProductService.getItemImages(props.id)
   return images.data
 }
 
@@ -172,12 +172,8 @@ const handleContactSeller = async () => {
     }
 
     // Check existing conversations
-    const response = await axios.get('/api/conversations', {
-      params: {
-        userId: authStore.user.id.toString()
-      }
-    })
-
+    const response = await MessagingService.getUserConversations(authStore.user.id)
+    
     // Check if conversation already exists with this seller for this item
     const existingConversation = response.data.find((conv: any) =>
       (conv.senderId === authStore.user?.id?.toString() && conv.receiverId === sellerId.value?.toString() && conv.itemId === props.id) ||
@@ -190,7 +186,7 @@ const handleContactSeller = async () => {
       router.push(`/messages/${chatId}`)
     } else {
       // Create new conversation by sending first message
-      const messageResponse = await axios.post('/api/messages', {
+      const messageResponse = await MessagingService.sendMessage({
         senderId: authStore.user.id.toString(),
         receiverId: sellerId.value.toString(),
         content: `Hi! I'm interested in your item: ${item.value?.title}`,
