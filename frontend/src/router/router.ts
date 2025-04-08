@@ -13,12 +13,12 @@ const router = createRouter({
     {
       path: '/reset-password',
       name: 'reset-password',
-      component: () => import('@/views/ResetPasswordVerifier.vue'),
+      component: () => import('@/views/verification/ResetPasswordVerifier.vue'),
     },
     {
       path: '/verify',
-      name: 'toker-verifier',
-      component: () => import('@/views/TokerVerifier.vue'),
+      name: 'registration-verifier',
+      component: () => import('@/views/verification/RegisterationVerifier.vue'),
     },
     {
       path: '/products/:id',
