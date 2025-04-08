@@ -34,7 +34,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of UserService for managing users.
+ * Implementation of the UserService abstract class for managing user-related operations.
+ * <p>
+ * This service provides a complete implementation of user management functionality
+ * including user registration, authentication, profile management, and account verification.
+ * It handles communication with the user repository for database operations, handles password
+ * encoding and verification, and manages email communication for account-related actions.
+ * </p>
+ * <p>
+ * Key responsibilities include:
+ * <ul>
+ *   <li>User registration with email verification</li>
+ *   <li>User authentication</li>
+ *   <li>User profile management (update, delete)</li>
+ *   <li>Password change and reset functionality</li>
+ *   <li>User retrieval by various criteria</li>
+ * </ul>
+ * </p>
+ * <p>
+ * This implementation uses Spring Security for authentication and authorization,
+ * a password encoder for secure password storage, and an email service for
+ * communicating with users.
+ * </p>
  */
 @Service
 public class UserServiceImpl extends UserService {
@@ -63,6 +84,21 @@ public class UserServiceImpl extends UserService {
         this.verificationTokenRepository = verificationTokenRepository;
     }
 
+    /**
+     * Retrieves the currently authenticated user from the security context.
+     * <p>
+     * This method checks the current security context for an authenticated user
+     * and returns the corresponding User entity. It handles two authentication scenarios:
+     * </p>
+     * <ol>
+     *   <li>When the principal is a CustomUserDetails instance (most common case)</li>
+     *   <li>When only the username is available in the authentication</li>
+     * </ol>
+     *
+     * @return the currently authenticated User entity
+     * @throws RuntimeException if no authenticated user is found in the security context
+     * @throws UserNotFoundException if the authenticated username cannot be found in the database
+     */
     @Override
     public User getCurrentUser() {
         logger.info("Getting current user");
@@ -81,9 +117,13 @@ public class UserServiceImpl extends UserService {
     }
 
     /**
-     * Retrieves all users.
+     * Retrieves all users from the database.
+     * <p>
+     * This method fetches all user records from the database and converts them
+     * to DTOs for external use.
+     * </p>
      *
-     * @return a list of user DTOs
+     * @return a list of user DTOs representing all users in the system
      */
     @Override
     public List<UserDTO> getAllUsers() {
@@ -93,6 +133,17 @@ public class UserServiceImpl extends UserService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a user by their unique identifier.
+     * <p>
+     * This method attempts to find a user with the specified ID and converts
+     * the entity to a DTO if found.
+     * </p>
+     *
+     * @param id the unique identifier of the user to retrieve
+     * @return the UserDTO representing the requested user
+     * @throws UserNotFoundException if no user with the given ID exists
+     */
     @Override
     public UserDTO getUserById(Long id) {
         logger.info("Getting user by ID: {}", id);
@@ -101,6 +152,17 @@ public class UserServiceImpl extends UserService {
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    /**
+     * Retrieves a user by their username.
+     * <p>
+     * This method attempts to find a user with the specified username and converts
+     * the entity to a DTO if found.
+     * </p>
+     *
+     * @param username the username of the user to retrieve
+     * @return the UserDTO representing the requested user
+     * @throws UserNotFoundException if no user with the given username exists
+     */
     @Override
     public UserDTO getUserByUsername(String username) {
         logger.info("Getting user by username: {}", username);
