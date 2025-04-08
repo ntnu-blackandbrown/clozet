@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import axios from '@/api/axios'
-
+import { TransactionService } from '@/api/services/TransactionService'
 // State
 const transactions = ref([])
 const isLoading = ref(true)
@@ -16,7 +15,7 @@ const fetchTransactions = async () => {
   try {
     isLoading.value = true
     error.value = null
-    const response = await axios.get('/api/transactions')
+    const response = await TransactionService.getAllTransactions()
     transactions.value = response.data
     isLoading.value = false
   } catch (err) {

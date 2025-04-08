@@ -66,7 +66,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from '@/api/axios'
+import { AuthService } from '@/api/services/AuthService'
 import {
   useValidatedForm,
   useValidatedField,
@@ -113,10 +113,7 @@ const submit = handleSubmit(async (values) => {
 
   try {
     // Call API to update password
-    await axios.post('/api/me/change-password', {
-      currentPassword: values.currentPassword,
-      newPassword: values.newPassword
-    })
+    await AuthService.changePassword(values.currentPassword, values.newPassword, values.confirmPassword)
 
     success.value = true
     message.value = 'Password has been updated successfully.'

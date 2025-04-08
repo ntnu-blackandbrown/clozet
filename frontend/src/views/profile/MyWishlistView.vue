@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import axios from '@/api/axios.ts'
 import ProductList from '@/components/product/ProductList.vue'
 import type { Product } from '@/types/product'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useRoute } from 'vue-router'
-
+import { ProductService } from '@/api/services/ProductService'
+import { FavoritesService } from '@/api/services/FavoritesService'
 const authStore = useAuthStore()
 const items = ref<Product[]>([])
 const userId = authStore.user?.id
@@ -15,7 +15,7 @@ const initialProductId = ref<number | null>(null)
 // Fetch image URL for a single item
 const fetchImageForItem = async (item: any): Promise<Product> => {
   try {
-    const imagesResponse = await axios.get(`api/images/item/${item.id}`)
+    const imagesResponse = await ProductService.getItemImages(item.id)
     const images = imagesResponse.data
 
     return {
@@ -35,11 +35,11 @@ const fetchImageForItem = async (item: any): Promise<Product> => {
 onMounted(async () => {
   try {
     // First get user's favorites
-    const favResponse = await axios.get(`api/favorites/user/${userId}`)
+    const favResponse = await FavoritesService.getUserFavorites(userId as number)
     const favorites = favResponse.data
 
     // Then get marketplace items
-    const marketPlaceResponse = await axios.get(`api/marketplace/items`)
+    const marketPlaceResponse = await ProductService.getAllItems()
     const allItems = marketPlaceResponse.data
 
     // Filter items to only include those that exist in favorites

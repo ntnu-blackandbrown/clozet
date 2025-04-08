@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import axios from '@/api/axios'
+import { UserService } from '@/api/services/UserService'
 
 // State
 const users = ref([])
@@ -14,7 +14,7 @@ const fetchUsers = async () => {
   try {
     isLoading.value = true
     error.value = null
-    const response = await axios.get('/api/users')
+    const response = await UserService.getAllUsers()
     users.value = response.data
     isLoading.value = false
   } catch (err) {
@@ -45,7 +45,7 @@ const filteredUsers = computed(() => {
 const toggleUserStatus = async (user) => {
   try {
     isLoading.value = true
-    await axios.put(`/api/users/${user.id}`, {
+    await UserService.updateUser(user.id, {
       active: !user.active
     })
 
@@ -67,7 +67,7 @@ const toggleUserStatus = async (user) => {
 const changeUserRole = async (user, newRole) => {
   try {
     isLoading.value = true
-    await axios.put(`/api/users/${user.id}`, {
+    await UserService.updateUser(user.id, {
       role: newRole
     })
 

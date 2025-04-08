@@ -5,7 +5,7 @@ import ProductListView from '@/views/user/ProductListView.vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
 import { ref, onMounted, watch, computed } from 'vue'
-import axios from '@/api/axios'
+import { CategoryService } from '@/api/services/CategoryService'
 
 const router = useRouter()
 const route = useRoute()
@@ -86,7 +86,7 @@ const fetchTopCategories = async () => {
   categoryError.value = null
 
   try {
-    const response = await axios.get('/api/categories/top-five')
+    const response = await CategoryService.getTopCategories()
     topCategories.value = response.data
     console.log('Fetched top categories:', response.data)
   } catch (error) {

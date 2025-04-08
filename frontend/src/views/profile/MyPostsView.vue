@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import axios from '@/api/axios.ts'
 import type { Product } from '@/types/product'
 import ProductList from '@/components/product/ProductList.vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useRoute } from 'vue-router'
-
+import { ProductService } from '@/api/services/ProductService'
 const items = ref<Product[]>([])
 const authStore = useAuthStore()
 const route = useRoute()
@@ -14,7 +13,7 @@ const initialProductId = ref<number | null>(null)
 // Fetch image URL for a single item
 const fetchImageForItem = async (item: any): Promise<Product> => {
   try {
-    const imagesResponse = await axios.get(`api/images/item/${item.id}`)
+    const imagesResponse = await ProductService.getItemImages(item.id)
     const images = imagesResponse.data
 
     return {
@@ -35,7 +34,7 @@ const fetchImageForItem = async (item: any): Promise<Product> => {
 
 onMounted(async () => {
   try {
-    const response = await axios.get(`api/items/seller/${authStore.user?.id}`)
+    const response = await ProductService.getItemsBySeller(authStore.user?.id as number)
     const fetchedItems = response.data
     console.log('Fetched items from backend:', fetchedItems)
 

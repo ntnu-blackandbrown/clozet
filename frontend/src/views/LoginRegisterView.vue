@@ -3,8 +3,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import BaseModal from '@/components/modals/BaseModal.vue'
 import { useRouter } from 'vue-router'
-import axios from '@/api/axios'
 import { useValidatedForm, useValidatedField, loginSchema, registerSchema } from '@/utils/validation'
+import { AuthService } from '@/api/services/AuthService'
 import * as yup from 'yup'
 
 const router = useRouter()
@@ -124,9 +124,9 @@ const submit = handleSubmit(async (values) => {
     if (isLogin.value) {
       // Login using AuthStore (JWT cookie approach)
       debugInfo.value = `POST til /api/auth/login med ${JSON.stringify({ username: values.username, password: values.password })}`
-      const result = await authStore.login(values.username, values.password)
+      const result = await AuthService.login(values.username, values.password)
 
-      if (result.success) {
+      if (result.status === 200) {
         statusMessage.value = `Innlogging vellykket!`
         statusType.value = 'success'
         setTimeout(() => {
@@ -152,9 +152,9 @@ const submit = handleSubmit(async (values) => {
 
       debugInfo.value = `POST til /api/auth/register med ${JSON.stringify(userData)}`
 
-      const response = await authStore.register(userData.username, userData.password, userData.email, userData.firstName, userData.lastName)
+      const response = await AuthService.register(userData.username, userData.password, userData.email, userData.firstName, userData.lastName)
 
-      if (response.success) {
+      if (response.status === 200) {
         statusMessage.value = `Registeration sucessful! Please check your email for verification`
       }
     }

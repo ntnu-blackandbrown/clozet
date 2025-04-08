@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from '@/api/axios'
+import { ShippingService } from '@/api/services/ShippingService'
 
 // State
 const shippingOptions = ref([])
@@ -26,7 +26,7 @@ const fetchShippingOptions = async () => {
   try {
     isLoading.value = true
     error.value = null
-    const response = await axios.get('/api/shipping-options')
+    const response = await ShippingService.getAllShippingOptions()
     shippingOptions.value = response.data
     isLoading.value = false
   } catch (err) {
@@ -42,7 +42,7 @@ const createShippingOption = async () => {
 
   try {
     isLoading.value = true
-    await axios.post('/api/shipping-options', shippingForm.value)
+    await ShippingService.createShippingOption(shippingForm.value)
     await fetchShippingOptions()
     isLoading.value = false
     resetForm()
@@ -60,7 +60,7 @@ const updateShippingOption = async () => {
 
   try {
     isLoading.value = true
-    await axios.put(`/api/shipping-options/${shippingForm.value.id}`, shippingForm.value)
+    await ShippingService.updateShippingOption(shippingForm.value.id, shippingForm.value)
     await fetchShippingOptions()
     isLoading.value = false
     resetForm()
@@ -78,7 +78,7 @@ const deleteShippingOption = async (id) => {
 
   try {
     isLoading.value = true
-    await axios.delete(`/api/shipping-options/${id}`)
+    await ShippingService.deleteShippingOption(id)
     await fetchShippingOptions()
     isLoading.value = false
   } catch (err) {

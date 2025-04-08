@@ -1,7 +1,6 @@
-<script setup>
+  <script setup>
 import { ref, onMounted } from 'vue'
-import axios from '@/api/axios'
-
+import { CategoryService } from '@/api/services/CategoryService'
 // State
 const categories = ref([])
 const isLoading = ref(true)
@@ -24,7 +23,7 @@ const fetchCategories = async () => {
   try {
     isLoading.value = true
     error.value = null
-    const response = await axios.get('/api/categories')
+    const response = await CategoryService.getAllCategories()
     categories.value = response.data
     isLoading.value = false
   } catch (err) {
@@ -40,7 +39,7 @@ const createCategory = async () => {
 
   try {
     isLoading.value = true
-    await axios.post('/api/categories', categoryForm.value)
+    await CategoryService.createCategory(categoryForm.value)
     await fetchCategories()
     isLoading.value = false
     resetForm()
@@ -58,7 +57,7 @@ const updateCategory = async () => {
 
   try {
     isLoading.value = true
-    await axios.put(`/api/categories/${categoryForm.value.id}`, categoryForm.value)
+    await CategoryService.updateCategory(categoryForm.value.id, categoryForm.value)
     await fetchCategories()
     isLoading.value = false
     resetForm()
@@ -76,7 +75,7 @@ const deleteCategory = async (id) => {
 
   try {
     isLoading.value = true
-    await axios.delete(`/api/categories/${id}`)
+    await CategoryService.deleteCategory(id)
     await fetchCategories()
     isLoading.value = false
   } catch (err) {

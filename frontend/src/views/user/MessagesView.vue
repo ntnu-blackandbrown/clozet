@@ -2,10 +2,12 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import MessagesSidebar from '@/components/messaging/MessagesSidebar.vue'
-import axios from '@/api/axios'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useWebsocket } from '@/websocket/websocket'
 import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
+import { ProductService } from '@/api/services/ProductService'
+import { UserService } from '@/api/services/UserService'
+import { MessagingService } from '@/api/services/MessagingService'
 
 // Core stores and router
 const router = useRouter()
@@ -60,7 +62,7 @@ const findConversationByChatId = (chatId) => {
  */
 const fetchItemDetails = async (itemId) => {
   try {
-    const response = await axios.get(`/api/items/${itemId}`)
+    const response = await ProductService.getItemById(itemId)
     itemDetails.value[itemId] = response.data
     return response.data
   } catch (error) {
@@ -154,14 +156,7 @@ const loadMessages = async (chatId, reset = false) => {
     if (!selectedConversation) return
 
     // Fetch chat messages with pagination
-    const mssgResponse = await axios.get('/api/messages', {
-      params: {
-        senderId: authStore.user?.id?.toString(),
-        receiverId: selectedConversation.receiverId?.toString(),
-        page: messagePage.value,
-        size: messagePageSize.value
-      }
-    })
+    const mssgResponse = await MessagingService.getConversationMessages(authStore.user?.id?.toString(), selectedConversation.receiverId?.toString(), messagePage.value, messagePageSize.value)
 
     // Ensure messages are sorted by timestamp
     const sortedMessages = mssgResponse.data.sort((a, b) =>
@@ -210,7 +205,7 @@ const handleScrollToTop = async (event) => {
 const fetchReceiverDetails = async (receiverId) => {
   try {
     const numericReceiverId = Number(receiverId)
-    const response = await axios.get(`/api/users/${numericReceiverId}`)
+    const response = await UserService.getUserById(numericReceiverId)
 
     if (response.data) {
       receiverDetails.value = response.data
@@ -249,11 +244,7 @@ onMounted(async () => {
     websocket.connect()
 
     // Step 1: Load all conversations for the logged-in user
-    const response = await axios.get('/api/conversations', {
-      params: {
-        userId: authStore.user?.id?.toString() || ''
-      }
-    })
+    const response = await MessagingService.getUserConversations(authStore.user?.id?.toString() || '')
 
     // Filter out duplicate conversations and conversations with self
     const uniqueConversations = [];

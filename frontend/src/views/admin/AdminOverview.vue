@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from '@/api/axios'
 
 // Statistics data
 const statistics = ref({

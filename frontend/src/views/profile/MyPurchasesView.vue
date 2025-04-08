@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import axios from '@/api/axios.ts'
 import ProductList from '@/components/product/ProductList.vue'
 import type { Product } from '@/types/product'
 import { useAuthStore } from '@/stores/AuthStore'
-
+import { ProductService } from '@/api/services/ProductService'
+import { TransactionService } from '@/api/services/TransactionService'
 const authStore = useAuthStore()
 
 const items = ref<Product[]>([])
@@ -12,7 +12,7 @@ const loading = ref(true)
 
 const fetchImageForItem = async (item: any): Promise<Product> => {
   try {
-    const imagesResponse = await axios.get(`api/images/item/${item.id}`)
+    const imagesResponse = await ProductService.getItemImages(item.id)
     const images = imagesResponse.data
 
     return {
@@ -33,7 +33,7 @@ const fetchImageForItem = async (item: any): Promise<Product> => {
 const fetchItemById = async (itemId: number): Promise<Product | null> => {
   try {
     // Get item details directly from the items API
-    const response = await axios.get(`api/items/${itemId}`)
+    const response = await ProductService.getItemById(itemId)
     const item = response.data
 
     return {
@@ -69,7 +69,7 @@ onMounted(async () => {
     loading.value = true
 
     // Fetch user's transactions
-    const response = await axios.get(`api/transactions/buyer/${authStore.user?.id}`)
+    const response = await TransactionService.getBuyerTransactions(authStore.user?.id as number)
     const purchasedTransactions = response.data
     console.log('Purchased Transactions:', purchasedTransactions)
     console.log('Transactions count:', purchasedTransactions.length)

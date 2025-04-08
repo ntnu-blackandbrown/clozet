@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from '@/api/axios'
+import { LocationService } from '@/api/services/LocationService'
 
 // State
 const locations = ref([])
@@ -25,7 +25,7 @@ const fetchLocations = async () => {
   try {
     isLoading.value = true
     error.value = null
-    const response = await axios.get('/api/locations')
+    const response = await LocationService.getAllLocations()
     locations.value = response.data
     isLoading.value = false
   } catch (err) {
@@ -41,7 +41,7 @@ const createLocation = async () => {
 
   try {
     isLoading.value = true
-    await axios.post('/api/locations', locationForm.value)
+    await LocationService.createLocation(locationForm.value)
     await fetchLocations()
     isLoading.value = false
     resetForm()
@@ -59,7 +59,7 @@ const updateLocation = async () => {
 
   try {
     isLoading.value = true
-    await axios.put(`/api/locations/${locationForm.value.id}`, locationForm.value)
+    await LocationService.updateLocation(locationForm.value.id, locationForm.value)
     await fetchLocations()
     isLoading.value = false
     resetForm()
@@ -77,7 +77,7 @@ const deleteLocation = async (id) => {
 
   try {
     isLoading.value = true
-    await axios.delete(`/api/locations/${id}`)
+    await LocationService.deleteLocation(id)
     await fetchLocations()
     isLoading.value = false
   } catch (err) {

@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
-import axios from '@/api/axios.ts'
 import type { Product, ProductDisplay } from '@/types/product'
 import ProductList from '@/components/product/ProductList.vue'
 import { useRoute, useRouter } from 'vue-router'
-
+import { ProductService } from '@/api/services/ProductService'
 const props = defineProps({
   searchQuery: {
     type: String,
@@ -47,7 +46,7 @@ const shippingOptions = computed(() => {
 // Fetch detailed item information for a specific item
 const fetchItemDetails = async (itemId: number) => {
   try {
-    const response = await axios.get(`api/items/${itemId}`)
+    const response = await ProductService.getItemById(itemId)
     const detailedItem = response.data
     detailedItems.value.set(itemId, detailedItem)
     return detailedItem
@@ -67,7 +66,7 @@ const fetchAllItemDetails = async () => {
 
 onMounted(async () => {
   try {
-    const response = await axios.get('api/marketplace/items')
+    const response = await ProductService.getAllItems()
     items.value = response.data
 
     // Fetch details for all items to populate shipping options

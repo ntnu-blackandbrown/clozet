@@ -4,10 +4,10 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useCategoryStore } from '@/stores/Category'
 import { useShippingOptionStore } from '@/stores/ShippingOption'
-import axios from '@/api/axios'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useLocationStore } from '@/stores/Location'
+import { ProductService } from '@/api/services/ProductService'
 // Define interfaces for TypeScript
 interface Category {
   id: number
@@ -234,11 +234,7 @@ const onSubmit = handleSubmit(async (values) => {
     }
 
     // 1. Create the item first
-    const response = await axios.post('/api/items', payload, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+    const response = await ProductService.createItem(payload)
 
     const itemId = response.data.id
     testResult.value = `Success! Item created with ID: ${itemId}`
@@ -250,11 +246,7 @@ const onSubmit = handleSubmit(async (values) => {
       formData.append('file', file)
       formData.append('itemId', itemId.toString())
 
-      await axios.post('/api/images/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
+      await ProductService.uploadImages(formData)
     }
 
     testResult.value += ' and images uploaded successfully.'
@@ -301,7 +293,7 @@ const sendTestData = async () => {
     }
 
     // Send the request to the backend
-    const response = await axios.post('/api/items', mockData)
+    const response = await ProductService.createItem(mockData)
 
     testResult.value = `Success! Item created with ID: ${response.data.id}`
     console.log('Test data sent successfully:', response.data)
