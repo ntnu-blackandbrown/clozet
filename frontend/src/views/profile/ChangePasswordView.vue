@@ -17,7 +17,7 @@
               :class="{ 'error-input': currentPasswordError }"
             />
             <button type="button" @click="showCurrentPassword = !showCurrentPassword" class="toggle-password">
-              {{ showCurrentPassword ? '👁️‍🗨️' : '👁️' }}
+              {{ showCurrentPassword ? 'Hide' : 'Show' }}
             </button>
           </div>
           <span class="error" v-if="currentPasswordError">{{ currentPasswordError }}</span>
@@ -35,7 +35,7 @@
               :class="{ 'error-input': newPasswordError }"
             />
              <button type="button" @click="showNewPassword = !showNewPassword" class="toggle-password">
-              {{ showNewPassword ? '👁️‍🗨️' : '👁️' }}
+              {{ showNewPassword ? 'Hide' : 'Show' }}
             </button>
           </div>
           <span class="error" v-if="newPasswordError">{{ newPasswordError }}</span>
@@ -53,7 +53,7 @@
               :class="{ 'error-input': confirmPasswordError }"
             />
             <button type="button" @click="showConfirmPassword = !showConfirmPassword" class="toggle-password">
-              {{ showConfirmPassword ? '👁️‍🗨️' : '👁️' }}
+              {{ showConfirmPassword ? 'Hide' : 'Show' }}
             </button>
           </div>
           <span class="error" v-if="confirmPasswordError">{{ confirmPasswordError }}</span>
@@ -305,9 +305,9 @@ label {
   /* Style as an icon button */
   background: none;
   border: none;
-  padding: 0;
+  padding: 0.2rem 0.4rem; /* Adjusted padding for text */
   cursor: pointer;
-  font-size: 1.2rem; /* Adjust icon size */
+  font-size: 0.8rem; /* Adjusted font size for text */
   color: #666; /* Adjust icon color */
   line-height: 1; /* Ensure proper vertical alignment */
 }
