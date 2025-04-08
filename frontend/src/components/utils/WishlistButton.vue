@@ -1,63 +1,34 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useAuthStore } from '@/stores/AuthStore'
-import { FavoritesService } from '@/api/services/FavoritesService'
+import { useFavoritesStore } from '@/stores/FavoritesStore'
 
 const authStore = useAuthStore()
+const favoritesStore = useFavoritesStore()
 
 interface WishlistButtonProps {
-  productId?: number
-  isWishlisted?: boolean
+  productId: number
   isAvailable?: boolean
 }
 
 const props = withDefaults(defineProps<WishlistButtonProps>(), {
-  productId: 0,
-  isWishlisted: false,
   isAvailable: true,
 })
 
-const isWishlisted = ref(props.isWishlisted)
-const favoriteId = ref<number | null>(null)
-
-const fetchFavoriteId = async () => {
-  try {
-    if (authStore.user?.id) {
-      const response = await FavoritesService.getUserFavorites(authStore.user.id)
-      const favorites = response.data
-      const favorite = favorites.find((f: any) => f.itemId === props.productId)
-      if (favorite) {
-        favoriteId.value = favorite.id
-      }
-    }
-  } catch (error) {
-    console.error('Failed to fetch favorite ID:', error)
-  }
-}
-
-onMounted(async () => {
-  if (props.isWishlisted) {
-    await fetchFavoriteId()
-  }
-})
+const isWishlisted = computed(() => favoritesStore.isFavorite(props.productId))
 
 const toggleWishlist = async () => {
   if (!authStore.isLoggedIn) {
+    console.log('User not logged in, cannot toggle wishlist.')
     return
   }
-  isWishlisted.value = !isWishlisted.value
-  // TODO: Implement actual wishlist functionality with backend
-  console.log('current state of isWishlisted: ', isWishlisted.value)
-  if (isWishlisted.value && authStore.user?.id) {
-    const response = await FavoritesService.addFavorite(authStore.user.id, props.productId)
-    console.log('response: ', response)
-    favoriteId.value = response.data.id // Store the favorite ID from the response
+
+  if (isWishlisted.value) {
+    console.log(`Attempting to remove favorite for product ID: ${props.productId}`)
+    await favoritesStore.removeFavorite(props.productId)
   } else {
-    if (favoriteId.value) {
-      const response = await FavoritesService.removeFavorite(favoriteId.value)
-      console.log('response: ', response)
-      favoriteId.value = null
-    }
+    console.log(`Attempting to add favorite for product ID: ${props.productId}`)
+    await favoritesStore.addFavorite(props.productId)
   }
 }
 </script>
@@ -71,7 +42,7 @@ const toggleWishlist = async () => {
     }"
     @click="toggleWishlist"
     :disabled="!authStore.isLoggedIn || !props.isAvailable"
-    :aria-label="props.isAvailable ? 'Add to wishlist' : 'Item is sold'"
+    :aria-label="props.isAvailable ? 'Toggle wishlist' : 'Item is sold'"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
