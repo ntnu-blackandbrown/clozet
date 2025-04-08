@@ -1,28 +1,28 @@
 package stud.ntnu.no.backend.user.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import stud.ntnu.no.backend.user.dto.RegisterUserDTO;
 import stud.ntnu.no.backend.user.dto.UserDTO;
 import stud.ntnu.no.backend.user.entity.User;
 
-/**
- * Maps user entities to DTOs and vice versa.
- */
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    /**
-     * Maps a User entity to a UserDTO.
-     *
-     * @param user the user entity
-     * @return the user DTO
-     */
+
     UserDTO toDto(User user);
 
-    /**
-     * Maps a UserDTO to a User entity.
-     *
-     * @param userDto the user DTO
-     * @return the user entity
-     */
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "profilePictureUrl", ignore = true)
+    // Map password to passwordHash, assuming you will handle hashing later or in a service
+    @Mapping(target = "passwordHash", source = "password")
+    @Mapping(target = "role", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    // Note: the User entity has a boolean field with a getter isActive(), so ignore that field
+    @Mapping(target = "active", ignore = true)
+    @Mapping(target = "verificationToken", ignore = true)
+    @Mapping(target = "verificationTokenExpiry", ignore = true)
+    // User has a setFullName() method which MapStruct sees as a target property. Ignore if not needed.
+    @Mapping(target = "fullName", ignore = true)
     User toEntity(RegisterUserDTO dto);
 }

@@ -5,7 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -152,6 +152,11 @@ public class EmailServiceImpl implements EmailService {
             helper.setTo(toEmail);
             helper.setSubject(subject);
             helper.setText(htmlContent, true);
+            
+            // Add the logo as an inline attachment
+            ClassPathResource logoResource = new ClassPathResource("static/images/light-green.png");
+            helper.addInline("logo", logoResource);
+            logger.info("Added logo as inline attachment");
             
             mailSender.send(mimeMessage);
             logger.info("HTML email sent to: {}", toEmail);
