@@ -20,10 +20,21 @@ app:
     base-url: https://clozet.netlify.app/  # bytt til frontend-produksjonsdomene om nødvendig
     verification-expiry-hours: 24
     password-reset-expiry-hours: 1
+
+  jwt:
+    secret: AZTwI6sasm/p1KfaPZiSyGzIwDsEe70xTWG4H4TXatDcrqSOgWgACv1z05zhJnBIBGNWOUGuNZUnkwt86V2cqg==
+    expiration: 3600000
+    cookie-max-age: 3600
+    refresh-expiration: 3600000
+    refresh-cookie-max-age: 3600
+    secure-cookie: true  # Production bør ha secure cookies!
+
   upload:
     dir: uploads
+
   storage:
     use-cloudinary: true
+
   cloudinary:
     cloud-name: dmoe4eqt4
     api-key: 298875699675921
