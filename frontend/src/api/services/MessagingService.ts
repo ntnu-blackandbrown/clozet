@@ -7,8 +7,8 @@ export const MessagingService = {
   getUserConversations: (userId: number) => {
     return axios.get('/api/conversations', {
       params: {
-        userId
-      }
+        userId,
+      },
     })
   },
 
@@ -20,8 +20,8 @@ export const MessagingService = {
       params: {
         conversationId,
         page,
-        size
-      }
+        size,
+      },
     })
   },
 
@@ -37,7 +37,7 @@ export const MessagingService = {
    */
   createConversation: (conversationData: any) => {
     return axios.post('/api/conversations', conversationData)
-  }
+  },
 }
 
 export default MessagingService

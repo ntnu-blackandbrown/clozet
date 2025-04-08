@@ -11,8 +11,20 @@ export const AuthService = {
   /**
    * Register a new user
    */
-  register: (usernameOrEmail: string, password: string, email: string, firstName: string, lastName: string) => {
-    return axios.post('/api/auth/register', { usernameOrEmail, password, email, firstName, lastName })
+  register: (
+    usernameOrEmail: string,
+    password: string,
+    email: string,
+    firstName: string,
+    lastName: string,
+  ) => {
+    return axios.post('/api/auth/register', {
+      usernameOrEmail,
+      password,
+      email,
+      firstName,
+      lastName,
+    })
   },
 
   /**
@@ -36,7 +48,7 @@ export const AuthService = {
     return axios.post('/api/me/change-password', {
       currentPassword,
       newPassword,
-      confirmPassword
+      confirmPassword,
     })
   },
 
@@ -45,7 +57,7 @@ export const AuthService = {
    */
   verifyToken: (endpoint: string, token: string) => {
     return axios.get(`${import.meta.env.VITE_API_BASE_URL}${endpoint}?token=${token}`)
-  }
+  },
 }
 
 export default AuthService

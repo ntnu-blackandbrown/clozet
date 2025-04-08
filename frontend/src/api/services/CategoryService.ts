@@ -41,7 +41,7 @@ export const CategoryService = {
    */
   deleteCategory: (categoryId: number) => {
     return axios.delete(`/api/categories/${categoryId}`)
-  }
+  },
 }
 
 export default CategoryService

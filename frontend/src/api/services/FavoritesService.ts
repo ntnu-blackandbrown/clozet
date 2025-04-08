@@ -20,7 +20,7 @@ export const FavoritesService = {
    */
   removeFavorite: (favoriteId: number) => {
     return axios.delete(`api/favorites/${favoriteId}`)
-  }
+  },
 }
 
 export default FavoritesService

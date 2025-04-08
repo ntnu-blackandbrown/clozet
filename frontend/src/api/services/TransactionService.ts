@@ -27,7 +27,7 @@ export const TransactionService = {
    */
   createPurchase: (transactionData: any) => {
     return axios.post('/api/transactions/purchase', transactionData)
-  }
+  },
 }
 
 export default TransactionService

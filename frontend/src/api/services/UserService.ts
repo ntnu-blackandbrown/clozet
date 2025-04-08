@@ -34,7 +34,7 @@ export const UserService = {
    */
   toggleUserStatus: (userId: number, isActive: boolean) => {
     return axios.put(`/api/users/${userId}`, { active: isActive })
-  }
+  },
 }
 
 export default UserService

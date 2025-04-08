@@ -49,8 +49,8 @@ export const ProductService = {
   uploadImages: (formData: FormData) => {
     return axios.post('/api/images/upload', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'multipart/form-data',
+      },
     })
   },
 
@@ -59,7 +59,7 @@ export const ProductService = {
    */
   getItemImages: (itemId: number) => {
     return axios.get(`api/images/item/${itemId}`)
-  }
+  },
 }
 
 export default ProductService

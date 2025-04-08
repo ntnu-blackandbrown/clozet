@@ -34,7 +34,7 @@ export const ShippingService = {
    */
   deleteShippingOption: (shippingId: number) => {
     return axios.delete(`/api/shipping-options/${shippingId}`)
-  }
+  },
 }
 
 export default ShippingService

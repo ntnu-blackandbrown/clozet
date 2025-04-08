@@ -34,7 +34,7 @@ export const LocationService = {
    */
   deleteLocation: (locationId: number) => {
     return axios.delete(`/api/locations/${locationId}`)
-  }
+  },
 }
 
 export default LocationService
