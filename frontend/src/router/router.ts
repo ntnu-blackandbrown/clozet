@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MessagesView from '../views/user/MessagesView.vue'
 import { useAuthStore } from '@/stores/AuthStore'
+import NotFoundView from '@/views/NotFoundView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -136,6 +137,12 @@ const router = createRouter({
         },
       ],
     },
+    // Catch-all 404 route - MUST BE LAST
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: NotFoundView,
+    }
   ],
 })
 
