@@ -15,9 +15,25 @@ import stud.ntnu.no.backend.user.exception.UserNotFoundException;
 import stud.ntnu.no.backend.user.service.UserService;
 
 /**
- * REST controller for managing the current user's account.
+ * REST controller for managing the authenticated user's own account.
  * <p>
- * This controller provides endpoints for retrieving and updating the current user's information.
+ * This controller provides secure endpoints for users to manage their own account
+ * information, including retrieving profile data and changing passwords. Unlike
+ * the UserController, which handles administrative operations, this controller
+ * strictly enforces that users can only access and modify their own information.
+ * </p>
+ * <p>
+ * All endpoints in this controller require authentication. Requests from
+ * unauthenticated users will receive a 401 Unauthorized response.
+ * </p>
+ * <p>
+ * Security considerations:
+ * <ul>
+ *   <li>All endpoints validate the current user's authentication status</li>
+ *   <li>Sensitive operations like password changes require verification</li>
+ *   <li>Error messages are carefully crafted to avoid information leakage</li>
+ * </ul>
+ * </p>
  */
 @RestController
 @RequestMapping("/api")
@@ -29,17 +45,35 @@ public class MeController {
 
     /**
      * Constructs a new MeController with the specified user service.
+     * <p>
+     * Uses constructor injection to maintain immutability and thread-safety.
+     * </p>
      *
-     * @param userService the UserService
+     * @param userService the service responsible for user-related business logic
      */
     public MeController(UserService userService) {
         this.userService = userService;
     }
 
     /**
-     * Retrieves the current authenticated user's information.
+     * Retrieves the profile information for the currently authenticated user.
+     * <p>
+     * This endpoint extracts the user identity from the security context and
+     * returns comprehensive profile information. It checks authentication status
+     * before attempting to retrieve user data.
+     * </p>
+     * <p>
+     * The response excludes sensitive data like password hashes and
+     * verification tokens to maintain security.
+     * </p>
      *
-     * @return the current user's UserDTO or an error message if unauthorized
+     * @return ResponseEntity with:
+     *         <ul>
+     *           <li>HTTP status 200 (OK) and UserDTO if successful</li>
+     *           <li>HTTP status 401 (Unauthorized) if user is not authenticated</li>
+     *           <li>HTTP status 404 (Not Found) if the authenticated user no longer exists in the database</li>
+     *           <li>HTTP status 500 (Internal Server Error) for unexpected errors</li>
+     *         </ul>
      */
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
@@ -72,10 +106,37 @@ public class MeController {
     }
 
     /**
-     * Changes the password of the current authenticated user.
+     * Changes the password for the currently authenticated user.
+     * <p>
+     * This endpoint allows users to update their password by providing their current
+     * password (for verification) and a new password. It implements multiple validation
+     * steps:
+     * </p>
+     * <ol>
+     *   <li>Verifies that the request contains valid data</li>
+     *   <li>Confirms that the user is properly authenticated</li>
+     *   <li>Validates that the current password is correct before allowing the change</li>
+     * </ol>
+     * <p>
+     * Data persistence: Upon successful validation, the password is securely hashed
+     * and stored in the database. The previous password hash is immediately overwritten
+     * to prevent any possibility of reverting to the old password.
+     * </p>
+     * <p>
+     * Security notes: This method requires re-authentication with the current password
+     * to prevent password changes by attackers who might have temporary access to a
+     * user's session.
+     * </p>
      *
-     * @param changePasswordDTO the ChangePasswordDTO containing current and new passwords
-     * @return a success message or an error message if the operation fails
+     * @param changePasswordDTO data transfer object containing current password and new password
+     * @return ResponseEntity with:
+     *         <ul>
+     *           <li>HTTP status 200 (OK) with success message if password was changed</li>
+     *           <li>HTTP status 400 (Bad Request) if validation fails or current password is incorrect</li>
+     *           <li>HTTP status 401 (Unauthorized) if user is not authenticated</li>
+     *           <li>HTTP status 404 (Not Found) if the authenticated user no longer exists in the database</li>
+     *           <li>HTTP status 500 (Internal Server Error) for unexpected errors</li>
+     *         </ul>
      */
     @PostMapping("/me/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
