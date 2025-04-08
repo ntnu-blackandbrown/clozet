@@ -36,6 +36,7 @@ const showSuccessModal = ref(false)
 const isLoading = ref(false)
 const shippingDetails = ref<any>(null)
 const transactionDetails = ref<any>(null)
+const selectedImageIndex = ref(0)
 
 // Define transaction data interface
 interface TransactionData {
@@ -157,6 +158,11 @@ const totalPrice = computed(() => {
   return basePrice + shippingFee
 })
 
+// Computed property for the main image URL
+const mainImageUrl = computed(() => {
+  return images.value?.[selectedImageIndex.value]?.imageUrl || '/default-product-image.jpg'
+})
+
 onMounted(async () => {
   item.value = await getItemById()
 
@@ -259,14 +265,20 @@ const handleContactSeller = async () => {
 
   <div v-if="item" class="product-display">
     <div class="product-image-container">
-      <div class="gallery-container" v-if="images && images.length > 0">
-        <div v-for="(image, index) in images" :key="index" class="gallery-item">
+      <div class="gallery-container" v-if="images && images.length > 1">
+        <div
+          v-for="(image, index) in images"
+          :key="index"
+          class="gallery-item"
+          :class="{ active: index === selectedImageIndex }"
+          @click="selectedImageIndex = index"
+        >
           <img :src="image.imageUrl" :alt="'Product image ' + (index + 1)" class="gallery-image" />
         </div>
       </div>
       <div class="main-image-container">
         <img
-          :src="images?.[0]?.imageUrl || '/default-product-image.jpg'"
+          :src="mainImageUrl"
           :alt="'Main product image'"
           class="main-image"
         />
@@ -394,10 +406,20 @@ const handleContactSeller = async () => {
   cursor: pointer;
   border: 2px solid transparent;
   transition: border-color 0.2s;
+  opacity: 0.7;
 }
 
 .gallery-image:hover {
   border-color: #4a90e2;
+}
+
+.gallery-item.active .gallery-image {
+  border-color: #4a90e2;
+  opacity: 1;
+}
+
+.gallery-image:hover {
+  opacity: 1;
 }
 
 .product-details {
