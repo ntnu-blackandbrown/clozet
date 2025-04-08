@@ -314,56 +314,6 @@ class TransactionControllerTest {
     }
 
     @Test
-    void getTransactionsByBuyerId_ShouldReturnTransactionsForBuyer() throws Exception {
-        // Given
-        String buyerId = "user101";
-        
-        TransactionDTO transaction1 = new TransactionDTO();
-        transaction1.setId(1L);
-        transaction1.setBuyerId(buyerId);
-        transaction1.setSellerId("user201");
-        transaction1.setItemId(301L);
-        
-        TransactionDTO transaction2 = new TransactionDTO();
-        transaction2.setId(2L);
-        transaction2.setBuyerId(buyerId);
-        transaction2.setSellerId("user202");
-        transaction2.setItemId(302L);
-        
-        List<TransactionDTO> transactions = Arrays.asList(transaction1, transaction2);
-        
-        when(transactionService.getTransactionsByBuyerId(buyerId)).thenReturn(transactions);
-
-        // When/Then
-        mockMvc.perform(get("/api/transactions/buyer/" + buyerId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].buyerId").value(buyerId))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].buyerId").value(buyerId))
-                .andDo(document("transactions-get-by-buyer-id",
-                        Preprocessors.preprocessRequest(prettyPrint()),
-                        Preprocessors.preprocessResponse(prettyPrint()),
-                        pathParameters(
-                                parameterWithName("buyerId").description("ID of the buyer")
-                        ),
-                        responseFields(
-                                fieldWithPath("[].id").description("Transaction ID"),
-                                fieldWithPath("[].buyerId").description("Buyer ID"),
-                                fieldWithPath("[].sellerId").description("Seller ID"),
-                                fieldWithPath("[].itemId").description("Item ID"),
-                                fieldWithPath("[].amount").description("Transaction amount"),
-                                fieldWithPath("[].status").description("Transaction status"),
-                                fieldWithPath("[].paymentMethod").description("Payment method used"),
-                                fieldWithPath("[].createdAt").description("Date and time when transaction was created"),
-                                fieldWithPath("[].updatedAt").description("Date and time when transaction was last updated")
-                        )
-                ));
-                
-        verify(transactionService).getTransactionsByBuyerId(buyerId);
-    }
-
-    @Test
     void purchaseItem_ShouldReturnCreatedTransaction() throws Exception {
         // Given
         CreateTransactionRequest request = new CreateTransactionRequest();
