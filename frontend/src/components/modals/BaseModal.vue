@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const hideCloseButton = ref(false)
 const maxWidth = ref('900px')
@@ -10,6 +10,20 @@ const emit = defineEmits(['close'])
 const close = () => {
   emit('close')
 }
+
+const handleKeydown = (event) => {
+  if (event.key === 'Escape') {
+    close()
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
+})
 </script>
 
 <template>

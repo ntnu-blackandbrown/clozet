@@ -7,40 +7,55 @@
       <form @submit.prevent="submit" class="forgot-password-form">
         <div class="form-group">
           <label for="currentPassword">Current Password</label>
-          <input
-            type="password"
-            id="currentPassword"
-            v-model="currentPassword"
-            placeholder="Enter your current password"
-            class="form-control"
-            :class="{ 'error-input': currentPasswordError }"
-          />
+          <div class="password-input-container">
+            <input
+              :type="showCurrentPassword ? 'text' : 'password'"
+              id="currentPassword"
+              v-model="currentPassword"
+              placeholder="Enter your current password"
+              class="form-control"
+              :class="{ 'error-input': currentPasswordError }"
+            />
+            <button type="button" @click="showCurrentPassword = !showCurrentPassword" class="toggle-password">
+              {{ showCurrentPassword ? 'Hide' : 'Show' }}
+            </button>
+          </div>
           <span class="error" v-if="currentPasswordError">{{ currentPasswordError }}</span>
         </div>
 
         <div class="form-group">
           <label for="newPassword">New Password</label>
-          <input
-            type="password"
-            id="newPassword"
-            v-model="newPassword"
-            placeholder="Enter your new password"
-            class="form-control"
-            :class="{ 'error-input': newPasswordError }"
-          />
+          <div class="password-input-container">
+            <input
+              :type="showNewPassword ? 'text' : 'password'"
+              id="newPassword"
+              v-model="newPassword"
+              placeholder="Enter your new password"
+              class="form-control"
+              :class="{ 'error-input': newPasswordError }"
+            />
+             <button type="button" @click="showNewPassword = !showNewPassword" class="toggle-password">
+              {{ showNewPassword ? 'Hide' : 'Show' }}
+            </button>
+          </div>
           <span class="error" v-if="newPasswordError">{{ newPasswordError }}</span>
         </div>
 
         <div class="form-group">
           <label for="confirmPassword">Confirm New Password</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            v-model="confirmPassword"
-            placeholder="Confirm your new password"
-            class="form-control"
-            :class="{ 'error-input': confirmPasswordError }"
-          />
+           <div class="password-input-container">
+            <input
+              :type="showConfirmPassword ? 'text' : 'password'"
+              id="confirmPassword"
+              v-model="confirmPassword"
+              placeholder="Confirm your new password"
+              class="form-control"
+              :class="{ 'error-input': confirmPasswordError }"
+            />
+            <button type="button" @click="showConfirmPassword = !showConfirmPassword" class="toggle-password">
+              {{ showConfirmPassword ? 'Hide' : 'Show' }}
+            </button>
+          </div>
           <span class="error" v-if="confirmPasswordError">{{ confirmPasswordError }}</span>
         </div>
 
@@ -96,6 +111,11 @@ const { value: confirmPassword, errorMessage: confirmPasswordError } =
 const error = ref(false)
 const success = ref(false)
 const message = ref('')
+
+// Add state for each password field's visibility
+const showCurrentPassword = ref(false)
+const showNewPassword = ref(false)
+const showConfirmPassword = ref(false)
 
 // Handle form submission
 const submit = handleSubmit(async (values) => {
@@ -258,5 +278,42 @@ label {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Added styles for password input container and toggle button */
+.password-input-container {
+  /* Add relative positioning to contain the absolute button */
+  position: relative;
+  display: flex;
+  align-items: center;
+  /* Removed gap as button is now inside */
+}
+
+.password-input-container input {
+  flex-grow: 1; /* Make input take available space */
+  margin-bottom: 0; /* Remove default margin if any */
+  /* Add padding to the right to make space for the button */
+  padding-right: 2.5rem; /* Adjust as needed */
+}
+
+.password-input-container .toggle-password {
+   /* Position the button absolutely inside the container */
+  position: absolute;
+  right: 0.5rem; /* Adjust position */
+  top: 50%;
+  transform: translateY(-50%);
+  /* Style as an icon button */
+  background: none;
+  border: none;
+  padding: 0.2rem 0.4rem; /* Adjusted padding for text */
+  cursor: pointer;
+  font-size: 0.8rem; /* Adjusted font size for text */
+  color: #666; /* Adjust icon color */
+  line-height: 1; /* Ensure proper vertical alignment */
+}
+
+/* Ensure toggle button doesn't receive focus outline if not desired */
+.password-input-container .toggle-password:focus {
+  outline: none;
 }
 </style>

@@ -50,8 +50,13 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = response.data
       return response.data
     } catch (error) {
-      console.error('Error fetching user info:', error)
-      user.value = null
+      const axiosError = error as AxiosError
+      if (axiosError.response && axiosError.response.status === 401) {
+        user.value = null
+      } else {
+        console.error('Error fetching user info:', error)
+        user.value = null
+      }
       return null
     } finally {
       loading.value = false
