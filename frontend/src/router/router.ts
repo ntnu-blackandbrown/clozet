@@ -89,7 +89,7 @@ const router = createRouter({
         {
           path: 'change-password',
           name: 'change-password',
-          component: () => import('@/views/ChangePasswordView.vue'),
+          component: () => import('@/views/profile/ChangePasswordView.vue'),
         },
       ],
     },
