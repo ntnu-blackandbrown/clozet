@@ -14,6 +14,7 @@ spring:
     enabled: false
 
   mail:
+    enabled: false
     host: smtp.mailgun.org
     port: 587
     username: postmaster@sandbox25f0009567d5425391596f541e2cc221.mailgun.org
@@ -46,3 +47,11 @@ app:
     cloud-name: dmoe4eqt4
     api-key: 298875699675921
     api-secret: 1kAWETGi8leIYAugHlCtvH7rBAg
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure: DEBUG
+    org.springframework.boot: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate: INFO
+    stud.ntnu.no.backend: DEBUG
