@@ -3,7 +3,12 @@ import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import BaseModal from '@/components/modals/BaseModal.vue'
 import { useRouter } from 'vue-router'
-import { useValidatedForm, useValidatedField, loginSchema, registerSchema } from '@/utils/validation'
+import {
+  useValidatedForm,
+  useValidatedField,
+  loginSchema,
+  registerSchema,
+} from '@/utils/validation'
 import { AuthService } from '@/api/services/AuthService'
 import * as yup from 'yup'
 
@@ -44,12 +49,12 @@ const toggleText = computed(() =>
 
 // Interface for form values
 interface FormValues {
-  username: string;
-  password: string;
-  confirmPassword: string;
-  firstName: string;
-  lastName: string;
-  email: string;
+  username: string
+  password: string
+  confirmPassword: string
+  firstName: string
+  lastName: string
+  email: string
 }
 
 // Create a custom login schema without password validation
@@ -59,7 +64,9 @@ const loginSchemaNoPasswordValidation = yup.object({
 })
 
 // Use the current schema based on login/register mode
-const currentSchema = computed(() => (isLogin.value ? loginSchemaNoPasswordValidation : registerSchema))
+const currentSchema = computed(() =>
+  isLogin.value ? loginSchemaNoPasswordValidation : registerSchema,
+)
 
 // Set up initial form values
 const initialValues: FormValues = {
@@ -68,7 +75,7 @@ const initialValues: FormValues = {
   confirmPassword: '',
   firstName: '',
   lastName: '',
-  email: ''
+  email: '',
 }
 
 const {
@@ -77,24 +84,24 @@ const {
   resetForm,
   isFormValid: originalIsFormValid,
   isSubmitting,
-  values
+  values,
 } = useValidatedForm<FormValues>(currentSchema.value, initialValues)
 
 // Custom form validation for login mode
 const isFormValid = computed(() => {
   if (isLogin.value) {
     // For login, only check username and password
-    return values.username && values.password &&
-           !errors.value.username && !errors.value.password;
+    return values.username && values.password && !errors.value.username && !errors.value.password
   }
   // For registration, use the original validation
-  return originalIsFormValid.value;
+  return originalIsFormValid.value
 })
 
 // Define form fields with validation
 const { value: username, errorMessage: usernameError } = useValidatedField('username')
 const { value: password, errorMessage: passwordError } = useValidatedField('password')
-const { value: confirmPassword, errorMessage: confirmPasswordError } = useValidatedField('confirmPassword')
+const { value: confirmPassword, errorMessage: confirmPasswordError } =
+  useValidatedField('confirmPassword')
 const { value: firstName, errorMessage: firstNameError } = useValidatedField('firstName')
 const { value: lastName, errorMessage: lastNameError } = useValidatedField('lastName')
 const { value: email, errorMessage: emailError } = useValidatedField('email')
@@ -138,7 +145,7 @@ const submit = handleSubmit(async (values) => {
       }
     } else {
       // Direct registration with correct endpoint
-      console.log("Registering now")
+      console.log('Registering now')
       const userData = {
         username: values.username,
         email: values.email,
@@ -147,12 +154,18 @@ const submit = handleSubmit(async (values) => {
         lastName: values.lastName,
         role: 'USER',
       }
-      console.log("userData", userData)
-      console.log("Sending request now")
+      console.log('userData', userData)
+      console.log('Sending request now')
 
       debugInfo.value = `POST til /api/auth/register med ${JSON.stringify(userData)}`
 
-      const response = await AuthService.register(userData.username, userData.password, userData.email, userData.firstName, userData.lastName)
+      const response = await AuthService.register(
+        userData.username,
+        userData.password,
+        userData.email,
+        userData.firstName,
+        userData.lastName,
+      )
 
       if (response.status === 200) {
         statusMessage.value = `Registeration sucessful! Please check your email for verification`
@@ -265,7 +278,7 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #4caf50;
   box-shadow: 0 0 0 3px rgba(150, 187, 124, 0.2);
 }
 
@@ -284,7 +297,7 @@ button[type='submit'] {
   width: 100%;
   padding: 0.75rem;
   margin-top: 1rem;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
@@ -313,7 +326,7 @@ button[type='submit']:disabled {
 .toggle-form {
   background: none;
   border: none;
-  color: #2196F3;
+  color: #2196f3;
   font-size: 0.95rem;
   margin-top: 1.5rem;
   cursor: pointer;
@@ -323,7 +336,7 @@ button[type='submit']:disabled {
 }
 
 .toggle-form:hover:not(:disabled) {
-  color: #1976D2;
+  color: #1976d2;
   background-color: rgba(80, 125, 188, 0.1);
 }
 

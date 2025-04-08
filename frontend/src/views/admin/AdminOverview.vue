@@ -8,7 +8,7 @@ const statistics = ref({
   totalCategories: 0,
   totalTransactions: 0,
   recentUsers: [],
-  recentItems: []
+  recentItems: [],
 })
 
 const isLoading = ref(true)
@@ -33,15 +33,54 @@ const fetchStatistics = async () => {
         totalCategories: 18,
         totalTransactions: 52,
         recentUsers: [
-          { id: 1, username: 'emmasmith1', firstName: 'Emma', lastName: 'Smith', email: 'emmasmith@example.com', createdAt: '2023-05-15' },
-          { id: 2, username: 'noahjohnson1', firstName: 'Noah', lastName: 'Johnson', email: 'noahjohnson@example.com', createdAt: '2023-05-14' },
-          { id: 3, username: 'oliviawilliams1', firstName: 'Olivia', lastName: 'Williams', email: 'oliviawilliams@example.com', createdAt: '2023-05-13' }
+          {
+            id: 1,
+            username: 'emmasmith1',
+            firstName: 'Emma',
+            lastName: 'Smith',
+            email: 'emmasmith@example.com',
+            createdAt: '2023-05-15',
+          },
+          {
+            id: 2,
+            username: 'noahjohnson1',
+            firstName: 'Noah',
+            lastName: 'Johnson',
+            email: 'noahjohnson@example.com',
+            createdAt: '2023-05-14',
+          },
+          {
+            id: 3,
+            username: 'oliviawilliams1',
+            firstName: 'Olivia',
+            lastName: 'Williams',
+            email: 'oliviawilliams@example.com',
+            createdAt: '2023-05-13',
+          },
         ],
         recentItems: [
-          { id: 1, title: "Men's Classic T-Shirt - Black", price: 199.50, seller: 'demoSeller', createdAt: '2023-05-16' },
-          { id: 2, title: "Women's Summer Dress - Floral", price: 450.00, seller: 'emmasmith1', createdAt: '2023-05-15' },
-          { id: 3, title: "Leather Jacket - Brown", price: 1200.00, seller: 'oliviawilliams1', createdAt: '2023-05-14' }
-        ]
+          {
+            id: 1,
+            title: "Men's Classic T-Shirt - Black",
+            price: 199.5,
+            seller: 'demoSeller',
+            createdAt: '2023-05-16',
+          },
+          {
+            id: 2,
+            title: "Women's Summer Dress - Floral",
+            price: 450.0,
+            seller: 'emmasmith1',
+            createdAt: '2023-05-15',
+          },
+          {
+            id: 3,
+            title: 'Leather Jacket - Brown',
+            price: 1200.0,
+            seller: 'oliviawilliams1',
+            createdAt: '2023-05-14',
+          },
+        ],
       }
       isLoading.value = false
     }, 800)
@@ -189,7 +228,8 @@ onMounted(() => {
   margin-top: 0;
 }
 
-.loading-container, .error-container {
+.loading-container,
+.error-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -208,8 +248,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .retry-button {
@@ -288,7 +332,8 @@ onMounted(() => {
   border-collapse: collapse;
 }
 
-.data-table th, .data-table td {
+.data-table th,
+.data-table td {
   text-align: left;
   padding: 0.75rem 1.5rem;
 }
@@ -326,7 +371,8 @@ onMounted(() => {
     grid-template-columns: 1fr;
   }
 
-  .data-table th, .data-table td {
+  .data-table th,
+  .data-table td {
     padding: 0.75rem 1rem;
   }
 }

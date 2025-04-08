@@ -82,9 +82,7 @@ onMounted(() => {
       </div>
 
       <div class="admin-sidebar-footer">
-        <RouterLink to="/" class="admin-back-link">
-          Return to Site
-        </RouterLink>
+        <RouterLink to="/" class="admin-back-link"> Return to Site </RouterLink>
       </div>
     </nav>
 

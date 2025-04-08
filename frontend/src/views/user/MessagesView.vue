@@ -34,9 +34,9 @@ const selectedProductId = ref(null)
 
 // Format timestamp for display
 const formatTime = (timestamp) => {
-  if (!timestamp) return '';
-  const date = new Date(timestamp);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  if (!timestamp) return ''
+  const date = new Date(timestamp)
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
 // Returns currently active chatId from route (or null)
@@ -47,14 +47,12 @@ const activeChat = computed(() => {
 
 // Helper function to get a chat ID (either conversationId or id)
 const getChatId = (conversation) => {
-  return conversation?.conversationId || conversation?.id;
+  return conversation?.conversationId || conversation?.id
 }
 
 // Helper function to find a conversation by chat ID
 const findConversationByChatId = (chatId) => {
-  return chats.value.find(chat =>
-    (chat.conversationId === chatId) || (chat.id === chatId)
-  );
+  return chats.value.find((chat) => chat.conversationId === chatId || chat.id === chatId)
 }
 
 /**
@@ -83,15 +81,15 @@ const handleChatSelect = async (chatId) => {
   try {
     // Validate chatId is defined and not 'undefined'
     if (!chatId || chatId === 'undefined') {
-      console.error('Invalid chat ID:', chatId);
-      return;
+      console.error('Invalid chat ID:', chatId)
+      return
     }
 
     router.push(`/messages/${chatId}`)
 
     // Look for the conversation by conversationId OR id (depending on backend response)
-    const selectedConversation = chats.value.find(chat =>
-      (chat.conversationId === chatId) || (chat.id === chatId)
+    const selectedConversation = chats.value.find(
+      (chat) => chat.conversationId === chatId || chat.id === chatId,
     )
 
     if (!selectedConversation) {
@@ -107,7 +105,7 @@ const handleChatSelect = async (chatId) => {
       console.log('Setting receiver ID:', selectedConversation.receiverId.toString())
 
       // Clear WebSocket messages first to avoid duplicates
-      websocket.clearMessages();
+      websocket.clearMessages()
 
       // Then set the receiver
       websocket.setReceiver(selectedConversation.receiverId.toString())
@@ -133,8 +131,8 @@ const handleChatSelect = async (chatId) => {
 
       // Mark messages from this receiver as read
       setTimeout(() => {
-        websocket.markAllAsRead();
-      }, 1000); // Small delay to ensure WebSocket connection is ready
+        websocket.markAllAsRead()
+      }, 1000) // Small delay to ensure WebSocket connection is ready
     }
   } catch (error) {
     console.error('Failed to fetch messages for conversation:', error)
@@ -156,12 +154,17 @@ const loadMessages = async (chatId, reset = false) => {
     if (!selectedConversation) return
 
     // Fetch chat messages with pagination
-    const mssgResponse = await MessagingService.getConversationMessages(authStore.user?.id?.toString(), selectedConversation.receiverId?.toString(), messagePage.value, messagePageSize.value)
+    const mssgResponse = await MessagingService.getConversationMessages(
+      authStore.user?.id?.toString(),
+      selectedConversation.receiverId?.toString(),
+      messagePage.value,
+      messagePageSize.value,
+    )
 
     // Ensure messages are sorted by timestamp
-    const sortedMessages = mssgResponse.data.sort((a, b) =>
-      new Date(a.timestamp || a.createdAt) - new Date(b.timestamp || b.createdAt)
-    );
+    const sortedMessages = mssgResponse.data.sort(
+      (a, b) => new Date(a.timestamp || a.createdAt) - new Date(b.timestamp || b.createdAt),
+    )
 
     // If no messages returned, we've reached the end
     if (sortedMessages.length === 0) {
@@ -180,7 +183,6 @@ const loadMessages = async (chatId, reset = false) => {
       // Prepend older messages
       chatMessages.value[chatId] = [...sortedMessages, ...chatMessages.value[chatId]]
     }
-
   } catch (error) {
     console.error('Failed to fetch messages:', error)
   } finally {
@@ -211,9 +213,7 @@ const fetchReceiverDetails = async (receiverId) => {
       receiverDetails.value = response.data
 
       const readableName =
-        response.data.usernameOrEmail ||
-        response.data.username ||
-        response.data.firstName
+        response.data.usernameOrEmail || response.data.username || response.data.firstName
 
       receiverUsernames.value.set(numericReceiverId, readableName)
       return response.data
@@ -244,40 +244,42 @@ onMounted(async () => {
     websocket.connect()
 
     // Step 1: Load all conversations for the logged-in user
-    const response = await MessagingService.getUserConversations(authStore.user?.id?.toString() || '')
+    const response = await MessagingService.getUserConversations(
+      authStore.user?.id?.toString() || '',
+    )
 
     // Filter out duplicate conversations and conversations with self
-    const uniqueConversations = [];
-    const conversationKeys = new Set();
+    const uniqueConversations = []
+    const conversationKeys = new Set()
 
-    response.data.forEach(convo => {
+    response.data.forEach((convo) => {
       // Skip conversations where sender and receiver are the same
       if (convo.senderId === convo.receiverId) {
-        console.log('Skipping self-conversation:', convo);
-        return;
+        console.log('Skipping self-conversation:', convo)
+        return
       }
 
       // Create a unique key for each conversation (sorted IDs to handle both directions)
-      const ids = [convo.senderId, convo.receiverId].sort().join('-');
+      const ids = [convo.senderId, convo.receiverId].sort().join('-')
 
       // Only add if we haven't seen this conversation before
       if (!conversationKeys.has(ids)) {
-        conversationKeys.add(ids);
+        conversationKeys.add(ids)
 
         // Ensure receiverId is always the other person, not the current user
         if (Number(convo.receiverId) === authStore.user?.id) {
           // Swap sender and receiver if needed
-          const temp = convo.senderId;
-          convo.senderId = convo.receiverId;
-          convo.receiverId = temp;
+          const temp = convo.senderId
+          convo.senderId = convo.receiverId
+          convo.receiverId = temp
         }
 
-        uniqueConversations.push(convo);
+        uniqueConversations.push(convo)
       }
-    });
+    })
 
-    chats.value = uniqueConversations;
-    console.log('Loaded unique conversations:', chats.value);
+    chats.value = uniqueConversations
+    console.log('Loaded unique conversations:', chats.value)
 
     // Step 2: Fetch receiver details for each conversation
     for (const convo of chats.value) {
@@ -328,136 +330,139 @@ const logConversations = () => {
 
 // Filter WebSocket messages to only show those relevant to current chat
 const filteredWebSocketMessages = computed(() => {
-  if (!activeChat.value) return [];
+  if (!activeChat.value) return []
 
   // Find conversation by either id or conversationId
-  const currentChat = chats.value.find(chat =>
-    (chat.conversationId === activeChat.value) || (chat.id === activeChat.value)
-  );
+  const currentChat = chats.value.find(
+    (chat) => chat.conversationId === activeChat.value || chat.id === activeChat.value,
+  )
 
-  if (!currentChat) return [];
+  if (!currentChat) return []
 
   // Get the current receiver ID
-  const currentReceiverId = currentChat.receiverId?.toString();
+  const currentReceiverId = currentChat.receiverId?.toString()
 
   // Filter WebSocket messages to only include those from/to current receiver
-  return websocket.messages.filter(msg => {
+  return websocket.messages.filter((msg) => {
     // Only messages from the current receiver or to the current receiver
-    return (msg.receiverId === currentReceiverId || msg.senderId === currentReceiverId);
-  });
-});
+    return msg.receiverId === currentReceiverId || msg.senderId === currentReceiverId
+  })
+})
 
 // Add this computed property to deduplicate messages between WebSocket and API sources
 const combinedMessages = computed(() => {
-  if (!activeChat.value) return [];
+  if (!activeChat.value) return []
 
   // Find the current conversation
-  const currentConversation = chats.value.find(chat =>
-    (chat.conversationId === activeChat.value) || (chat.id === activeChat.value)
-  );
+  const currentConversation = chats.value.find(
+    (chat) => chat.conversationId === activeChat.value || chat.id === activeChat.value,
+  )
 
-  if (!currentConversation) return [];
+  if (!currentConversation) return []
 
-  const currentReceiverId = currentConversation.receiverId?.toString();
-  const currentSenderId = authStore.user?.id?.toString();
+  const currentReceiverId = currentConversation.receiverId?.toString()
+  const currentSenderId = authStore.user?.id?.toString()
 
   // Get API messages for the active chat
-  const apiMessages = chatMessages.value[activeChat.value] || [];
+  const apiMessages = chatMessages.value[activeChat.value] || []
 
   // Filter API messages to ensure they belong to the current conversation
-  const filteredApiMessages = apiMessages.filter(msg =>
-    (msg.senderId === currentSenderId && msg.receiverId === currentReceiverId) ||
-    (msg.senderId === currentReceiverId && msg.receiverId === currentSenderId)
-  );
+  const filteredApiMessages = apiMessages.filter(
+    (msg) =>
+      (msg.senderId === currentSenderId && msg.receiverId === currentReceiverId) ||
+      (msg.senderId === currentReceiverId && msg.receiverId === currentSenderId),
+  )
 
   // Create a unique key for each API message for duplicate detection
-  const messageKeys = new Set();
-  filteredApiMessages.forEach(msg => {
-    const key = `${msg.senderId}-${msg.receiverId}-${msg.content}-${msg.timestamp || msg.createdAt}`;
-    messageKeys.add(key);
-  });
+  const messageKeys = new Set()
+  filteredApiMessages.forEach((msg) => {
+    const key = `${msg.senderId}-${msg.receiverId}-${msg.content}-${msg.timestamp || msg.createdAt}`
+    messageKeys.add(key)
+  })
 
   // Filter WebSocket messages to only include those that don't match API messages
-  const uniqueWebSocketMessages = filteredWebSocketMessages.value.filter(wsMsg => {
-    const key = `${wsMsg.senderId}-${wsMsg.receiverId}-${wsMsg.content}-${wsMsg.timestamp || wsMsg.createdAt}`;
+  const uniqueWebSocketMessages = filteredWebSocketMessages.value.filter((wsMsg) => {
+    const key = `${wsMsg.senderId}-${wsMsg.receiverId}-${wsMsg.content}-${wsMsg.timestamp || wsMsg.createdAt}`
     if (messageKeys.has(key)) {
-      return false;
+      return false
     }
-    messageKeys.add(key);
-    return true;
-  });
+    messageKeys.add(key)
+    return true
+  })
 
   // Combine and sort all messages by timestamp
-  const allMessages = [...filteredApiMessages, ...uniqueWebSocketMessages];
+  const allMessages = [...filteredApiMessages, ...uniqueWebSocketMessages]
   return allMessages.sort((a, b) => {
-    const timeA = new Date(a.timestamp || a.createdAt).getTime();
-    const timeB = new Date(b.timestamp || b.createdAt).getTime();
-    return timeA - timeB;
-  });
-});
+    const timeA = new Date(a.timestamp || a.createdAt).getTime()
+    const timeB = new Date(b.timestamp || b.createdAt).getTime()
+    return timeA - timeB
+  })
+})
 
 /**
  * Get the username for a conversation's receiver
  */
 const getReceiverUsername = (conversation) => {
-  if (!conversation) return '';
+  if (!conversation) return ''
 
-  const numericReceiverId = Number(conversation.receiverId);
-  const username = receiverUsernames.value.get(numericReceiverId);
+  const numericReceiverId = Number(conversation.receiverId)
+  const username = receiverUsernames.value.get(numericReceiverId)
 
   if (username) {
-    return username;
+    return username
   }
 
   // If we don't have the username in our map, try to fetch it
   if (numericReceiverId) {
-    fetchReceiverDetails(numericReceiverId);
+    fetchReceiverDetails(numericReceiverId)
   }
 
   // Return receiver name from conversation as fallback
-  return conversation.receiverName || 'Unknown User';
+  return conversation.receiverName || 'Unknown User'
 }
 
 // Get active item details for the current chat
 const activeItemDetails = computed(() => {
-  if (!activeChat.value) return null;
+  if (!activeChat.value) return null
 
-  const currentChat = findConversationByChatId(activeChat.value);
-  if (!currentChat || !currentChat.itemId) return null;
+  const currentChat = findConversationByChatId(activeChat.value)
+  if (!currentChat || !currentChat.itemId) return null
 
-  return itemDetails.value[currentChat.itemId] || null;
-});
+  return itemDetails.value[currentChat.itemId] || null
+})
 
 // Additional computed properties for Buy Button logic
 const isCurrentUserSeller = computed(() => {
-  if (!activeItemDetails.value || !authStore.user?.id) return false;
-  return activeItemDetails.value.sellerId === authStore.user.id;
-});
+  if (!activeItemDetails.value || !authStore.user?.id) return false
+  return activeItemDetails.value.sellerId === authStore.user.id
+})
 
 const isItemAvailable = computed(() => {
-  if (!activeItemDetails.value) return false;
-  return activeItemDetails.value.available !== false && activeItemDetails.value.isAvailable !== false;
-});
+  if (!activeItemDetails.value) return false
+  return (
+    activeItemDetails.value.available !== false && activeItemDetails.value.isAvailable !== false
+  )
+})
 
 const shouldDisableButtons = computed(() => {
-  return isCurrentUserSeller.value || !isItemAvailable.value;
-});
+  return isCurrentUserSeller.value || !isItemAvailable.value
+})
 
 // Function to handle Buy Item button click
 const handleBuyItem = () => {
-  if (!activeItemDetails.value) return;
+  if (!activeItemDetails.value) return
 
   // Set the product ID and show the modal
-  selectedProductId.value = activeItemDetails.value.id;
-  showProductModal.value = true;
-};
+  selectedProductId.value = activeItemDetails.value.id
+  showProductModal.value = true
+}
 
 // Function to handle Show Product button click
 const handleShowProduct = (productId) => {
   // Set the product ID and show the modal
-  selectedProductId.value = productId;
-  showProductModal.value = true;
-};
+  selectedProductId.value = productId
+  showProductModal.value = true
+}
 </script>
 
 <template>
@@ -481,15 +486,16 @@ const handleShowProduct = (productId) => {
           </h2>
           <div v-if="activeItemDetails" class="item-info">
             <span class="item-label">Item:</span>
-            <span class="item-name" @click="handleShowProduct(activeItemDetails.id)" role="button">{{ activeItemDetails.title }}</span>
+            <span
+              class="item-name"
+              @click="handleShowProduct(activeItemDetails.id)"
+              role="button"
+              >{{ activeItemDetails.title }}</span
+            >
           </div>
         </div>
         <div v-if="activeItemDetails" class="header-actions">
-          <button
-            class="buy-button"
-            @click="handleBuyItem"
-            :disabled="shouldDisableButtons"
-          >
+          <button class="buy-button" @click="handleBuyItem" :disabled="shouldDisableButtons">
             Buy Item
           </button>
         </div>
@@ -510,16 +516,31 @@ const handleShowProduct = (productId) => {
 
         <div class="messages-list">
           <!-- Combined messages from API and WebSocket, without duplicates -->
-          <div v-for="(msg, index) in combinedMessages" :key="'msg-'+index"
-               :class="['message', (Number(msg.senderId) === authStore.user?.id || msg.type === 'sent') ? 'message-sent' : 'message-received']">
+          <div
+            v-for="(msg, index) in combinedMessages"
+            :key="'msg-' + index"
+            :class="[
+              'message',
+              Number(msg.senderId) === authStore.user?.id || msg.type === 'sent'
+                ? 'message-sent'
+                : 'message-received',
+            ]"
+          >
             <div class="message-content">{{ msg.content }}</div>
             <div class="message-footer">
               <span class="message-time">{{ formatTime(msg.timestamp || msg.createdAt) }}</span>
 
               <!-- Message status indicators (only for sent messages) -->
-              <span v-if="Number(msg.senderId) === authStore.user?.id || msg.type === 'sent'" class="message-status">
+              <span
+                v-if="Number(msg.senderId) === authStore.user?.id || msg.type === 'sent'"
+                class="message-status"
+              >
                 <!-- Failed message with retry option -->
-                <span v-if="websocket.failedMessages.has(msg.id)" class="message-failed" @click="websocket.retryMessage(msg.id)">
+                <span
+                  v-if="websocket.failedMessages.has(msg.id)"
+                  class="message-failed"
+                  @click="websocket.retryMessage(msg.id)"
+                >
                   <i class="fas fa-exclamation-circle"></i>
                   <span class="retry-text">Tap to retry</span>
                 </span>
@@ -552,17 +573,23 @@ const handleShowProduct = (productId) => {
       <!-- Message input area -->
       <div class="message-input" v-if="activeChat">
         <!-- Typing indicator -->
-        <div v-if="websocket.isReceiverTyping(findConversationByChatId(activeChat)?.receiverId)" class="typing-indicator">
+        <div
+          v-if="websocket.isReceiverTyping(findConversationByChatId(activeChat)?.receiverId)"
+          class="typing-indicator"
+        >
           {{ getReceiverUsername(findConversationByChatId(activeChat)) }} is typing...
         </div>
         <div class="form-group">
-          <textarea v-model="websocket.messageContent"
-                   @keypress.enter.prevent="websocket.sendMessage"
-                   @input="websocket.handleTyping"
-                   placeholder="Type a message..."></textarea>
+          <textarea
+            v-model="websocket.messageContent"
+            @keypress.enter.prevent="websocket.sendMessage"
+            @input="websocket.handleTyping"
+            placeholder="Type a message..."
+          ></textarea>
         </div>
-        <button @click="websocket.sendMessage"
-                :disabled="!websocket.messageContent.trim()">Send Message</button>
+        <button @click="websocket.sendMessage" :disabled="!websocket.messageContent.trim()">
+          Send Message
+        </button>
       </div>
 
       <!-- No chat selected state -->
@@ -638,7 +665,7 @@ const handleShowProduct = (productId) => {
 }
 
 .buy-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 0.375rem;
@@ -669,9 +696,15 @@ const handleShowProduct = (productId) => {
 }
 
 @keyframes pulsate {
-  0% { opacity: 0.5; }
-  50% { opacity: 1; }
-  100% { opacity: 0.5; }
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
 }
 
 .message-history {
@@ -703,8 +736,12 @@ const handleShowProduct = (productId) => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .end-of-history {

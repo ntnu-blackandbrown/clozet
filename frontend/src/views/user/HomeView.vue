@@ -108,7 +108,7 @@ const displayCategories = computed(() => {
     { id: 1, name: 'Tops' },
     { id: 2, name: 'Bottoms' },
     { id: 3, name: 'Dresses' },
-    { id: 4, name: 'Accessories' }
+    { id: 4, name: 'Accessories' },
   ]
 })
 </script>
@@ -159,7 +159,12 @@ const displayCategories = computed(() => {
         </h4>
         <div v-if="categoryError" class="error-message">{{ categoryError }}</div>
         <div class="badge-container">
-          <Badge v-for="category in displayCategories" :key="category.id" type="category" :name="category.name" />
+          <Badge
+            v-for="category in displayCategories"
+            :key="category.id"
+            type="category"
+            :name="category.name"
+          />
         </div>
       </div>
     </div>

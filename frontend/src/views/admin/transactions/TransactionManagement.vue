@@ -27,23 +27,24 @@ const fetchTransactions = async () => {
 
 // Filter transactions based on status and search
 const filteredTransactions = computed(() => {
-  let filtered = transactions.value;
+  let filtered = transactions.value
 
   // Filter by status
   if (statusFilter.value !== 'all') {
-    filtered = filtered.filter(transaction =>
-      transaction.status?.toUpperCase() === statusFilter.value.toUpperCase()
+    filtered = filtered.filter(
+      (transaction) => transaction.status?.toUpperCase() === statusFilter.value.toUpperCase(),
     )
   }
 
   // Filter by search query
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(transaction =>
-      transaction.buyerId?.toString().includes(query) ||
-      transaction.sellerId?.toString().includes(query) ||
-      transaction.paymentMethod?.toLowerCase().includes(query) ||
-      transaction.item?.title?.toLowerCase().includes(query)
+    filtered = filtered.filter(
+      (transaction) =>
+        transaction.buyerId?.toString().includes(query) ||
+        transaction.sellerId?.toString().includes(query) ||
+        transaction.paymentMethod?.toLowerCase().includes(query) ||
+        transaction.item?.title?.toLowerCase().includes(query),
     )
   }
 
@@ -86,7 +87,11 @@ const toggleSort = (key) => {
 const formatDate = (dateString) => {
   if (!dateString) return '-'
   const date = new Date(dateString)
-  return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  return (
+    date.toLocaleDateString() +
+    ' ' +
+    date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  )
 }
 
 // Format currency
@@ -141,7 +146,7 @@ onMounted(() => {
           v-model="searchQuery"
           placeholder="Search by buyer, seller, item..."
           class="search-input"
-        >
+        />
       </div>
 
       <div class="filter-container">
@@ -211,7 +216,10 @@ onMounted(() => {
         <p>Loading transactions...</p>
       </div>
 
-      <div v-else-if="filteredTransactions.length === 0 && transactions.length > 0" class="empty-state">
+      <div
+        v-else-if="filteredTransactions.length === 0 && transactions.length > 0"
+        class="empty-state"
+      >
         <p>No transactions found matching your filters</p>
         <button @click="resetFilters" class="btn-primary">Reset Filters</button>
       </div>
@@ -315,7 +323,8 @@ onMounted(() => {
   border-collapse: collapse;
 }
 
-.admin-table th, .admin-table td {
+.admin-table th,
+.admin-table td {
   text-align: left;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -413,8 +422,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .empty-state {
@@ -441,7 +454,8 @@ onMounted(() => {
     gap: 1rem;
   }
 
-  .admin-table th, .admin-table td {
+  .admin-table th,
+  .admin-table td {
     padding: 0.75rem 0.5rem;
     font-size: 0.875rem;
   }

@@ -44,7 +44,7 @@
           <span class="error" v-if="confirmPasswordError">{{ confirmPasswordError }}</span>
         </div>
 
-        <div class="message" :class="{ 'error': error, 'success': success }">
+        <div class="message" :class="{ error: error, success: success }">
           {{ message }}
         </div>
 
@@ -67,38 +67,31 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { AuthService } from '@/api/services/AuthService'
-import {
-  useValidatedForm,
-  useValidatedField,
-  changePasswordSchema
-} from '@/utils/validation'
+import { useValidatedForm, useValidatedField, changePasswordSchema } from '@/utils/validation'
 
 const router = useRouter()
 
 // Define form values interface
 interface ChangePasswordFormValues {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
 }
 
 // Use our validation hook
-const {
-  handleSubmit,
-  errors,
-  resetForm,
-  isFormValid,
-  isSubmitting
-} = useValidatedForm<ChangePasswordFormValues>(changePasswordSchema, {
-  currentPassword: '',
-  newPassword: '',
-  confirmPassword: ''
-})
+const { handleSubmit, errors, resetForm, isFormValid, isSubmitting } =
+  useValidatedForm<ChangePasswordFormValues>(changePasswordSchema, {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  })
 
 // Setup fields with validation
-const { value: currentPassword, errorMessage: currentPasswordError } = useValidatedField('currentPassword')
+const { value: currentPassword, errorMessage: currentPasswordError } =
+  useValidatedField('currentPassword')
 const { value: newPassword, errorMessage: newPasswordError } = useValidatedField('newPassword')
-const { value: confirmPassword, errorMessage: confirmPasswordError } = useValidatedField('confirmPassword')
+const { value: confirmPassword, errorMessage: confirmPasswordError } =
+  useValidatedField('confirmPassword')
 
 const error = ref(false)
 const success = ref(false)
@@ -113,7 +106,11 @@ const submit = handleSubmit(async (values) => {
 
   try {
     // Call API to update password
-    await AuthService.changePassword(values.currentPassword, values.newPassword, values.confirmPassword)
+    await AuthService.changePassword(
+      values.currentPassword,
+      values.newPassword,
+      values.confirmPassword,
+    )
 
     success.value = true
     message.value = 'Password has been updated successfully.'
@@ -194,7 +191,7 @@ label {
 .submit-button {
   width: 100%;
   padding: 0.75rem;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
@@ -239,7 +236,7 @@ label {
 }
 
 .back-to-login {
-  color: #2196F3;
+  color: #2196f3;
   text-decoration: none;
 }
 

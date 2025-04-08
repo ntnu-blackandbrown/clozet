@@ -13,7 +13,7 @@ const locationForm = ref({
   city: '',
   region: '',
   latitude: 0,
-  longitude: 0
+  longitude: 0,
 })
 
 const formMode = ref('add') // 'add' or 'edit'
@@ -111,7 +111,7 @@ const editLocation = (location) => {
     city: location.city,
     region: location.region,
     latitude: location.latitude,
-    longitude: location.longitude
+    longitude: location.longitude,
   }
   showForm.value = true
 }
@@ -123,7 +123,7 @@ const resetForm = () => {
     city: '',
     region: '',
     latitude: 0,
-    longitude: 0
+    longitude: 0,
   }
   formErrors.value = {}
 }
@@ -186,16 +186,10 @@ onMounted(() => {
             <td>{{ location.id }}</td>
             <td>{{ location.city }}</td>
             <td>{{ location.region }}</td>
-            <td>
-              {{ location.latitude.toFixed(4) }}, {{ location.longitude.toFixed(4) }}
-            </td>
+            <td>{{ location.latitude.toFixed(4) }}, {{ location.longitude.toFixed(4) }}</td>
             <td class="actions">
-              <button @click="editLocation(location)" class="btn-icon edit">
-                ✎
-              </button>
-              <button @click="deleteLocation(location.id)" class="btn-icon delete">
-                🗑
-              </button>
+              <button @click="editLocation(location)" class="btn-icon edit">✎</button>
+              <button @click="deleteLocation(location.id)" class="btn-icon delete">🗑</button>
             </td>
           </tr>
         </tbody>
@@ -228,7 +222,7 @@ onMounted(() => {
               id="city"
               v-model="locationForm.city"
               :class="{ 'input-error': formErrors.city }"
-            >
+            />
             <span v-if="formErrors.city" class="error-text">{{ formErrors.city }}</span>
           </div>
 
@@ -239,7 +233,7 @@ onMounted(() => {
               id="region"
               v-model="locationForm.region"
               :class="{ 'input-error': formErrors.region }"
-            >
+            />
             <span v-if="formErrors.region" class="error-text">{{ formErrors.region }}</span>
           </div>
 
@@ -252,7 +246,7 @@ onMounted(() => {
                 v-model.number="locationForm.latitude"
                 step="0.0001"
                 :class="{ 'input-error': formErrors.latitude }"
-              >
+              />
               <span v-if="formErrors.latitude" class="error-text">{{ formErrors.latitude }}</span>
             </div>
 
@@ -264,7 +258,7 @@ onMounted(() => {
                 v-model.number="locationForm.longitude"
                 step="0.0001"
                 :class="{ 'input-error': formErrors.longitude }"
-              >
+              />
               <span v-if="formErrors.longitude" class="error-text">{{ formErrors.longitude }}</span>
             </div>
           </div>
@@ -324,7 +318,8 @@ onMounted(() => {
   border-collapse: collapse;
 }
 
-.admin-table th, .admin-table td {
+.admin-table th,
+.admin-table td {
   text-align: left;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -401,8 +396,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .empty-state {
@@ -524,7 +523,8 @@ onMounted(() => {
     gap: 1rem;
   }
 
-  .admin-table th, .admin-table td {
+  .admin-table th,
+  .admin-table td {
     padding: 0.75rem 1rem;
   }
 

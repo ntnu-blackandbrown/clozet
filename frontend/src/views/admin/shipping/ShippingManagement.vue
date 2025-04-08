@@ -14,7 +14,7 @@ const shippingForm = ref({
   description: '',
   estimatedDays: 1,
   price: 0,
-  isTracked: false
+  isTracked: false,
 })
 
 const formMode = ref('add') // 'add' or 'edit'
@@ -113,7 +113,7 @@ const editShippingOption = (option) => {
     description: option.description,
     estimatedDays: option.estimatedDays,
     price: option.price,
-    isTracked: option.isTracked
+    isTracked: option.isTracked,
   }
   showForm.value = true
 }
@@ -126,7 +126,7 @@ const resetForm = () => {
     description: '',
     estimatedDays: 1,
     price: 0,
-    isTracked: false
+    isTracked: false,
   }
   formErrors.value = {}
 }
@@ -204,12 +204,8 @@ onMounted(() => {
               </span>
             </td>
             <td class="actions">
-              <button @click="editShippingOption(option)" class="btn-icon edit">
-                ✎
-              </button>
-              <button @click="deleteShippingOption(option.id)" class="btn-icon delete">
-                🗑
-              </button>
+              <button @click="editShippingOption(option)" class="btn-icon edit">✎</button>
+              <button @click="deleteShippingOption(option.id)" class="btn-icon delete">🗑</button>
             </td>
           </tr>
         </tbody>
@@ -222,7 +218,9 @@ onMounted(() => {
 
       <div v-else class="empty-state">
         <p>No shipping options found</p>
-        <button @click="addShippingOption" class="btn-primary">Add Your First Shipping Option</button>
+        <button @click="addShippingOption" class="btn-primary">
+          Add Your First Shipping Option
+        </button>
       </div>
     </div>
 
@@ -242,7 +240,7 @@ onMounted(() => {
               id="name"
               v-model="shippingForm.name"
               :class="{ 'input-error': formErrors.name }"
-            >
+            />
             <span v-if="formErrors.name" class="error-text">{{ formErrors.name }}</span>
           </div>
 
@@ -254,7 +252,9 @@ onMounted(() => {
               rows="3"
               :class="{ 'input-error': formErrors.description }"
             ></textarea>
-            <span v-if="formErrors.description" class="error-text">{{ formErrors.description }}</span>
+            <span v-if="formErrors.description" class="error-text">{{
+              formErrors.description
+            }}</span>
           </div>
 
           <div class="form-row">
@@ -266,8 +266,10 @@ onMounted(() => {
                 v-model.number="shippingForm.estimatedDays"
                 min="1"
                 :class="{ 'input-error': formErrors.estimatedDays }"
-              >
-              <span v-if="formErrors.estimatedDays" class="error-text">{{ formErrors.estimatedDays }}</span>
+              />
+              <span v-if="formErrors.estimatedDays" class="error-text">{{
+                formErrors.estimatedDays
+              }}</span>
             </div>
 
             <div class="form-group half">
@@ -279,14 +281,14 @@ onMounted(() => {
                 step="0.01"
                 min="0"
                 :class="{ 'input-error': formErrors.price }"
-              >
+              />
               <span v-if="formErrors.price" class="error-text">{{ formErrors.price }}</span>
             </div>
           </div>
 
           <div class="form-group checkbox-group">
             <label class="checkbox-label">
-              <input type="checkbox" v-model="shippingForm.isTracked">
+              <input type="checkbox" v-model="shippingForm.isTracked" />
               <span class="checkbox-text">Tracked Shipping</span>
             </label>
           </div>
@@ -346,7 +348,8 @@ onMounted(() => {
   border-collapse: collapse;
 }
 
-.admin-table th, .admin-table td {
+.admin-table th,
+.admin-table td {
   text-align: left;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -441,8 +444,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .empty-state {
@@ -586,7 +593,8 @@ onMounted(() => {
     gap: 1rem;
   }
 
-  .admin-table th, .admin-table td {
+  .admin-table th,
+  .admin-table td {
     padding: 0.75rem 1rem;
   }
 

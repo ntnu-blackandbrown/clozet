@@ -1,4 +1,4 @@
-  <script setup>
+<script setup>
 import { ref, onMounted } from 'vue'
 import { CategoryService } from '@/api/services/CategoryService'
 // State
@@ -11,7 +11,7 @@ const categoryForm = ref({
   id: null,
   name: '',
   description: '',
-  parentId: null
+  parentId: null,
 })
 
 const formMode = ref('add') // 'add' or 'edit'
@@ -108,7 +108,7 @@ const editCategory = (category) => {
     id: category.id,
     name: category.name,
     description: category.description,
-    parentId: category.parent ? category.parent.id : null
+    parentId: category.parent ? category.parent.id : null,
   }
   showForm.value = true
 }
@@ -119,7 +119,7 @@ const resetForm = () => {
     id: null,
     name: '',
     description: '',
-    parentId: null
+    parentId: null,
   }
   formErrors.value = {}
 }
@@ -182,12 +182,8 @@ onMounted(() => {
             <td>{{ category.description }}</td>
             <td>{{ getParentName(category) }}</td>
             <td class="actions">
-              <button @click="editCategory(category)" class="btn-icon edit">
-                ✎
-              </button>
-              <button @click="deleteCategory(category.id)" class="btn-icon delete">
-                🗑
-              </button>
+              <button @click="editCategory(category)" class="btn-icon edit">✎</button>
+              <button @click="deleteCategory(category.id)" class="btn-icon delete">🗑</button>
             </td>
           </tr>
         </tbody>
@@ -220,7 +216,7 @@ onMounted(() => {
               id="name"
               v-model="categoryForm.name"
               :class="{ 'input-error': formErrors.name }"
-            >
+            />
             <span v-if="formErrors.name" class="error-text">{{ formErrors.name }}</span>
           </div>
 
@@ -232,7 +228,9 @@ onMounted(() => {
               rows="3"
               :class="{ 'input-error': formErrors.description }"
             ></textarea>
-            <span v-if="formErrors.description" class="error-text">{{ formErrors.description }}</span>
+            <span v-if="formErrors.description" class="error-text">{{
+              formErrors.description
+            }}</span>
           </div>
 
           <div class="form-group">
@@ -305,7 +303,8 @@ onMounted(() => {
   border-collapse: collapse;
 }
 
-.admin-table th, .admin-table td {
+.admin-table th,
+.admin-table td {
   text-align: left;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -382,8 +381,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .empty-state {
@@ -498,7 +501,8 @@ onMounted(() => {
     gap: 1rem;
   }
 
-  .admin-table th, .admin-table td {
+  .admin-table th,
+  .admin-table td {
     padding: 0.75rem 1rem;
   }
 

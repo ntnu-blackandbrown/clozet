@@ -135,8 +135,6 @@ describe('MessagingContainer.vue', () => {
     expect(replaceSpy).not.toHaveBeenCalled()
   })*/
 
-
-
   it('calls router.push when MessagesSidebar emits "select-chat"', async () => {
     const wrapper = mount(MessagesView, {
       global: {
@@ -153,6 +151,4 @@ describe('MessagingContainer.vue', () => {
     await wrapper.findComponent(MessagesSidebarStub).vm.$emit('select-chat', 1)
     expect(pushSpy).toHaveBeenCalledWith(`/messages/1`)
   })
-
-
 })

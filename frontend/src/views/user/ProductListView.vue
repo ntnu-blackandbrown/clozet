@@ -7,8 +7,8 @@ import { ProductService } from '@/api/services/ProductService'
 const props = defineProps({
   searchQuery: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
 })
 
 const route = useRoute()
@@ -25,20 +25,20 @@ const selectedCategory = ref<string>('')
 
 // Unique filter options
 const locations = computed(() => {
-  const uniqueLocations = new Set(items.value.map(item => item.location).filter(Boolean))
+  const uniqueLocations = new Set(items.value.map((item) => item.location).filter(Boolean))
   return Array.from(uniqueLocations)
 })
 
 const categories = computed(() => {
-  const uniqueCategories = new Set(items.value.map(item => item.category).filter(Boolean))
+  const uniqueCategories = new Set(items.value.map((item) => item.category).filter(Boolean))
   return Array.from(uniqueCategories)
 })
 
 const shippingOptions = computed(() => {
   const uniqueOptions = new Set(
     Array.from(detailedItems.value.values())
-      .map(item => item.shippingOptionName)
-      .filter(Boolean)
+      .map((item) => item.shippingOptionName)
+      .filter(Boolean),
   )
   return Array.from(uniqueOptions)
 })
@@ -59,8 +59,8 @@ const fetchItemDetails = async (itemId: number) => {
 // Function to fetch details for all items
 const fetchAllItemDetails = async () => {
   isLoadingDetails.value = true
-  const itemsNeedingDetails = items.value.filter(item => !detailedItems.value.has(item.id))
-  await Promise.all(itemsNeedingDetails.map(item => fetchItemDetails(item.id)))
+  const itemsNeedingDetails = items.value.filter((item) => !detailedItems.value.has(item.id))
+  await Promise.all(itemsNeedingDetails.map((item) => fetchItemDetails(item.id)))
   isLoadingDetails.value = false
 }
 
@@ -94,18 +94,18 @@ watch(
       isLoadingDetails.value = true
 
       // Fetch details for all items that don't already have details
-      const itemsNeedingDetails = items.value.filter(item => !detailedItems.value.has(item.id))
+      const itemsNeedingDetails = items.value.filter((item) => !detailedItems.value.has(item.id))
 
       // Limit to first 10 items to avoid overloading the server
       const itemsToFetch = itemsNeedingDetails.slice(0, 10)
 
       if (itemsToFetch.length > 0) {
-        await Promise.all(itemsToFetch.map(item => fetchItemDetails(item.id)))
+        await Promise.all(itemsToFetch.map((item) => fetchItemDetails(item.id)))
       }
 
       isLoadingDetails.value = false
     }
-  }
+  },
 )
 
 // Updated filtering logic
@@ -115,7 +115,7 @@ const filteredItems = computed(() => {
   // Apply search query filter
   if (props.searchQuery.trim()) {
     const query = props.searchQuery.toLowerCase().trim()
-    filtered = filtered.filter(item => {
+    filtered = filtered.filter((item) => {
       const basicMatch =
         item.title?.toLowerCase().includes(query) ||
         item.category?.toLowerCase().includes(query) ||
@@ -141,17 +141,17 @@ const filteredItems = computed(() => {
 
   // Apply location filter
   if (selectedLocation.value) {
-    filtered = filtered.filter(item => item.location === selectedLocation.value)
+    filtered = filtered.filter((item) => item.location === selectedLocation.value)
   }
 
   // Apply category filter
   if (selectedCategory.value) {
-    filtered = filtered.filter(item => item.category === selectedCategory.value)
+    filtered = filtered.filter((item) => item.category === selectedCategory.value)
   }
 
   // Apply shipping option filter
   if (selectedShippingOption.value) {
-    filtered = filtered.filter(item => {
+    filtered = filtered.filter((item) => {
       const detailedItem = detailedItems.value.get(item.id)
       return detailedItem?.shippingOptionName === selectedShippingOption.value
     })
@@ -195,30 +195,31 @@ watch(
       selectedShippingOption.value = newQuery.shipping as string
     }
   },
-  { immediate: true }
+  { immediate: true },
 )
 
 // Update URL when filters change
-watch([selectedCategory, selectedLocation, selectedShippingOption], ([category, location, shipping]) => {
-  const query: Record<string, string> = {}
+watch(
+  [selectedCategory, selectedLocation, selectedShippingOption],
+  ([category, location, shipping]) => {
+    const query: Record<string, string> = {}
 
-  if (category) query.category = category
-  if (location) query.location = location
-  if (shipping) query.shipping = shipping
+    if (category) query.category = category
+    if (location) query.location = location
+    if (shipping) query.shipping = shipping
 
-  // Replace the current URL with the new query parameters
-  router.replace({ query })
-}, { deep: true })
+    // Replace the current URL with the new query parameters
+    router.replace({ query })
+  },
+  { deep: true },
+)
 
 // Watch for shipping filter changes
-watch(
-  selectedShippingOption,
-  async (newShippingOption) => {
-    if (newShippingOption) {
-      await fetchAllItemDetails()
-    }
+watch(selectedShippingOption, async (newShippingOption) => {
+  if (newShippingOption) {
+    await fetchAllItemDetails()
   }
-)
+})
 
 // Reset filters function
 const resetFilters = () => {
@@ -266,9 +267,7 @@ const resetFilters = () => {
         </select>
       </div>
 
-      <button class="reset-button" @click="resetFilters">
-        Reset filters
-      </button>
+      <button class="reset-button" @click="resetFilters">Reset filters</button>
     </div>
 
     <div v-if="isLoadingDetails" class="loading-indicator">
