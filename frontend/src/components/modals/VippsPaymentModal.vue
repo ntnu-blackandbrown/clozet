@@ -21,12 +21,17 @@ const currentStep = ref(1)
 const error = ref('')
 
 // Initialize validation with the vipps schema
+interface VippsFormValues {
+  phoneNumber: string;
+  pincode: string;
+}
+
 const {
   handleSubmit,
   isSubmitting,
   setStatus,
   isFormValid
-} = useValidatedForm(vippsPaymentSchema, {
+} = useValidatedForm<VippsFormValues>(vippsPaymentSchema, {
   phoneNumber: '',
   pincode: ''
 })

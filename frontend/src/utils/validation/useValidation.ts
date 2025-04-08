@@ -8,21 +8,32 @@ import type { Schema } from 'yup'
  * @param initialValues Optional initial values for the form
  * @returns Form validation utilities
  */
-export function useValidatedForm<T extends Record<string, any>>(schema: Schema, initialValues = {} as T) {
+export function useValidatedForm<T extends Record<string, any>>(schema: Schema, initialValues: T) {
   const isSubmitting = ref(false)
   const statusMessage = ref('')
   const statusType = ref('')
 
-  // Initialize form with validation schema
-  const { handleSubmit, errors, resetForm, values } = useForm<T>({
+  // Initialize form with validation schema and handle the type casting
+  const { handleSubmit, errors, resetForm, values } = useForm({
     validationSchema: schema,
-    initialValues
+    initialValues: initialValues as any
   })
 
   // Computes if the form is valid by checking all errors and required fields
   const isFormValid = computed(() => {
-    return Object.keys(errors.value).length === 0 &&
-           Object.entries(values).every(([_, value]) => value !== undefined && value !== '')
+    if (Object.keys(errors.value).length > 0) {
+      return false
+    }
+
+    // Check if all form values are filled
+    for (const key in values) {
+      const value = values[key as keyof typeof values]
+      if (value === undefined || value === '') {
+        return false
+      }
+    }
+
+    return true
   })
 
   // Set form status (for displaying status messages)
@@ -38,7 +49,8 @@ export function useValidatedForm<T extends Record<string, any>>(schema: Schema, 
   }
 
   return {
-    handleSubmit,
+    // Cast the handleSubmit to accept our type T as an argument
+    handleSubmit: handleSubmit as (handler: (values: T) => any) => any,
     errors,
     resetForm,
     isFormValid,
@@ -47,7 +59,7 @@ export function useValidatedForm<T extends Record<string, any>>(schema: Schema, 
     statusType,
     setStatus,
     clearStatus,
-    values
+    values: values as T
   }
 }
 
