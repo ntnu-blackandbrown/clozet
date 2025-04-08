@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, defineEmits, defineProps, computed } from 'vue'
 import axios from '@/api/axios'
+import { useValidatedForm, useValidatedField, vippsPaymentSchema } from '@/utils/validation'
 
 const props = defineProps<{
   itemId: number,
@@ -17,22 +18,30 @@ const emit = defineEmits(['close', 'back', 'paymentComplete'])
 
 // Step tracking
 const currentStep = ref(1)
-const phoneNumber = ref('')
-const pincode = ref('')
-const isProcessing = ref(false)
 const error = ref('')
 
-// Phone number validation
-const isValidPhoneNumber = (phone: string) => {
-  // Norwegian phone number: +47 followed by 8 digits
-  const regex = /^\+47[0-9]{8}$/
-  return regex.test(phone)
-}
+// Initialize validation with the vipps schema
+const {
+  handleSubmit,
+  isSubmitting,
+  setStatus,
+  isFormValid
+} = useValidatedForm(vippsPaymentSchema, {
+  phoneNumber: '',
+  pincode: ''
+})
+
+// Get validated fields
+const { value: phoneNumber } = useValidatedField('phoneNumber')
+const { value: pincode } = useValidatedField('pincode')
 
 // Go to next step
 const nextStep = () => {
   if (currentStep.value === 1) {
-    if (!isValidPhoneNumber(phoneNumber.value)) {
+    // Use our vipps phone number validation
+    const phoneValue = phoneNumber.value as string
+    const isValid = /^\+47[0-9]{8}$/.test(phoneValue)
+    if (!isValid) {
       error.value = 'Please enter a valid Norwegian phone number (+47 followed by 8 digits)'
       return
     }
@@ -53,13 +62,8 @@ const prevStep = () => {
 }
 
 // Process payment
-const processPayment = async () => {
-  if (pincode.value.length !== 4) {
-    error.value = 'PIN must be 4 digits'
-    return
-  }
-
-  isProcessing.value = true
+const processPayment = handleSubmit(async (values) => {
+  isSubmitting.value = true
   error.value = ''
 
   try {
@@ -76,7 +80,7 @@ const processPayment = async () => {
       updatedAt: new Date().toISOString(),
       amount: totalPrice.value,
       paymentMethod: 'vipps',
-      phoneNumber: phoneNumber.value
+      phoneNumber: values.phoneNumber
     })
 
     emit('paymentComplete', response.data)
@@ -84,9 +88,9 @@ const processPayment = async () => {
     console.error('Payment processing error:', err)
     error.value = 'Payment failed. Please try again.'
   } finally {
-    isProcessing.value = false
+    isSubmitting.value = false
   }
-}
+})
 
 // Calculate total price including shipping
 const totalPrice = computed(() => {
@@ -130,7 +134,11 @@ const formattedPrice = (price: number) => {
 
       <div class="button-group">
         <button @click="prevStep" class="vipps-button back">Back to Shipping</button>
-        <button @click="nextStep" class="vipps-button next">Next</button>
+        <button
+          @click="nextStep"
+          class="vipps-button next"
+          :disabled="!phoneNumber || !/^\+47[0-9]{8}$/.test(phoneNumber as string)"
+        >Next</button>
       </div>
     </div>
 
@@ -189,9 +197,13 @@ const formattedPrice = (price: number) => {
       <p v-if="error" class="error-message">{{ error }}</p>
 
       <div class="button-group">
-        <button @click="prevStep" class="vipps-button back" :disabled="isProcessing">Back</button>
-        <button @click="processPayment" class="vipps-button pay" :disabled="isProcessing">
-          <span v-if="isProcessing">Processing...</span>
+        <button @click="prevStep" class="vipps-button back" :disabled="isSubmitting">Back</button>
+        <button
+          @click="processPayment"
+          class="vipps-button pay"
+          :disabled="!isFormValid || isSubmitting || !pincode || (pincode as string).length !== 4"
+        >
+          <span v-if="isSubmitting">Processing...</span>
           <span v-else>Pay Now</span>
         </button>
       </div>

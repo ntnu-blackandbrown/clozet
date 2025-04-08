@@ -48,8 +48,8 @@
           {{ message }}
         </div>
 
-        <button type="submit" class="submit-button" :disabled="!isFormValid || isLoading">
-          <span v-if="isLoading">
+        <button type="submit" class="submit-button" :disabled="!isFormValid || isSubmitting">
+          <span v-if="isSubmitting">
             <span class="spinner"></span>
           </span>
           <span v-else>Update Password</span>
@@ -66,68 +66,42 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useField, useForm } from 'vee-validate'
-import * as yup from 'yup'
 import axios from '@/api/axios'
+import {
+  useValidatedForm,
+  useValidatedField,
+  changePasswordSchema
+} from '@/utils/validation'
+
 const router = useRouter()
-const isLoading = ref(false)
+
+// Use our validation hook
+const {
+  handleSubmit,
+  errors,
+  resetForm,
+  isFormValid,
+  isSubmitting
+} = useValidatedForm(changePasswordSchema)
+
+// Setup fields with validation
+const { value: currentPassword, errorMessage: currentPasswordError } = useValidatedField('currentPassword')
+const { value: newPassword, errorMessage: newPasswordError } = useValidatedField('newPassword')
+const { value: confirmPassword, errorMessage: confirmPasswordError } = useValidatedField('confirmPassword')
+
 const error = ref(false)
 const success = ref(false)
 const message = ref('')
 
-// Define validation schema
-const schema = yup.object({
-  currentPassword: yup.string().required('Current password is required'),
-  newPassword: yup
-    .string()
-    .required('New password is required')
-    .min(8, 'Password must be at least 8 characters')
-    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .matches(/[0-9]/, 'Password must contain at least one number'),
-  confirmPassword: yup
-    .string()
-    .required('Please confirm your password')
-    .oneOf([yup.ref('newPassword')], 'Passwords must match'),
-})
-
-// Setup form validation
-const { handleSubmit, errors, resetForm } = useForm({
-  validationSchema: schema,
-})
-
-// Setup fields with validation
-const { value: currentPassword, errorMessage: currentPasswordError } = useField('currentPassword')
-const { value: newPassword, errorMessage: newPasswordError } = useField('newPassword')
-const { value: confirmPassword, errorMessage: confirmPasswordError } = useField('confirmPassword')
-
-// Check if form is valid
-const isFormValid = computed(() => {
-  return (
-    !errors.value.currentPassword &&
-    !errors.value.newPassword &&
-    !errors.value.confirmPassword &&
-    currentPassword.value &&
-    newPassword.value &&
-    confirmPassword.value
-  )
-})
-
 // Handle form submission
 const submit = handleSubmit(async (values) => {
-  isLoading.value = true
+  isSubmitting.value = true
   error.value = false
   success.value = false
   message.value = ''
 
   try {
-    // TODO: Implement the API call to your backend
-    // const response = await api.post('/auth/change-password', {
-    //   currentPassword: values.currentPassword,
-    //   newPassword: values.newPassword
-    // })
-
-    // Simulating API call for now
+    // Call API to update password
     await axios.post('/api/me/change-password', {
       currentPassword: values.currentPassword,
       newPassword: values.newPassword
@@ -144,7 +118,7 @@ const submit = handleSubmit(async (values) => {
     error.value = true
     message.value = 'An error occurred. Please check your current password and try again.'
   } finally {
-    isLoading.value = false
+    isSubmitting.value = false
   }
 })
 </script>

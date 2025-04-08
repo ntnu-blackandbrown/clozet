@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useField, useForm } from 'vee-validate'
-import * as yup from 'yup'
 import { useAuthStore } from '@/stores/AuthStore'
 import BaseModal from '@/components/modals/BaseModal.vue'
 import { useRouter } from 'vue-router'
 import axios from '@/api/axios'
+import { useValidatedForm, useValidatedField, loginSchema, registerSchema } from '@/utils/validation'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -22,7 +21,6 @@ const props = defineProps({
 })
 
 const isLogin = ref(props.initialMode === 'login')
-const isSubmitting = ref(false)
 const statusMessage = ref('')
 const statusType = ref('')
 const debugInfo = ref('')
@@ -43,65 +41,25 @@ const toggleText = computed(() =>
   isLogin.value ? 'Need an account? Register' : 'Already have an account? Login',
 )
 
-// Login schema
-const loginSchema = yup.object({
-  username: yup.string().required('Username is required'),
-  password: yup.string().required('Password is required'),
-})
-
-// Register schema
-const registerSchema = yup.object({
-  username: yup.string().required('Username is required'),
-  firstName: yup.string().required('First name is required'),
-  lastName: yup.string().required('Last name is required'),
-  email: yup.string().email('Invalid email').required('Email is required'),
-  password: yup
-    .string()
-    .required('Password is required')
-    .min(8, 'Password must be at least 8 characters')
-    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .matches(/[0-9]/, 'Password must contain at least one number'),
-  confirmPassword: yup
-    .string()
-    .required('Please confirm your password')
-    .oneOf([yup.ref('password')], 'Passwords must match'),
-})
-
+// Use the current schema based on login/register mode
 const currentSchema = computed(() => (isLogin.value ? loginSchema : registerSchema))
 
-const { handleSubmit, errors, resetForm } = useForm({
-  validationSchema: currentSchema,
-})
+// Use our validation hook
+const {
+  handleSubmit,
+  errors,
+  resetForm,
+  isFormValid,
+  isSubmitting
+} = useValidatedForm(currentSchema.value)
 
 // Define form fields with validation
-const { value: username, errorMessage: usernameError } = useField('username')
-const { value: password, errorMessage: passwordError } = useField('password')
-const { value: confirmPassword, errorMessage: confirmPasswordError } = useField('confirmPassword')
-const { value: firstName, errorMessage: firstNameError } = useField('firstName')
-const { value: lastName, errorMessage: lastNameError } = useField('lastName')
-const { value: email, errorMessage: emailError } = useField('email')
-
-const isFormValid = computed(() => {
-  if (isLogin.value) {
-    return !errors.value.username && !errors.value.password && username.value && password.value
-  } else {
-    return (
-      !errors.value.username &&
-      !errors.value.firstName &&
-      !errors.value.lastName &&
-      !errors.value.email &&
-      !errors.value.password &&
-      !errors.value.confirmPassword &&
-      username.value &&
-      firstName.value &&
-      lastName.value &&
-      email.value &&
-      password.value &&
-      confirmPassword.value
-    )
-  }
-})
+const { value: username, errorMessage: usernameError } = useValidatedField('username')
+const { value: password, errorMessage: passwordError } = useValidatedField('password')
+const { value: confirmPassword, errorMessage: confirmPasswordError } = useValidatedField('confirmPassword')
+const { value: firstName, errorMessage: firstNameError } = useValidatedField('firstName')
+const { value: lastName, errorMessage: lastNameError } = useValidatedField('lastName')
+const { value: email, errorMessage: emailError } = useValidatedField('email')
 
 const toggleForm = () => {
   isLogin.value = !isLogin.value
