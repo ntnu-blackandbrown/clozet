@@ -410,22 +410,33 @@ p {
 }
 
 .password-input-container {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   width: 100%;
 }
 
 .password-input-container input {
   flex-grow: 1;
   margin-bottom: 0;
+  padding-right: 2.5rem;
 }
 
 .password-input-container .toggle-password {
-  flex-shrink: 0;
-  padding: 0.5rem;
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0.2rem 0.4rem;
   cursor: pointer;
-  height: fit-content;
-  margin-bottom: 0;
+  font-size: 0.8rem;
+  color: #666;
+  line-height: 1;
+}
+
+.password-input-container .toggle-password:focus {
+  outline: none;
 }
 </style>

@@ -17,7 +17,7 @@
               :class="{ 'error-input': currentPasswordError }"
             />
             <button type="button" @click="showCurrentPassword = !showCurrentPassword" class="toggle-password">
-              {{ showCurrentPassword ? 'Hide' : 'Show' }}
+              {{ showCurrentPassword ? '👁️‍🗨️' : '👁️' }}
             </button>
           </div>
           <span class="error" v-if="currentPasswordError">{{ currentPasswordError }}</span>
@@ -35,7 +35,7 @@
               :class="{ 'error-input': newPasswordError }"
             />
              <button type="button" @click="showNewPassword = !showNewPassword" class="toggle-password">
-              {{ showNewPassword ? 'Hide' : 'Show' }}
+              {{ showNewPassword ? '👁️‍🗨️' : '👁️' }}
             </button>
           </div>
           <span class="error" v-if="newPasswordError">{{ newPasswordError }}</span>
@@ -53,7 +53,7 @@
               :class="{ 'error-input': confirmPasswordError }"
             />
             <button type="button" @click="showConfirmPassword = !showConfirmPassword" class="toggle-password">
-              {{ showConfirmPassword ? 'Hide' : 'Show' }}
+              {{ showConfirmPassword ? '👁️‍🗨️' : '👁️' }}
             </button>
           </div>
           <span class="error" v-if="confirmPasswordError">{{ confirmPasswordError }}</span>
@@ -282,25 +282,38 @@ label {
 
 /* Added styles for password input container and toggle button */
 .password-input-container {
+  /* Add relative positioning to contain the absolute button */
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* Adjust gap as needed */
+  /* Removed gap as button is now inside */
 }
 
 .password-input-container input {
   flex-grow: 1; /* Make input take available space */
   margin-bottom: 0; /* Remove default margin if any */
+  /* Add padding to the right to make space for the button */
+  padding-right: 2.5rem; /* Adjust as needed */
 }
 
 .password-input-container .toggle-password {
-  flex-shrink: 0; /* Prevent button from shrinking */
-  padding: 0.5rem; /* Example padding */
+   /* Position the button absolutely inside the container */
+  position: absolute;
+  right: 0.5rem; /* Adjust position */
+  top: 50%;
+  transform: translateY(-50%);
+  /* Style as an icon button */
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
-  height: fit-content; /* Adjust height to align with input */
-  /* Add specific styling if desired - e.g., background, border */
-  background-color: #eee;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  font-size: 1.2rem; /* Adjust icon size */
+  color: #666; /* Adjust icon color */
+  line-height: 1; /* Ensure proper vertical alignment */
+}
+
+/* Ensure toggle button doesn't receive focus outline if not desired */
+.password-input-container .toggle-password:focus {
+  outline: none;
 }
 </style>
