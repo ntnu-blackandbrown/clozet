@@ -44,8 +44,8 @@ import java.util.UUID;
  * password reset, and logout.
  * </p>
  * 
- * @author YourName
- * @version 1.0
+ *
+ * 
  */
 @RestController
 @RequestMapping("/api/auth")

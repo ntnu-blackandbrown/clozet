@@ -27,8 +27,8 @@ import java.util.Arrays;
  * authentication context if valid.
  * </p>
  * 
- * @author YourName
- * @version 1.0
+ *
+ * 
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {

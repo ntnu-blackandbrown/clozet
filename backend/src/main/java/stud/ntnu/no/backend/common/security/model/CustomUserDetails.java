@@ -13,9 +13,8 @@ import java.util.Collections;
  * <p>
  * This class wraps a User entity and provides user details for authentication.
  * </p>
- * 
- * @author YourName
- * @version 1.0
+ *
+ * .0
  */
 public class CustomUserDetails implements UserDetails {
     

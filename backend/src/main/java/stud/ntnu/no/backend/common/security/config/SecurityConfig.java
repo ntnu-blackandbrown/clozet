@@ -31,9 +31,8 @@ import java.util.Collections;
  * This class configures CORS, CSRF, session management, and exception handling.
  * It also sets up the security filter chain and password encoding.
  * </p>
+ *
  * 
- * @author YourName
- * @version 1.0
  */
 @Configuration
 @EnableWebSecurity
