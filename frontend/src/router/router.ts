@@ -133,7 +133,7 @@ const router = createRouter({
           path: 'transactions',
           name: 'admin-transactions',
           component: () => import('@/views/admin/transactions/TransactionManagement.vue'),
-        }
+        },
       ],
     },
   ],
