@@ -30,6 +30,7 @@ const isLogin = ref(props.initialMode === 'login')
 const statusMessage = ref('')
 const statusType = ref('')
 const debugInfo = ref('')
+const showPassword = ref(false)
 
 // Set initial mode based on prop
 onMounted(() => {
@@ -204,14 +205,21 @@ const submit = handleSubmit(async (values) => {
         <span class="error" id="emailErrSpan">{{ emailError }}</span>
       </template>
 
-      <input v-model="password" type="password" placeholder="Password" />
+      <div class="password-input-container">
+        <input v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="Password" />
+        <button type="button" @click="showPassword = !showPassword" class="toggle-password">
+          {{ showPassword ? 'Hide' : 'Show' }}
+        </button>
+      </div>
       <span class="error" id="passwordErrSpan">{{ passwordError }}</span>
-      <input
-        v-if="!isLogin"
-        v-model="confirmPassword"
-        type="password"
-        placeholder="Confirm Password"
-      />
+
+      <div v-if="!isLogin" class="password-input-container">
+        <input
+          v-model="confirmPassword"
+          :type="showPassword ? 'text' : 'password'"
+          placeholder="Confirm Password"
+        />
+      </div>
       <span v-if="!isLogin" class="error" id="confirmPasswordErrSpan">{{
         confirmPasswordError
       }}</span>
@@ -399,5 +407,25 @@ button[type='submit']:disabled {
 p {
   text-align: center;
   margin: 0;
+}
+
+.password-input-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.password-input-container input {
+  flex-grow: 1;
+  margin-bottom: 0;
+}
+
+.password-input-container .toggle-password {
+  flex-shrink: 0;
+  padding: 0.5rem;
+  cursor: pointer;
+  height: fit-content;
+  margin-bottom: 0;
 }
 </style>

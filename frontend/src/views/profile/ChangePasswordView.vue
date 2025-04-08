@@ -7,40 +7,55 @@
       <form @submit.prevent="submit" class="forgot-password-form">
         <div class="form-group">
           <label for="currentPassword">Current Password</label>
-          <input
-            type="password"
-            id="currentPassword"
-            v-model="currentPassword"
-            placeholder="Enter your current password"
-            class="form-control"
-            :class="{ 'error-input': currentPasswordError }"
-          />
+          <div class="password-input-container">
+            <input
+              :type="showCurrentPassword ? 'text' : 'password'"
+              id="currentPassword"
+              v-model="currentPassword"
+              placeholder="Enter your current password"
+              class="form-control"
+              :class="{ 'error-input': currentPasswordError }"
+            />
+            <button type="button" @click="showCurrentPassword = !showCurrentPassword" class="toggle-password">
+              {{ showCurrentPassword ? 'Hide' : 'Show' }}
+            </button>
+          </div>
           <span class="error" v-if="currentPasswordError">{{ currentPasswordError }}</span>
         </div>
 
         <div class="form-group">
           <label for="newPassword">New Password</label>
-          <input
-            type="password"
-            id="newPassword"
-            v-model="newPassword"
-            placeholder="Enter your new password"
-            class="form-control"
-            :class="{ 'error-input': newPasswordError }"
-          />
+          <div class="password-input-container">
+            <input
+              :type="showNewPassword ? 'text' : 'password'"
+              id="newPassword"
+              v-model="newPassword"
+              placeholder="Enter your new password"
+              class="form-control"
+              :class="{ 'error-input': newPasswordError }"
+            />
+             <button type="button" @click="showNewPassword = !showNewPassword" class="toggle-password">
+              {{ showNewPassword ? 'Hide' : 'Show' }}
+            </button>
+          </div>
           <span class="error" v-if="newPasswordError">{{ newPasswordError }}</span>
         </div>
 
         <div class="form-group">
           <label for="confirmPassword">Confirm New Password</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            v-model="confirmPassword"
-            placeholder="Confirm your new password"
-            class="form-control"
-            :class="{ 'error-input': confirmPasswordError }"
-          />
+           <div class="password-input-container">
+            <input
+              :type="showConfirmPassword ? 'text' : 'password'"
+              id="confirmPassword"
+              v-model="confirmPassword"
+              placeholder="Confirm your new password"
+              class="form-control"
+              :class="{ 'error-input': confirmPasswordError }"
+            />
+            <button type="button" @click="showConfirmPassword = !showConfirmPassword" class="toggle-password">
+              {{ showConfirmPassword ? 'Hide' : 'Show' }}
+            </button>
+          </div>
           <span class="error" v-if="confirmPasswordError">{{ confirmPasswordError }}</span>
         </div>
 
@@ -96,6 +111,11 @@ const { value: confirmPassword, errorMessage: confirmPasswordError } =
 const error = ref(false)
 const success = ref(false)
 const message = ref('')
+
+// Add state for each password field's visibility
+const showCurrentPassword = ref(false)
+const showNewPassword = ref(false)
+const showConfirmPassword = ref(false)
 
 // Handle form submission
 const submit = handleSubmit(async (values) => {
@@ -258,5 +278,29 @@ label {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Added styles for password input container and toggle button */
+.password-input-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Adjust gap as needed */
+}
+
+.password-input-container input {
+  flex-grow: 1; /* Make input take available space */
+  margin-bottom: 0; /* Remove default margin if any */
+}
+
+.password-input-container .toggle-password {
+  flex-shrink: 0; /* Prevent button from shrinking */
+  padding: 0.5rem; /* Example padding */
+  cursor: pointer;
+  height: fit-content; /* Adjust height to align with input */
+  /* Add specific styling if desired - e.g., background, border */
+  background-color: #eee;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.8rem;
 }
 </style>
