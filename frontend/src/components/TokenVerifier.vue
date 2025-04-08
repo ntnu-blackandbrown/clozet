@@ -12,16 +12,16 @@ import { AuthService } from '@/api/services/AuthService'
 const props = defineProps({
   verifyEndpoint: {
     type: String,
-    required: true
+    required: true,
   },
   redirectPath: {
     type: String,
-    required: true
+    required: true,
   },
   includeTokenInRedirect: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const route = useRoute()

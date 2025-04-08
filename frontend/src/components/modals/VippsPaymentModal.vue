@@ -4,13 +4,13 @@ import { useValidatedForm, useValidatedField, vippsPaymentSchema } from '@/utils
 import { TransactionService } from '@/api/services/TransactionService'
 
 const props = defineProps<{
-  itemId: number,
-  itemTitle: string,
-  itemPrice: number,
-  sellerId: number,
-  buyerId: number,
-  shippingOptionName?: string,
-  shippingCost?: number,
+  itemId: number
+  itemTitle: string
+  itemPrice: number
+  sellerId: number
+  buyerId: number
+  shippingOptionName?: string
+  shippingCost?: number
   shippingPhoneNumber?: string
 }>()
 
@@ -22,19 +22,17 @@ const error = ref('')
 
 // Initialize validation with the vipps schema
 interface VippsFormValues {
-  phoneNumber: string;
-  pincode: string;
+  phoneNumber: string
+  pincode: string
 }
 
-const {
-  handleSubmit,
-  isSubmitting,
-  setStatus,
-  isFormValid
-} = useValidatedForm<VippsFormValues>(vippsPaymentSchema, {
-  phoneNumber: '',
-  pincode: ''
-})
+const { handleSubmit, isSubmitting, setStatus, isFormValid } = useValidatedForm<VippsFormValues>(
+  vippsPaymentSchema,
+  {
+    phoneNumber: '',
+    pincode: '',
+  },
+)
 
 // Get validated fields
 const { value: phoneNumber } = useValidatedField('phoneNumber')
@@ -73,7 +71,7 @@ const processPayment = handleSubmit(async (values) => {
 
   try {
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 2000))
 
     // Create transaction
     const response = await TransactionService.createPurchase({
@@ -85,7 +83,7 @@ const processPayment = handleSubmit(async (values) => {
       updatedAt: new Date().toISOString(),
       amount: totalPrice.value,
       paymentMethod: 'vipps',
-      phoneNumber: values.phoneNumber
+      phoneNumber: values.phoneNumber,
     })
 
     emit('paymentComplete', response.data)
@@ -122,17 +120,14 @@ const formattedPrice = (price: number) => {
       <p class="step-description">Please enter your Norwegian phone number connected to Vipps</p>
 
       <div v-if="props.shippingPhoneNumber" class="shipping-phone-notice">
-        <p>Your shipping phone number is: <strong>{{ props.shippingPhoneNumber }}</strong></p>
+        <p>
+          Your shipping phone number is: <strong>{{ props.shippingPhoneNumber }}</strong>
+        </p>
         <p class="hint">You can use the same number or enter a different one for Vipps payment</p>
       </div>
 
       <div class="input-group">
-        <input
-          type="tel"
-          v-model="phoneNumber"
-          placeholder="+47 12345678"
-          class="vipps-input"
-        />
+        <input type="tel" v-model="phoneNumber" placeholder="+47 12345678" class="vipps-input" />
       </div>
 
       <p v-if="error" class="error-message">{{ error }}</p>
@@ -143,7 +138,9 @@ const formattedPrice = (price: number) => {
           @click="nextStep"
           class="vipps-button next"
           :disabled="!phoneNumber || !/^\+47[0-9]{8}$/.test(phoneNumber as string)"
-        >Next</button>
+        >
+          Next
+        </button>
       </div>
     </div>
 
@@ -187,7 +184,9 @@ const formattedPrice = (price: number) => {
     <!-- Step 3: PIN Code -->
     <div v-if="currentStep === 3" class="vipps-step">
       <h3>Enter your Vipps PIN</h3>
-      <p class="step-description">Please enter your 4-digit Vipps PIN code to complete the payment</p>
+      <p class="step-description">
+        Please enter your 4-digit Vipps PIN code to complete the payment
+      </p>
 
       <div class="input-group">
         <input
@@ -254,7 +253,7 @@ const formattedPrice = (price: number) => {
 .vipps-input {
   width: 100%;
   padding: 12px 15px;
-  border: 2px solid #FF5B24;
+  border: 2px solid #ff5b24;
   border-radius: 8px;
   font-size: 16px;
   outline: none;
@@ -297,12 +296,14 @@ const formattedPrice = (price: number) => {
   background-color: #e5e5e5;
 }
 
-.vipps-button.next, .vipps-button.pay {
-  background-color: #FF5B24;
+.vipps-button.next,
+.vipps-button.pay {
+  background-color: #ff5b24;
   color: white;
 }
 
-.vipps-button.next:hover, .vipps-button.pay:hover {
+.vipps-button.next:hover,
+.vipps-button.pay:hover {
   background-color: #e94e1b;
 }
 
@@ -354,7 +355,7 @@ const formattedPrice = (price: number) => {
 
 .detail-value.price {
   font-weight: 700;
-  color: #FF5B24;
+  color: #ff5b24;
 }
 
 .total-row {

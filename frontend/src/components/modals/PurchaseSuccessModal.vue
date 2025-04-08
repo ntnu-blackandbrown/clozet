@@ -23,7 +23,7 @@ const formattedPrice = computed(() => {
     style: 'currency',
     currency: 'NOK',
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(roundedAmount)
 })
 </script>
@@ -32,12 +32,16 @@ const formattedPrice = computed(() => {
   <div class="success-modal">
     <div class="success-icon">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        <path
+          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+        />
       </svg>
     </div>
 
     <h2>Purchase Successful!</h2>
-    <p class="success-message">Thank you for your purchase. Your transaction has been completed successfully.</p>
+    <p class="success-message">
+      Thank you for your purchase. Your transaction has been completed successfully.
+    </p>
 
     <div class="purchase-summary">
       <h3>Purchase Summary</h3>
@@ -62,12 +66,8 @@ const formattedPrice = computed(() => {
     </div>
 
     <div class="actions">
-      <button @click="emit('viewPurchases')" class="view-purchases-btn">
-        View My Purchases
-      </button>
-      <button @click="emit('close')" class="continue-shopping-btn">
-        Continue Shopping
-      </button>
+      <button @click="emit('viewPurchases')" class="view-purchases-btn">View My Purchases</button>
+      <button @click="emit('close')" class="continue-shopping-btn">Continue Shopping</button>
     </div>
   </div>
 </template>
@@ -84,7 +84,7 @@ const formattedPrice = computed(() => {
   width: 80px;
   height: 80px;
   margin: 0 auto 1.5rem;
-  color: #4CAF50;
+  color: #4caf50;
 }
 
 .success-icon svg {
@@ -93,7 +93,7 @@ const formattedPrice = computed(() => {
 }
 
 h2 {
-  color: #4CAF50;
+  color: #4caf50;
   margin-bottom: 1rem;
   font-size: 1.8rem;
 }
@@ -105,7 +105,8 @@ h2 {
   line-height: 1.5;
 }
 
-.purchase-summary, .shipping-info {
+.purchase-summary,
+.shipping-info {
   background-color: #f8f9fa;
   border-radius: 8px;
   padding: 1.5rem;
@@ -135,7 +136,7 @@ h3 {
 }
 
 .summary-item .amount {
-  color: #4CAF50;
+  color: #4caf50;
   font-weight: 600;
 }
 
@@ -155,7 +156,8 @@ h3 {
   margin-top: 2rem;
 }
 
-.view-purchases-btn, .continue-shopping-btn {
+.view-purchases-btn,
+.continue-shopping-btn {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
@@ -165,7 +167,7 @@ h3 {
 }
 
 .view-purchases-btn {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 
@@ -187,7 +189,8 @@ h3 {
     flex-direction: column;
   }
 
-  .view-purchases-btn, .continue-shopping-btn {
+  .view-purchases-btn,
+  .continue-shopping-btn {
     width: 100%;
   }
 }

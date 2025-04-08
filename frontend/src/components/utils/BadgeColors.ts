@@ -53,7 +53,7 @@ export const badgeColors = {
     activeColor: '#A3B7AC',
     activeTextColor: '#3A4951',
     activeBorderColor: '#3A4951',
-  }
+  },
 } as const
 
 export type BadgeType = keyof typeof badgeColors

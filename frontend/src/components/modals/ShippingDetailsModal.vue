@@ -14,7 +14,7 @@ interface ShippingDetails {
 }
 
 const props = defineProps<{
-  shippingOptionName: string,
+  shippingOptionName: string
   initialValues?: ShippingDetails
 }>()
 
@@ -29,17 +29,14 @@ const initialValues = {
   postalCode: props.initialValues?.postalCode || '',
   city: props.initialValues?.city || '',
   country: props.initialValues?.country || 'Norway',
-  phone: props.initialValues?.phone || authStore.user?.phoneNumber || ''
+  phone: props.initialValues?.phone || authStore.user?.phoneNumber || '',
 }
 
 // Use validation hook with initial values
-const {
-  handleSubmit,
-  isSubmitting,
-  setStatus,
-  clearStatus,
-  isFormValid
-} = useValidatedForm(shippingDetailsSchema, initialValues)
+const { handleSubmit, isSubmitting, setStatus, clearStatus, isFormValid } = useValidatedForm(
+  shippingDetailsSchema,
+  initialValues,
+)
 
 // Get validated fields
 const { value: firstName } = useValidatedField('firstName')
@@ -123,24 +120,12 @@ const handleContinue = handleSubmit((values) => {
 
       <div class="form-group">
         <label for="country">Country</label>
-        <select
-          v-if="isInternationalShipping"
-          id="country"
-          v-model="country"
-          class="form-input"
-        >
+        <select v-if="isInternationalShipping" id="country" v-model="country" class="form-input">
           <option v-for="countryName in countries" :key="countryName" :value="countryName">
             {{ countryName }}
           </option>
         </select>
-        <input
-          v-else
-          type="text"
-          id="country"
-          v-model="country"
-          class="form-input"
-          readonly
-        />
+        <input v-else type="text" id="country" v-model="country" class="form-input" readonly />
       </div>
 
       <div class="form-group">
@@ -256,7 +241,7 @@ label {
 }
 
 .form-input:focus {
-  border-color: #4CAF50;
+  border-color: #4caf50;
   outline: none;
 }
 
@@ -291,7 +276,7 @@ label {
 }
 
 .shipping-button.continue {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   min-width: 180px;
 }
@@ -322,7 +307,7 @@ select.form-input {
 }
 
 select.form-input:focus {
-  border-color: #4CAF50;
+  border-color: #4caf50;
   outline: none;
 }
 

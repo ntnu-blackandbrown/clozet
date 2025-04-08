@@ -24,27 +24,27 @@ const itemIds = ref<Map<number, number>>(new Map()) // Map conversationItemId ->
 
 // Get the chat ID for a conversation (conversationId or id)
 const getChatId = (conversation: Conversation) => {
-  return conversation.conversationId || conversation.id;
+  return conversation.conversationId || conversation.id
 }
 
 // Function to emit event to show product
 const showProduct = (event: Event, itemId: number) => {
-  event.stopPropagation(); // Prevent triggering the conversation selection
-  emit('show-product', itemId);
+  event.stopPropagation() // Prevent triggering the conversation selection
+  emit('show-product', itemId)
 }
 
 // Filter conversations to ensure we don't show self-conversations
 const filteredConversations = computed(() => {
-  return props.conversations.filter(conversation => {
+  return props.conversations.filter((conversation) => {
     // Skip conversations where the user is talking to themselves
-    return Number(conversation.receiverId) !== authStore.user?.id;
-  });
-});
+    return Number(conversation.receiverId) !== authStore.user?.id
+  })
+})
 
 const activeConversation = computed(() => {
-  return filteredConversations.value.find((conversation) =>
-    getChatId(conversation) === props.activeConversationId
-  );
+  return filteredConversations.value.find(
+    (conversation) => getChatId(conversation) === props.activeConversationId,
+  )
 })
 
 const getLatestMessage = (conversation: Conversation) => {
@@ -134,7 +134,9 @@ onMounted(async () => {
           <div
             v-if="conversation.itemId && itemTitles.get(conversation.itemId)"
             class="chat-item-name"
-            @click="(event) => showProduct(event, itemIds.get(conversation.itemId) || conversation.itemId)"
+            @click="
+              (event) => showProduct(event, itemIds.get(conversation.itemId) || conversation.itemId)
+            "
           >
             Item: {{ itemTitles.get(conversation.itemId) }}
           </div>

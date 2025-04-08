@@ -67,7 +67,7 @@ const toggleWishlist = async () => {
     class="wishlist-button"
     :class="{
       wishlisted: isWishlisted,
-      'disabled': !authStore.isLoggedIn || !props.isAvailable
+      disabled: !authStore.isLoggedIn || !props.isAvailable,
     }"
     @click="toggleWishlist"
     :disabled="!authStore.isLoggedIn || !props.isAvailable"
