@@ -1,6 +1,6 @@
 import { setActivePinia, createPinia } from 'pinia'
 import { useCategoryStore } from '@/stores/Category'
-import axios from 'axios'
+import axios from '@/api/axios'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Mocked } from 'vitest'
 vi.mock('axios')

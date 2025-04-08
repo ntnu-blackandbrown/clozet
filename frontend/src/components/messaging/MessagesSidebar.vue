@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
-import axios from 'axios'
+import axios from '@/api/axios'
 import { useAuthStore } from '@/stores/AuthStore'
 import type { Message, Conversation } from '@/types/messaging'
 

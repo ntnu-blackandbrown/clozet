@@ -2,7 +2,7 @@
 import { ref, nextTick, onMounted, watch } from 'vue'
 import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
 import ProductCard from '@/components/product/ProductCard.vue'
-import axios from 'axios'
+import axios from '@/api/axios'
 import type { Product } from '@/types/product'
 import { useRouter } from 'vue-router'
 

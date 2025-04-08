@@ -1,7 +1,7 @@
 import { mount, flushPromises } from '@vue/test-utils'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 import MessagesSidebar from '@/components/messaging/MessagesSidebar.vue' // adjust path as needed
-import axios from 'axios'
+import axios from '@/api/axios'
 
 // Mock axios to intercept image fetches
 vi.mock('axios')
