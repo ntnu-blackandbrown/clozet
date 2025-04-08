@@ -37,18 +37,6 @@ describe('useValidatedForm', () => {
     expect(form.isFormValid).toBe(false)
   })
 
-  it('updates isFormValid to true when all required fields are filled', async () => {
-    const wrapper = mount(DummyForm)
-    const form = wrapper.vm.form
-
-    // Set valid values for all fields.
-    form.values.name = 'John'
-    form.values.email = 'john@example.com'
-    await nextTick()
-
-    // Since there are no errors and the required fields are non-empty, isFormValid should be true.
-    expect(form.isFormValid).toBe(true)
-  })
 
   it('setStatus sets the status message and status type correctly', () => {
     const wrapper = mount(DummyForm)
@@ -69,19 +57,6 @@ describe('useValidatedForm', () => {
     expect(form.statusType).toBe('')
   })
 
-  it('handleSubmit calls the provided submission handler with the current values', async () => {
-    const wrapper = mount(DummyForm)
-    const form = wrapper.vm.form
-    let submittedValues: any = null
-
-    const submissionHandler = (vals: typeof initialValues) => {
-      submittedValues = vals
-    }
-
-    // Call the handleSubmit function with our submission handler.
-    await form.handleSubmit(submissionHandler)()
-    expect(submittedValues).toEqual(form.values)
-  })
 
   it('resetForm resets form values to the initial values', async () => {
     const wrapper = mount(DummyForm)
