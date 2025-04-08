@@ -34,16 +34,20 @@ function connect() {
   stompClient = Stomp.over(socket)
   stompClient.debug = (str) => log(`STOMP Debug: ${str}`, 'info')
 
-  stompClient.connect({}, (frame) => {
-    connected.value = true
-    updateConnectionStatus('connected', 'Connected')
-    log(`Connected: ${frame}`, 'message-received')
-    subscribeToTopics()
-  }, (error) => {
-    connected.value = false
-    updateConnectionStatus('disconnected', 'Connection Failed')
-    log(`Connection error: ${error}`, 'error')
-  })
+  stompClient.connect(
+    {},
+    (frame) => {
+      connected.value = true
+      updateConnectionStatus('connected', 'Connected')
+      log(`Connected: ${frame}`, 'message-received')
+      subscribeToTopics()
+    },
+    (error) => {
+      connected.value = false
+      updateConnectionStatus('disconnected', 'Connection Failed')
+      log(`Connection error: ${error}`, 'error')
+    },
+  )
 
   stompClient.heartbeat.outgoing = 20000
   stompClient.heartbeat.incoming = 20000
@@ -54,7 +58,10 @@ function subscribeToTopics() {
     try {
       const message = JSON.parse(msg.body)
       messageCount++
-      log(`Received message #${messageCount}:<br>ID: ${message.id}<br>From: ${message.senderId}<br>To: ${message.receiverId}<br>Content: ${message.content}<br>Time: ${message.createdAt}`, 'message-received')
+      log(
+        `Received message #${messageCount}:<br>ID: ${message.id}<br>From: ${message.senderId}<br>To: ${message.receiverId}<br>Content: ${message.content}<br>Time: ${message.createdAt}`,
+        'message-received',
+      )
     } catch (e) {
       log(`Error parsing message: ${e.message}`, 'error')
     }
@@ -72,7 +79,10 @@ function subscribeToTopics() {
   stompClient.subscribe('/topic/messages.update', (msg) => {
     try {
       const message = JSON.parse(msg.body)
-      log(`Message updated:<br>ID: ${message.id}<br>Content: ${message.content}`, 'message-received')
+      log(
+        `Message updated:<br>ID: ${message.id}<br>Content: ${message.content}`,
+        'message-received',
+      )
     } catch (e) {
       log(`Error parsing update: ${e.message}`, 'error')
     }
@@ -103,11 +113,14 @@ function sendMessage() {
     senderId: sender.value,
     receiverId: receiver.value,
     content: messageContent.value,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   }
 
   stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(msg))
-  log(`Sent:<br>From: ${msg.senderId}<br>To: ${msg.receiverId}<br>Content: ${msg.content}`, 'message-sent')
+  log(
+    `Sent:<br>From: ${msg.senderId}<br>To: ${msg.receiverId}<br>Content: ${msg.content}`,
+    'message-sent',
+  )
   messageContent.value = ''
 }
 

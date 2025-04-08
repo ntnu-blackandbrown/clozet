@@ -19,7 +19,7 @@ export const useLocationStore = defineStore('locations', () => {
       locations.value = response.data
     } catch (err) {
       error.value = 'Failed to fetch locations'
-        console.error('Error fetching locations:', err)
+      console.error('Error fetching locations:', err)
     } finally {
       loading.value = false
     }

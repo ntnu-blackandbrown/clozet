@@ -17,7 +17,6 @@ export const useCategoryStore = defineStore('categories', () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-
   const fetchCategories = async () => {
     try {
       loading.value = true
