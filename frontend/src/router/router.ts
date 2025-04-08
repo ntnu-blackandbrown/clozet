@@ -36,11 +36,6 @@ const router = createRouter({
       component: () => import('@/views/HomeView.vue'),
     },
     {
-      path: '/change-password',
-      name: 'change-password',
-      component: () => import('@/views/ChangePasswordView.vue'),
-    },
-    {
       path: '/create-product',
       name: 'create-product',
       component: () => import('@/views/CreateProductView.vue'),
@@ -90,6 +85,11 @@ const router = createRouter({
           path: 'purchases',
           name: 'my-purchases',
           component: () => import('@/views/profile/MyPurchasesView.vue'),
+        },
+        {
+          path: 'change-password',
+          name: 'change-password',
+          component: () => import('@/views/ChangePasswordView.vue'),
         },
       ],
     },
