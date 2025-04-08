@@ -1,5 +1,5 @@
 <script setup>
-import { defineEmits, ref } from 'vue'
+import { ref } from 'vue'
 
 const hideCloseButton = ref(false)
 const maxWidth = ref('900px')

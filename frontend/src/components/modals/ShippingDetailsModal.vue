@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits, defineProps, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useValidatedForm, useValidatedField, shippingDetailsSchema } from '@/utils/validation'
 
