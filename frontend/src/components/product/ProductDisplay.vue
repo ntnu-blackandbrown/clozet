@@ -305,7 +305,6 @@ const handleContactSeller = async () => {
         </button>
         <WishlistButton
           :product-id="item.id"
-          :purchased="item.purchased"
           :is-available="isItemAvailable"
         />
       </div>
