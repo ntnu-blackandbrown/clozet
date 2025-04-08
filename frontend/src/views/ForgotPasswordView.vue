@@ -75,6 +75,13 @@ import {
 
 const router = useRouter()
 
+// Define form values interface
+interface ChangePasswordFormValues {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
 // Use our validation hook
 const {
   handleSubmit,
@@ -82,7 +89,11 @@ const {
   resetForm,
   isFormValid,
   isSubmitting
-} = useValidatedForm(changePasswordSchema)
+} = useValidatedForm<ChangePasswordFormValues>(changePasswordSchema, {
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
 
 // Setup fields with validation
 const { value: currentPassword, errorMessage: currentPasswordError } = useValidatedField('currentPassword')
