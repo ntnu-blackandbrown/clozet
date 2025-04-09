@@ -107,4 +107,4 @@ export const useAuthStore = defineStore('auth', () => {
   persist: {
     paths: ['user'],
   },
-})
+} as any)
