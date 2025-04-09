@@ -124,24 +124,23 @@ const toggleForm = () => {
 
 const submit = handleSubmit(async (values) => {
   isSubmitting.value = true
-  statusMessage.value = isLogin.value ? 'Logger inn...' : 'Registrerer bruker...'
+  statusMessage.value = isLogin.value ? 'Logging in...' : 'Registering user...'
   statusType.value = 'info'
   debugInfo.value = ''
 
   try {
     if (isLogin.value) {
       // Login using AuthStore (JWT cookie approach)
-      debugInfo.value = `POST til /api/auth/login med ${JSON.stringify({ username: values.username, password: values.password })}`
       const result = await authStore.login(values.username, values.password)
 
       if (result.success) {
-        statusMessage.value = `Innlogging vellykket!`
+        statusMessage.value = `Login successful!`
         statusType.value = 'success'
         setTimeout(() => {
           emit('close')
         }, 1500)
       } else {
-        statusMessage.value = 'Innlogging feilet. Kontroller brukernavn og passord.'
+        statusMessage.value = 'Log in failed. Check username and password.'
         statusType.value = 'error'
       }
     } else {
@@ -158,7 +157,6 @@ const submit = handleSubmit(async (values) => {
       console.log('userData', userData)
       console.log('Sending request now')
 
-      debugInfo.value = `POST til /api/auth/register med ${JSON.stringify(userData)}`
 
       const response = await AuthService.register(
         userData.username,
@@ -178,7 +176,6 @@ const submit = handleSubmit(async (values) => {
       ? 'Innlogging feilet på grunn av teknisk feil.'
       : 'Registrering feilet på grunn av teknisk feil.'
     statusType.value = 'error'
-    debugInfo.value = `Feil: ${error.message}, Status: ${error.response?.status}, Data: ${JSON.stringify(error.response?.data)}`
   } finally {
     isSubmitting.value = false
   }
@@ -324,10 +321,6 @@ const submit = handleSubmit(async (values) => {
         {{ statusMessage }}
       </div>
 
-      <!-- Debug Info -->
-      <div v-if="debugInfo" class="debug-info" aria-live="polite">
-        {{ debugInfo }}
-      </div>
 
       <button type="submit" :disabled="!isFormValid || isSubmitting" :aria-busy="isSubmitting">
         <span v-if="isSubmitting">
