@@ -89,7 +89,6 @@ const fetchTopCategories = async () => {
   try {
     const response = await CategoryService.getTopCategories()
     topCategories.value = response.data
-     ('Fetched top categories:', response.data)
   } catch (error) {
     console.error('Error fetching top categories:', error)
     categoryError.value = 'Failed to load categories'
