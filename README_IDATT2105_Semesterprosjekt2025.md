@@ -184,6 +184,9 @@ Each feature package contains:
 - `exception/` - Custom exceptions
 - `mapper/` - MapStruct mappers for entity-DTO conversion
 
+
+# Legg til diagrammer overordnet og så internt
+
 ### Frontend Architecture
 The frontend is built with Vue 3 and follows a modern component-based architecture:
 
@@ -204,24 +207,95 @@ frontend/
 
 ### Key Architectural Decisions
 1. **Backend**
-   - Spring Boot 3 with Java 21
+   - Spring Boot 3.4.4 with Java 21
    - JPA for data access
+   - H2 for development, PostgreSQL for production
+   - Redis for caching
+   - Elasticsearch for search functionality
+   - Cloudinary for image management
    - REST API with Spring REST Docs
-   - WebSocket for real-time features
+   - WebSocket with SockJS/STOMP
    - JWT for authentication
 
 2. **Frontend**
-   - Vue 3 with Composition API
+   - Vue 3.5.13 with Composition API
+   - Vite 6.2.5 for build tooling
+   - TypeScript 5.8 for type safety
    - Pinia for state management
-   - TypeScript for type safety
    - Vue Router for navigation
-   - WebSocket client for real-time features
+   - SockJS/StompJS for WebSocket
+   - Vee-validate/Yup for form validation
 
 3. **Testing**
    - Controller tests with Spring REST Docs
    - Service layer unit tests
    - Frontend component tests with Vitest
    - E2E tests with Cypress
+
+### Architecture Diagrams
+
+#### High-Level System Architecture
+```mermaid
+graph TB
+    Client[Web Client] --> |HTTP/REST| API[API Gateway]
+    Client --> |WebSocket| WS[WebSocket Server]
+    API --> Auth[Authentication]
+    API --> Service[Service Layer]
+    WS --> Service
+    Service --> Cache[(Redis Cache)]
+    Service --> DB[(PostgreSQL)]
+    Service --> Search[(Elasticsearch)]
+    Service --> Storage[(Cloudinary)]
+```
+
+#### Backend Layer Architecture
+```mermaid
+graph TB
+    Controller[Controller Layer] --> Service[Service Layer]
+    Service --> Repository[Repository Layer]
+    Service --> Mapper[Mapper Layer]
+    Repository --> Entity[Entity Layer]
+    Mapper --> DTO[DTO Layer]
+    Controller --> DTO
+    Service --> Cache[(Redis)]
+    Service --> Search[(Elasticsearch)]
+```
+
+#### Frontend Architecture
+```mermaid
+graph TB
+    View[View Layer] --> Component[Component Layer]
+    Component --> Store[Pinia Store]
+    Component --> Router[Vue Router]
+    Store --> API[API Client]
+    Store --> WS[WebSocket Client]
+    Component --> Validation[Form Validation]
+```
+
+#### Data Flow Architecture
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant A as API Gateway
+    participant S as Service Layer
+    participant D as Database
+    participant R as Redis Cache
+    participant E as Elasticsearch
+    
+    C->>A: HTTP Request
+    A->>S: Process Request
+    S->>R: Check Cache
+    alt Cache Hit
+        R-->>S: Return Cached Data
+    else Cache Miss
+        S->>D: Query Database
+        D-->>S: Return Data
+        S->>R: Update Cache
+    end
+    S->>E: Index Data
+    S-->>A: Return Response
+    A-->>C: HTTP Response
+```
 
 ## API Documentation
 
