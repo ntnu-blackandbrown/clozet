@@ -35,19 +35,11 @@ import { RouterLink } from 'vue-router'
       </div>
 
       <div class="footer-section">
-        <h3 id="newsletter-section">Newsletter</h3>
-        <p>Subscribe to get updates on new items and special offers!</p>
-        <form class="newsletter-form" aria-labelledby="newsletter-section">
-          <label for="newsletter-email" class="sr-only">Email address</label>
-          <input
-            type="email"
-            id="newsletter-email"
-            placeholder="Enter your email"
-            class="form-control"
-            aria-required="true"
-          />
-          <button type="submit" class="btn btn-primary">Subscribe</button>
-        </form>
+        <h3 id="account-section">Account</h3>
+        <nav aria-labelledby="account-section">
+          <RouterLink to="/login" class="footer-link">Login</RouterLink>
+          <RouterLink to="/register" class="footer-link">Register</RouterLink>
+        </nav>
       </div>
     </div>
 
@@ -151,51 +143,6 @@ import { RouterLink } from 'vue-router'
 .footer-link:focus {
   outline: 2px solid var(--color-summer-green);
   outline-offset: 2px;
-}
-
-.newsletter-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.newsletter-form input {
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: var(--border-radius);
-  background-color: rgba(255, 255, 255, 0.1);
-  color: var(--color-white);
-  transition: var(--transition-smooth);
-}
-
-.newsletter-form input:focus {
-  outline: none;
-  border-color: var(--color-summer-green);
-  background-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 0 2px var(--color-summer-green-light);
-}
-
-.newsletter-form input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.newsletter-form button {
-  background-color: var(--color-summer-green);
-  color: var(--color-white);
-  border: none;
-  border-radius: var(--border-radius);
-  padding: var(--spacing-sm) var(--spacing-md);
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition-bounce);
-}
-
-.newsletter-form button:hover,
-.newsletter-form button:focus {
-  background-color: var(--color-summer-green-dark);
-  transform: translateY(-2px);
-  box-shadow: var(--box-shadow-medium);
-  outline: none;
 }
 
 .footer-bottom {
