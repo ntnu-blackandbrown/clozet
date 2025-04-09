@@ -3,40 +3,51 @@ import { RouterLink } from 'vue-router'
 </script>
 
 <template>
-  <footer class="footer">
+  <footer class="footer" role="contentinfo">
     <div class="footer-content">
       <div class="footer-section">
-        <h3>About Clozet</h3>
+        <h3 id="about-section">About Clozet</h3>
         <p>Your sustainable fashion marketplace. Buy, sell, and trade clothes with ease.</p>
-        <div class="social-links">
-          <a href="#" class="social-link">Instagram</a>
-          <a href="#" class="social-link">Facebook</a>
-          <a href="#" class="social-link">Twitter</a>
+        <div class="social-links" aria-labelledby="about-section">
+          <a href="#" class="social-link" aria-label="Follow us on Instagram">Instagram</a>
+          <a href="#" class="social-link" aria-label="Follow us on Facebook">Facebook</a>
+          <a href="#" class="social-link" aria-label="Follow us on Twitter">Twitter</a>
         </div>
       </div>
 
       <div class="footer-section">
-        <h3>Quick Links</h3>
-        <RouterLink to="/profile" class="footer-link">My Profile</RouterLink>
-        <RouterLink to="/messages" class="footer-link">Messages</RouterLink>
-        <RouterLink to="/create-product" class="footer-link">Sell Items</RouterLink>
+        <h3 id="navigation-section">Quick Links</h3>
+        <nav aria-labelledby="navigation-section">
+          <RouterLink to="/profile" class="footer-link">My Profile</RouterLink>
+          <RouterLink to="/messages" class="footer-link">Messages</RouterLink>
+          <RouterLink to="/create-product" class="footer-link">Sell Items</RouterLink>
+        </nav>
       </div>
 
       <div class="footer-section">
-        <h3>Help & Support</h3>
-        <a href="#" class="footer-link">FAQ</a>
-        <a href="#" class="footer-link">Contact Us</a>
-        <a href="#" class="footer-link">Terms of Service</a>
-        <a href="#" class="footer-link">Privacy Policy</a>
+        <h3 id="help-section">Help & Support</h3>
+        <nav aria-labelledby="help-section">
+          <a href="#" class="footer-link">FAQ</a>
+          <a href="#" class="footer-link">Contact Us</a>
+          <a href="#" class="footer-link">Terms of Service</a>
+          <a href="#" class="footer-link">Privacy Policy</a>
+        </nav>
       </div>
 
       <div class="footer-section">
-        <h3>Newsletter</h3>
+        <h3 id="newsletter-section">Newsletter</h3>
         <p>Subscribe to get updates on new items and special offers!</p>
-        <div class="newsletter-form">
-          <input type="email" placeholder="Enter your email" class="form-control" />
+        <form class="newsletter-form" aria-labelledby="newsletter-section">
+          <label for="newsletter-email" class="sr-only">Email address</label>
+          <input
+            type="email"
+            id="newsletter-email"
+            placeholder="Enter your email"
+            class="form-control"
+            aria-required="true"
+          />
           <button type="submit" class="btn btn-primary">Subscribe</button>
-        </div>
+        </form>
       </div>
     </div>
 
@@ -109,9 +120,16 @@ import { RouterLink } from 'vue-router'
   border-radius: var(--border-radius-sm);
 }
 
-.social-link:hover {
+.social-link:hover,
+.social-link:focus {
   color: var(--color-white);
   background-color: rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.social-link:focus {
+  outline: 2px solid var(--color-summer-green);
+  outline-offset: 2px;
 }
 
 .footer-link {
@@ -120,11 +138,19 @@ import { RouterLink } from 'vue-router'
   font-size: 0.9rem;
   transition: var(--transition-smooth);
   padding: var(--spacing-xs) 0;
+  display: block;
 }
 
-.footer-link:hover {
+.footer-link:hover,
+.footer-link:focus {
   color: var(--color-summer-green);
   transform: translateX(5px);
+  outline: none;
+}
+
+.footer-link:focus {
+  outline: 2px solid var(--color-summer-green);
+  outline-offset: 2px;
 }
 
 .newsletter-form {
@@ -146,6 +172,7 @@ import { RouterLink } from 'vue-router'
   outline: none;
   border-color: var(--color-summer-green);
   background-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 0 2px var(--color-summer-green-light);
 }
 
 .newsletter-form input::placeholder {
@@ -163,10 +190,12 @@ import { RouterLink } from 'vue-router'
   transition: var(--transition-bounce);
 }
 
-.newsletter-form button:hover {
+.newsletter-form button:hover,
+.newsletter-form button:focus {
   background-color: var(--color-summer-green-dark);
   transform: translateY(-2px);
   box-shadow: var(--box-shadow-medium);
+  outline: none;
 }
 
 .footer-bottom {
@@ -179,6 +208,18 @@ import { RouterLink } from 'vue-router'
 .footer-bottom p {
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.85rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 /* Responsive Design */

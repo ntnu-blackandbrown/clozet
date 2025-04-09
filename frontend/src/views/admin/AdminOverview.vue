@@ -78,25 +78,25 @@ onMounted(() => {
 <template>
   <div class="admin-overview">
     <div class="page-header">
-      <h1>Dashboard Overview</h1>
+      <h1 id="dashboard-title">Dashboard Overview</h1>
       <p class="subtitle">Welcome to the admin dashboard</p>
     </div>
 
-    <div v-if="isLoading" class="loading-container">
-      <div class="loading-spinner"></div>
+    <div v-if="isLoading" class="loading-container" role="status" aria-live="polite">
+      <div class="loading-spinner" aria-hidden="true"></div>
       <p>Loading dashboard data...</p>
     </div>
 
-    <div v-else-if="error" class="error-container">
+    <div v-else-if="error" class="error-container" role="alert">
       <p>{{ error }}</p>
-      <button @click="fetchStatistics" class="retry-button">Retry</button>
+      <button @click="fetchStatistics" class="retry-button" aria-label="Retry loading dashboard data">Retry</button>
     </div>
 
     <template v-else>
       <!-- Statistics Cards -->
-      <div class="stats-grid">
+      <div class="stats-grid" role="region" aria-labelledby="dashboard-title">
         <div class="stat-card">
-          <div class="stat-icon">👥</div>
+          <div class="stat-icon" aria-hidden="true">👥</div>
           <div class="stat-content">
             <h3 class="stat-title">Total Users</h3>
             <p class="stat-value">{{ statistics.totalUsers }}</p>
@@ -104,7 +104,7 @@ onMounted(() => {
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon">👕</div>
+          <div class="stat-icon" aria-hidden="true">👕</div>
           <div class="stat-content">
             <h3 class="stat-title">Total Items</h3>
             <p class="stat-value">{{ statistics.totalItems }}</p>
@@ -112,7 +112,7 @@ onMounted(() => {
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon">🏷️</div>
+          <div class="stat-icon" aria-hidden="true">🏷️</div>
           <div class="stat-content">
             <h3 class="stat-title">Categories</h3>
             <p class="stat-value">{{ statistics.totalCategories }}</p>
@@ -120,7 +120,7 @@ onMounted(() => {
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon">💰</div>
+          <div class="stat-icon" aria-hidden="true">💰</div>
           <div class="stat-content">
             <h3 class="stat-title">Transactions</h3>
             <p class="stat-value">{{ statistics.totalTransactions }}</p>
@@ -131,15 +131,15 @@ onMounted(() => {
       <!-- Recent Activity Section -->
       <div class="activity-section">
         <div class="activity-card">
-          <h3 class="activity-title">Recent Users</h3>
+          <h3 id="recent-users-title" class="activity-title">Recent Users</h3>
           <div class="activity-content">
-            <table class="data-table">
+            <table class="data-table" aria-labelledby="recent-users-title">
               <thead>
                 <tr>
-                  <th>Username</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Date Joined</th>
+                  <th scope="col">Username</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Date Joined</th>
                 </tr>
               </thead>
               <tbody>
@@ -152,21 +152,21 @@ onMounted(() => {
               </tbody>
             </table>
             <div class="view-all-link">
-              <RouterLink to="/admin/users">View All Users</RouterLink>
+              <RouterLink to="/admin/users" aria-label="View all users">View All Users</RouterLink>
             </div>
           </div>
         </div>
 
         <div class="activity-card">
-          <h3 class="activity-title">Recent Items</h3>
+          <h3 id="recent-items-title" class="activity-title">Recent Items</h3>
           <div class="activity-content">
-            <table class="data-table">
+            <table class="data-table" aria-labelledby="recent-items-title">
               <thead>
                 <tr>
-                  <th>Title</th>
-                  <th>Price</th>
-                  <th>Seller</th>
-                  <th>Date Listed</th>
+                  <th scope="col">Title</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Seller</th>
+                  <th scope="col">Date Listed</th>
                 </tr>
               </thead>
               <tbody>

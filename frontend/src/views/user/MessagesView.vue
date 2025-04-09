@@ -477,11 +477,11 @@ const handleShowProduct = (productId) => {
     />
 
     <!-- Right area with WebSocket chat functionality -->
-    <div class="chat-content">
+    <main class="chat-content" role="main">
       <!-- Chat header with active user info -->
       <div v-if="activeChat" class="chat-header">
         <div class="user-info">
-          <h2>
+          <h2 id="conversation-header">
             {{ getReceiverUsername(findConversationByChatId(activeChat)) }}
           </h2>
           <div v-if="activeItemDetails" class="item-info">
@@ -490,22 +490,36 @@ const handleShowProduct = (productId) => {
               class="item-name"
               @click="handleShowProduct(activeItemDetails.id)"
               role="button"
+              tabindex="0"
+              aria-label="View details for item: {{ activeItemDetails.title }}"
               >{{ activeItemDetails.title }}</span
             >
           </div>
         </div>
         <div v-if="activeItemDetails" class="header-actions">
-          <button class="buy-button" @click="handleBuyItem" :disabled="shouldDisableButtons">
+          <button
+            class="buy-button"
+            @click="handleBuyItem"
+            :disabled="shouldDisableButtons"
+            aria-label="Buy item: {{ activeItemDetails.title }}"
+            >
             Buy Item
           </button>
         </div>
       </div>
 
       <!-- Message history area -->
-      <div class="message-history" v-if="activeChat" @scroll="handleScrollToTop">
+      <div
+        class="message-history"
+        v-if="activeChat"
+        @scroll="handleScrollToTop"
+        role="log"
+        aria-live="polite"
+        aria-label="Message conversation with {{ getReceiverUsername(findConversationByChatId(activeChat)) }}"
+        aria-labelledby="conversation-header">
         <!-- Loading indicator -->
-        <div v-if="isLoadingMore" class="loading-indicator">
-          <div class="loading-spinner"></div>
+        <div v-if="isLoadingMore" class="loading-indicator" role="status">
+          <div class="loading-spinner" aria-hidden="true"></div>
           <div>Loading older messages...</div>
         </div>
 
@@ -525,6 +539,7 @@ const handleShowProduct = (productId) => {
                 ? 'message-sent'
                 : 'message-received',
             ]"
+            :aria-label="(Number(msg.senderId) === authStore.user?.id ? 'You sent: ' : getReceiverUsername(findConversationByChatId(activeChat)) + ' sent: ') + msg.content + ' at ' + formatTime(msg.timestamp || msg.createdAt)"
           >
             <div class="message-content">{{ msg.content }}</div>
             <div class="message-footer">
@@ -534,12 +549,16 @@ const handleShowProduct = (productId) => {
               <span
                 v-if="Number(msg.senderId) === authStore.user?.id || msg.type === 'sent'"
                 class="message-status"
+                aria-hidden="true"
               >
                 <!-- Failed message with retry option -->
                 <span
                   v-if="websocket.failedMessages.has(msg.id)"
                   class="message-failed"
                   @click="websocket.retryMessage(msg.id)"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Message failed to send. Click to retry."
                 >
                   <i class="fas fa-exclamation-circle"></i>
                   <span class="retry-text">Tap to retry</span>
@@ -571,32 +590,40 @@ const handleShowProduct = (productId) => {
       </div>
 
       <!-- Message input area -->
-      <div class="message-input" v-if="activeChat">
+      <div class="message-input" v-if="activeChat" role="form" aria-label="Message input">
         <!-- Typing indicator -->
         <div
           v-if="websocket.isReceiverTyping(findConversationByChatId(activeChat)?.receiverId)"
           class="typing-indicator"
+          aria-live="polite"
         >
           {{ getReceiverUsername(findConversationByChatId(activeChat)) }} is typing...
         </div>
         <div class="form-group">
+          <label for="message-textarea" class="sr-only">Type your message</label>
           <textarea
+            id="message-textarea"
             v-model="websocket.messageContent"
             @keypress.enter.prevent="websocket.sendMessage"
             @input="websocket.handleTyping"
             placeholder="Type a message..."
+            aria-label="Type your message"
           ></textarea>
         </div>
-        <button @click="websocket.sendMessage" :disabled="!websocket.messageContent.trim()">
+        <button
+          @click="websocket.sendMessage"
+          :disabled="!websocket.messageContent.trim()"
+          aria-label="Send message"
+          >
           Send Message
         </button>
       </div>
 
       <!-- No chat selected state -->
-      <div v-if="!activeChat" class="no-chat-selected">
+      <div v-if="!activeChat" class="no-chat-selected" role="status">
         <h3>Select a conversation to start chatting</h3>
       </div>
-    </div>
+    </main>
   </div>
 
   <!-- Product Display Modal -->
@@ -867,5 +894,17 @@ const handleShowProduct = (productId) => {
   align-items: center;
   height: 100%;
   color: #666;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 </style>

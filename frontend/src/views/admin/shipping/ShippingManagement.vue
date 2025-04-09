@@ -168,28 +168,28 @@ onMounted(() => {
 <template>
   <div class="shipping-management">
     <div class="page-header">
-      <h1>Shipping Options Management</h1>
-      <button @click="addShippingOption" class="btn-primary">Add New Shipping Option</button>
+      <h1 id="shipping-management-title">Shipping Options Management</h1>
+      <button @click="addShippingOption" class="btn-primary" aria-label="Add new shipping option">Add New Shipping Option</button>
     </div>
 
-    <div v-if="error" class="error-message">
+    <div v-if="error" class="error-message" role="alert">
       {{ error }}
-      <button @click="fetchShippingOptions" class="btn-secondary">Retry</button>
+      <button @click="fetchShippingOptions" class="btn-secondary" aria-label="Retry loading shipping options">Retry</button>
     </div>
 
     <!-- Shipping Options Table -->
     <div class="table-container">
       <div style="overflow-x: auto;" v-if="!isLoading && shippingOptions.length > 0">
-        <table class="admin-table">
+        <table class="admin-table" aria-labelledby="shipping-management-title">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Estimated Days</th>
-              <th>Price</th>
-              <th>Tracked</th>
-              <th>Actions</th>
+              <th scope="col">ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Estimated Days</th>
+              <th scope="col">Price</th>
+              <th scope="col">Tracked</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -205,33 +205,33 @@ onMounted(() => {
                 </span>
               </td>
               <td class="actions">
-                <button @click="editShippingOption(option)" class="btn-icon edit">✎</button>
-                <button @click="deleteShippingOption(option.id)" class="btn-icon delete">🗑</button>
+                <button @click="editShippingOption(option)" class="btn-icon edit" aria-label="Edit shipping option: {{ option.name }}">✎</button>
+                <button @click="deleteShippingOption(option.id)" class="btn-icon delete" aria-label="Delete shipping option: {{ option.name }}">🗑</button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div v-else-if="isLoading" class="loading-container">
-        <div class="loading-spinner"></div>
+      <div v-else-if="isLoading" class="loading-container" role="status" aria-live="polite">
+        <div class="loading-spinner" aria-hidden="true"></div>
         <p>Loading shipping options...</p>
       </div>
 
       <div v-else class="empty-state">
         <p>No shipping options found</p>
-        <button @click="addShippingOption" class="btn-primary">
+        <button @click="addShippingOption" class="btn-primary" aria-label="Add first shipping option">
           Add Your First Shipping Option
         </button>
       </div>
     </div>
 
     <!-- Shipping Option Form Modal -->
-    <div v-if="showForm" class="modal-backdrop" @click="showForm = false">
+    <div v-if="showForm" class="modal-backdrop" @click="showForm = false" aria-modal="true" role="dialog" aria-labelledby="shipping-form-title">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h3>{{ formMode === 'add' ? 'Add New Shipping Option' : 'Edit Shipping Option' }}</h3>
-          <button @click="showForm = false" class="btn-close">×</button>
+          <h3 id="shipping-form-title">{{ formMode === 'add' ? 'Add New Shipping Option' : 'Edit Shipping Option' }}</h3>
+          <button @click="showForm = false" class="btn-close" aria-label="Close form">×</button>
         </div>
 
         <form @submit.prevent="handleSubmit" class="shipping-form">
@@ -242,8 +242,11 @@ onMounted(() => {
               id="name"
               v-model="shippingForm.name"
               :class="{ 'input-error': formErrors.name }"
+              aria-required="true"
+              :aria-invalid="formErrors.name ? 'true' : 'false'"
+              :aria-describedby="formErrors.name ? 'name-error' : undefined"
             />
-            <span v-if="formErrors.name" class="error-text">{{ formErrors.name }}</span>
+            <span v-if="formErrors.name" class="error-text" id="name-error" role="alert">{{ formErrors.name }}</span>
           </div>
 
           <div class="form-group">
@@ -253,8 +256,11 @@ onMounted(() => {
               v-model="shippingForm.description"
               rows="3"
               :class="{ 'input-error': formErrors.description }"
+              aria-required="true"
+              :aria-invalid="formErrors.description ? 'true' : 'false'"
+              :aria-describedby="formErrors.description ? 'description-error' : undefined"
             ></textarea>
-            <span v-if="formErrors.description" class="error-text">{{
+            <span v-if="formErrors.description" class="error-text" id="description-error" role="alert">{{
               formErrors.description
             }}</span>
           </div>
@@ -268,8 +274,11 @@ onMounted(() => {
                 v-model.number="shippingForm.estimatedDays"
                 min="1"
                 :class="{ 'input-error': formErrors.estimatedDays }"
+                aria-required="true"
+                :aria-invalid="formErrors.estimatedDays ? 'true' : 'false'"
+                :aria-describedby="formErrors.estimatedDays ? 'days-error' : undefined"
               />
-              <span v-if="formErrors.estimatedDays" class="error-text">{{
+              <span v-if="formErrors.estimatedDays" class="error-text" id="days-error" role="alert">{{
                 formErrors.estimatedDays
               }}</span>
             </div>
@@ -283,21 +292,24 @@ onMounted(() => {
                 step="0.01"
                 min="0"
                 :class="{ 'input-error': formErrors.price }"
+                aria-required="true"
+                :aria-invalid="formErrors.price ? 'true' : 'false'"
+                :aria-describedby="formErrors.price ? 'price-error' : undefined"
               />
-              <span v-if="formErrors.price" class="error-text">{{ formErrors.price }}</span>
+              <span v-if="formErrors.price" class="error-text" id="price-error" role="alert">{{ formErrors.price }}</span>
             </div>
           </div>
 
           <div class="form-group checkbox-group">
             <label class="checkbox-label">
-              <input type="checkbox" v-model="shippingForm.isTracked" />
+              <input type="checkbox" v-model="shippingForm.isTracked" id="isTracked" aria-label="Tracked shipping" />
               <span class="checkbox-text">Tracked Shipping</span>
             </label>
           </div>
 
           <div class="form-actions">
-            <button type="button" @click="showForm = false" class="btn-secondary">Cancel</button>
-            <button type="submit" class="btn-primary">
+            <button type="button" @click="showForm = false" class="btn-secondary" aria-label="Cancel">Cancel</button>
+            <button type="submit" class="btn-primary" aria-label="Submit shipping option form">
               {{ formMode === 'add' ? 'Add Shipping Option' : 'Update Shipping Option' }}
             </button>
           </div>

@@ -6,7 +6,6 @@
 
       <form @submit.prevent="submit" class="forgot-password-form">
         <div class="form-group">
-          <label for="currentPassword">Current Password</label>
           <div class="password-input-container">
             <input
               :type="showCurrentPassword ? 'text' : 'password'"

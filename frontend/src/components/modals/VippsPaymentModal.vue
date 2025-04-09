@@ -108,18 +108,18 @@ const formattedPrice = (price: number) => {
 </script>
 
 <template>
-  <div class="vipps-payment-modal">
+  <div class="vipps-payment-modal" role="dialog" aria-labelledby="vipps-payment-title">
     <div class="vipps-header">
       <img src="@/assets/images/vipps.png" alt="Vipps Logo" class="vipps-logo" />
-      <h2>Vipps Payment</h2>
+      <h2 id="vipps-payment-title">Vipps Payment</h2>
     </div>
 
     <!-- Step 1: Phone Number -->
-    <div v-if="currentStep === 1" class="vipps-step">
-      <h3>Enter your phone number</h3>
+    <div v-if="currentStep === 1" class="vipps-step" role="form" aria-labelledby="step1-title">
+      <h3 id="step1-title">Enter your phone number</h3>
       <p class="step-description">Please enter your Norwegian phone number connected to Vipps</p>
 
-      <div v-if="props.shippingPhoneNumber" class="shipping-phone-notice">
+      <div v-if="props.shippingPhoneNumber" class="shipping-phone-notice" aria-live="polite">
         <p>
           Your shipping phone number is: <strong>{{ props.shippingPhoneNumber }}</strong>
         </p>
@@ -127,17 +127,26 @@ const formattedPrice = (price: number) => {
       </div>
 
       <div class="input-group">
-        <input type="tel" v-model="phoneNumber" placeholder="+47 12345678" class="vipps-input" />
+        <label for="vipps-phone" class="visually-hidden">Phone number</label>
+        <input
+          type="tel"
+          id="vipps-phone"
+          v-model="phoneNumber"
+          placeholder="+47 12345678"
+          class="vipps-input"
+          aria-required="true"
+        />
       </div>
 
-      <p v-if="error" class="error-message">{{ error }}</p>
+      <p v-if="error" class="error-message" role="alert">{{ error }}</p>
 
       <div class="button-group">
-        <button @click="prevStep" class="vipps-button back">Back to Shipping</button>
+        <button @click="prevStep" class="vipps-button back" aria-label="Go back to shipping details">Back to Shipping</button>
         <button
           @click="nextStep"
           class="vipps-button next"
           :disabled="!phoneNumber || !/^\+47[0-9]{8}$/.test(phoneNumber as string)"
+          aria-label="Continue to purchase confirmation"
         >
           Next
         </button>
@@ -145,10 +154,10 @@ const formattedPrice = (price: number) => {
     </div>
 
     <!-- Step 2: Confirm Purchase -->
-    <div v-if="currentStep === 2" class="vipps-step">
-      <h3>Confirm Your Purchase</h3>
+    <div v-if="currentStep === 2" class="vipps-step" role="form" aria-labelledby="step2-title">
+      <h3 id="step2-title">Confirm Your Purchase</h3>
 
-      <div class="purchase-details">
+      <div class="purchase-details" role="region" aria-label="Purchase details summary">
         <div class="detail-row">
           <span class="detail-label">Item:</span>
           <span class="detail-value">{{ itemTitle }}</span>
@@ -176,36 +185,46 @@ const formattedPrice = (price: number) => {
       </div>
 
       <div class="button-group">
-        <button @click="prevStep" class="vipps-button back">Back</button>
-        <button @click="nextStep" class="vipps-button next">Confirm</button>
+        <button @click="prevStep" class="vipps-button back" aria-label="Go back to phone entry">Back</button>
+        <button @click="nextStep" class="vipps-button next" aria-label="Confirm and continue to PIN entry">Confirm</button>
       </div>
     </div>
 
     <!-- Step 3: PIN Code -->
-    <div v-if="currentStep === 3" class="vipps-step">
-      <h3>Enter your Vipps PIN</h3>
+    <div v-if="currentStep === 3" class="vipps-step" role="form" aria-labelledby="step3-title">
+      <h3 id="step3-title">Enter your Vipps PIN</h3>
       <p class="step-description">
         Please enter your 4-digit Vipps PIN code to complete the payment
       </p>
 
       <div class="input-group">
+        <label for="vipps-pin" class="visually-hidden">PIN code</label>
         <input
           type="password"
+          id="vipps-pin"
           v-model="pincode"
           placeholder="****"
           maxlength="4"
           class="vipps-input pin-input"
+          aria-required="true"
+          autocomplete="off"
         />
       </div>
 
-      <p v-if="error" class="error-message">{{ error }}</p>
+      <p v-if="error" class="error-message" role="alert">{{ error }}</p>
 
       <div class="button-group">
-        <button @click="prevStep" class="vipps-button back" :disabled="isSubmitting">Back</button>
+        <button
+          @click="prevStep"
+          class="vipps-button back"
+          :disabled="isSubmitting"
+          aria-label="Go back to purchase confirmation"
+        >Back</button>
         <button
           @click="processPayment"
           class="vipps-button pay"
           :disabled="!isFormValid || isSubmitting || !pincode || (pincode as string).length !== 4"
+          aria-label="Complete payment"
         >
           <span v-if="isSubmitting">Processing...</span>
           <span v-else>Pay Now</span>
@@ -386,5 +405,17 @@ const formattedPrice = (price: number) => {
   color: #666;
   font-size: 0.9em;
   margin-top: 0.5rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>

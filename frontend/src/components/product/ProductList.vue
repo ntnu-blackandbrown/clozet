@@ -42,7 +42,7 @@ watch(
 
 <template>
   <div class="product-list">
-    <div v-if="items.length === 0" class="no-items">No items available</div>
+    <div v-if="items.length === 0" class="no-items" role="status" aria-live="polite">No items available</div>
     <div v-else class="products-grid">
       <ProductCard
         v-for="item in items"
@@ -57,12 +57,14 @@ watch(
         :isWishlisted="item.wishlisted"
         :isAvailable="item.isAvailable"
         @click="openProductModal(item.id)"
+        :aria-label="`View details for ${item.title}, priced at ${item.price}`"
       />
     </div>
     <ProductDisplayModal
       v-if="showProductModal && selectedProductId"
       :product-id="selectedProductId"
       @close="showProductModal = false"
+      aria-label="Product details"
     />
   </div>
 </template>

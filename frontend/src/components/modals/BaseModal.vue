@@ -1,14 +1,42 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const hideCloseButton = ref(false)
-const maxWidth = ref('900px')
-const padding = ref('2rem')
+const props = defineProps({
+  modalTitle: {
+    type: String,
+    default: 'Modal Dialog'
+  },
+  modalId: {
+    type: String,
+    default: () => `modal-${Math.random().toString(36).substr(2, 9)}`
+  },
+  hideCloseButton: {
+    type: Boolean,
+    default: false
+  },
+  maxWidth: {
+    type: String,
+    default: '900px'
+  },
+  padding: {
+    type: String,
+    default: '2rem'
+  }
+})
 
+const modalIdRef = ref(props.modalId)
+const titleId = ref(`${modalIdRef.value}-title`)
 const emit = defineEmits(['close'])
+
+// Store the element that had focus before the modal was opened
+const previouslyFocused = ref(null)
 
 const close = () => {
   emit('close')
+  // Return focus to the element that had focus before the modal was opened
+  if (previouslyFocused.value) {
+    previouslyFocused.value.focus()
+  }
 }
 
 const handleKeydown = (event) => {
@@ -18,6 +46,16 @@ const handleKeydown = (event) => {
 }
 
 onMounted(() => {
+  // Store the element that had focus before the modal was opened
+  previouslyFocused.value = document.activeElement
+  // Set focus to the modal container
+  setTimeout(() => {
+    const modalContainer = document.getElementById(modalIdRef.value)
+    if (modalContainer) {
+      modalContainer.focus()
+    }
+  }, 50)
+
   window.addEventListener('keydown', handleKeydown)
 })
 
@@ -27,9 +65,23 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="backdrop" @click.self="close">
-    <div class="container" :style="{ maxWidth: maxWidth, padding: padding }">
-      <button v-if="!hideCloseButton" class="close-button" @click="close">×</button>
+  <div class="backdrop" @click.self="close" aria-hidden="true">
+    <div
+      class="container"
+      :style="{ maxWidth: maxWidth, padding: padding }"
+      role="dialog"
+      aria-modal="true"
+      :aria-labelledby="titleId"
+      :id="modalIdRef"
+      tabindex="-1"
+    >
+      <button
+        v-if="!hideCloseButton"
+        class="close-button"
+        @click="close"
+        aria-label="Close modal"
+      >×</button>
+      <div :id="titleId" class="visually-hidden">{{ modalTitle }}</div>
       <slot></slot>
     </div>
   </div>
@@ -101,6 +153,18 @@ onUnmounted(() => {
 .close-button:hover {
   background-color: #f1f1f1;
   color: #333;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 @media (max-width: 768px) {

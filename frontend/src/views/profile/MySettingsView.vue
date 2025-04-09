@@ -106,42 +106,43 @@ const handleDeleteAccount = async () => {
 
 <template>
   <div class="profile-settings-container">
-    <h2>Profile Settings</h2>
-    <form @submit.prevent="handleSaveChanges" class="profile-form">
+    <h2 id="profile-settings-title">Profile Settings</h2>
+    <form @submit.prevent="handleSaveChanges" class="profile-form" aria-labelledby="profile-settings-title">
       <div class="name-fields">
         <div class="form-group">
-          <label>First Name</label>
-          <input type="text" placeholder="Your first name" v-model="firstName" />
-          <span class="error" v-if="firstNameError">{{ firstNameError }}</span>
+          <label for="firstName">First Name</label>
+          <input type="text" id="firstName" placeholder="Your first name" v-model="firstName" aria-required="true" aria-invalid="firstNameError ? true : false" />
+          <span class="error" v-if="firstNameError" role="alert">{{ firstNameError }}</span>
         </div>
         <div class="form-group">
-          <label>Last Name</label>
-          <input type="text" placeholder="Your last name" v-model="lastName" />
-          <span class="error" v-if="lastNameError">{{ lastNameError }}</span>
+          <label for="lastName">Last Name</label>
+          <input type="text" id="lastName" placeholder="Your last name" v-model="lastName" aria-required="true" aria-invalid="lastNameError ? true : false" />
+          <span class="error" v-if="lastNameError" role="alert">{{ lastNameError }}</span>
         </div>
       </div>
       <div class="credentials-fields">
         <div class="form-group">
-          <label>Username</label>
-          <input type="text" placeholder="Your username" v-model="username" />
-          <span class="error" v-if="usernameError">{{ usernameError }}</span>
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Your username" v-model="username" aria-required="true" aria-invalid="usernameError ? true : false" />
+          <span class="error" v-if="usernameError" role="alert">{{ usernameError }}</span>
         </div>
         <div class="form-group">
-          <label>Email</label>
-          <input type="email" placeholder="Your email" v-model="email" />
-          <span class="error" v-if="emailError">{{ emailError }}</span>
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Your email" v-model="email" aria-required="true" aria-invalid="emailError ? true : false" />
+          <span class="error" v-if="emailError" role="alert">{{ emailError }}</span>
         </div>
       </div>
 
       <!-- Status Message -->
-      <div v-if="statusMessage" class="status-message" :class="statusType">
+      <div v-if="statusMessage" class="status-message" :class="statusType" role="status" aria-live="polite">
         {{ statusMessage }}
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="save-button" :disabled="!isFormValid || isSubmitting">
+        <button type="submit" class="save-button" :disabled="!isFormValid || isSubmitting" aria-busy="isSubmitting">
           <span v-if="isSubmitting">
-            <span class="spinner"></span>
+            <span class="spinner" aria-hidden="true"></span>
+            <span class="sr-only">Saving...</span>
           </span>
           <span v-else>Save Changes</span>
         </button>
@@ -150,6 +151,7 @@ const handleDeleteAccount = async () => {
           class="delete-button"
           @click="handleDeleteAccount"
           :disabled="isSubmitting"
+          aria-label="Delete your account permanently"
         >
           Delete Account
         </button>
@@ -323,5 +325,17 @@ const handleDeleteAccount = async () => {
   to {
     transform: rotate(360deg);
   }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 </style>

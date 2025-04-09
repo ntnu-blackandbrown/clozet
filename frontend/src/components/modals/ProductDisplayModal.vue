@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import ProductDisplay from '@/components/product/ProductDisplay.vue'
 import BaseModal from '@/components/modals/BaseModal.vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -13,6 +13,7 @@ const router = useRouter()
 const route = useRoute()
 
 const emit = defineEmits(['close'])
+const modalId = ref(`product-modal-${props.productId}`)
 
 const handleClose = () => {
   // Get the base path from the current route
@@ -36,7 +37,11 @@ const handleClose = () => {
 </script>
 
 <template>
-  <BaseModal @close="handleClose">
+  <BaseModal
+    @close="handleClose"
+    :modalId="modalId"
+    modalTitle="Product Details"
+  >
     <ProductDisplay :id="props.productId" />
   </BaseModal>
 </template>

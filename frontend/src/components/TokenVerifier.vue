@@ -1,7 +1,7 @@
 <template>
-  <div class="token-verifier">
-    <p v-if="loading">Validerer token...</p>
-    <p v-if="error" class="error">{{ errorMessage }}</p>
+  <div class="token-verifier" role="status" aria-live="polite">
+    <p v-if="loading" aria-busy="true">Validerer token...</p>
+    <p v-if="error" class="error" role="alert">{{ errorMessage }}</p>
   </div>
 </template>
 

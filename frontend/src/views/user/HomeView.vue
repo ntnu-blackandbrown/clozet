@@ -144,7 +144,7 @@ const displayCategories = computed(() => {
               aria-label="Search for products"
             />
 
-            <button v-if="searchQuery" @click="clearSearch" class="clear-search-btn">Clear</button>
+            <button v-if="searchQuery" @click="clearSearch" class="clear-search-btn" aria-label="Clear search">Clear</button>
             <!-- Inline SVG icon -->
             <svg
               class="search-icon"
@@ -154,13 +154,14 @@ const displayCategories = computed(() => {
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
+              aria-hidden="true"
             >
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
           </div>
           <div class="create-post-btn">
-            <button @click="handleCreatePost">Create a post!</button>
+            <button @click="handleCreatePost" aria-label="Create a new post">Create a post!</button>
           </div>
         </div>
       </div>
@@ -178,6 +179,7 @@ const displayCategories = computed(() => {
             type="category"
             :name="category.name"
             @click="handleCategoryClick(category.name)"
+            :aria-label="`Browse ${category.name} category`"
           />
         </div>
       </div>

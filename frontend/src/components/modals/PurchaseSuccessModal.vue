@@ -29,8 +29,8 @@ const formattedPrice = computed(() => {
 </script>
 
 <template>
-  <div class="success-modal">
-    <div class="success-icon">
+  <div class="success-modal" role="dialog" aria-labelledby="purchase-success-title">
+    <div class="success-icon" aria-hidden="true">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
         <path
           d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
@@ -38,13 +38,13 @@ const formattedPrice = computed(() => {
       </svg>
     </div>
 
-    <h2>Purchase Successful!</h2>
+    <h2 id="purchase-success-title">Purchase Successful!</h2>
     <p class="success-message">
       Thank you for your purchase. Your transaction has been completed successfully.
     </p>
 
-    <div class="purchase-summary">
-      <h3>Purchase Summary</h3>
+    <div class="purchase-summary" role="region" aria-labelledby="purchase-summary-title">
+      <h3 id="purchase-summary-title">Purchase Summary</h3>
       <div class="summary-item">
         <span class="label">Item:</span>
         <span class="value">{{ itemTitle }}</span>
@@ -55,8 +55,8 @@ const formattedPrice = computed(() => {
       </div>
     </div>
 
-    <div v-if="shippingAddress" class="shipping-info">
-      <h3>Shipping Details</h3>
+    <div v-if="shippingAddress" class="shipping-info" role="region" aria-labelledby="shipping-details-title">
+      <h3 id="shipping-details-title">Shipping Details</h3>
       <div class="address">
         <p>{{ shippingAddress.firstName }} {{ shippingAddress.lastName }}</p>
         <p>{{ shippingAddress.streetAddress }}</p>
@@ -66,8 +66,20 @@ const formattedPrice = computed(() => {
     </div>
 
     <div class="actions">
-      <button @click="emit('viewPurchases')" class="view-purchases-btn">View My Purchases</button>
-      <button @click="emit('close')" class="continue-shopping-btn">Continue Shopping</button>
+      <button
+        @click="emit('viewPurchases')"
+        class="view-purchases-btn"
+        aria-label="View my purchase history"
+      >
+        View My Purchases
+      </button>
+      <button
+        @click="emit('close')"
+        class="continue-shopping-btn"
+        aria-label="Continue shopping"
+      >
+        Continue Shopping
+      </button>
     </div>
   </div>
 </template>

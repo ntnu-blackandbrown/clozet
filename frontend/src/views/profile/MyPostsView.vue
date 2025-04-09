@@ -59,11 +59,16 @@ onMounted(async () => {
 
 <template>
   <div>
-    <h1>My posts</h1>
+    <h1 id="my-posts-title">My posts</h1>
+    <div v-if="items.length === 0" role="status" aria-live="polite" class="empty-state">
+      You have no posts yet
+    </div>
     <ProductList
+      v-else
       :items="items"
       route-base-path="/profile/posts/"
       :initial-product-id="initialProductId"
+      aria-labelledby="my-posts-title"
     />
   </div>
 </template>

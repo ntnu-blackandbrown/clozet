@@ -275,7 +275,7 @@ const handleDeleteClick = async () => {
 </script>
 
 <template>
-  <div v-if="isLoading" class="loading-popup">
+  <div v-if="isLoading" class="loading-popup" role="alert" aria-live="assertive">
     <p>Processing your purchase...</p>
   </div>
 
@@ -320,23 +320,27 @@ const handleDeleteClick = async () => {
     />
   </BaseModal>
 
-  <div v-if="item" class="product-display">
+  <div v-if="item" class="product-display" role="main">
     <div class="product-image-container">
-      <div class="gallery-container" v-if="images && images.length > 1">
+      <div class="gallery-container" v-if="images && images.length > 1" role="listbox" aria-label="Product image gallery">
         <div
           v-for="(image, index) in images"
           :key="index"
           class="gallery-item"
           :class="{ active: index === selectedImageIndex }"
           @click="selectedImageIndex = index"
+          role="option"
+          :aria-selected="index === selectedImageIndex"
+          :tabindex="index === selectedImageIndex ? 0 : -1"
+          :aria-label="`Image ${index + 1} of ${images.length}`"
         >
-          <img :src="image.imageUrl" :alt="'Product image ' + (index + 1)" class="gallery-image" />
+          <img :src="image.imageUrl" :alt="`Product image ${index + 1}`" class="gallery-image" />
         </div>
       </div>
       <div class="main-image-container">
         <img
           :src="mainImageUrl"
-          :alt="'Main product image'"
+          :alt="`Main product image of ${item.title}`"
           class="main-image"
         />
       </div>
@@ -367,12 +371,14 @@ const handleDeleteClick = async () => {
           <button
             class="edit-button"
             @click="handleEditClick"
+            aria-label="Edit this item"
           >
             Edit Item
           </button>
           <button
             class="delete-button"
             @click="handleDeleteClick"
+            aria-label="Delete this item"
           >
             Delete Item
           </button>
@@ -385,6 +391,7 @@ const handleDeleteClick = async () => {
             @click="handleContactSeller"
             :disabled="!isItemAvailable || !authStore.isLoggedIn || isAdmin"
             :title="isAdmin ? 'Admin cannot contact seller' : !authStore.isLoggedIn ? 'Please log in to contact seller' : !isItemAvailable ? 'Item is not available' : ''"
+            aria-label="Contact seller about this item"
           >
             Contact Seller
           </button>
@@ -393,29 +400,31 @@ const handleDeleteClick = async () => {
             @click="handleBuyClick"
             :disabled="!isItemAvailable || isAdmin"
             :title="isAdmin ? 'Admin cannot buy items' : !isItemAvailable ? 'Item is not available' : ''"
+            aria-label="Purchase this item"
            >
             Buy Item
           </button>
           <WishlistButton
             :product-id="item.id"
             :is-available="isItemAvailable"
+            aria-label="Add to wishlist"
           />
         </template>
       </div>
-      <div class="product-details-list">
-        <p class="detail-item">
+      <div class="product-details-list" role="list" aria-label="Product specifications">
+        <p class="detail-item" role="listitem">
           <span class="detail-label">Brand:</span>
           <span class="detail-value">{{ item.brand }}</span>
         </p>
-        <p class="detail-item">
+        <p class="detail-item" role="listitem">
           <span class="detail-label">Color:</span>
           <span class="detail-value">{{ item.color }}</span>
         </p>
-        <p class="detail-item">
+        <p class="detail-item" role="listitem">
           <span class="detail-label">Condition:</span>
           <span class="detail-value">{{ item.condition }}</span>
         </p>
-        <p class="detail-item">
+        <p class="detail-item" role="listitem">
           <span class="detail-label">Size:</span>
           <span class="detail-value">{{ item.size }}</span>
         </p>
@@ -426,7 +435,7 @@ const handleDeleteClick = async () => {
           class="vipps-image"
         />
       </div>
-      <div id="product-info">
+      <div id="product-info" aria-label="Product posting information">
         <div class="info-item">
           <span class="info-label">Posted:</span>
           <span class="info-value">{{ formatDate(item.createdAt) }}</span>

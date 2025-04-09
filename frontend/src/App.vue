@@ -62,36 +62,45 @@ const handleCloseAuthModal = () => {
 
 <template>
   <div :class="{ blurred: showLoginModal }">
-    <header class="main-header">
+    <a href="#main-content" class="skip-link sr-only sr-only-focusable">Skip to main content</a>
+    <header class="main-header" role="banner">
       <div class="header-content">
         <div class="header-left">
-          <RouterLink to="/" class="logo-container">
+          <RouterLink to="/" class="logo-container" aria-label="Clozet Home">
             <img src="@/assets/light-green.png" alt="Clozet Logo" class="logo-image" />
           </RouterLink>
-          <nav class="main-nav">
-
-
+          <nav class="main-nav" aria-label="Main Navigation">
             <template v-if="userDetails?.role === 'ADMIN'">
-              <RouterLink  to="/admin" class="nav-link admin-link"
-              >Admin Dashboard</RouterLink
-            >
+              <RouterLink
+                to="/admin"
+                class="nav-link admin-link"
+                aria-label="Admin Dashboard"
+              >Admin Dashboard</RouterLink>
             </template>
             <template v-else>
-              <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
-              <RouterLink v-if="isLoggedIn" to="/messages">Messages</RouterLink>
+              <RouterLink v-if="isLoggedIn" to="/profile" aria-label="User Profile">Profile</RouterLink>
+              <RouterLink v-if="isLoggedIn" to="/messages" aria-label="Messages">Messages</RouterLink>
             </template>
-
           </nav>
         </div>
 
         <div class="auth-section">
-          <button v-if="isLoggedIn" @click="logout" class="logout-btn">Log Out</button>
-
-            <button  v-else @click="handleLoginClick" class="login-btn">Log In</button>
+          <button
+            v-if="isLoggedIn"
+            @click="logout"
+            class="logout-btn"
+            aria-label="Log Out"
+          >Log Out</button>
+          <button
+            v-else
+            @click="handleLoginClick"
+            class="login-btn"
+            aria-label="Log In"
+          >Log In</button>
         </div>
       </div>
     </header>
-    <main>
+    <main id="main-content" role="main">
       <RouterView />
     </main>
     <Footer />
@@ -163,6 +172,45 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Skip Link */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  padding: 8px;
+  background-color: var(--color-white);
+  color: var(--color-limed-spruce);
+  z-index: 1000;
+  transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
 }
 
 /* Global Component Styles */
@@ -310,9 +358,17 @@ body {
   opacity: 0.9;
 }
 
-.main-nav a:hover {
+.main-nav a:hover,
+.main-nav a:focus {
   color: var(--color-white);
   opacity: 1;
+  outline: none;
+}
+
+.main-nav a:focus {
+  text-decoration: underline;
+  outline: 2px solid white;
+  outline-offset: 2px;
 }
 
 .main-nav a::after {

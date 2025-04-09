@@ -187,56 +187,87 @@ const submit = handleSubmit(async (values) => {
 
 <template>
   <BaseModal @close="emit('close')" maxWidth="400px" padding="3rem" hideCloseButton>
-    <h2>{{ formTitle }}</h2>
+    <h2 id="modal-title">{{ formTitle }}</h2>
 
     <!-- FORM CONTENT-->
-    <form @submit.prevent="submit">
-      <input v-if="isLogin" type="text" v-model="username" placeholder="Username" />
-      <span class="error" id="usernameErrSpan" v-if="isLogin">{{ usernameError }}</span>
+    <form @submit.prevent="submit" aria-labelledby="modal-title">
+      <div class="form-group">
+        <label for="username" class="sr-only">Username</label>
+        <input v-if="isLogin" type="text" id="username" v-model="username" placeholder="Username" aria-required="true" :aria-invalid="!!usernameError" />
+        <span class="error" id="usernameErrSpan" v-if="isLogin && usernameError" role="alert">{{ usernameError }}</span>
+      </div>
 
       <template v-if="!isLogin">
-        <input v-model="username" type="text" placeholder="Username" />
-        <span class="error" id="usernameErrSpan">{{ usernameError }}</span>
-        <input v-model="firstName" type="text" placeholder="First Name" />
-        <span class="error" id="firstNameErrSpan">{{ firstNameError }}</span>
-        <input v-model="lastName" type="text" placeholder="Last Name" />
-        <span class="error" id="lastNameErrSpan">{{ lastNameError }}</span>
-        <input v-model="email" type="email" placeholder="Email" />
-        <span class="error" id="emailErrSpan">{{ emailError }}</span>
+        <div class="form-group">
+          <label for="register-username" class="sr-only">Username</label>
+          <input id="register-username" v-model="username" type="text" placeholder="Username" aria-required="true" :aria-invalid="!!usernameError" />
+          <span class="error" id="usernameErrSpan" v-if="usernameError" role="alert">{{ usernameError }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="firstName" class="sr-only">First Name</label>
+          <input id="firstName" v-model="firstName" type="text" placeholder="First Name" aria-required="true" :aria-invalid="!!firstNameError" />
+          <span class="error" id="firstNameErrSpan" v-if="firstNameError" role="alert">{{ firstNameError }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName" class="sr-only">Last Name</label>
+          <input id="lastName" v-model="lastName" type="text" placeholder="Last Name" aria-required="true" :aria-invalid="!!lastNameError" />
+          <span class="error" id="lastNameErrSpan" v-if="lastNameError" role="alert">{{ lastNameError }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="sr-only">Email</label>
+          <input id="email" v-model="email" type="email" placeholder="Email" aria-required="true" :aria-invalid="!!emailError" />
+          <span class="error" id="emailErrSpan" v-if="emailError" role="alert">{{ emailError }}</span>
+        </div>
       </template>
 
-      <div class="password-input-container">
-        <input v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="Password" />
-        <button type="button" @click="showPassword = !showPassword" class="toggle-password">
+      <div class="password-input-container form-group">
+        <label for="password" class="sr-only">Password</label>
+        <input id="password" v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="Password" aria-required="true" :aria-invalid="!!passwordError" />
+        <button
+          type="button"
+          @click="showPassword = !showPassword"
+          class="toggle-password"
+          :aria-label="showPassword ? 'Hide password' : 'Show password'"
+          aria-controls="password"
+        >
           {{ showPassword ? 'Hide' : 'Show' }}
         </button>
       </div>
-      <span class="error" id="passwordErrSpan">{{ passwordError }}</span>
+      <span class="error" id="passwordErrSpan" v-if="passwordError" role="alert">{{ passwordError }}</span>
 
-      <div v-if="!isLogin" class="password-input-container">
+      <div v-if="!isLogin" class="password-input-container form-group">
+        <label for="confirmPassword" class="sr-only">Confirm Password</label>
         <input
+          id="confirmPassword"
           v-model="confirmPassword"
           :type="showPassword ? 'text' : 'password'"
           placeholder="Confirm Password"
+          aria-required="true"
+          :aria-invalid="!!confirmPasswordError"
+          aria-describedby="confirmPasswordErrSpan"
         />
       </div>
-      <span v-if="!isLogin" class="error" id="confirmPasswordErrSpan">{{
+      <span v-if="!isLogin && confirmPasswordError" class="error" id="confirmPasswordErrSpan" role="alert">{{
         confirmPasswordError
       }}</span>
 
       <!-- Status Message -->
-      <div v-if="statusMessage" class="status-message" :class="statusType">
+      <div v-if="statusMessage" class="status-message" :class="statusType" role="status" aria-live="polite">
         {{ statusMessage }}
       </div>
 
       <!-- Debug Info -->
-      <div v-if="debugInfo" class="debug-info">
+      <div v-if="debugInfo" class="debug-info" aria-live="polite">
         {{ debugInfo }}
       </div>
 
-      <button type="submit" :disabled="!isFormValid || isSubmitting">
+      <button type="submit" :disabled="!isFormValid || isSubmitting" :aria-busy="isSubmitting">
         <span v-if="isSubmitting">
-          <span class="spinner"></span>
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="sr-only">Loading...</span>
         </span>
         <span v-else>{{ isLogin ? 'Login' : 'Register' }}</span>
       </button>
@@ -438,5 +469,21 @@ p {
 
 .password-input-container .toggle-password:focus {
   outline: none;
+}
+
+.form-group {
+  margin-bottom: 0.5rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 </style>
