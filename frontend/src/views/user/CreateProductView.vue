@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useCategoryStore } from '@/stores/Category'
 import { useShippingOptionStore } from '@/stores/ShippingOption'
-import { useField, useForm } from 'vee-validate'
-import * as yup from 'yup'
+import { useValidatedForm, useValidatedField } from '@/utils/validation/useValidation'
+import { productSchema } from '@/utils/validation/schemas'
 import { useLocationStore } from '@/stores/Location'
 import { ProductService } from '@/api/services/ProductService'
+
+// Define props
+const props = defineProps<{ id?: number }>()
+
 // Define interfaces for TypeScript
 interface Category {
   id: number
@@ -37,49 +41,28 @@ interface User {
 }
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useAuthStore()
 const categoryStore = useCategoryStore()
 const shippingOptionStore = useShippingOptionStore()
 const locationStore = useLocationStore()
 
-// Form validation schema
-const productSchema = yup.object({
-  title: yup.string().required('Title is required'),
-  shortDescription: yup.string().required('Short description is required'),
-  longDescription: yup.string().required('Long description is required'),
-  price: yup
-    .number()
-    .required('Price is required')
-    .positive('Price must be positive')
-    .min(0, 'Price must be at least 0'),
-  categoryId: yup.string().required('Category is required'),
-  locationId: yup.string().required('Location is required'),
-  shippingOptionId: yup.string().required('Shipping option is required'),
-  condition: yup.string().required('Condition is required'),
-  size: yup.string().required('Size is required'),
-  brand: yup.string().required('Brand is required'),
-  color: yup.string().required('Color is required'),
-  isVippsPaymentEnabled: yup.boolean(),
-})
-
-// Form data
-const formData = ref({
+// Initial form data structure (matching schema keys)
+const initialFormData = {
   title: '',
   shortDescription: '',
   longDescription: '',
-  price: '',
+  price: '', // Keep as string for input binding, schema handles number conversion
   categoryId: '',
   locationId: '',
   shippingOptionId: '',
-  latitude: '',
-  longitude: '',
   condition: '',
   size: '',
   brand: '',
   color: '',
   isVippsPaymentEnabled: false,
-  images: [], // Array to store image files
-})
+  // images are handled separately
+}
 
 // Image upload state
 const imageFiles = ref<File[]>([])
@@ -88,8 +71,10 @@ const isDragging = ref(false)
 const maxImages = 5
 
 // Form validation
-const isSubmitting = ref(false)
 const testResult = ref('')
+
+// Determine if we are in edit mode
+const isEditMode = computed(() => !!props.id)
 
 // Categories (to be fetched from backend)
 const categories = ref<Category[]>([])
@@ -99,7 +84,7 @@ const shippingOptions = ref<ShippingOption[]>([])
 // Locations (to be fetched from backend)
 const locations = ref<Location[]>([])
 
-//on mount, fetch categories
+//on mount, fetch categories, options, locations and potentially existing item data
 onMounted(async () => {
   await categoryStore.fetchCategories()
   categories.value = categoryStore.categories
@@ -107,6 +92,45 @@ onMounted(async () => {
   shippingOptions.value = shippingOptionStore.shippingOptions
   await locationStore.fetchLocations()
   locations.value = locationStore.locations
+
+  if (isEditMode.value && props.id) {
+    // Fetch item data for editing
+    try {
+      const itemResponse = await ProductService.getItemById(props.id)
+      const itemData = itemResponse.data
+
+      // Populate form fields with existing data
+      title.value = itemData.title
+      shortDescription.value = itemData.shortDescription
+      longDescription.value = itemData.longDescription
+      price.value = itemData.price.toString()
+      categoryId.value = itemData.categoryId.toString()
+      locationId.value = itemData.locationId.toString()
+      shippingOptionId.value = itemData.shippingOptionId.toString()
+      condition.value = itemData.condition
+      size.value = itemData.size
+      brand.value = itemData.brand
+      color.value = itemData.color
+      isVippsPaymentEnabled.value = itemData.vippsPaymentEnabled
+
+      // Fetch and populate images
+      const imagesResponse = await ProductService.getItemImages(props.id)
+      const fetchedImages = imagesResponse.data
+
+      // We need to convert image URLs back to File objects or manage them differently
+      // For simplicity here, we'll just store URLs for preview, but submission needs adjustment
+      imagePreviews.value = fetchedImages.map((img: any) => img.imageUrl)
+      // Note: We cannot easily recreate File objects from URLs. Image updating might need a separate logic.
+      // For now, we'll clear the `imageFiles` ref in edit mode, requiring re-upload if changes are needed.
+      imageFiles.value = [] // Clear file list, user must re-upload to change images.
+
+    } catch (error) {
+      console.error("Error fetching item data for edit:", error)
+      // Optionally redirect or show an error message
+      testResult.value = 'Error loading item data.'
+      router.push('/') // Redirect home on error
+    }
+  }
 })
 
 // Condition options
@@ -115,58 +139,38 @@ const conditions = ref(['New', 'Like New', 'Good', 'Fair', 'Poor'])
 // Size options
 const sizes = ref(['XS', 'S', 'M', 'L', 'XL', 'XXL'])
 
-// Add preview modal state
-const showPreview = ref(false)
 
-// Setup form validation
-const { handleSubmit, errors, resetForm } = useForm({
-  validationSchema: productSchema,
-})
+// Setup form validation using the new hook
+const { handleSubmit, errors, resetForm, isFormValid: isVeeValid, isSubmitting, values } = useValidatedForm(
+  productSchema,
+  initialFormData,
+)
 
-// Setup form fields with proper typing
-const { value: title, errorMessage: titleError } = useField<string>('title')
+// Setup form fields with the new hook, specifying types
+const { value: title, errorMessage: titleError } = useValidatedField<string>('title')
 const { value: shortDescription, errorMessage: shortDescriptionError } =
-  useField<string>('shortDescription')
+  useValidatedField<string>('shortDescription')
 const { value: longDescription, errorMessage: longDescriptionError } =
-  useField<string>('longDescription')
-const { value: price, errorMessage: priceError } = useField<string>('price')
-const { value: categoryId, errorMessage: categoryIdError } = useField<string>('categoryId')
-const { value: locationId, errorMessage: locationIdError } = useField<string>('locationId')
+  useValidatedField<string>('longDescription')
+const { value: price, errorMessage: priceError } = useValidatedField<string>('price')
+const { value: categoryId, errorMessage: categoryIdError } = useValidatedField<string>('categoryId')
+const { value: locationId, errorMessage: locationIdError } = useValidatedField<string>('locationId')
 const { value: shippingOptionId, errorMessage: shippingOptionIdError } =
-  useField<string>('shippingOptionId')
-const { value: condition, errorMessage: conditionError } = useField<string>('condition')
-const { value: size, errorMessage: sizeError } = useField<string>('size')
-const { value: brand, errorMessage: brandError } = useField<string>('brand')
-const { value: color, errorMessage: colorError } = useField<string>('color')
-const { value: isVippsPaymentEnabled } = useField<boolean>('isVippsPaymentEnabled')
+  useValidatedField<string>('shippingOptionId')
+const { value: condition, errorMessage: conditionError } = useValidatedField<string>('condition')
+const { value: size, errorMessage: sizeError } = useValidatedField<string>('size')
+const { value: brand, errorMessage: brandError } = useValidatedField<string>('brand')
+const { value: color, errorMessage: colorError } = useValidatedField<string>('color')
+const { value: isVippsPaymentEnabled } = useValidatedField<boolean>('isVippsPaymentEnabled')
 
-// Computed property to check if form is valid
+// Updated computed property to check if form is valid
 const isFormValid = computed(() => {
-  return (
-    !errors.value.title &&
-    !errors.value.shortDescription &&
-    !errors.value.longDescription &&
-    !errors.value.price &&
-    !errors.value.categoryId &&
-    !errors.value.locationId &&
-    !errors.value.shippingOptionId &&
-    !errors.value.condition &&
-    !errors.value.size &&
-    !errors.value.brand &&
-    !errors.value.color &&
-    title.value &&
-    shortDescription.value &&
-    longDescription.value &&
-    price.value &&
-    categoryId.value &&
-    locationId.value &&
-    shippingOptionId.value &&
-    condition.value &&
-    size.value &&
-    brand.value &&
-    color.value &&
-    imageFiles.value.length > 0
-  )
+  // In edit mode, image upload might not be strictly required if keeping old ones
+  // However, our current setup requires re-upload for changes.
+  // Let's keep the check simple: form must be valid according to VeeValidate.
+  // We might need more complex logic if we allow keeping existing images without re-uploading.
+  const imagesRequired = !isEditMode.value // Only require images for new products
+  return isVeeValid.value && (imagesRequired ? imageFiles.value.length > 0 : true)
 })
 
 const handleImageUpload = (event: Event) => {
@@ -210,119 +214,97 @@ const removeImage = (index: number) => {
   imagePreviews.value.splice(index, 1)
 }
 
-const onSubmit = handleSubmit(async (values) => {
-  if (imageFiles.value.length === 0) {
-    alert('Please upload at least one image')
+const onSubmit = handleSubmit(async (formValues) => {
+  // Check image requirement again, especially for create mode
+  if (!isEditMode.value && imageFiles.value.length === 0) {
+    alert('Please upload at least one image for a new product.')
     return
   }
 
-  isSubmitting.value = true
-  testResult.value = 'Submitting product...'
+  testResult.value = isEditMode.value ? 'Updating product...' : 'Submitting product...'
 
   try {
     const payload = {
-      title: values.title,
-      shortDescription: values.shortDescription,
-      longDescription: values.longDescription,
-      price: parseFloat(values.price),
-      categoryId: parseInt(values.categoryId),
-      locationId: parseInt(values.locationId),
-      shippingOptionId: parseInt(values.shippingOptionId),
-      condition: values.condition,
-      size: values.size,
-      brand: values.brand,
-      color: values.color,
-      isVippsPaymentEnabled: values.isVippsPaymentEnabled,
+      title: formValues.title,
+      shortDescription: formValues.shortDescription,
+      longDescription: formValues.longDescription,
+      price: parseFloat(formValues.price), // Ensure price is parsed correctly
+      categoryId: parseInt(formValues.categoryId),
+      locationId: parseInt(formValues.locationId),
+      shippingOptionId: parseInt(formValues.shippingOptionId),
+      condition: formValues.condition,
+      size: formValues.size,
+      brand: formValues.brand,
+      color: formValues.color,
+      isVippsPaymentEnabled: formValues.isVippsPaymentEnabled,
+      // sellerId is handled by the backend using the authenticated user
     }
 
-    // 1. Create the item first
-    const response = await ProductService.createItem(payload)
+    let itemId: number;
 
-    const itemId = response.data.id
-    testResult.value = `Success! Item created with ID: ${itemId}`
-    console.log('Product created:', response.data)
+    if (isEditMode.value && props.id) {
+      // 1. Update the item details
+      const response = await ProductService.updateItem(props.id, payload)
+      itemId = response.data.id
+      testResult.value = `Success! Item updated with ID: ${itemId}`
+      console.log('Product updated:', response.data)
 
-    // 2. Upload each image
-    for (const file of imageFiles.value) {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('itemId', itemId.toString())
+      // 2. Handle image updates (if new images were added)
+      // This part is tricky because we cleared imageFiles. If the user adds new images,
+      // we need to upload them. If they didn't, we assume they keep the old ones.
+      // The backend might need logic to handle removal of old images if new ones are uploaded.
+      if (imageFiles.value.length > 0) {
+        console.log('New images detected for upload during update...')
+        // Potential: Delete existing images before uploading new ones? Requires backend support.
+        // await ProductService.deleteItemImages(itemId); // Example: if backend supports this
+        for (const file of imageFiles.value) {
+          const formData = new FormData()
+          formData.append('file', file)
+          formData.append('itemId', itemId.toString())
+          await ProductService.uploadImages(formData)
+        }
+        testResult.value += ' and new images uploaded successfully.'
+        console.log('New images uploaded.')
+      } else {
+        testResult.value += '. Kept existing images.'
+      }
 
-      await ProductService.uploadImages(formData)
+    } else {
+      // Create Mode
+      // 1. Create the item first
+      const response = await ProductService.createItem(payload)
+      itemId = response.data.id
+      testResult.value = `Success! Item created with ID: ${itemId}`
+      console.log('Product created:', response.data)
+
+      // 2. Upload each image
+      for (const file of imageFiles.value) {
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('itemId', itemId.toString())
+        await ProductService.uploadImages(formData)
+      }
+      testResult.value += ' and images uploaded successfully.'
+      console.log('All images uploaded.')
     }
 
-    testResult.value += ' and images uploaded successfully.'
-    console.log('All images uploaded.')
-
-    // Optional: redirect
+    // Optional: redirect after success
     setTimeout(() => {
-      router.push('/')
-    }, 1000)
+      // Redirect to the product detail page after create/update
+      router.push(`/products/${itemId}`)
+    }, 1500)
+
   } catch (error: any) {
     testResult.value = `Error: ${error.response?.data?.message || error.message}`
-    console.error('Error:', error)
-  } finally {
-    isSubmitting.value = false
+    console.error('Error submitting form:', error)
   }
 })
 
-const handlePreview = () => {
-  showPreview.value = true
-}
-
-// Function to send test data to the ItemController
-const sendTestData = async () => {
-  try {
-    testResult.value = 'Sending test data...'
-
-    // Create mock data based on the CreateItemDTO expected by the backend
-    const mockData = {
-      title: 'Test Product',
-      shortDescription: 'This is a test product',
-      longDescription:
-        'This is a longer description for the test product. It contains more details about the product.',
-      price: 299.99,
-      categoryId: 1,
-      locationId: 1,
-      shippingOptionId: 1,
-      latitude: 59.913868,
-      longitude: 10.752245,
-      condition: 'New',
-      size: 'M',
-      brand: 'Test Brand',
-      color: 'Blue',
-      isVippsPaymentEnabled: true,
-    }
-
-    // Send the request to the backend
-    const response = await ProductService.createItem(mockData)
-
-    testResult.value = `Success! Item created with ID: ${response.data.id}`
-    console.log('Test data sent successfully:', response.data)
-  } catch (error: any) {
-    testResult.value = `Error: ${error.message}`
-    console.error('Error sending test data:', error)
-  }
-}
 </script>
 
 <template>
   <div class="create-product-container">
-    <h1>Create New Product</h1>
-
-    <!-- Test Button Section -->
-    <div class="test-section">
-      <h2>Test API Connection</h2>
-      <p>Click the button below to send test data to the backend:</p>
-      <button @click="sendTestData" class="test-button">Send Test Data</button>
-      <div
-        v-if="testResult"
-        class="test-result"
-        :class="{ success: testResult.includes('Success') }"
-      >
-        {{ testResult }}
-      </div>
-    </div>
+    <h1>{{ isEditMode ? 'Edit Product' : 'Create New Product' }}</h1>
 
     <form @submit.prevent="onSubmit" class="product-form">
       <!-- Image Upload Section -->
@@ -380,8 +362,11 @@ const sendTestData = async () => {
             </div>
           </div>
         </div>
-        <span class="error-message" v-if="imageFiles.length === 0"
-          >At least one image is required</span
+        <span class="error-message" v-if="!isFormValid && !isEditMode && imageFiles.length === 0"
+          >At least one image is required for a new product</span
+        >
+        <span class="info-message" v-if="isEditMode && imageFiles.length === 0"
+         >Current images will be kept. Upload new images to replace them.</span
         >
       </section>
 
@@ -452,8 +437,8 @@ const sendTestData = async () => {
           <label for="condition">Condition</label>
           <select id="condition" v-model="condition" :class="{ error: conditionError }">
             <option value="">Select condition</option>
-            <option v-for="condition in conditions" :key="condition" :value="condition">
-              {{ condition }}
+            <option v-for="c in conditions" :key="c" :value="c">
+              {{ c }}
             </option>
           </select>
           <span class="error-message" v-if="conditionError">{{ conditionError }}</span>
@@ -463,8 +448,8 @@ const sendTestData = async () => {
           <label for="size">Size</label>
           <select id="size" v-model="size" :class="{ error: sizeError }">
             <option value="">Select size</option>
-            <option v-for="size in sizes" :key="size" :value="size">
-              {{ size }}
+            <option v-for="s in sizes" :key="s" :value="s">
+              {{ s }}
             </option>
           </select>
           <span class="error-message" v-if="sizeError">{{ sizeError }}</span>
@@ -525,36 +510,12 @@ const sendTestData = async () => {
 
       <div class="form-actions">
         <button type="button" @click="router.back()" class="cancel-button">Cancel</button>
-        <button type="button" class="preview-button" @click="handlePreview">Preview Product</button>
         <button type="submit" class="submit-button" :disabled="!isFormValid || isSubmitting">
-          {{ isSubmitting ? 'Creating...' : 'Create Product' }}
+          {{ isSubmitting ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Product' : 'Create Product') }}
         </button>
       </div>
     </form>
 
-    <!-- Preview Modal -->
-    <div v-if="showPreview" class="preview-modal">
-      <div class="preview-modal-content">
-        <button class="close-button" @click="showPreview = false">×</button>
-        <ProductDisplay
-          :images="imagePreviews"
-          :title="title"
-          :description_full="longDescription"
-          :category="categories.find((c: Category) => c.id === parseInt(categoryId))?.name || ''"
-          :location="locations.find((l: Location) => l.id === parseInt(locationId))?.name || ''"
-          :price="Number(price)"
-          :seller="userStore.user?.firstName || userStore.user?.usernameOrEmail || 'Current User'"
-          :shipping_options="
-            shippingOptions.find((s: ShippingOption) => s.id === parseInt(shippingOptionId))
-              ?.name || ''
-          "
-          :status="'Available'"
-          :created_at="new Date().toLocaleDateString()"
-          :updated_at="new Date().toLocaleDateString()"
-          :purchased="false"
-        />
-      </div>
-    </div>
   </div>
 </template>
 
@@ -887,5 +848,13 @@ textarea:focus {
 
 .close-button:hover {
   color: #333;
+}
+
+/* Add style for info message */
+.info-message {
+  display: block;
+  margin-top: 0.5rem;
+  color: #3b82f6; /* Blue color for info */
+  font-size: 0.875rem;
 }
 </style>

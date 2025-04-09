@@ -85,15 +85,13 @@ const handleBadgeClick = (event: { type: string; value: string }) => {
 }
 
 const isCurrentUserSeller = computed(() => {
-  return authStore.user?.id === sellerId.value
+  // Ensure user is loaded before checking ID
+  return authStore.user && authStore.user.id === sellerId.value
 })
 
 const isItemAvailable = computed(() => {
+  // Check both potential availability flags for robustness
   return item.value?.available !== false && item.value?.isAvailable !== false
-})
-
-const shouldDisableButtons = computed(() => {
-  return isCurrentUserSeller.value || !isItemAvailable.value
 })
 
 const isLocalPickup = computed(() => {
@@ -180,9 +178,23 @@ onMounted(async () => {
 
 const handleContactSeller = async () => {
   try {
-    if (!authStore.isLoggedIn || !authStore.user?.id || !sellerId.value) {
-      return
+    if (!authStore.isLoggedIn || !authStore.user?.id) {
+      // Optionally redirect to login or show a message
+      alert('Please log in to contact the seller.');
+      return;
     }
+
+     // Prevent contacting self
+     if (isCurrentUserSeller.value) {
+       console.warn("Seller cannot contact themselves.");
+       return;
+     }
+
+     if (!sellerId.value) {
+        console.error("Seller ID is not available.");
+        alert('Could not contact seller. Please try again later.');
+        return;
+     }
 
     // Check existing conversations
     const response = await MessagingService.getUserConversations(authStore.user.id)
@@ -211,15 +223,50 @@ const handleContactSeller = async () => {
 
       // The message response should include the conversation ID
       const newMessageData = messageResponse.data
-      const chatId = compositeId
+      const chatId = compositeId // Use the computed composite ID for consistency
 
       // Navigate to the messages view with the new conversation
       router.push(`/messages/${chatId}`)
     }
   } catch (error) {
     console.error('Error starting conversation:', error)
+    alert('Could not start conversation. Please try again later.');
   }
 }
+
+const handleEditClick = () => {
+  if (props.id) {
+    router.push(`/product/edit/${props.id}`);
+  } else {
+    console.error("Cannot edit item: ID is missing.");
+    // Optionally show an error message to the user
+    alert('Could not edit item. Please try again later.');
+  }
+};
+
+const handleDeleteClick = async () => {
+  if (!props.id) {
+    console.error("Cannot delete item: ID is missing.");
+    alert('Could not delete item. Please try again later.');
+    return;
+  }
+
+  if (window.confirm('Are you sure you want to permanently delete this item?')) {
+    try {
+      await ProductService.deleteItem(props.id);
+      alert('Item deleted successfully.');
+      // Navigate away after deletion, e.g., to user's posts or home
+      router.push('/profile/posts');
+    } catch (error: any) {
+      console.error('Error deleting item:', error);
+      if (error.response && error.response.status === 409) {
+         alert('Failed to delete item: This item cannot be deleted because it is associated with a transaction history.');
+      } else {
+        alert('Failed to delete item. Please try again later.');
+      }
+    }
+  }
+};
 </script>
 
 <template>
@@ -310,20 +357,45 @@ const handleContactSeller = async () => {
         <Badge :name="item.shippingOptionName || 'N/A'" type="shipping" @click="handleBadgeClick" />
       </div>
       <div class="action-buttons">
-        <button
-          class="contact-button"
-          @click="handleContactSeller"
-          :disabled="shouldDisableButtons"
-        >
-          Contact Seller
-        </button>
-        <button class="buy-button" @click="handleBuyClick" :disabled="shouldDisableButtons">
-          Buy Item
-        </button>
-        <WishlistButton
-          :product-id="item.id"
-          :is-available="isItemAvailable"
-        />
+        <!-- Seller View -->
+        <template v-if="isCurrentUserSeller">
+          <button
+            class="edit-button"
+            @click="handleEditClick"
+          >
+            Edit Item
+          </button>
+          <button
+            class="delete-button"
+            @click="handleDeleteClick"
+          >
+            Delete Item
+          </button>
+        </template>
+
+        <!-- Buyer/Guest View -->
+        <template v-else>
+          <button
+            class="contact-button"
+            @click="handleContactSeller"
+            :disabled="!isItemAvailable || !authStore.isLoggedIn"
+            :title="!authStore.isLoggedIn ? 'Please log in to contact seller' : !isItemAvailable ? 'Item is not available' : ''"
+          >
+            Contact Seller
+          </button>
+          <button
+            class="buy-button"
+            @click="handleBuyClick"
+            :disabled="!isItemAvailable"
+            :title="!isItemAvailable ? 'Item is not available' : ''"
+           >
+            Buy Item
+          </button>
+          <WishlistButton
+            :product-id="item.id"
+            :is-available="isItemAvailable"
+          />
+        </template>
       </div>
       <div class="product-details-list">
         <p class="detail-item">
@@ -573,4 +645,51 @@ const handleContactSeller = async () => {
   cursor: not-allowed;
   opacity: 0.7;
 }
+
+/* Style for the Edit button */
+.edit-button {
+  background-color: #f59e0b; /* Amber color, adjust as needed */
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.edit-button:hover:not(:disabled) {
+  background-color: #d97706; /* Darker amber */
+}
+
+.edit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Style for the Delete button */
+.delete-button {
+  background-color: #ef4444; /* Red color */
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.delete-button:hover:not(:disabled) {
+  background-color: #dc2626; /* Darker red */
+}
+
+.delete-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
 </style>
+

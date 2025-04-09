@@ -42,6 +42,13 @@ const router = createRouter({
       component: () => import('@/views/user/CreateProductView.vue'),
     },
     {
+      path: '/product/edit/:id',
+      name: 'edit-product',
+      component: () => import('@/views/user/CreateProductView.vue'),
+      props: route => ({ id: parseInt(route.params.id as string) }),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/messages/:chatId?',
       name: 'messages',
       component: MessagesView,
