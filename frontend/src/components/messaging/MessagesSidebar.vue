@@ -16,7 +16,7 @@ const props = defineProps<{
   receiverUsernames: Map<number, string>
 }>()
 
-const emit = defineEmits(['select-chat', 'show-product'])
+const emit = defineEmits(['select-chat', 'show-product', 'archive-conversation'])
 const authStore = useAuthStore()
 const itemImages = ref<Map<number, string>>(new Map())
 const itemTitles = ref<Map<number, string>>(new Map())
@@ -31,6 +31,12 @@ const getChatId = (conversation: Conversation) => {
 const showProduct = (event: Event, itemId: number) => {
   event.stopPropagation() // Prevent triggering the conversation selection
   emit('show-product', itemId)
+}
+
+// Function to archive a conversation
+const archiveConversation = (event: Event, conversationId: string) => {
+  event.stopPropagation() // Prevent triggering the conversation selection
+  emit('archive-conversation', conversationId)
 }
 
 // Filter conversations to ensure we don't show self-conversations
@@ -144,6 +150,13 @@ onMounted(async () => {
         </div>
         <div class="chat-meta">
           <div class="chat-time">{{ conversation.latestMessageTimestamp }}</div>
+          <button
+            class="archive-btn"
+            title="Archive conversation"
+            @click="(event) => archiveConversation(event, getChatId(conversation))"
+          >
+            <i class="fas fa-archive"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -305,5 +318,18 @@ onMounted(async () => {
   padding: 2px 6px;
   border-radius: 12px;
   font-size: 12px;
+}
+
+.archive-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 8px;
+}
+
+.archive-btn i {
+  color: #6b7280;
+  font-size: 14px;
 }
 </style>

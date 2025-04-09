@@ -55,8 +55,8 @@ public class ConversationService {
     public List<ConversationDTO> getUserConversations(String userId) {
         logger.info("Retrieving conversations for user: {}", userId);
 
-        // Get all messages where user is sender or receiver
-        List<Message> allMessages = messageRepository.findBySenderIdOrReceiverId(userId, userId);
+        // Get all non-archived messages where user is sender or receiver
+        List<Message> allMessages = messageRepository.findNonArchivedMessagesByUserId(userId);
 
         // Group by conversation (senderId + receiverId + itemId)
         Map<String, List<Message>> conversationGroups = allMessages.stream()
@@ -68,6 +68,11 @@ public class ConversationService {
         List<ConversationDTO> conversations = new ArrayList<>();
         for (Map.Entry<String, List<Message>> entry : conversationGroups.entrySet()) {
             List<Message> messages = entry.getValue();
+            // Skip empty conversations
+            if (messages.isEmpty()) {
+                continue;
+            }
+
             // Sort messages by timestamp
             messages.sort(Comparator.comparing(Message::getCreatedAt));
 
@@ -119,8 +124,21 @@ public class ConversationService {
     public void archiveConversation(String conversationId, String userId) {
         logger.info("Archiving conversation: {} for user: {}", conversationId, userId);
 
-        // Implementation would depend on how you want to store archived status
-        // For now, just notify via WebSocket
+        // Get all messages in this conversation
+        List<Message> messages = messageRepository.findByConversationId(conversationId);
+        
+        // Mark each message as archived for this user
+        for (Message message : messages) {
+            if (message.getSenderId().equals(userId)) {
+                message.setArchivedBySender(true);
+            }
+            if (message.getReceiverId().equals(userId)) {
+                message.setArchivedByReceiver(true);
+            }
+            messageRepository.save(message);
+        }
+
+        // Notify via WebSocket
         webSocketService.notifyConversationArchived(conversationId, userId);
     }
 }

@@ -38,6 +38,17 @@ export const MessagingService = {
   createConversation: (conversationData: any) => {
     return axios.post('/api/conversations', conversationData)
   },
+
+  /**
+   * Archive a conversation for a user
+   */
+  archiveConversation: (conversationId: string, userId: number) => {
+    return axios.post(`/api/conversations/${conversationId}/archive`, null, {
+      params: {
+        userId,
+      },
+    })
+  },
 }
 
 export default MessagingService

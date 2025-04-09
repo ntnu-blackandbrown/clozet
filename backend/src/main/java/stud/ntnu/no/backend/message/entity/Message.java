@@ -29,6 +29,8 @@ public class Message {
     private String content;
     private LocalDateTime createdAt;
     private boolean isRead;
+    private boolean archivedBySender = false;
+    private boolean archivedByReceiver = false;
     
     // Constructors
     public Message() {
@@ -159,5 +161,41 @@ public class Message {
      */
     public void setRead(boolean read) {
         isRead = read;
+    }
+    
+    /**
+     * Returns whether the message is archived by the sender.
+     *
+     * @return true if archived by sender, false otherwise
+     */
+    public boolean isArchivedBySender() {
+        return archivedBySender;
+    }
+    
+    /**
+     * Sets whether the message is archived by the sender.
+     *
+     * @param archivedBySender true if archived by sender, false otherwise
+     */
+    public void setArchivedBySender(boolean archivedBySender) {
+        this.archivedBySender = archivedBySender;
+    }
+    
+    /**
+     * Returns whether the message is archived by the receiver.
+     *
+     * @return true if archived by receiver, false otherwise
+     */
+    public boolean isArchivedByReceiver() {
+        return archivedByReceiver;
+    }
+    
+    /**
+     * Sets whether the message is archived by the receiver.
+     *
+     * @param archivedByReceiver true if archived by receiver, false otherwise
+     */
+    public void setArchivedByReceiver(boolean archivedByReceiver) {
+        this.archivedByReceiver = archivedByReceiver;
     }
 }

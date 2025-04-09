@@ -463,6 +463,29 @@ const handleShowProduct = (productId) => {
   selectedProductId.value = productId
   showProductModal.value = true
 }
+
+/**
+ * Archives a conversation for the current user
+ */
+const handleArchiveConversation = async (conversationId) => {
+  try {
+    await MessagingService.archiveConversation(conversationId, authStore.user?.id)
+
+    // Remove conversation from the UI
+    chats.value = chats.value.filter(chat => getChatId(chat) !== conversationId)
+
+    // If this was the active conversation, go back to the messages view
+    if (activeChat.value === conversationId) {
+      router.push('/messages')
+    }
+
+    // Show a success message
+    alert('Conversation archived successfully')
+  } catch (error) {
+    console.error('Failed to archive conversation:', error)
+    alert('Failed to archive conversation')
+  }
+}
 </script>
 
 <template>
@@ -474,6 +497,7 @@ const handleShowProduct = (productId) => {
       :receiver-usernames="receiverUsernames"
       @select-chat="handleChatSelect"
       @show-product="handleShowProduct"
+      @archive-conversation="handleArchiveConversation"
     />
 
     <!-- Right area with WebSocket chat functionality -->
