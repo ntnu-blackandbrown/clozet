@@ -144,49 +144,51 @@ onMounted(() => {
 
     <!-- User Table -->
     <div class="table-container">
-      <table class="admin-table" v-if="!isLoading && filteredUsers.length > 0">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Date Joined</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="user in filteredUsers" :key="user.id">
-            <td>{{ user.id }}</td>
-            <td>{{ user.firstName }} {{ user.lastName }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-              <select
-                v-model="user.role"
-                @change="changeUserRole(user, $event.target.value)"
-                class="role-select"
-              >
-                <option value="ADMIN">Admin</option>
-                <option value="ROLE_USER">Regular User</option>
-              </select>
-            </td>
-            <td>
-              <span class="tag" :class="getStatusClass(user.active)">
-                {{ user.active ? 'Active' : 'Inactive' }}
-              </span>
-            </td>
-            <td>{{ formatDate(user.createdAt) }}</td>
-            <td class="actions">
-              <button @click="toggleUserStatus(user)" class="btn-secondary btn-small">
-                {{ user.active ? 'Deactivate' : 'Activate' }}
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="overflow-x: auto;" v-if="!isLoading && filteredUsers.length > 0">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Date Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="user in filteredUsers" :key="user.id">
+              <td>{{ user.id }}</td>
+              <td>{{ user.firstName }} {{ user.lastName }}</td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                <select
+                  v-model="user.role"
+                  @change="changeUserRole(user, $event.target.value)"
+                  class="role-select"
+                >
+                  <option value="ADMIN">Admin</option>
+                  <option value="ROLE_USER">Regular User</option>
+                </select>
+              </td>
+              <td>
+                <span class="tag" :class="getStatusClass(user.active)">
+                  {{ user.active ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>{{ formatDate(user.createdAt) }}</td>
+              <td class="actions">
+                <button @click="toggleUserStatus(user)" class="btn-secondary btn-small">
+                  {{ user.active ? 'Deactivate' : 'Activate' }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <div v-else-if="isLoading" class="loading-container">
         <div class="loading-spinner"></div>

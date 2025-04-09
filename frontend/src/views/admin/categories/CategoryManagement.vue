@@ -165,29 +165,31 @@ onMounted(() => {
 
     <!-- Category Table -->
     <div class="table-container">
-      <table class="admin-table" v-if="!isLoading && categories.length > 0">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Parent Category</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="category in categories" :key="category.id">
-            <td>{{ category.id }}</td>
-            <td>{{ category.name }}</td>
-            <td>{{ category.description }}</td>
-            <td>{{ getParentName(category) }}</td>
-            <td class="actions">
-              <button @click="editCategory(category)" class="btn-icon edit">✎</button>
-              <button @click="deleteCategory(category.id)" class="btn-icon delete">🗑</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="overflow-x: auto;" v-if="!isLoading && categories.length > 0">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Parent Category</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="category in categories" :key="category.id">
+              <td>{{ category.id }}</td>
+              <td>{{ category.name }}</td>
+              <td>{{ category.description }}</td>
+              <td>{{ getParentName(category) }}</td>
+              <td class="actions">
+                <button @click="editCategory(category)" class="btn-icon edit">✎</button>
+                <button @click="deleteCategory(category.id)" class="btn-icon delete">🗑</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <div v-else-if="isLoading" class="loading-container">
         <div class="loading-spinner"></div>

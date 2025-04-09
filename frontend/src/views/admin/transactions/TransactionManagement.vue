@@ -165,51 +165,53 @@ onMounted(() => {
 
     <!-- Transaction Table -->
     <div class="table-container">
-      <table class="admin-table" v-if="!isLoading && filteredTransactions.length > 0">
-        <thead>
-          <tr>
-            <th @click="toggleSort('id')" class="sortable">
-              ID
-              <span v-if="sortKey === 'id'" class="sort-indicator">
-                {{ sortDirection === 'asc' ? '↑' : '↓' }}
-              </span>
-            </th>
-            <th>Item</th>
-            <th>Buyer</th>
-            <th>Seller</th>
-            <th @click="toggleSort('amount')" class="sortable">
-              Amount
-              <span v-if="sortKey === 'amount'" class="sort-indicator">
-                {{ sortDirection === 'asc' ? '↑' : '↓' }}
-              </span>
-            </th>
-            <th>Payment Method</th>
-            <th>Status</th>
-            <th @click="toggleSort('createdAt')" class="sortable">
-              Date
-              <span v-if="sortKey === 'createdAt'" class="sort-indicator">
-                {{ sortDirection === 'asc' ? '↑' : '↓' }}
-              </span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="transaction in filteredTransactions" :key="transaction.id">
-            <td>{{ transaction.id }}</td>
-            <td>{{ transaction.item?.title || 'Unknown Item' }}</td>
-            <td>{{ transaction.buyerId }}</td>
-            <td>{{ transaction.sellerId }}</td>
-            <td>{{ formatCurrency(transaction.amount) }}</td>
-            <td>{{ transaction.paymentMethod }}</td>
-            <td>
-              <span class="tag" :class="getStatusClass(transaction.status)">
-                {{ transaction.status }}
-              </span>
-            </td>
-            <td>{{ formatDate(transaction.createdAt) }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="overflow-x: auto;" v-if="!isLoading && filteredTransactions.length > 0">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th @click="toggleSort('id')" class="sortable">
+                ID
+                <span v-if="sortKey === 'id'" class="sort-indicator">
+                  {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                </span>
+              </th>
+              <th>Item</th>
+              <th>Buyer</th>
+              <th>Seller</th>
+              <th @click="toggleSort('amount')" class="sortable">
+                Amount
+                <span v-if="sortKey === 'amount'" class="sort-indicator">
+                  {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                </span>
+              </th>
+              <th>Payment Method</th>
+              <th>Status</th>
+              <th @click="toggleSort('createdAt')" class="sortable">
+                Date
+                <span v-if="sortKey === 'createdAt'" class="sort-indicator">
+                  {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="transaction in filteredTransactions" :key="transaction.id">
+              <td>{{ transaction.id }}</td>
+              <td>{{ transaction.item?.title || 'Unknown Item' }}</td>
+              <td>{{ transaction.buyerId }}</td>
+              <td>{{ transaction.sellerId }}</td>
+              <td>{{ formatCurrency(transaction.amount) }}</td>
+              <td>{{ transaction.paymentMethod }}</td>
+              <td>
+                <span class="tag" :class="getStatusClass(transaction.status)">
+                  {{ transaction.status }}
+                </span>
+              </td>
+              <td>{{ formatDate(transaction.createdAt) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <div v-else-if="isLoading" class="loading-container">
         <div class="loading-spinner"></div>

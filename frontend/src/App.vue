@@ -22,7 +22,7 @@ onMounted(async () => {
   if (sessionStorage.getItem('user')) {
     console.log('Fetching user info from session storage')
     await authStore.fetchUserInfo()
-  } 
+  }
   // Check if we should show the login/register modal based on the route
   if (route.path === '/login' || route.path === '/register') {
     showLoginModal.value = true
@@ -69,26 +69,25 @@ const handleCloseAuthModal = () => {
             <img src="@/assets/light-green.png" alt="Clozet Logo" class="logo-image" />
           </RouterLink>
           <nav class="main-nav">
-            <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
-            <RouterLink v-if="isLoggedIn" to="/messages">Messages</RouterLink>
-            <RouterLink v-if="userDetails?.role === 'ADMIN'" to="/admin" class="nav-link"
+
+
+            <template v-if="userDetails?.role === 'ADMIN'">
+              <RouterLink  to="/admin" class="nav-link admin-link"
               >Admin Dashboard</RouterLink
             >
+            </template>
+            <template v-else>
+              <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
+              <RouterLink v-if="isLoggedIn" to="/messages">Messages</RouterLink>
+            </template>
+
           </nav>
         </div>
 
         <div class="auth-section">
-          <template v-if="isLoggedIn">
-            <RouterLink v-if="userDetails?.role === 'ADMIN'" to="/admin" class="nav-link admin-link"
-              >Admin Dashboard</RouterLink
-            >
-            <RouterLink to="/profile" class="nav-link">My Profile</RouterLink>
-            <RouterLink to="/messages" class="nav-link">Messages</RouterLink>
-            <button @click="logout" class="logout-btn">Log Out</button>
-          </template>
-          <template v-else>
-            <button @click="handleLoginClick" class="login-btn">Log In</button>
-          </template>
+          <button v-if="isLoggedIn" @click="logout" class="logout-btn">Log Out</button>
+
+            <button  v-else @click="handleLoginClick" class="login-btn">Log In</button>
         </div>
       </div>
     </header>
