@@ -12,6 +12,7 @@ public class CreateMessageRequest {
     private String receiverId;
     private String content;
     private LocalDateTime timestamp;
+    private Long itemId;
 
     // Default constructor
     public CreateMessageRequest() {
@@ -24,13 +25,15 @@ public class CreateMessageRequest {
      * @param receiverId the ID of the receiver
      * @param content the content of the message
      * @param timestamp the timestamp of the message
+     * @param itemId the ID of the related item
      */
     // Constructor with arguments
-    public CreateMessageRequest(String senderId, String receiverId, String content, LocalDateTime timestamp) {
+    public CreateMessageRequest(String senderId, String receiverId, String content, LocalDateTime timestamp, Long itemId) {
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.content = content;
         this.timestamp = timestamp;
+        this.itemId = itemId;
     }
 
     /**
@@ -103,5 +106,23 @@ public class CreateMessageRequest {
      */
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    /**
+     * Returns the ID of the related item.
+     *
+     * @return the item ID
+     */
+    public Long getItemId() {
+        return itemId;
+    }
+
+    /**
+     * Sets the ID of the related item.
+     *
+     * @param itemId the item ID to set
+     */
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
     }
 }
