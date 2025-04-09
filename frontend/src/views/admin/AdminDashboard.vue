@@ -101,17 +101,6 @@ const toggleMobileMenu = () => {
           <span class="admin-nav-icon" aria-hidden="true">👥</span>
           User Management
         </RouterLink>
-
-        <RouterLink
-          to="/admin/transactions"
-          class="admin-nav-link"
-          :class="{ active: route.path === '/admin/transactions' }"
-          @click="isMobileMenuOpen = false"
-          aria-current="route.path === '/admin/transactions' ? 'page' : undefined"
-        >
-          <span class="admin-nav-icon" aria-hidden="true">💰</span>
-          Transactions
-        </RouterLink>
       </div>
 
       <div class="admin-sidebar-footer">
