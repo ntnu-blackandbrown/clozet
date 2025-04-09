@@ -144,16 +144,19 @@ const displayCategories = computed(() => {
               aria-label="Search for products"
             />
 
+            <!-- Clear button (now positioned inside) -->
             <button
               v-if="searchQuery"
               @click="clearSearch"
               class="clear-search-btn"
               aria-label="Clear search"
             >
-              Clear
+              &#x2715; <!-- Use an 'X' symbol -->
             </button>
-            <!-- Inline SVG icon -->
+
+            <!-- Search icon (only shown when input is empty) -->
             <svg
+              v-if="!searchQuery"
               class="search-icon"
               viewBox="0 0 24 24"
               fill="none"
@@ -345,16 +348,36 @@ h3 {
   color: #9ca3af;
 }
 
-.search-icon {
+.search-icon,
+.clear-search-btn { /* Apply positioning to both */
   position: absolute;
   right: var(--spacing-md);
   top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer; /* Make clear button clickable */
+}
+
+.search-icon {
   width: 20px;
   height: 20px;
-  transform: translateY(-50%);
   pointer-events: none;
   stroke: #2d353f;
   transition: var(--transition-smooth);
+}
+
+.clear-search-btn {
+  background: none;
+  border: none;
+  color: #6b7280; /* Adjust color for visibility */
+  font-size: 1.2rem; /* Make the 'X' bigger */
+  line-height: 1; /* Ensure proper vertical alignment */
+  padding: 0; /* Remove default padding */
+}
+
+.clear-search-btn:hover,
+.clear-search-btn:focus {
+  color: #2d353f; /* Darken on hover/focus */
+  outline: none;
 }
 
 .create-post-btn {
@@ -386,15 +409,6 @@ h3 {
   transform: translateY(0);
   background-color: #262d36;
   box-shadow: var(--box-shadow-light);
-}
-
-.clear-search-btn {
-  background: none;
-  border: none;
-  color: #2d353f;
-  cursor: pointer;
-  font-size: 0.9rem;
-  margin-left: 8px;
 }
 
 .loading-indicator {
