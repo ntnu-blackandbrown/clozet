@@ -1,83 +1,85 @@
+# IDATT2105 - Semester Project 2025
 
-# IDATT2105 - Semesterprosjekt 2025
+**Project Description:**  
+Brief introduction of the project. (E.g.: A marketplace similar to finn.no, featuring buying, selling, filtering, search, messaging, and payments through VIPPS.)
 
-**Prosjektbeskrivelse:**  
-Kort introduksjon av prosjektet. (Eks.: En markedsplass lik finn.no med funksjonalitet for kjøp, salg, filtrering, søk, meldinger og betaling via VIPPS.)
+**Link to application (optional):**  
+Insert link here (when available).
 
-**Lenke til applikasjon (valgfritt):**  
-Sett inn lenke her (når den er tilgjengelig).
+## Table of Contents
+1. [Introduction](#introduction)
+2. [Technology Choices and Justifications](#technology-choices-and-justifications)
+3. [Application Structure](#application-structure)
+4. [Security and Authentication](#security-and-authentication)
+5. [API Documentation](#api-documentation)
+6. [Installation and Running](#installation-and-running)
+7. [Testing and CI/CD](#testing-and-cicd)
+8. [Usage Examples](#usage-examples)
+9. [Project Members](#project-members)
 
-## Innholdsfortegnelse
-1. [Introduksjon](#introduksjon)
-2. [Teknologivalg og begrunnelser](#teknologivalg-og-begrunnelser)
-3. [Applikasjonsstruktur](#applikasjonsstruktur)
-4. [Sikkerhet og autentisering](#sikkerhet-og-autentisering)
-5. [API-dokumentasjon](#api-dokumentasjon)
-6. [Installasjon og kjøring](#installasjon-og-kjøring)
-7. [Testing og CI/CD](#testing-og-cicd)
-8. [Eksempler på bruk](#eksempler-på-bruk)
-9. [Prosjektmedlemmer](#prosjektmedlemmer)
+## Introduction
+Explain what the project is about and what it aims to solve. Consider including:
+- Background of the project
+- Main functionalities
+- Overall requirements
 
-## Introduksjon
-Forklar hva prosjektet handler om og hva det skal løse. Ta gjerne med:
-- Bakgrunn for prosjektet
-- Hovedfunksjonalitet
-- Overordnede krav
+## Technology Choices and Justifications
+Comment and edit:
+- **Frontend:** Vue 3, justify why Vue was chosen over React or Angular.
+- **Backend:** Java and Spring Boot, justify the choice of version (v21).
+- **Database:** MySQL/H2, explain the reasons and advantages of this combination.
 
-## Teknologivalg og begrunnelser
-Kommenter og rediger:
-- **Frontend:** Vue 3, begrunn hvorfor Vue ble valgt framfor React eller Angular.
-- **Backend:** Java og Spring Boot, begrunn versjonsvalg (v21).
-- **Database:** MySQL/H2, begrunn valget og fordelene med denne kombinasjonen.
 
-## Applikasjonsstruktur
-Her beskriver du arkitekturen og strukturen til prosjektet. Ta med:
-- Mapper og pakker
-- Klassediagrammer og ER-diagrammer (husk illustrasjoner!)
-- Kort forklaring av Controller, Service, Repository, DTOs, og Models.
 
-## Sikkerhet og autentisering
-Beskriv hvordan sikkerhet er håndtert:
-- JWT autentisering
+
+## Application Structure
+Describe the architecture and structure of your project. Include:
+- Folders and packages
+- Class diagrams and ER diagrams (remember illustrations!)
+- Brief explanation of Controller, Service, Repository, DTOs, and Models.
+
+## Security and Authentication
+Describe how security is handled:
+- JWT authentication
 - Refresh Tokens
-- Autorisasjonsnivåer (bruker/admin)
-- Passordkryptering
+- Authorization levels (user/admin)
+- Password encryption
 
-## API-dokumentasjon
-Gi informasjon om hvordan API er dokumentert:
-- Lenke til Swagger
-- Eksempler på hvordan bruke API
+## API Documentation
+Provide information on how the API is documented:
+- Link to Swagger
+- Examples on how to use the API
 
-## Installasjon og kjøring
-Stegvis guide for oppsett:
-- **Forutsetninger:** Java-versjon, Node-versjon, MySQL
-- **Hvordan klone repoet**
-- **Hvordan starte backend**
-- **Hvordan starte frontend**
-- Hvordan legge til testdata
+## Installation and Running
+Step-by-step guide for setup:
+- **Prerequisites:** Java version, Node version, MySQL
+- **How to clone the repository**
+- **How to start the backend**
+- **How to start the frontend**
+- How to add test data
 
-## Testing og CI/CD
-Dokumenter hvordan testingen og CI/CD er satt opp:
-- Unit testing, integrasjonstester
-- Test coverage krav (minst 50%)
-- Lenker til CI/CD pipelines i GitLab
-- Forklaring av deploymentprosessen (Azure/Netlify)
+## Testing and CI/CD
+Document how testing and CI/CD are configured:
+- Unit testing, integration tests
+- Test coverage requirements (at least 50%)
+- Links to CI/CD pipelines in GitLab
+- Explanation of the deployment process (Azure/Netlify)
 
-## Eksempler på bruk
-Beskriv en typisk brukerscenario:
-- Registrering
-- Innlogging
-- Publisering av annonse
-- Kontakt med selger/kjøper
-- Transaksjoner med VIPPS
+## Usage Examples
+Describe a typical user scenario:
+- Registration
+- Login
+- Publishing an advertisement
+- Contacting seller/buyer
+- Transactions using VIPPS
 
-## Prosjektmedlemmer
-- Navn og roller
-- Kontaktinformasjon
+## Project Members
+- Names and roles
+- Contact information
 
 ---
 
-## Kommentarer til redigering (kan slettes senere):
-- Husk å oppdatere alle lenker og informasjon etter hvert som prosjektet utvikler seg.
-- Legg til illustrasjoner, diagrammer og bilder der det passer seg.
-- Test instruksjoner grundig før levering.
+## Comments for editing (can be deleted later):
+- Remember to update all links and information as the project progresses.
+- Add illustrations, diagrams, and images where appropriate.
+- Thoroughly test instructions before submission.
