@@ -266,6 +266,7 @@ const displayCategories = computed(() => {
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--box-shadow-light);
+  text-align: center;
 }
 
 .categories-section h4 {
@@ -273,6 +274,7 @@ const displayCategories = computed(() => {
   font-size: 1.1rem;
   font-weight: 500;
   margin-bottom: var(--spacing-md);
+  text-align: center;
 }
 
 .featured-section {
@@ -313,6 +315,7 @@ h3 {
   display: flex;
   gap: var(--spacing-sm);
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .search-wrapper {
