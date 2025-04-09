@@ -193,39 +193,92 @@ const submit = handleSubmit(async (values) => {
     <form @submit.prevent="submit" aria-labelledby="modal-title">
       <div class="form-group">
         <label for="username" class="sr-only">Username</label>
-        <input v-if="isLogin" type="text" id="username" v-model="username" placeholder="Username" aria-required="true" :aria-invalid="!!usernameError" />
-        <span class="error" id="usernameErrSpan" v-if="isLogin && usernameError" role="alert">{{ usernameError }}</span>
+        <input
+          v-if="isLogin"
+          type="text"
+          id="username"
+          v-model="username"
+          placeholder="Username"
+          aria-required="true"
+          :aria-invalid="!!usernameError"
+        />
+        <span class="error" id="usernameErrSpan" v-if="isLogin && usernameError" role="alert">{{
+          usernameError
+        }}</span>
       </div>
 
       <template v-if="!isLogin">
         <div class="form-group">
           <label for="register-username" class="sr-only">Username</label>
-          <input id="register-username" v-model="username" type="text" placeholder="Username" aria-required="true" :aria-invalid="!!usernameError" />
-          <span class="error" id="usernameErrSpan" v-if="usernameError" role="alert">{{ usernameError }}</span>
+          <input
+            id="register-username"
+            v-model="username"
+            type="text"
+            placeholder="Username"
+            aria-required="true"
+            :aria-invalid="!!usernameError"
+          />
+          <span class="error" id="usernameErrSpan" v-if="usernameError" role="alert">{{
+            usernameError
+          }}</span>
         </div>
 
         <div class="form-group">
           <label for="firstName" class="sr-only">First Name</label>
-          <input id="firstName" v-model="firstName" type="text" placeholder="First Name" aria-required="true" :aria-invalid="!!firstNameError" />
-          <span class="error" id="firstNameErrSpan" v-if="firstNameError" role="alert">{{ firstNameError }}</span>
+          <input
+            id="firstName"
+            v-model="firstName"
+            type="text"
+            placeholder="First Name"
+            aria-required="true"
+            :aria-invalid="!!firstNameError"
+          />
+          <span class="error" id="firstNameErrSpan" v-if="firstNameError" role="alert">{{
+            firstNameError
+          }}</span>
         </div>
 
         <div class="form-group">
           <label for="lastName" class="sr-only">Last Name</label>
-          <input id="lastName" v-model="lastName" type="text" placeholder="Last Name" aria-required="true" :aria-invalid="!!lastNameError" />
-          <span class="error" id="lastNameErrSpan" v-if="lastNameError" role="alert">{{ lastNameError }}</span>
+          <input
+            id="lastName"
+            v-model="lastName"
+            type="text"
+            placeholder="Last Name"
+            aria-required="true"
+            :aria-invalid="!!lastNameError"
+          />
+          <span class="error" id="lastNameErrSpan" v-if="lastNameError" role="alert">{{
+            lastNameError
+          }}</span>
         </div>
 
         <div class="form-group">
           <label for="email" class="sr-only">Email</label>
-          <input id="email" v-model="email" type="email" placeholder="Email" aria-required="true" :aria-invalid="!!emailError" />
-          <span class="error" id="emailErrSpan" v-if="emailError" role="alert">{{ emailError }}</span>
+          <input
+            id="email"
+            v-model="email"
+            type="email"
+            placeholder="Email"
+            aria-required="true"
+            :aria-invalid="!!emailError"
+          />
+          <span class="error" id="emailErrSpan" v-if="emailError" role="alert">{{
+            emailError
+          }}</span>
         </div>
       </template>
 
       <div class="password-input-container form-group">
         <label for="password" class="sr-only">Password</label>
-        <input id="password" v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="Password" aria-required="true" :aria-invalid="!!passwordError" />
+        <input
+          id="password"
+          v-model="password"
+          :type="showPassword ? 'text' : 'password'"
+          placeholder="Password"
+          aria-required="true"
+          :aria-invalid="!!passwordError"
+        />
         <button
           type="button"
           @click="showPassword = !showPassword"
@@ -236,7 +289,9 @@ const submit = handleSubmit(async (values) => {
           {{ showPassword ? 'Hide' : 'Show' }}
         </button>
       </div>
-      <span class="error" id="passwordErrSpan" v-if="passwordError" role="alert">{{ passwordError }}</span>
+      <span class="error" id="passwordErrSpan" v-if="passwordError" role="alert">{{
+        passwordError
+      }}</span>
 
       <div v-if="!isLogin" class="password-input-container form-group">
         <label for="confirmPassword" class="sr-only">Confirm Password</label>
@@ -250,12 +305,22 @@ const submit = handleSubmit(async (values) => {
           aria-describedby="confirmPasswordErrSpan"
         />
       </div>
-      <span v-if="!isLogin && confirmPasswordError" class="error" id="confirmPasswordErrSpan" role="alert">{{
-        confirmPasswordError
-      }}</span>
+      <span
+        v-if="!isLogin && confirmPasswordError"
+        class="error"
+        id="confirmPasswordErrSpan"
+        role="alert"
+        >{{ confirmPasswordError }}</span
+      >
 
       <!-- Status Message -->
-      <div v-if="statusMessage" class="status-message" :class="statusType" role="status" aria-live="polite">
+      <div
+        v-if="statusMessage"
+        class="status-message"
+        :class="statusType"
+        role="status"
+        aria-live="polite"
+      >
         {{ statusMessage }}
       </div>
 

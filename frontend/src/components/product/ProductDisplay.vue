@@ -105,10 +105,9 @@ const isLocalPickup = computed(() => {
 
 const computeCompositeId = (buyer: number, seller: number, item: number) => {
   // Ensure the user ids are in a known order (to handle both directions)
-  const [firstId, secondId] = buyer < seller ? [buyer, seller] : [seller, buyer];
-  return `${firstId}_${secondId}_${item}`;
-};
-
+  const [firstId, secondId] = buyer < seller ? [buyer, seller] : [seller, buyer]
+  return `${firstId}_${secondId}_${item}`
+}
 
 const handleBuyClick = () => {
   if (!item.value?.vippsPaymentEnabled) {
@@ -185,21 +184,21 @@ const handleContactSeller = async () => {
   try {
     if (!authStore.isLoggedIn || !authStore.user?.id) {
       // Optionally redirect to login or show a message
-      alert('Please log in to contact the seller.');
-      return;
+      alert('Please log in to contact the seller.')
+      return
     }
 
-     // Prevent contacting self
-     if (isCurrentUserSeller.value) {
-       console.warn("Seller cannot contact themselves.");
-       return;
-     }
+    // Prevent contacting self
+    if (isCurrentUserSeller.value) {
+      console.warn('Seller cannot contact themselves.')
+      return
+    }
 
-     if (!sellerId.value) {
-        console.error("Seller ID is not available.");
-        alert('Could not contact seller. Please try again later.');
-        return;
-     }
+    if (!sellerId.value) {
+      console.error('Seller ID is not available.')
+      alert('Could not contact seller. Please try again later.')
+      return
+    }
 
     // Check existing conversations
     const response = await MessagingService.getUserConversations(authStore.user.id)
@@ -210,10 +209,10 @@ const handleContactSeller = async () => {
 
     //check if conversation already exists with this seller for this item
     const existingConversation = response.data.find(
-      (conv: any) => conv.conversationId === compositeId
+      (conv: any) => conv.conversationId === compositeId,
     )
 
-    if (existingConversation){
+    if (existingConversation) {
       router.push(`/messages/${existingConversation.conversationId}`)
       return
     } else {
@@ -223,7 +222,7 @@ const handleContactSeller = async () => {
         senderId: authStore.user.id.toString(),
         receiverId: sellerId.value.toString(),
         content: `Hi! I'm interested in your item: ${item.value?.title}`,
-        itemId: props.id
+        itemId: props.id,
       })
 
       // The message response should include the conversation ID
@@ -235,43 +234,45 @@ const handleContactSeller = async () => {
     }
   } catch (error) {
     console.error('Error starting conversation:', error)
-    alert('Could not start conversation. Please try again later.');
+    alert('Could not start conversation. Please try again later.')
   }
 }
 
 const handleEditClick = () => {
   if (props.id) {
-    router.push(`/product/edit/${props.id}`);
+    router.push(`/product/edit/${props.id}`)
   } else {
-    console.error("Cannot edit item: ID is missing.");
+    console.error('Cannot edit item: ID is missing.')
     // Optionally show an error message to the user
-    alert('Could not edit item. Please try again later.');
+    alert('Could not edit item. Please try again later.')
   }
-};
+}
 
 const handleDeleteClick = async () => {
   if (!props.id) {
-    console.error("Cannot delete item: ID is missing.");
-    alert('Could not delete item. Please try again later.');
-    return;
+    console.error('Cannot delete item: ID is missing.')
+    alert('Could not delete item. Please try again later.')
+    return
   }
 
   if (window.confirm('Are you sure you want to permanently delete this item?')) {
     try {
-      await ProductService.deleteItem(props.id);
-      alert('Item deleted successfully.');
+      await ProductService.deleteItem(props.id)
+      alert('Item deleted successfully.')
       // Navigate away after deletion, e.g., to user's posts or home
-      router.push('/profile/posts');
+      router.push('/profile/posts')
     } catch (error: any) {
-      console.error('Error deleting item:', error);
+      console.error('Error deleting item:', error)
       if (error.response && error.response.status === 409) {
-         alert('Failed to delete item: This item cannot be deleted because it is associated with a transaction history.');
+        alert(
+          'Failed to delete item: This item cannot be deleted because it is associated with a transaction history.',
+        )
       } else {
-        alert('Failed to delete item. Please try again later.');
+        alert('Failed to delete item. Please try again later.')
       }
     }
   }
-};
+}
 </script>
 
 <template>
@@ -322,7 +323,12 @@ const handleDeleteClick = async () => {
 
   <div v-if="item" class="product-display" role="main">
     <div class="product-image-container">
-      <div class="gallery-container" v-if="images && images.length > 1" role="listbox" aria-label="Product image gallery">
+      <div
+        class="gallery-container"
+        v-if="images && images.length > 1"
+        role="listbox"
+        aria-label="Product image gallery"
+      >
         <div
           v-for="(image, index) in images"
           :key="index"
@@ -338,11 +344,7 @@ const handleDeleteClick = async () => {
         </div>
       </div>
       <div class="main-image-container">
-        <img
-          :src="mainImageUrl"
-          :alt="`Main product image of ${item.title}`"
-          class="main-image"
-        />
+        <img :src="mainImageUrl" :alt="`Main product image of ${item.title}`" class="main-image" />
       </div>
     </div>
 
@@ -368,18 +370,10 @@ const handleDeleteClick = async () => {
       <div class="action-buttons">
         <!-- Seller View -->
         <template v-if="isCurrentUserSeller">
-          <button
-            class="edit-button"
-            @click="handleEditClick"
-            aria-label="Edit this item"
-          >
+          <button class="edit-button" @click="handleEditClick" aria-label="Edit this item">
             Edit Item
           </button>
-          <button
-            class="delete-button"
-            @click="handleDeleteClick"
-            aria-label="Delete this item"
-          >
+          <button class="delete-button" @click="handleDeleteClick" aria-label="Delete this item">
             Delete Item
           </button>
         </template>
@@ -390,7 +384,15 @@ const handleDeleteClick = async () => {
             class="contact-button"
             @click="handleContactSeller"
             :disabled="!isItemAvailable || !authStore.isLoggedIn || isAdmin"
-            :title="isAdmin ? 'Admin cannot contact seller' : !authStore.isLoggedIn ? 'Please log in to contact seller' : !isItemAvailable ? 'Item is not available' : ''"
+            :title="
+              isAdmin
+                ? 'Admin cannot contact seller'
+                : !authStore.isLoggedIn
+                  ? 'Please log in to contact seller'
+                  : !isItemAvailable
+                    ? 'Item is not available'
+                    : ''
+            "
             aria-label="Contact seller about this item"
           >
             Contact Seller
@@ -399,9 +401,11 @@ const handleDeleteClick = async () => {
             class="buy-button"
             @click="handleBuyClick"
             :disabled="!isItemAvailable || isAdmin"
-            :title="isAdmin ? 'Admin cannot buy items' : !isItemAvailable ? 'Item is not available' : ''"
+            :title="
+              isAdmin ? 'Admin cannot buy items' : !isItemAvailable ? 'Item is not available' : ''
+            "
             aria-label="Purchase this item"
-           >
+          >
             Buy Item
           </button>
           <WishlistButton
@@ -706,4 +710,3 @@ const handleDeleteClick = async () => {
   opacity: 0.7;
 }
 </style>
-

@@ -33,7 +33,9 @@ describe('ShippingService', () => {
       const error = new Error('Error retrieving shipping options')
       ;(axios.get as any).mockRejectedValue(error)
 
-      await expect(ShippingService.getAllShippingOptions()).rejects.toThrow('Error retrieving shipping options')
+      await expect(ShippingService.getAllShippingOptions()).rejects.toThrow(
+        'Error retrieving shipping options',
+      )
       expect(axios.get).toHaveBeenCalledWith('/api/shipping-options')
     })
   })
@@ -55,7 +57,9 @@ describe('ShippingService', () => {
       const error = new Error('Shipping option not found')
       ;(axios.get as any).mockRejectedValue(error)
 
-      await expect(ShippingService.getShippingOptionById(shippingId)).rejects.toThrow('Shipping option not found')
+      await expect(ShippingService.getShippingOptionById(shippingId)).rejects.toThrow(
+        'Shipping option not found',
+      )
       expect(axios.get).toHaveBeenCalledWith(`/api/shipping-options/${shippingId}`)
     })
   })
@@ -77,7 +81,9 @@ describe('ShippingService', () => {
       const error = new Error('Creation failed')
       ;(axios.post as any).mockRejectedValue(error)
 
-      await expect(ShippingService.createShippingOption(shippingData)).rejects.toThrow('Creation failed')
+      await expect(ShippingService.createShippingOption(shippingData)).rejects.toThrow(
+        'Creation failed',
+      )
       expect(axios.post).toHaveBeenCalledWith('/api/shipping-options', shippingData)
     })
   })
@@ -101,7 +107,9 @@ describe('ShippingService', () => {
       const error = new Error('Update failed')
       ;(axios.put as any).mockRejectedValue(error)
 
-      await expect(ShippingService.updateShippingOption(shippingId, shippingData)).rejects.toThrow('Update failed')
+      await expect(ShippingService.updateShippingOption(shippingId, shippingData)).rejects.toThrow(
+        'Update failed',
+      )
       expect(axios.put).toHaveBeenCalledWith(`/api/shipping-options/${shippingId}`, shippingData)
     })
   })
@@ -123,7 +131,9 @@ describe('ShippingService', () => {
       const error = new Error('Deletion failed')
       ;(axios.delete as any).mockRejectedValue(error)
 
-      await expect(ShippingService.deleteShippingOption(shippingId)).rejects.toThrow('Deletion failed')
+      await expect(ShippingService.deleteShippingOption(shippingId)).rejects.toThrow(
+        'Deletion failed',
+      )
       expect(axios.delete).toHaveBeenCalledWith(`/api/shipping-options/${shippingId}`)
     })
   })

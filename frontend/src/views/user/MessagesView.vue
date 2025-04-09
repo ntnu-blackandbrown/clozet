@@ -502,7 +502,7 @@ const handleShowProduct = (productId) => {
             @click="handleBuyItem"
             :disabled="shouldDisableButtons"
             aria-label="Buy item: {{ activeItemDetails.title }}"
-            >
+          >
             Buy Item
           </button>
         </div>
@@ -516,7 +516,8 @@ const handleShowProduct = (productId) => {
         role="log"
         aria-live="polite"
         aria-label="Message conversation with {{ getReceiverUsername(findConversationByChatId(activeChat)) }}"
-        aria-labelledby="conversation-header">
+        aria-labelledby="conversation-header"
+      >
         <!-- Loading indicator -->
         <div v-if="isLoadingMore" class="loading-indicator" role="status">
           <div class="loading-spinner" aria-hidden="true"></div>
@@ -539,7 +540,14 @@ const handleShowProduct = (productId) => {
                 ? 'message-sent'
                 : 'message-received',
             ]"
-            :aria-label="(Number(msg.senderId) === authStore.user?.id ? 'You sent: ' : getReceiverUsername(findConversationByChatId(activeChat)) + ' sent: ') + msg.content + ' at ' + formatTime(msg.timestamp || msg.createdAt)"
+            :aria-label="
+              (Number(msg.senderId) === authStore.user?.id
+                ? 'You sent: '
+                : getReceiverUsername(findConversationByChatId(activeChat)) + ' sent: ') +
+              msg.content +
+              ' at ' +
+              formatTime(msg.timestamp || msg.createdAt)
+            "
           >
             <div class="message-content">{{ msg.content }}</div>
             <div class="message-footer">
@@ -614,7 +622,7 @@ const handleShowProduct = (productId) => {
           @click="websocket.sendMessage"
           :disabled="!websocket.messageContent.trim()"
           aria-label="Send message"
-          >
+        >
           Send Message
         </button>
       </div>

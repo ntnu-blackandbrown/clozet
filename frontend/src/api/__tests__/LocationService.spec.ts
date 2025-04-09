@@ -54,7 +54,9 @@ describe('LocationService', () => {
       const error = new Error('Location not found')
       ;(axios.get as any).mockRejectedValue(error)
 
-      await expect(LocationService.getLocationById(locationId)).rejects.toThrow('Location not found')
+      await expect(LocationService.getLocationById(locationId)).rejects.toThrow(
+        'Location not found',
+      )
       expect(axios.get).toHaveBeenCalledWith(`/api/locations/${locationId}`)
     })
   })
@@ -97,7 +99,9 @@ describe('LocationService', () => {
       const error = new Error('Update failed')
       ;(axios.put as any).mockRejectedValue(error)
 
-      await expect(LocationService.updateLocation(locationId, locationData)).rejects.toThrow('Update failed')
+      await expect(LocationService.updateLocation(locationId, locationData)).rejects.toThrow(
+        'Update failed',
+      )
       expect(axios.put).toHaveBeenCalledWith(`/api/locations/${locationId}`, locationData)
     })
   })

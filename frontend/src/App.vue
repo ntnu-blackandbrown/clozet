@@ -71,32 +71,28 @@ const handleCloseAuthModal = () => {
           </RouterLink>
           <nav class="main-nav" aria-label="Main Navigation">
             <template v-if="userDetails?.role === 'ADMIN'">
-              <RouterLink
-                to="/admin"
-                class="nav-link admin-link"
-                aria-label="Admin Dashboard"
-              >Admin Dashboard</RouterLink>
+              <RouterLink to="/admin" class="nav-link admin-link" aria-label="Admin Dashboard"
+                >Admin Dashboard</RouterLink
+              >
             </template>
             <template v-else>
-              <RouterLink v-if="isLoggedIn" to="/profile" aria-label="User Profile">Profile</RouterLink>
-              <RouterLink v-if="isLoggedIn" to="/messages" aria-label="Messages">Messages</RouterLink>
+              <RouterLink v-if="isLoggedIn" to="/profile" aria-label="User Profile"
+                >Profile</RouterLink
+              >
+              <RouterLink v-if="isLoggedIn" to="/messages" aria-label="Messages"
+                >Messages</RouterLink
+              >
             </template>
           </nav>
         </div>
 
         <div class="auth-section">
-          <button
-            v-if="isLoggedIn"
-            @click="logout"
-            class="logout-btn"
-            aria-label="Log Out"
-          >Log Out</button>
-          <button
-            v-else
-            @click="handleLoginClick"
-            class="login-btn"
-            aria-label="Log In"
-          >Log In</button>
+          <button v-if="isLoggedIn" @click="logout" class="logout-btn" aria-label="Log Out">
+            Log Out
+          </button>
+          <button v-else @click="handleLoginClick" class="login-btn" aria-label="Log In">
+            Log In
+          </button>
         </div>
       </div>
     </header>

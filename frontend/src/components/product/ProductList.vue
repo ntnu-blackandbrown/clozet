@@ -42,7 +42,9 @@ watch(
 
 <template>
   <div class="product-list">
-    <div v-if="items.length === 0" class="no-items" role="status" aria-live="polite">No items available</div>
+    <div v-if="items.length === 0" class="no-items" role="status" aria-live="polite">
+      No items available
+    </div>
     <div v-else class="products-grid">
       <ProductCard
         v-for="item in items"

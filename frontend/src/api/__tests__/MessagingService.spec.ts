@@ -73,7 +73,9 @@ describe('MessagingService', () => {
       const error = new Error('Fetch error')
       ;(axios.get as any).mockRejectedValue(error)
 
-      await expect(MessagingService.getConversationMessages(conversationId)).rejects.toThrow('Fetch error')
+      await expect(MessagingService.getConversationMessages(conversationId)).rejects.toThrow(
+        'Fetch error',
+      )
       expect(axios.get).toHaveBeenCalledWith('/api/messages', {
         params: { conversationId, page: 0, size: 20 },
       })
@@ -119,7 +121,9 @@ describe('MessagingService', () => {
       const error = new Error('Create failed')
       ;(axios.post as any).mockRejectedValue(error)
 
-      await expect(MessagingService.createConversation(conversationData)).rejects.toThrow('Create failed')
+      await expect(MessagingService.createConversation(conversationData)).rejects.toThrow(
+        'Create failed',
+      )
       expect(axios.post).toHaveBeenCalledWith('/api/conversations', conversationData)
     })
   })

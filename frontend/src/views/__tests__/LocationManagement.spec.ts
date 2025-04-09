@@ -11,7 +11,7 @@ vi.mock('@/api/services/LocationService', () => ({
     createLocation: vi.fn(),
     updateLocation: vi.fn(),
     deleteLocation: vi.fn(),
-  }
+  },
 }))
 
 describe('LocationManagement', () => {

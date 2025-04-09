@@ -85,9 +85,9 @@ onMounted(async () => {
     }
     // Set current page from query params if available
     if (route.query.page) {
-      const page = parseInt(route.query.page as string);
+      const page = parseInt(route.query.page as string)
       if (!isNaN(page) && page > 0) {
-        currentPage.value = page;
+        currentPage.value = page
       }
     }
   } catch (error) {
@@ -102,7 +102,7 @@ watch(
   async (newQuery, oldQuery) => {
     // Reset to page 1 when search query changes
     if (newQuery !== oldQuery) {
-        currentPage.value = 1;
+      currentPage.value = 1
     }
 
     // If search query is substantial, fetch details for all visible items
@@ -213,38 +213,38 @@ watch(
   () => route.query,
   (newQuery) => {
     // Update filters based on query parameters
-    let filtersChanged = false;
+    let filtersChanged = false
     if (newQuery.category && newQuery.category !== selectedCategory.value) {
-        selectedCategory.value = newQuery.category as string;
-        filtersChanged = true;
+      selectedCategory.value = newQuery.category as string
+      filtersChanged = true
     } else if (!newQuery.category && selectedCategory.value) {
-        selectedCategory.value = '';
-        filtersChanged = true;
+      selectedCategory.value = ''
+      filtersChanged = true
     }
 
     if (newQuery.location && newQuery.location !== selectedLocation.value) {
-        selectedLocation.value = newQuery.location as string;
-        filtersChanged = true;
+      selectedLocation.value = newQuery.location as string
+      filtersChanged = true
     } else if (!newQuery.location && selectedLocation.value) {
-        selectedLocation.value = '';
-        filtersChanged = true;
+      selectedLocation.value = ''
+      filtersChanged = true
     }
 
     if (newQuery.shipping && newQuery.shipping !== selectedShippingOption.value) {
-        selectedShippingOption.value = newQuery.shipping as string;
-        filtersChanged = true;
+      selectedShippingOption.value = newQuery.shipping as string
+      filtersChanged = true
     } else if (!newQuery.shipping && selectedShippingOption.value) {
-        selectedShippingOption.value = '';
-        filtersChanged = true;
+      selectedShippingOption.value = ''
+      filtersChanged = true
     }
 
     // Update page based on query parameter
-    const pageQuery = newQuery.page ? parseInt(newQuery.page as string) : 1;
+    const pageQuery = newQuery.page ? parseInt(newQuery.page as string) : 1
     if (!isNaN(pageQuery) && pageQuery > 0 && pageQuery !== currentPage.value) {
-      currentPage.value = pageQuery;
+      currentPage.value = pageQuery
     } else if (!newQuery.page && currentPage.value !== 1) {
-        // If page query is removed, reset to 1 unless it was already 1
-        currentPage.value = 1;
+      // If page query is removed, reset to 1 unless it was already 1
+      currentPage.value = 1
     }
 
     // If filters changed, reset page to 1 (unless page is explicitly set in the same query update)
@@ -252,34 +252,33 @@ watch(
     if (filtersChanged && (!newQuery.page || pageQuery === 1)) {
       // Only reset if page wasn't explicitly set to something other than 1
       if (currentPage.value !== 1) {
-         // Update URL to reflect page reset due to filter change
-         updateUrlQuery();
+        // Update URL to reflect page reset due to filter change
+        updateUrlQuery()
       }
-      currentPage.value = 1;
+      currentPage.value = 1
     }
-
   },
   { immediate: true, deep: true }, // Use deep watch for query object
 )
 
 // Function to update URL query parameters
 const updateUrlQuery = () => {
-    const query: Record<string, string> = {}
+  const query: Record<string, string> = {}
 
-    if (selectedCategory.value) query.category = selectedCategory.value
-    if (selectedLocation.value) query.location = selectedLocation.value
-    if (selectedShippingOption.value) query.shipping = selectedShippingOption.value
-    if (currentPage.value > 1) query.page = String(currentPage.value) // Add page to query only if > 1
+  if (selectedCategory.value) query.category = selectedCategory.value
+  if (selectedLocation.value) query.location = selectedLocation.value
+  if (selectedShippingOption.value) query.shipping = selectedShippingOption.value
+  if (currentPage.value > 1) query.page = String(currentPage.value) // Add page to query only if > 1
 
-    // Use router.replace to avoid adding history entries for filter/page changes
-    router.replace({ query: Object.keys(query).length > 0 ? query : {} })
+  // Use router.replace to avoid adding history entries for filter/page changes
+  router.replace({ query: Object.keys(query).length > 0 ? query : {} })
 }
 
 // Update URL when filters or page change
 watch(
   [selectedCategory, selectedLocation, selectedShippingOption, currentPage],
   () => {
-      updateUrlQuery();
+    updateUrlQuery()
   },
   { deep: true },
 )
@@ -367,18 +366,16 @@ const goToPage = (page: number) => {
     <ProductList :items="paginatedItems" :initial-product-id="initialProductId" />
 
     <!-- Pagination Controls -->
-     <div v-if="totalPages > 1" class="pagination-controls">
-      <button @click="prevPage" :disabled="currentPage === 1" class="page-button">
-        Previous
-      </button>
+    <div v-if="totalPages > 1" class="pagination-controls">
+      <button @click="prevPage" :disabled="currentPage === 1" class="page-button">Previous</button>
       <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
       <button @click="nextPage" :disabled="currentPage === totalPages" class="page-button">
         Next
       </button>
     </div>
-     <div v-else-if="filteredItems.length === 0 && !isLoadingDetails" class="no-results">
-        No products found matching your criteria.
-     </div>
+    <div v-else-if="filteredItems.length === 0 && !isLoadingDetails" class="no-results">
+      No products found matching your criteria.
+    </div>
   </div>
 </template>
 
@@ -446,7 +443,7 @@ const goToPage = (page: number) => {
 
 .page-button {
   padding: 0.5rem 1rem;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
@@ -471,57 +468,57 @@ const goToPage = (page: number) => {
 }
 
 .page-numbers {
-    margin-top: 0.5rem;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 0.25rem;
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
 }
 
 .page-numbers .page-button {
-    min-width: 30px;
-    background-color: #f0f0f0;
-    color: #333;
+  min-width: 30px;
+  background-color: #f0f0f0;
+  color: #333;
 }
 .page-numbers .page-button:hover:not(:disabled) {
-     background-color: #e0e0e0;
+  background-color: #e0e0e0;
 }
 
 .page-numbers .page-button.active {
-    background-color: #4CAF50;
-    color: white;
-    font-weight: bold;
-    cursor: default;
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+  cursor: default;
 }
 .page-numbers .page-button:disabled:not(.active) {
-    background-color: #f0f0f0;
-    opacity: 0.5;
+  background-color: #f0f0f0;
+  opacity: 0.5;
 }
 
 .no-results {
-    text-align: center;
-    color: #888;
-    margin-top: 2rem;
-    font-style: italic;
+  text-align: center;
+  color: #888;
+  margin-top: 2rem;
+  font-style: italic;
 }
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
-    .reset-button {
-        margin-left: 0;
-        align-self: center;
-        margin-top: 1rem;
-    }
+  .reset-button {
+    margin-left: 0;
+    align-self: center;
+    margin-top: 1rem;
+  }
 
-    .pagination-controls {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.75rem;
-    }
-     .page-info {
-         width: 100%;
-         text-align: center;
-         margin: 0.5rem 0;
-     }
+  .pagination-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  .page-info {
+    width: 100%;
+    text-align: center;
+    margin: 0.5rem 0;
+  }
 }
 </style>

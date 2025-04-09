@@ -155,17 +155,21 @@ onMounted(() => {
   <div class="category-management">
     <div class="page-header">
       <h1 id="category-management-title">Category Management</h1>
-      <button @click="addCategory" class="btn-primary" aria-label="Add new category">Add New Category</button>
+      <button @click="addCategory" class="btn-primary" aria-label="Add new category">
+        Add New Category
+      </button>
     </div>
 
     <div v-if="error" class="error-message" role="alert">
       {{ error }}
-      <button @click="fetchCategories" class="btn-secondary" aria-label="Retry loading categories">Retry</button>
+      <button @click="fetchCategories" class="btn-secondary" aria-label="Retry loading categories">
+        Retry
+      </button>
     </div>
 
     <!-- Category Table -->
     <div class="table-container">
-      <div style="overflow-x: auto;" v-if="!isLoading && categories.length > 0">
+      <div style="overflow-x: auto" v-if="!isLoading && categories.length > 0">
         <table class="admin-table" aria-labelledby="category-management-title">
           <thead>
             <tr>
@@ -183,8 +187,20 @@ onMounted(() => {
               <td>{{ category.description }}</td>
               <td>{{ getParentName(category) }}</td>
               <td class="actions">
-                <button @click="editCategory(category)" class="btn-icon edit" aria-label="Edit category: {{ category.name }}">✎</button>
-                <button @click="deleteCategory(category.id)" class="btn-icon delete" aria-label="Delete category: {{ category.name }}">🗑</button>
+                <button
+                  @click="editCategory(category)"
+                  class="btn-icon edit"
+                  aria-label="Edit category: {{ category.name }}"
+                >
+                  ✎
+                </button>
+                <button
+                  @click="deleteCategory(category.id)"
+                  class="btn-icon delete"
+                  aria-label="Delete category: {{ category.name }}"
+                >
+                  🗑
+                </button>
               </td>
             </tr>
           </tbody>
@@ -198,15 +214,26 @@ onMounted(() => {
 
       <div v-else class="empty-state">
         <p>No categories found</p>
-        <button @click="addCategory" class="btn-primary" aria-label="Add first category">Add Your First Category</button>
+        <button @click="addCategory" class="btn-primary" aria-label="Add first category">
+          Add Your First Category
+        </button>
       </div>
     </div>
 
     <!-- Category Form Modal -->
-    <div v-if="showForm" class="modal-backdrop" @click="showForm = false" aria-modal="true" role="dialog" aria-labelledby="category-form-title">
+    <div
+      v-if="showForm"
+      class="modal-backdrop"
+      @click="showForm = false"
+      aria-modal="true"
+      role="dialog"
+      aria-labelledby="category-form-title"
+    >
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h3 id="category-form-title">{{ formMode === 'add' ? 'Add New Category' : 'Edit Category' }}</h3>
+          <h3 id="category-form-title">
+            {{ formMode === 'add' ? 'Add New Category' : 'Edit Category' }}
+          </h3>
           <button @click="showForm = false" class="btn-close" aria-label="Close form">×</button>
         </div>
 
@@ -222,7 +249,9 @@ onMounted(() => {
               :aria-invalid="formErrors.name ? 'true' : 'false'"
               :aria-describedby="formErrors.name ? 'name-error' : undefined"
             />
-            <span v-if="formErrors.name" class="error-text" id="name-error" role="alert">{{ formErrors.name }}</span>
+            <span v-if="formErrors.name" class="error-text" id="name-error" role="alert">{{
+              formErrors.name
+            }}</span>
           </div>
 
           <div class="form-group">
@@ -236,9 +265,13 @@ onMounted(() => {
               :aria-invalid="formErrors.description ? 'true' : 'false'"
               :aria-describedby="formErrors.description ? 'description-error' : undefined"
             ></textarea>
-            <span v-if="formErrors.description" class="error-text" id="description-error" role="alert">{{
-              formErrors.description
-            }}</span>
+            <span
+              v-if="formErrors.description"
+              class="error-text"
+              id="description-error"
+              role="alert"
+              >{{ formErrors.description }}</span
+            >
           </div>
 
           <div class="form-group">
@@ -257,7 +290,14 @@ onMounted(() => {
           </div>
 
           <div class="form-actions">
-            <button type="button" @click="showForm = false" class="btn-secondary" aria-label="Cancel">Cancel</button>
+            <button
+              type="button"
+              @click="showForm = false"
+              class="btn-secondary"
+              aria-label="Cancel"
+            >
+              Cancel
+            </button>
             <button type="submit" class="btn-primary" aria-label="Submit category form">
               {{ formMode === 'add' ? 'Add Category' : 'Update Category' }}
             </button>

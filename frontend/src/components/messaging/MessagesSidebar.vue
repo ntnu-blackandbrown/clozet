@@ -102,7 +102,10 @@ onMounted(async () => {
   <div class="messages-sidebar" role="complementary" aria-label="Messages sidebar">
     <div class="messages-header">
       <h1>
-        Messages <span class="message-count" aria-label="Number of messages">{{ filteredConversations.length }}</span>
+        Messages
+        <span class="message-count" aria-label="Number of messages">{{
+          filteredConversations.length
+        }}</span>
       </h1>
       <button class="new-message-btn" aria-label="Create new message">
         <i class="fas fa-pen"></i>
@@ -146,7 +149,9 @@ onMounted(async () => {
           <div class="chat-preview">{{ getLatestMessage(conversation) }}</div>
         </div>
         <div class="chat-meta">
-          <div class="chat-time" aria-label="Message time">{{ conversation.latestMessageTimestamp }}</div>
+          <div class="chat-time" aria-label="Message time">
+            {{ conversation.latestMessageTimestamp }}
+          </div>
         </div>
       </div>
     </div>

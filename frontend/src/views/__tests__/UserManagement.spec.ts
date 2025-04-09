@@ -157,8 +157,6 @@ describe('UserManagement', () => {
 
     // Verify that updateUser was called with toggled status: active false
     expect(UserService.updateUser).toHaveBeenCalledWith(1, { active: false })
-
-    
   })
 
   it('changes user role using the dropdown', async () => {

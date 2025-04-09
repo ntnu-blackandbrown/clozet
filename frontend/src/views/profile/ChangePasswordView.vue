@@ -15,7 +15,11 @@
               class="form-control"
               :class="{ 'error-input': currentPasswordError }"
             />
-            <button type="button" @click="showCurrentPassword = !showCurrentPassword" class="toggle-password">
+            <button
+              type="button"
+              @click="showCurrentPassword = !showCurrentPassword"
+              class="toggle-password"
+            >
               {{ showCurrentPassword ? 'Hide' : 'Show' }}
             </button>
           </div>
@@ -33,7 +37,11 @@
               class="form-control"
               :class="{ 'error-input': newPasswordError }"
             />
-             <button type="button" @click="showNewPassword = !showNewPassword" class="toggle-password">
+            <button
+              type="button"
+              @click="showNewPassword = !showNewPassword"
+              class="toggle-password"
+            >
               {{ showNewPassword ? 'Hide' : 'Show' }}
             </button>
           </div>
@@ -42,7 +50,7 @@
 
         <div class="form-group">
           <label for="confirmPassword">Confirm New Password</label>
-           <div class="password-input-container">
+          <div class="password-input-container">
             <input
               :type="showConfirmPassword ? 'text' : 'password'"
               id="confirmPassword"
@@ -51,7 +59,11 @@
               class="form-control"
               :class="{ 'error-input': confirmPasswordError }"
             />
-            <button type="button" @click="showConfirmPassword = !showConfirmPassword" class="toggle-password">
+            <button
+              type="button"
+              @click="showConfirmPassword = !showConfirmPassword"
+              class="toggle-password"
+            >
               {{ showConfirmPassword ? 'Hide' : 'Show' }}
             </button>
           </div>
@@ -296,7 +308,7 @@ label {
 }
 
 .password-input-container .toggle-password {
-   /* Position the button absolutely inside the container */
+  /* Position the button absolutely inside the container */
   position: absolute;
   right: 0.5rem; /* Adjust position */
   top: 50%;

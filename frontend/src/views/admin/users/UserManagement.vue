@@ -116,7 +116,9 @@ onMounted(() => {
 
     <div v-if="error" class="error-message" role="alert">
       {{ error }}
-      <button @click="fetchUsers" class="btn-secondary" aria-label="Retry loading users">Retry</button>
+      <button @click="fetchUsers" class="btn-secondary" aria-label="Retry loading users">
+        Retry
+      </button>
     </div>
 
     <!-- Filters -->
@@ -133,19 +135,26 @@ onMounted(() => {
 
       <div class="filter-container">
         <label for="role-filter">Filter by Role:</label>
-        <select id="role-filter" v-model="selectedRole" class="role-filter" aria-label="Filter users by role">
+        <select
+          id="role-filter"
+          v-model="selectedRole"
+          class="role-filter"
+          aria-label="Filter users by role"
+        >
           <option value="all">All Roles</option>
           <option value="ADMIN">Admin</option>
           <option value="ROLE_USER">Regular User</option>
         </select>
 
-        <button @click="resetFilters" class="btn-secondary" aria-label="Reset all filters">Reset Filters</button>
+        <button @click="resetFilters" class="btn-secondary" aria-label="Reset all filters">
+          Reset Filters
+        </button>
       </div>
     </div>
 
     <!-- User Table -->
     <div class="table-container">
-      <div style="overflow-x: auto;" v-if="!isLoading && filteredUsers.length > 0">
+      <div style="overflow-x: auto" v-if="!isLoading && filteredUsers.length > 0">
         <table class="admin-table" aria-labelledby="user-management-title">
           <thead>
             <tr>
@@ -201,9 +210,15 @@ onMounted(() => {
         <p>Loading users...</p>
       </div>
 
-      <div v-else-if="filteredUsers.length === 0 && users.length > 0" class="empty-state" aria-live="polite">
+      <div
+        v-else-if="filteredUsers.length === 0 && users.length > 0"
+        class="empty-state"
+        aria-live="polite"
+      >
         <p>No users found matching your filters</p>
-        <button @click="resetFilters" class="btn-primary" aria-label="Reset all filters">Reset Filters</button>
+        <button @click="resetFilters" class="btn-primary" aria-label="Reset all filters">
+          Reset Filters
+        </button>
       </div>
 
       <div v-else class="empty-state" aria-live="polite">

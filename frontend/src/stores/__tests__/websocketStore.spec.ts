@@ -5,12 +5,12 @@ import { useAuthStore } from '@/stores/AuthStore'
 
 // Define types for our mock STOMP client
 interface MockStompClient {
-  brokerURL: string;
-  connected: boolean;
-  activate: () => void;
-  deactivate: () => void;
-  publish: (options: any) => void;
-  subscribe: (destination: string, callback: any) => { id: string };
+  brokerURL: string
+  connected: boolean
+  activate: () => void
+  deactivate: () => void
+  publish: (options: any) => void
+  subscribe: (destination: string, callback: any) => { id: string }
 }
 
 // Mock @stomp/stompjs
@@ -25,7 +25,7 @@ vi.mock('@stomp/stompjs', () => {
         mockStompClientConfig = config
       }
       return mockStompClient
-    })
+    }),
   }
 })
 
@@ -37,13 +37,19 @@ describe('useWebsocket store', () => {
     authStore = useAuthStore()
 
     // Mock an authenticated user
-    authStore.user = { id: 123, usernameOrEmail: 'Test User', email: 'test@example.com', active: true, role: 'user' }
+    authStore.user = {
+      id: 123,
+      usernameOrEmail: 'Test User',
+      email: 'test@example.com',
+      active: true,
+      role: 'user',
+    }
 
     // Prepare a fresh mockStompClient each test
     mockStompClient = {
       brokerURL: 'ws://localhost:8080/ws',
       connected: false,
-      activate: vi.fn(function(this: MockStompClient) {
+      activate: vi.fn(function (this: MockStompClient) {
         // Simulate connection success
         this.connected = true
         // Call the onConnect callback if provided
@@ -51,7 +57,7 @@ describe('useWebsocket store', () => {
           mockStompClientConfig.onConnect('mock-frame')
         }
       }),
-      deactivate: vi.fn(function(this: MockStompClient) {
+      deactivate: vi.fn(function (this: MockStompClient) {
         this.connected = false
       }),
       publish: vi.fn(),
@@ -199,8 +205,6 @@ describe('useWebsocket store', () => {
     // The store sets a 3s timeout to revert isTyping to false
     // We won't wait 3s in the test, but we've confirmed it's set to true
   })
-
-  
 
   it('marks all unread messages as read', () => {
     websocketStore.connect()

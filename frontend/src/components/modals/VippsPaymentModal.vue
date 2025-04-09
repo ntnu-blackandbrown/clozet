@@ -141,7 +141,13 @@ const formattedPrice = (price: number) => {
       <p v-if="error" class="error-message" role="alert">{{ error }}</p>
 
       <div class="button-group">
-        <button @click="prevStep" class="vipps-button back" aria-label="Go back to shipping details">Back to Shipping</button>
+        <button
+          @click="prevStep"
+          class="vipps-button back"
+          aria-label="Go back to shipping details"
+        >
+          Back to Shipping
+        </button>
         <button
           @click="nextStep"
           class="vipps-button next"
@@ -185,8 +191,16 @@ const formattedPrice = (price: number) => {
       </div>
 
       <div class="button-group">
-        <button @click="prevStep" class="vipps-button back" aria-label="Go back to phone entry">Back</button>
-        <button @click="nextStep" class="vipps-button next" aria-label="Confirm and continue to PIN entry">Confirm</button>
+        <button @click="prevStep" class="vipps-button back" aria-label="Go back to phone entry">
+          Back
+        </button>
+        <button
+          @click="nextStep"
+          class="vipps-button next"
+          aria-label="Confirm and continue to PIN entry"
+        >
+          Confirm
+        </button>
       </div>
     </div>
 
@@ -219,7 +233,9 @@ const formattedPrice = (price: number) => {
           class="vipps-button back"
           :disabled="isSubmitting"
           aria-label="Go back to purchase confirmation"
-        >Back</button>
+        >
+          Back
+        </button>
         <button
           @click="processPayment"
           class="vipps-button pay"

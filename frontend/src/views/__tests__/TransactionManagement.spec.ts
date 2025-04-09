@@ -7,8 +7,8 @@ import { TransactionService } from '@/api/services/TransactionService'
 // Mock the TransactionService method
 vi.mock('@/api/services/TransactionService', () => ({
   TransactionService: {
-    getAllTransactions: vi.fn()
-  }
+    getAllTransactions: vi.fn(),
+  },
 }))
 
 describe('TransactionManagement', () => {
@@ -22,7 +22,7 @@ describe('TransactionManagement', () => {
       amount: '100.50',
       paymentMethod: 'Credit Card',
       status: 'COMPLETED',
-      createdAt: '2025-01-01T10:00:00Z'
+      createdAt: '2025-01-01T10:00:00Z',
     },
     {
       id: 2,
@@ -32,7 +32,7 @@ describe('TransactionManagement', () => {
       amount: '200.75',
       paymentMethod: 'Vipps',
       status: 'PENDING',
-      createdAt: '2025-02-01T12:00:00Z'
+      createdAt: '2025-02-01T12:00:00Z',
     },
     {
       id: 3,
@@ -42,8 +42,8 @@ describe('TransactionManagement', () => {
       amount: '150.00',
       paymentMethod: 'PayPal',
       status: 'FAILED',
-      createdAt: '2025-03-01T08:30:00Z'
-    }
+      createdAt: '2025-03-01T08:30:00Z',
+    },
   ]
 
   beforeEach(() => {
@@ -52,7 +52,7 @@ describe('TransactionManagement', () => {
   })
 
   it('fetches transactions on mount and displays them', async () => {
-    (TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
+    ;(TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
     const wrapper = mount(TransactionManagement)
     await flushPromises()
 
@@ -69,7 +69,7 @@ describe('TransactionManagement', () => {
   })
 
   it('displays an error message if fetching transactions fails', async () => {
-    (TransactionService.getAllTransactions as any).mockRejectedValue(new Error('Network error'))
+    ;(TransactionService.getAllTransactions as any).mockRejectedValue(new Error('Network error'))
     const wrapper = mount(TransactionManagement)
     await flushPromises()
 
@@ -79,7 +79,7 @@ describe('TransactionManagement', () => {
   })
 
   it('filters transactions based on status filter', async () => {
-    (TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
+    ;(TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
     const wrapper = mount(TransactionManagement)
     await flushPromises()
 
@@ -97,7 +97,7 @@ describe('TransactionManagement', () => {
   })
 
   it('filters transactions based on search query', async () => {
-    (TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
+    ;(TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
     const wrapper = mount(TransactionManagement)
     await flushPromises()
 
@@ -114,7 +114,7 @@ describe('TransactionManagement', () => {
   })
 
   it('resets filters correctly', async () => {
-    (TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
+    ;(TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
     const wrapper = mount(TransactionManagement)
     await flushPromises()
 
@@ -141,7 +141,7 @@ describe('TransactionManagement', () => {
   })
 
   it('sorts transactions when a sortable header is clicked', async () => {
-    (TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
+    ;(TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
     const wrapper = mount(TransactionManagement)
     await flushPromises()
 
@@ -159,7 +159,7 @@ describe('TransactionManagement', () => {
     // After clicking, sortKey should be set to "id" with sortDirection "desc",
     // meaning the highest id comes first. For our sample, that yields ordering: 3, 2, 1.
     let rows = wrapper.findAll('tbody tr')
-    let ids = rows.map(row => row.find('td').text())
+    let ids = rows.map((row) => row.find('td').text())
     expect(ids).toEqual(['3', '2', '1'])
 
     // Click the "ID" header again to toggle sort direction to "asc"
@@ -167,12 +167,12 @@ describe('TransactionManagement', () => {
     await nextTick()
 
     rows = wrapper.findAll('tbody tr')
-    let idsAsc = rows.map(row => row.find('td').text())
+    let idsAsc = rows.map((row) => row.find('td').text())
     expect(idsAsc).toEqual(['1', '2', '3'])
   })
 
   it('displays formatted currency and date correctly', async () => {
-    (TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
+    ;(TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
     const wrapper = mount(TransactionManagement)
     await flushPromises()
 

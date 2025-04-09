@@ -26,8 +26,6 @@ describe('useValidatedForm', () => {
     template: `<div></div>`,
   })
 
-
-
   it('resetForm resets form values to the initial values', async () => {
     const wrapper = mount(DummyForm)
     const form = wrapper.vm.form

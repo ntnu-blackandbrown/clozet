@@ -73,7 +73,6 @@ describe('AppLayout.vue (normal Pinia)', () => {
     mockRoute.params = {}
   })
 
-
   it('renders header with logo and navigation links', () => {
     const wrapper = mount(App, {
       global: {

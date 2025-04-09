@@ -55,7 +55,12 @@ const formattedPrice = computed(() => {
       </div>
     </div>
 
-    <div v-if="shippingAddress" class="shipping-info" role="region" aria-labelledby="shipping-details-title">
+    <div
+      v-if="shippingAddress"
+      class="shipping-info"
+      role="region"
+      aria-labelledby="shipping-details-title"
+    >
       <h3 id="shipping-details-title">Shipping Details</h3>
       <div class="address">
         <p>{{ shippingAddress.firstName }} {{ shippingAddress.lastName }}</p>
@@ -73,11 +78,7 @@ const formattedPrice = computed(() => {
       >
         View My Purchases
       </button>
-      <button
-        @click="emit('close')"
-        class="continue-shopping-btn"
-        aria-label="Continue shopping"
-      >
+      <button @click="emit('close')" class="continue-shopping-btn" aria-label="Continue shopping">
         Continue Shopping
       </button>
     </div>

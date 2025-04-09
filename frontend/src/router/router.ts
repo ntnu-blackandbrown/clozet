@@ -45,7 +45,7 @@ const router = createRouter({
       path: '/product/edit/:id',
       name: 'edit-product',
       component: () => import('@/views/user/CreateProductView.vue'),
-      props: route => ({ id: parseInt(route.params.id as string) }),
+      props: (route) => ({ id: parseInt(route.params.id as string) }),
       meta: { requiresAuth: true },
     },
     {
@@ -149,7 +149,7 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: NotFoundView,
-    }
+    },
   ],
 })
 

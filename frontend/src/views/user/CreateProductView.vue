@@ -123,9 +123,8 @@ onMounted(async () => {
       // Note: We cannot easily recreate File objects from URLs. Image updating might need a separate logic.
       // For now, we'll clear the `imageFiles` ref in edit mode, requiring re-upload if changes are needed.
       imageFiles.value = [] // Clear file list, user must re-upload to change images.
-
     } catch (error) {
-      console.error("Error fetching item data for edit:", error)
+      console.error('Error fetching item data for edit:', error)
       // Optionally redirect or show an error message
       testResult.value = 'Error loading item data.'
       router.push('/') // Redirect home on error
@@ -139,12 +138,15 @@ const conditions = ref(['New', 'Like New', 'Good', 'Fair', 'Poor'])
 // Size options
 const sizes = ref(['XS', 'S', 'M', 'L', 'XL', 'XXL'])
 
-
 // Setup form validation using the new hook
-const { handleSubmit, errors, resetForm, isFormValid: isVeeValid, isSubmitting, values } = useValidatedForm(
-  productSchema,
-  initialFormData,
-)
+const {
+  handleSubmit,
+  errors,
+  resetForm,
+  isFormValid: isVeeValid,
+  isSubmitting,
+  values,
+} = useValidatedForm(productSchema, initialFormData)
 
 // Setup form fields with the new hook, specifying types
 const { value: title, errorMessage: titleError } = useValidatedField<string>('title')
@@ -240,7 +242,7 @@ const onSubmit = handleSubmit(async (formValues) => {
       // sellerId is handled by the backend using the authenticated user
     }
 
-    let itemId: number;
+    let itemId: number
 
     if (isEditMode.value && props.id) {
       // 1. Update the item details
@@ -268,7 +270,6 @@ const onSubmit = handleSubmit(async (formValues) => {
       } else {
         testResult.value += '. Kept existing images.'
       }
-
     } else {
       // Create Mode
       // 1. Create the item first
@@ -293,13 +294,11 @@ const onSubmit = handleSubmit(async (formValues) => {
       // Redirect to the product detail page after create/update
       router.push(`/products/${itemId}`)
     }, 1500)
-
   } catch (error: any) {
     testResult.value = `Error: ${error.response?.data?.message || error.message}`
     console.error('Error submitting form:', error)
   }
 })
-
 </script>
 
 <template>
@@ -352,8 +351,18 @@ const onSubmit = handleSubmit(async (formValues) => {
           </div>
 
           <!-- Image Previews -->
-          <div v-if="imagePreviews.length > 0" class="image-previews" role="list" aria-label="Uploaded product images">
-            <div v-for="(preview, index) in imagePreviews" :key="index" class="image-preview" role="listitem">
+          <div
+            v-if="imagePreviews.length > 0"
+            class="image-previews"
+            role="list"
+            aria-label="Uploaded product images"
+          >
+            <div
+              v-for="(preview, index) in imagePreviews"
+              :key="index"
+              class="image-preview"
+              role="listitem"
+            >
               <img :src="preview" :alt="'Product image ' + (index + 1)" />
               <button
                 type="button"
@@ -366,11 +375,14 @@ const onSubmit = handleSubmit(async (formValues) => {
             </div>
           </div>
         </div>
-        <span class="error-message" v-if="!isFormValid && !isEditMode && imageFiles.length === 0" role="alert"
+        <span
+          class="error-message"
+          v-if="!isFormValid && !isEditMode && imageFiles.length === 0"
+          role="alert"
           >At least one image is required for a new product</span
         >
         <span class="info-message" v-if="isEditMode && imageFiles.length === 0"
-         >Current images will be kept. Upload new images to replace them.</span
+          >Current images will be kept. Upload new images to replace them.</span
         >
       </section>
 
@@ -380,7 +392,14 @@ const onSubmit = handleSubmit(async (formValues) => {
 
         <div class="form-group">
           <label for="title">Title</label>
-          <input id="title" v-model="title" type="text" :class="{ error: titleError }" aria-required="true" :aria-invalid="!!titleError" />
+          <input
+            id="title"
+            v-model="title"
+            type="text"
+            :class="{ error: titleError }"
+            aria-required="true"
+            :aria-invalid="!!titleError"
+          />
           <span class="error-message" v-if="titleError" role="alert">{{ titleError }}</span>
         </div>
 
@@ -409,7 +428,9 @@ const onSubmit = handleSubmit(async (formValues) => {
             aria-required="true"
             :aria-invalid="!!longDescriptionError"
           ></textarea>
-          <span class="error-message" v-if="longDescriptionError" role="alert">{{ longDescriptionError }}</span>
+          <span class="error-message" v-if="longDescriptionError" role="alert">{{
+            longDescriptionError
+          }}</span>
         </div>
 
         <div class="form-group">
@@ -434,18 +455,32 @@ const onSubmit = handleSubmit(async (formValues) => {
 
         <div class="form-group">
           <label for="category">Category</label>
-          <select id="category" v-model="categoryId" :class="{ error: categoryIdError }" aria-required="true" :aria-invalid="!!categoryIdError">
+          <select
+            id="category"
+            v-model="categoryId"
+            :class="{ error: categoryIdError }"
+            aria-required="true"
+            :aria-invalid="!!categoryIdError"
+          >
             <option value="">Select a category</option>
             <option v-for="category in categories" :key="category.id" :value="category.id">
               {{ category.name }}
             </option>
           </select>
-          <span class="error-message" v-if="categoryIdError" role="alert">{{ categoryIdError }}</span>
+          <span class="error-message" v-if="categoryIdError" role="alert">{{
+            categoryIdError
+          }}</span>
         </div>
 
         <div class="form-group">
           <label for="condition">Condition</label>
-          <select id="condition" v-model="condition" :class="{ error: conditionError }" aria-required="true" :aria-invalid="!!conditionError">
+          <select
+            id="condition"
+            v-model="condition"
+            :class="{ error: conditionError }"
+            aria-required="true"
+            :aria-invalid="!!conditionError"
+          >
             <option value="">Select condition</option>
             <option v-for="c in conditions" :key="c" :value="c">
               {{ c }}
@@ -456,7 +491,13 @@ const onSubmit = handleSubmit(async (formValues) => {
 
         <div class="form-group">
           <label for="size">Size</label>
-          <select id="size" v-model="size" :class="{ error: sizeError }" aria-required="true" :aria-invalid="!!sizeError">
+          <select
+            id="size"
+            v-model="size"
+            :class="{ error: sizeError }"
+            aria-required="true"
+            :aria-invalid="!!sizeError"
+          >
             <option value="">Select size</option>
             <option v-for="s in sizes" :key="s" :value="s">
               {{ s }}
@@ -467,13 +508,27 @@ const onSubmit = handleSubmit(async (formValues) => {
 
         <div class="form-group">
           <label for="brand">Brand</label>
-          <input id="brand" v-model="brand" type="text" :class="{ error: brandError }" aria-required="true" :aria-invalid="!!brandError" />
+          <input
+            id="brand"
+            v-model="brand"
+            type="text"
+            :class="{ error: brandError }"
+            aria-required="true"
+            :aria-invalid="!!brandError"
+          />
           <span class="error-message" v-if="brandError" role="alert">{{ brandError }}</span>
         </div>
 
         <div class="form-group">
           <label for="color">Color</label>
-          <input id="color" v-model="color" type="text" :class="{ error: colorError }" aria-required="true" :aria-invalid="!!colorError" />
+          <input
+            id="color"
+            v-model="color"
+            type="text"
+            :class="{ error: colorError }"
+            aria-required="true"
+            :aria-invalid="!!colorError"
+          />
           <span class="error-message" v-if="colorError" role="alert">{{ colorError }}</span>
         </div>
       </section>
@@ -484,13 +539,21 @@ const onSubmit = handleSubmit(async (formValues) => {
 
         <div class="form-group">
           <label for="location">Location</label>
-          <select id="location" v-model="locationId" :class="{ error: locationIdError }" aria-required="true" :aria-invalid="!!locationIdError">
+          <select
+            id="location"
+            v-model="locationId"
+            :class="{ error: locationIdError }"
+            aria-required="true"
+            :aria-invalid="!!locationIdError"
+          >
             <option value="">Select location</option>
             <option v-for="location in locations" :key="location.id" :value="location.id">
               {{ location.name }}
             </option>
           </select>
-          <span class="error-message" v-if="locationIdError" role="alert">{{ locationIdError }}</span>
+          <span class="error-message" v-if="locationIdError" role="alert">{{
+            locationIdError
+          }}</span>
         </div>
 
         <div class="form-group">
@@ -521,13 +584,32 @@ const onSubmit = handleSubmit(async (formValues) => {
       </section>
 
       <div class="form-actions">
-        <button type="button" @click="router.back()" class="cancel-button" aria-label="Cancel and go back">Cancel</button>
-        <button type="submit" class="submit-button" :disabled="!isFormValid || isSubmitting" :aria-busy="isSubmitting">
-          {{ isSubmitting ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Product' : 'Create Product') }}
+        <button
+          type="button"
+          @click="router.back()"
+          class="cancel-button"
+          aria-label="Cancel and go back"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="submit-button"
+          :disabled="!isFormValid || isSubmitting"
+          :aria-busy="isSubmitting"
+        >
+          {{
+            isSubmitting
+              ? isEditMode
+                ? 'Updating...'
+                : 'Creating...'
+              : isEditMode
+                ? 'Update Product'
+                : 'Create Product'
+          }}
         </button>
       </div>
     </form>
-
   </div>
 </template>
 

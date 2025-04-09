@@ -144,7 +144,14 @@ const displayCategories = computed(() => {
               aria-label="Search for products"
             />
 
-            <button v-if="searchQuery" @click="clearSearch" class="clear-search-btn" aria-label="Clear search">Clear</button>
+            <button
+              v-if="searchQuery"
+              @click="clearSearch"
+              class="clear-search-btn"
+              aria-label="Clear search"
+            >
+              Clear
+            </button>
             <!-- Inline SVG icon -->
             <svg
               class="search-icon"

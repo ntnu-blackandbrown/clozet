@@ -38,7 +38,12 @@ const toggleMobileMenu = () => {
     </button>
 
     <!-- Admin sidebar navigation -->
-    <nav class="admin-sidebar" :class="{ 'is-open': isMobileMenuOpen }" role="navigation" aria-label="Admin dashboard navigation">
+    <nav
+      class="admin-sidebar"
+      :class="{ 'is-open': isMobileMenuOpen }"
+      role="navigation"
+      aria-label="Admin dashboard navigation"
+    >
       <h2 class="admin-title" id="admin-nav-title">Admin Dashboard</h2>
 
       <div class="admin-nav-links">
@@ -110,7 +115,12 @@ const toggleMobileMenu = () => {
       </div>
 
       <div class="admin-sidebar-footer">
-        <RouterLink to="/" class="admin-back-link" @click="isMobileMenuOpen = false" aria-label="Return to main site">
+        <RouterLink
+          to="/"
+          class="admin-back-link"
+          @click="isMobileMenuOpen = false"
+          aria-label="Return to main site"
+        >
           Return to Site
         </RouterLink>
       </div>

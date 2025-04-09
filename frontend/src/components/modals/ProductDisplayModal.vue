@@ -37,11 +37,7 @@ const handleClose = () => {
 </script>
 
 <template>
-  <BaseModal
-    @close="handleClose"
-    :modalId="modalId"
-    modalTitle="Product Details"
-  >
+  <BaseModal @close="handleClose" :modalId="modalId" modalTitle="Product Details">
     <ProductDisplay :id="props.productId" />
   </BaseModal>
 </template>

@@ -4,24 +4,24 @@ import { ref, onMounted, onUnmounted } from 'vue'
 const props = defineProps({
   modalTitle: {
     type: String,
-    default: 'Modal Dialog'
+    default: 'Modal Dialog',
   },
   modalId: {
     type: String,
-    default: () => `modal-${Math.random().toString(36).substr(2, 9)}`
+    default: () => `modal-${Math.random().toString(36).substr(2, 9)}`,
   },
   hideCloseButton: {
     type: Boolean,
-    default: false
+    default: false,
   },
   maxWidth: {
     type: String,
-    default: '900px'
+    default: '900px',
   },
   padding: {
     type: String,
-    default: '2rem'
-  }
+    default: '2rem',
+  },
 })
 
 const modalIdRef = ref(props.modalId)
@@ -75,12 +75,9 @@ onUnmounted(() => {
       :id="modalIdRef"
       tabindex="-1"
     >
-      <button
-        v-if="!hideCloseButton"
-        class="close-button"
-        @click="close"
-        aria-label="Close modal"
-      >×</button>
+      <button v-if="!hideCloseButton" class="close-button" @click="close" aria-label="Close modal">
+        ×
+      </button>
       <div :id="titleId" class="visually-hidden">{{ modalTitle }}</div>
       <slot></slot>
     </div>

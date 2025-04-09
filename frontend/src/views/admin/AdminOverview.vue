@@ -1,10 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 // Import API services
-import { UserService } from '@/api/services/UserService';
-import { ProductService } from '@/api/services/ProductService';
-import { CategoryService } from '@/api/services/CategoryService';
-import { TransactionService } from '@/api/services/TransactionService';
+import { UserService } from '@/api/services/UserService'
+import { ProductService } from '@/api/services/ProductService'
+import { CategoryService } from '@/api/services/CategoryService'
+import { TransactionService } from '@/api/services/TransactionService'
 
 // Statistics data
 const statistics = ref({
@@ -21,11 +21,9 @@ const error = ref(null)
 
 // Helper function to sort by date and get top N items
 const getRecentItems = (items, count = 3) => {
-  if (!items || !Array.isArray(items)) return [];
+  if (!items || !Array.isArray(items)) return []
   // Assuming items have a 'createdAt' field that can be parsed into a Date
-  return items
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, count);
+  return items.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, count)
 }
 
 // Fetch dashboard statistics from APIs
@@ -35,17 +33,30 @@ const fetchStatistics = async () => {
     error.value = null
 
     // Make concurrent API calls
-    const [usersResponse, productsResponse, categoriesResponse, transactionsResponse] = await Promise.all([
-      UserService.getAllUsers().catch(e => { console.error('Failed to fetch users:', e); return { data: [] }; }),
-      ProductService.getAllItems().catch(e => { console.error('Failed to fetch products:', e); return { data: [] }; }),
-      CategoryService.getAllCategories().catch(e => { console.error('Failed to fetch categories:', e); return { data: [] }; }),
-      TransactionService.getAllTransactions().catch(e => { console.error('Failed to fetch transactions:', e); return { data: [] }; })
-    ]);
+    const [usersResponse, productsResponse, categoriesResponse, transactionsResponse] =
+      await Promise.all([
+        UserService.getAllUsers().catch((e) => {
+          console.error('Failed to fetch users:', e)
+          return { data: [] }
+        }),
+        ProductService.getAllItems().catch((e) => {
+          console.error('Failed to fetch products:', e)
+          return { data: [] }
+        }),
+        CategoryService.getAllCategories().catch((e) => {
+          console.error('Failed to fetch categories:', e)
+          return { data: [] }
+        }),
+        TransactionService.getAllTransactions().catch((e) => {
+          console.error('Failed to fetch transactions:', e)
+          return { data: [] }
+        }),
+      ])
 
-    const users = usersResponse.data || [];
-    const products = productsResponse.data || [];
-    const categories = categoriesResponse.data || [];
-    const transactions = transactionsResponse.data || [];
+    const users = usersResponse.data || []
+    const products = productsResponse.data || []
+    const categories = categoriesResponse.data || []
+    const transactions = transactionsResponse.data || []
 
     // Calculate statistics
     statistics.value = {
@@ -55,7 +66,7 @@ const fetchStatistics = async () => {
       totalTransactions: transactions.length,
       recentUsers: getRecentItems(users),
       recentItems: getRecentItems(products),
-    };
+    }
 
     // Remove mock data timeout
     // setTimeout(() => { ... }, 800) // This block is removed
@@ -89,7 +100,13 @@ onMounted(() => {
 
     <div v-else-if="error" class="error-container" role="alert">
       <p>{{ error }}</p>
-      <button @click="fetchStatistics" class="retry-button" aria-label="Retry loading dashboard data">Retry</button>
+      <button
+        @click="fetchStatistics"
+        class="retry-button"
+        aria-label="Retry loading dashboard data"
+      >
+        Retry
+      </button>
     </div>
 
     <template v-else>

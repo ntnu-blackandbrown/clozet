@@ -107,39 +107,82 @@ const handleDeleteAccount = async () => {
 <template>
   <div class="profile-settings-container">
     <h2 id="profile-settings-title">Profile Settings</h2>
-    <form @submit.prevent="handleSaveChanges" class="profile-form" aria-labelledby="profile-settings-title">
+    <form
+      @submit.prevent="handleSaveChanges"
+      class="profile-form"
+      aria-labelledby="profile-settings-title"
+    >
       <div class="name-fields">
         <div class="form-group">
           <label for="firstName">First Name</label>
-          <input type="text" id="firstName" placeholder="Your first name" v-model="firstName" aria-required="true" aria-invalid="firstNameError ? true : false" />
+          <input
+            type="text"
+            id="firstName"
+            placeholder="Your first name"
+            v-model="firstName"
+            aria-required="true"
+            aria-invalid="firstNameError ? true : false"
+          />
           <span class="error" v-if="firstNameError" role="alert">{{ firstNameError }}</span>
         </div>
         <div class="form-group">
           <label for="lastName">Last Name</label>
-          <input type="text" id="lastName" placeholder="Your last name" v-model="lastName" aria-required="true" aria-invalid="lastNameError ? true : false" />
+          <input
+            type="text"
+            id="lastName"
+            placeholder="Your last name"
+            v-model="lastName"
+            aria-required="true"
+            aria-invalid="lastNameError ? true : false"
+          />
           <span class="error" v-if="lastNameError" role="alert">{{ lastNameError }}</span>
         </div>
       </div>
       <div class="credentials-fields">
         <div class="form-group">
           <label for="username">Username</label>
-          <input type="text" id="username" placeholder="Your username" v-model="username" aria-required="true" aria-invalid="usernameError ? true : false" />
+          <input
+            type="text"
+            id="username"
+            placeholder="Your username"
+            v-model="username"
+            aria-required="true"
+            aria-invalid="usernameError ? true : false"
+          />
           <span class="error" v-if="usernameError" role="alert">{{ usernameError }}</span>
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" placeholder="Your email" v-model="email" aria-required="true" aria-invalid="emailError ? true : false" />
+          <input
+            type="email"
+            id="email"
+            placeholder="Your email"
+            v-model="email"
+            aria-required="true"
+            aria-invalid="emailError ? true : false"
+          />
           <span class="error" v-if="emailError" role="alert">{{ emailError }}</span>
         </div>
       </div>
 
       <!-- Status Message -->
-      <div v-if="statusMessage" class="status-message" :class="statusType" role="status" aria-live="polite">
+      <div
+        v-if="statusMessage"
+        class="status-message"
+        :class="statusType"
+        role="status"
+        aria-live="polite"
+      >
         {{ statusMessage }}
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="save-button" :disabled="!isFormValid || isSubmitting" aria-busy="isSubmitting">
+        <button
+          type="submit"
+          class="save-button"
+          :disabled="!isFormValid || isSubmitting"
+          aria-busy="isSubmitting"
+        >
           <span v-if="isSubmitting">
             <span class="spinner" aria-hidden="true"></span>
             <span class="sr-only">Saving...</span>

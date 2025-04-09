@@ -31,7 +31,9 @@ describe('TransactionService', () => {
       const error = new Error('Error retrieving transactions')
       ;(axios.get as any).mockRejectedValue(error)
 
-      await expect(TransactionService.getAllTransactions()).rejects.toThrow('Error retrieving transactions')
+      await expect(TransactionService.getAllTransactions()).rejects.toThrow(
+        'Error retrieving transactions',
+      )
       expect(axios.get).toHaveBeenCalledWith('/api/transactions')
     })
   })
@@ -53,7 +55,9 @@ describe('TransactionService', () => {
       const error = new Error('Buyer transactions error')
       ;(axios.get as any).mockRejectedValue(error)
 
-      await expect(TransactionService.getBuyerTransactions(buyerId)).rejects.toThrow('Buyer transactions error')
+      await expect(TransactionService.getBuyerTransactions(buyerId)).rejects.toThrow(
+        'Buyer transactions error',
+      )
       expect(axios.get).toHaveBeenCalledWith(`/api/transactions/buyer/${buyerId}`)
     })
   })
@@ -75,7 +79,9 @@ describe('TransactionService', () => {
       const error = new Error('Seller transactions error')
       ;(axios.get as any).mockRejectedValue(error)
 
-      await expect(TransactionService.getSellerTransactions(sellerId)).rejects.toThrow('Seller transactions error')
+      await expect(TransactionService.getSellerTransactions(sellerId)).rejects.toThrow(
+        'Seller transactions error',
+      )
       expect(axios.get).toHaveBeenCalledWith(`/api/transactions/seller/${sellerId}`)
     })
   })
@@ -97,7 +103,9 @@ describe('TransactionService', () => {
       const error = new Error('Create purchase failed')
       ;(axios.post as any).mockRejectedValue(error)
 
-      await expect(TransactionService.createPurchase(transactionData)).rejects.toThrow('Create purchase failed')
+      await expect(TransactionService.createPurchase(transactionData)).rejects.toThrow(
+        'Create purchase failed',
+      )
       expect(axios.post).toHaveBeenCalledWith('/api/transactions/purchase', transactionData)
     })
   })
