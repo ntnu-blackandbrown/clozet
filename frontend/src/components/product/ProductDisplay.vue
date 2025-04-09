@@ -100,6 +100,13 @@ const isLocalPickup = computed(() => {
   return item.value?.shippingOptionName === 'Local Pickup'
 })
 
+const computeCompositeId = (buyer: number, seller: number, item: number) => {
+  // Ensure the user ids are in a known order (to handle both directions)
+  const [firstId, secondId] = buyer < seller ? [buyer, seller] : [seller, buyer];
+  return `${firstId}_${secondId}_${item}`;
+};
+
+
 const handleBuyClick = () => {
   if (!item.value?.vippsPaymentEnabled) {
     // Show message when Vipps is not enabled
@@ -179,34 +186,32 @@ const handleContactSeller = async () => {
 
     // Check existing conversations
     const response = await MessagingService.getUserConversations(authStore.user.id)
+    console.log(response.data)
 
-    // Check if conversation already exists with this seller for this item
+    const compositeId = computeCompositeId(authStore.user.id, sellerId.value, props.id)
+    console.log(compositeId)
+
+    //check if conversation already exists with this seller for this item
     const existingConversation = response.data.find(
-      (conv: any) =>
-        (conv.senderId === authStore.user?.id?.toString() &&
-          conv.receiverId === sellerId.value?.toString() &&
-          conv.itemId === props.id) ||
-        (conv.receiverId === authStore.user?.id?.toString() &&
-          conv.senderId === sellerId.value?.toString() &&
-          conv.itemId === props.id),
+      (conv: any) => conv.conversationId === compositeId
     )
 
-    if (existingConversation) {
-      // If conversation exists, navigate to it
-      const chatId = existingConversation.conversationId || existingConversation.id
-      router.push(`/messages/${chatId}`)
+    if (existingConversation){
+      router.push(`/messages/${existingConversation.conversationId}`)
+      return
     } else {
-      // Create new conversation by sending first message
+      //create a new conversation
+      console.log('creating new conversation')
       const messageResponse = await MessagingService.sendMessage({
         senderId: authStore.user.id.toString(),
         receiverId: sellerId.value.toString(),
         content: `Hi! I'm interested in your item: ${item.value?.title}`,
-        itemId: props.id,
+        itemId: props.id
       })
 
       // The message response should include the conversation ID
       const newMessageData = messageResponse.data
-      const chatId = newMessageData.conversationId || newMessageData.id
+      const chatId = compositeId
 
       // Navigate to the messages view with the new conversation
       router.push(`/messages/${chatId}`)

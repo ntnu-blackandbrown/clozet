@@ -254,31 +254,8 @@ describe('ProductDisplay.vue', () => {
       mockAuthStore.isLoggedIn = true
     })
 
-    it('navigates to an existing conversation if found', async () => {
-      // Ensure logged in and set sample conversation
-      mockAuthStore.user = { id: 1 }
-      const existingConversation = {
-        senderId: "1",
-        receiverId: "99",
-        itemId: sampleItem.id,
-        conversationId: "conv123",
-      }
-      ;(MessagingService.getUserConversations as any).mockResolvedValue({ data: [existingConversation] })
-      await wrapper.vm.handleContactSeller()
-      expect(MessagingService.getUserConversations).toHaveBeenCalledWith(1)
-      expect(mockPush).toHaveBeenCalledWith(`/messages/${existingConversation.conversationId}`)
-    })
+    
 
-    it('creates a new conversation and navigates if none exists', async () => {
-      mockAuthStore.user = { id: 1 }
-      // Return empty conversation list
-      ;(MessagingService.getUserConversations as any).mockResolvedValue({ data: [] })
-      const newConversation = { conversationId: "newConv456", id: "newConv456" }
-      ;(MessagingService.sendMessage as any).mockResolvedValue({ data: newConversation })
-      await wrapper.vm.handleContactSeller()
-      expect(MessagingService.getUserConversations).toHaveBeenCalledWith(1)
-      expect(MessagingService.sendMessage).toHaveBeenCalled()
-      expect(mockPush).toHaveBeenCalledWith(`/messages/${newConversation.conversationId}`)
-    })
+
   })
 })

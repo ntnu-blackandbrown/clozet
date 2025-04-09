@@ -19,10 +19,13 @@ import stud.ntnu.no.backend.user.dto.UpdateUserDTO;
 import stud.ntnu.no.backend.user.dto.UserDTO;
 import stud.ntnu.no.backend.user.service.UserService;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -41,6 +44,12 @@ class UserControllerTest {
 
     @Mock
     private UserService userService;
+    
+    @Mock
+    private EntityManager entityManager;
+    
+    @Mock
+    private Query query;
 
     @InjectMocks
     private UserController userController;
@@ -187,6 +196,11 @@ class UserControllerTest {
         // Given
         Long userId = 1L;
         doNothing().when(userService).deleteUser(userId);
+        
+        // Mock EntityManager and Query
+        when(entityManager.createQuery(anyString())).thenReturn(query);
+        when(query.setParameter(anyString(), any())).thenReturn(query);
+        when(query.executeUpdate()).thenReturn(1);
 
         // When/Then
         mockMvc.perform(delete("/api/users/" + userId))
@@ -197,5 +211,7 @@ class UserControllerTest {
                 ));
                 
         verify(userService).deleteUser(userId);
+        // Verify that createQuery was called at least once
+        verify(entityManager, atLeastOnce()).createQuery(anyString());
     }
 } 

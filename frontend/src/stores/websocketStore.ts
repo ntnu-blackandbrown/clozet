@@ -1,6 +1,7 @@
 // src/stores/Websocket.ts (or similar)
 import { ref } from 'vue'
 import { Client } from '@stomp/stompjs'
+import SockJS from 'sockjs-client'
 import { useAuthStore } from '@/stores/AuthStore'
 import { defineStore } from 'pinia'
 
@@ -81,8 +82,11 @@ export const useWebsocket = defineStore('websocket', () => {
     updateConnectionStatus('connecting', 'Connecting...')
     log(`Attempting to connect to ${serverUrl.value}...`)
 
+    // Create a new SockJS instance
+    const socket = new SockJS(serverUrl.value)
+
     stompClient = new Client({
-      brokerURL: serverUrl.value.replace('http', 'ws'),
+      webSocketFactory: () => socket,
       debug: (str) => log(`STOMP Debug: ${str}`, 'info'),
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,

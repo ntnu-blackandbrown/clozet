@@ -36,7 +36,7 @@ spring:
 app:
   jwt:
     secret: AZTwI6sasm/p1KfaPZiSyGzIwDsEe70xTWG4H4TXatDcrqSOgWgACv1z05zhJnBIBGNWOUGuNZUnkwt86V2cqg==
-    expiration: 30000
+    expiration: 3600000
     cookie-max-age: 3600
     refresh-expiration: 3600000
     refresh-cookie-max-age: 3600
