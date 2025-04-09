@@ -212,11 +212,11 @@ Our API documentation is automatically generated using Spring REST Docs, which e
    python generate_index.py
    ```
 ### Documentation Content
-- 📝 Request/response formats with examples
-- 🔍 Detailed field descriptions and types
-- 🎯 Sample request/response payloads
-- 📊 HTTP status codes and their meanings
-- 🔐 Authentication requirements per endpoint
+- Request/response formats with examples
+- Detailed field descriptions and types
+- Sample request/response payloads
+- HTTP status codes and their meanings
+- Authentication requirements per endpoint
 
 ### Accessing Documentation
 
@@ -256,16 +256,94 @@ The documentation can be accessed through the index.pdf file
 
 The application should now be running and accessible through your browser.
 
-- How to manually test - ProdEmial -- Spin back
+# How to run tests locally - manually with EmialProdConfig - skal gjøres
 
 ## Testing and CI/CD
-Document how testing and CI/CD are configured:
-- Unit testing, integration tests
-- Test coverage requirements (at least 50%)
-- Links to CI/CD pipelines in GitLab
-- Explanation of the deployment process (Azure/Netlify)
 
-- How to run tests locally - manually with EmialProdConfig
+### Testing Strategy
+
+#### Backend Testing
+- **Unit Tests**: JUnit 5 for testing individual components
+  - Service layer business logic
+  - Repository layer data access
+  - Utility classes and helpers
+- **Integration Tests**: Spring Test for API endpoints
+  - REST controller validation
+  - Database integration
+  - Security configuration
+
+#### Frontend Testing
+- **Unit Tests**: Vitest
+  - Component testing
+  - Store testing with Pinia
+  - Utility function testing
+- **E2E Tests**: Cypress
+  - Critical user flows
+  - Integration scenarios
+  - Cross-browser compatibility
+
+### Continuous Integration/Deployment
+
+#### Backend CI/CD Pipeline (.github/workflows/backend.yml)
+1. **Build**
+   - Java 21 setup with Temurin distribution
+   - Maven build and compilation
+   - Artifact preservation
+2. **Package**
+   - JAR packaging
+   - Artifact upload
+3. **Deployment**
+   - Automatic deployment to Heroku
+   - Environment configuration
+   - Database migration handling
+
+#### Frontend CI/CD Pipeline (.github/workflows/frontend.yml)
+1. **Build & Quality**
+   - Node.js 18 setup
+   - Dependency installation
+   - Code formatting (Prettier)
+   - Type checking
+2. **Testing**
+   - Unit test execution with Vitest
+   - Build artifact preservation
+3. **Deployment**
+   - Netlify deployment
+   - Production build optimization
+
+### Local Testing
+
+#### Backend Testing
+```bash
+# Run all tests
+mvn test
+
+# Run specific test class
+mvn test -Dtest=UserServiceTest
+
+# Package with tests
+mvn package
+```
+
+#### Frontend Testing
+```bash
+# Run unit tests
+npm run test:unit
+
+# Run unit tests with coverage
+npm run test:coverage
+
+# Run E2E tests
+npm run test:e2e
+
+# Run E2E tests in development mode
+npm run test:e2e:dev
+```
+
+### Test Environment Configuration
+- H2 in-memory database for backend tests
+- Environment-specific configurations
+- TypeScript type checking for frontend
+- ESLint and Prettier for code quality
 
 ## Project Members
 - Names and roles
@@ -277,11 +355,3 @@ Kevin Dennis Mazali
 Kaamya Shinde
 
 - pic
-
-
----
-
-## Comments for editing (can be deleted later):
-- Remember to update all links and information as the project progresses.
-- Add illustrations, diagrams, and images where appropriate.
-- Thoroughly test instructions before submission.
