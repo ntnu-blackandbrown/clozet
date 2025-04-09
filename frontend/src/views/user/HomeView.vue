@@ -233,9 +233,10 @@ const displayCategories = computed(() => {
   top: var(--spacing-xl);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   max-width: 500px;
   padding-top: var(--spacing-xl);
+  margin: 0 auto;
 }
 
 .homepage-image {
@@ -244,6 +245,8 @@ const displayCategories = computed(() => {
   max-height: 600px;
   object-fit: contain;
   border-radius: var(--border-radius-lg);
+  display: block;
+  margin: 0 auto;
 }
 
 .hero-section {
@@ -408,6 +411,7 @@ h3 {
   .home-container {
     flex-direction: column;
     padding: var(--spacing-md);
+    align-items: center;
   }
 
   .content-section {
@@ -438,10 +442,15 @@ h3 {
     order: -1;
     padding-top: 0;
     margin-bottom: var(--spacing-lg);
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
   }
 
   .homepage-image {
     max-height: 50vh;
+    margin: 0 auto;
+    max-width: 90%;
   }
 }
 
