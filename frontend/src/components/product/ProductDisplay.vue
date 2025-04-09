@@ -243,6 +243,30 @@ const handleEditClick = () => {
     alert('Could not edit item. Please try again later.');
   }
 };
+
+const handleDeleteClick = async () => {
+  if (!props.id) {
+    console.error("Cannot delete item: ID is missing.");
+    alert('Could not delete item. Please try again later.');
+    return;
+  }
+
+  if (window.confirm('Are you sure you want to permanently delete this item?')) {
+    try {
+      await ProductService.deleteItem(props.id);
+      alert('Item deleted successfully.');
+      // Navigate away after deletion, e.g., to user's posts or home
+      router.push('/profile/posts');
+    } catch (error: any) {
+      console.error('Error deleting item:', error);
+      if (error.response && error.response.status === 409) {
+         alert('Failed to delete item: This item cannot be deleted because it is associated with a transaction history.');
+      } else {
+        alert('Failed to delete item. Please try again later.');
+      }
+    }
+  }
+};
 </script>
 
 <template>
@@ -334,13 +358,20 @@ const handleEditClick = () => {
       </div>
       <div class="action-buttons">
         <!-- Seller View -->
-        <button
-          v-if="isCurrentUserSeller"
-          class="edit-button"
-          @click="handleEditClick"
-        >
-          Edit Item
-        </button>
+        <template v-if="isCurrentUserSeller">
+          <button
+            class="edit-button"
+            @click="handleEditClick"
+          >
+            Edit Item
+          </button>
+          <button
+            class="delete-button"
+            @click="handleDeleteClick"
+          >
+            Delete Item
+          </button>
+        </template>
 
         <!-- Buyer/Guest View -->
         <template v-else>
@@ -633,6 +664,29 @@ const handleEditClick = () => {
 }
 
 .edit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Style for the Delete button */
+.delete-button {
+  background-color: #ef4444; /* Red color */
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.delete-button:hover:not(:disabled) {
+  background-color: #dc2626; /* Darker red */
+}
+
+.delete-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
   opacity: 0.7;
