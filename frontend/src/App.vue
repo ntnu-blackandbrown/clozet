@@ -12,6 +12,7 @@ const showLoginModal = ref(false)
 const statusMessage = ref('')
 const isLoading = ref(false)
 const initialAuthMode = ref('login') // Default to login mode
+const mobileMenuOpen = ref(false) // Track mobile menu state
 
 // Computed properties
 const isLoggedIn = computed(() => authStore.isLoggedIn)
@@ -40,6 +41,8 @@ watch(
     } else {
       showLoginModal.value = false
     }
+    // Close mobile menu when navigating
+    mobileMenuOpen.value = false
   },
 )
 
@@ -58,6 +61,10 @@ const handleCloseAuthModal = () => {
   showLoginModal.value = false
   router.replace('/')
 }
+
+const toggleMobileMenu = () => {
+  mobileMenuOpen.value = !mobileMenuOpen.value
+}
 </script>
 
 <template>
@@ -69,23 +76,49 @@ const handleCloseAuthModal = () => {
           <RouterLink to="/" class="logo-container" aria-label="Clozet Home">
             <img src="@/assets/light-green.png" alt="Clozet Logo" class="logo-image" />
           </RouterLink>
-          <nav class="main-nav" aria-label="Main Navigation">
-            <template v-if="userDetails?.role === 'ADMIN'">
-              <RouterLink to="/admin" class="nav-link admin-link" aria-label="Admin Dashboard"
-                >Admin Dashboard</RouterLink
-              >
-            </template>
-            <template v-else>
-              <RouterLink v-if="isLoggedIn" to="/profile" aria-label="User Profile"
-                >Profile</RouterLink
-              >
-              <RouterLink v-if="isLoggedIn" to="/messages" aria-label="Messages"
-                >Messages</RouterLink
-              >
-            </template>
-          </nav>
+
+          <!-- Hamburger menu button -->
+          <button
+            class="hamburger-menu-btn"
+            @click="toggleMobileMenu"
+            aria-label="Toggle navigation menu"
+            :aria-expanded="mobileMenuOpen"
+            :class="{ 'is-active': mobileMenuOpen }"
+          >
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+          </button>
         </div>
 
+        <!-- Navigation menu -->
+        <nav class="main-nav" :class="{ 'mobile-menu-open': mobileMenuOpen }" aria-label="Main Navigation">
+          <template v-if="userDetails?.role === 'ADMIN'">
+            <RouterLink to="/admin" class="nav-link admin-link" aria-label="Admin Dashboard"
+              >Admin Dashboard</RouterLink
+            >
+          </template>
+          <template v-else>
+            <RouterLink v-if="isLoggedIn" to="/profile" aria-label="User Profile"
+              >Profile</RouterLink
+            >
+            <RouterLink v-if="isLoggedIn" to="/messages" aria-label="Messages"
+              >Messages</RouterLink
+            >
+          </template>
+
+          <!-- Mobile-only auth section -->
+          <div class="mobile-auth-section">
+            <button v-if="isLoggedIn" @click="logout" class="logout-btn" aria-label="Log Out">
+              Log Out
+            </button>
+            <button v-else @click="handleLoginClick" class="login-btn" aria-label="Log In">
+              Log In
+            </button>
+          </div>
+        </nav>
+
+        <!-- Desktop auth section -->
         <div class="auth-section">
           <button v-if="isLoggedIn" @click="logout" class="logout-btn" aria-label="Log Out">
             Log Out
@@ -338,6 +371,33 @@ body {
   letter-spacing: -0.02em;
 }
 
+/* Hamburger Menu Styles */
+.hamburger-menu-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 110;
+}
+
+.hamburger-bar {
+  width: 100%;
+  height: 3px;
+  background-color: var(--color-white);
+  border-radius: 10px;
+  transition: var(--transition-smooth);
+}
+
+/* Mobile Navigation Styles */
+.mobile-auth-section {
+  display: none;
+}
+
 .main-nav {
   display: flex;
   gap: var(--spacing-xl);
@@ -512,25 +572,88 @@ main {
 @media (max-width: 768px) {
   .header-content {
     padding: var(--spacing-md);
-    flex-direction: column;
-    gap: var(--spacing-lg);
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
   }
 
   .header-left {
-    flex-direction: column;
-    gap: var(--spacing-lg);
+    flex-direction: row;
+    width: auto;
+    gap: var(--spacing-md);
+    justify-content: space-between;
     width: 100%;
-    align-items: center;
+  }
+
+  .hamburger-menu-btn {
+    display: flex;
+    z-index: 120;
   }
 
   .main-nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    height: 100vh;
+    width: 75%;
+    max-width: 300px;
+    background-color: var(--color-limed-spruce);
+    padding: 80px 20px 20px;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    z-index: 100;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .main-nav.mobile-menu-open {
+    right: 0;
+  }
+
+  .main-nav a {
+    font-size: 1.3rem;
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     width: 100%;
-    justify-content: center;
+  }
+
+  .main-nav a::after {
+    display: none;
   }
 
   .auth-section {
+    display: none;
+  }
+
+  .mobile-auth-section {
+    display: block;
+    margin-top: var(--spacing-xl);
+  }
+
+  .mobile-auth-section button {
     width: 100%;
-    justify-content: center;
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-md);
+    font-size: 1.1rem;
+  }
+
+  /* Overlay when menu is open */
+  body:has(.mobile-menu-open) {
+    overflow: hidden;
+  }
+
+  /* Add an overlay when menu is open */
+  .main-nav.mobile-menu-open::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
   }
 
   .grid {
@@ -550,5 +673,18 @@ main {
 .admin-link:hover {
   background-color: #a5545c;
   color: white;
+}
+
+/* Animation for hamburger to X */
+.hamburger-menu-btn.is-active .hamburger-bar:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.hamburger-menu-btn.is-active .hamburger-bar:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu-btn.is-active .hamburger-bar:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
 }
 </style>
