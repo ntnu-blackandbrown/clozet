@@ -154,14 +154,74 @@ Comment and edit:
   - Built-in form handling
   - Instant cache invalidation
 
-
 ## Application Structure
-Describe the architecture and structure of your project. Include:
-- Folders and packages
-- Class diagrams and ER diagrams (remember illustrations!)
-- Brief explanation of Controller, Service, Repository, DTOs, and Models.
 
+### Backend Architecture
+The backend follows a clean, layered architecture with clear separation of concerns:
 
+```
+backend/
+├── src/main/java/stud/ntnu/no/backend/
+│   ├── category/           # Category management
+│   ├── user/              # User management
+│   ├── item/              # Item listings
+│   ├── message/           # Messaging system
+│   ├── transaction/       # Transaction handling
+│   ├── review/            # Review system
+│   ├── favorite/          # Favorites/bookmarks
+│   ├── location/          # Location services
+│   ├── itemimage/         # Image handling
+│   ├── shippingoption/    # Shipping options
+│   └── common/            # Shared utilities
+```
+
+Each feature package contains:
+- `controller/` - REST endpoints and request handling
+- `service/` - Business logic implementation
+- `repository/` - Data access layer
+- `entity/` - Database entities
+- `dto/` - Data Transfer Objects
+- `exception/` - Custom exceptions
+- `mapper/` - MapStruct mappers for entity-DTO conversion
+
+### Frontend Architecture
+The frontend is built with Vue 3 and follows a modern component-based architecture:
+
+```
+frontend/
+├── src/
+│   ├── api/              # API client and endpoints
+│   ├── assets/           # Static assets
+│   ├── components/       # Reusable Vue components
+│   ├── router/           # Vue Router configuration
+│   ├── stores/           # Pinia state management
+│   ├── types/            # TypeScript type definitions
+│   ├── utils/            # Utility functions
+│   ├── views/            # Page components
+│   ├── websocket/        # WebSocket integration
+│   └── __tests__/        # Test files
+```
+
+### Key Architectural Decisions
+1. **Backend**
+   - Spring Boot 3 with Java 21
+   - JPA for data access
+   - REST API with Spring REST Docs
+   - WebSocket for real-time features
+   - JWT for authentication
+
+2. **Frontend**
+   - Vue 3 with Composition API
+   - Pinia for state management
+   - TypeScript for type safety
+   - Vue Router for navigation
+   - WebSocket client for real-time features
+
+3. **Testing**
+   - Controller tests with Spring REST Docs
+   - Service layer unit tests
+   - Frontend component tests with Vitest
+   - E2E tests with Cypress
 
 ## API Documentation
 
@@ -170,7 +230,7 @@ Our API documentation is automatically generated using Spring REST Docs, which e
 ### Implementation Overview
 
 1. **Test-Driven Documentation**
-   - Documentation is generated through integration tests
+   - Documentation is generated through controller tests
    - Each endpoint's documentation is verified during test execution
    - Examples are automatically generated from actual request/response pairs
 
