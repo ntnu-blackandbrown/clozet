@@ -27,8 +27,44 @@ Insert link here (when available).
 
 ## Introduction
 Explain what the project is about and what it aims to solve. Consider including:
-- Background of the project
+
+- - Background of the project
+
+  The digital marketplace is a well-established concept, yet there is always room for improving user experience, security, and functionality. 
+  This project aims to recreate and modernize the core concept of a platform like finn.no – allowing users to list, search for, and buy second-hand or new items – while also emphasizing best practices in full-stack development.
+
+  This project was developed in the context of the IDATT2105 course, where students are tasked with creating a complete full-stack web application using modern technologies. 
+  The project is also a voluntary assignment for students seeking to improve their course grade from a C to a B or A, and thus requires high quality in all aspects: code, UI/UX, functionality, security, testing, and documentation.
+
 - Main functionalities
+
+The core functionalities of the platform include:
+
+User registration and authentication, including role-based access control (admin vs. normal users)
+
+Item listing, including add/update/delete/archive operations
+
+Filtering and full-text search based on category, location, keyword, date, etc.
+
+Favorites/bookmarking of items
+
+Messaging system between users (e.g., buyer contacting seller)
+
+Item detail pages with image galleries and VIPPS-based payment simulation.
+
+Admin interface for managing categories and performing elevated operations
+
+Map view and responsive thumbnail grid for item exploration
+
+Mobile-friendly design with internationalization (i18n) support
+
+Secure login with JWT and Spring Security
+
+Continuous Integration and Delivery (CI/CD) setup with test coverage > 50%
+
+REST API with Swagger documentation
+
+
 - Overall requirements
 
 ## Technology Choices and Justifications
