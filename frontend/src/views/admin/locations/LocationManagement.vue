@@ -171,29 +171,31 @@ onMounted(() => {
 
     <!-- Location Table -->
     <div class="table-container">
-      <table class="admin-table" v-if="!isLoading && locations.length > 0">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>City</th>
-            <th>Region</th>
-            <th>Coordinates</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="location in locations" :key="location.id">
-            <td>{{ location.id }}</td>
-            <td>{{ location.city }}</td>
-            <td>{{ location.region }}</td>
-            <td>{{ location.latitude.toFixed(4) }}, {{ location.longitude.toFixed(4) }}</td>
-            <td class="actions">
-              <button @click="editLocation(location)" class="btn-icon edit">✎</button>
-              <button @click="deleteLocation(location.id)" class="btn-icon delete">🗑</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="overflow-x: auto;" v-if="!isLoading && locations.length > 0">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>City</th>
+              <th>Region</th>
+              <th>Coordinates</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="location in locations" :key="location.id">
+              <td>{{ location.id }}</td>
+              <td>{{ location.city }}</td>
+              <td>{{ location.region }}</td>
+              <td>{{ location.latitude.toFixed(4) }}, {{ location.longitude.toFixed(4) }}</td>
+              <td class="actions">
+                <button @click="editLocation(location)" class="btn-icon edit">✎</button>
+                <button @click="deleteLocation(location.id)" class="btn-icon delete">🗑</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <div v-else-if="isLoading" class="loading-container">
         <div class="loading-spinner"></div>

@@ -179,37 +179,39 @@ onMounted(() => {
 
     <!-- Shipping Options Table -->
     <div class="table-container">
-      <table class="admin-table" v-if="!isLoading && shippingOptions.length > 0">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Estimated Days</th>
-            <th>Price</th>
-            <th>Tracked</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="option in shippingOptions" :key="option.id">
-            <td>{{ option.id }}</td>
-            <td>{{ option.name }}</td>
-            <td>{{ option.description }}</td>
-            <td>{{ option.estimatedDays }} days</td>
-            <td>{{ formatPrice(option.price) }}</td>
-            <td>
-              <span class="tag" :class="option.isTracked ? 'tag-green' : 'tag-gray'">
-                {{ option.isTracked ? 'Yes' : 'No' }}
-              </span>
-            </td>
-            <td class="actions">
-              <button @click="editShippingOption(option)" class="btn-icon edit">✎</button>
-              <button @click="deleteShippingOption(option.id)" class="btn-icon delete">🗑</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="overflow-x: auto;" v-if="!isLoading && shippingOptions.length > 0">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Estimated Days</th>
+              <th>Price</th>
+              <th>Tracked</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="option in shippingOptions" :key="option.id">
+              <td>{{ option.id }}</td>
+              <td>{{ option.name }}</td>
+              <td>{{ option.description }}</td>
+              <td>{{ option.estimatedDays }} days</td>
+              <td>{{ formatPrice(option.price) }}</td>
+              <td>
+                <span class="tag" :class="option.isTracked ? 'tag-green' : 'tag-gray'">
+                  {{ option.isTracked ? 'Yes' : 'No' }}
+                </span>
+              </td>
+              <td class="actions">
+                <button @click="editShippingOption(option)" class="btn-icon edit">✎</button>
+                <button @click="deleteShippingOption(option.id)" class="btn-icon delete">🗑</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <div v-else-if="isLoading" class="loading-container">
         <div class="loading-spinner"></div>
