@@ -38,69 +38,121 @@ Explain what the project is about and what it aims to solve. Consider including:
 
 - Main functionalities
 
-The core functionalities of the platform include:
+## Core Functionalities
 
-User registration and authentication, including role-based access control (admin vs. normal users)
+### User Management & Authentication
+- 👤 User registration and profile management
+- 🔐 Secure login with JWT and Spring Security
+- 👥 Role-based access control (Admin/Standard users)
+- 🌐 Internationalization (i18n) support
 
-Item listing, including add/update/delete/archive operations
+### Listing Management
+- 📝 Create, update, delete, and archive item listings
+- 📸 Multi-image gallery support for listings
+- 📱 Responsive thumbnail grid for item exploration
 
-Filtering and full-text search based on category, location, keyword, date, etc.
+### Search & Discovery
+- 🔍 Advanced filtering system
+  - Category-based filtering
+  - Location-based search
+  - Keyword search
+  - Date range filtering
+- 📊 Smart sorting options
+- 🗺️ Interactive map view for geographical browsing
 
-Favorites/bookmarking of items
+### User Interaction
+- 💬 Real-time messaging system between buyers and sellers
+- ❤️ Favorites/Bookmarking system for items
+- 💳 VIPPS payment simulation for transactions
+- 📨 Email notifications for important updates
 
-Messaging system between users (e.g., buyer contacting seller)
+### Admin Features
+- 🎛️ Comprehensive admin dashboard
+- 📁 Category management system
+- 👥 User management and moderation
+- 📊 Basic analytics and reporting
 
-Item detail pages with image galleries and VIPPS-based payment simulation.
-
-Admin interface for managing categories and performing elevated operations
-
-Map view and responsive thumbnail grid for item exploration
-
-Mobile-friendly design with internationalization (i18n) support
-
-Secure login with JWT and Spring Security
-
-Continuous Integration and Delivery (CI/CD) setup with test coverage > 50%
-
-REST API with Swagger documentation
-
-
-- Overall requirements
-
-he project adheres to the following technical and documentation requirements:
-
-Frontend: Vue.js 3 with clean CSS (no CSS frameworks like Tailwind)
-
-Backend: Spring Boot 3 with Java 17, 21, or 24; REST-based API
-
-Database: MySQL 8 and/or H2
-
-Security: JWT-based authentication and secure access controls
-
-Testing: Minimum 50% code coverage; test data and test users must be included
-
-CI/CD: Automated build, test, and deployment workflows
-
-Documentation: Complete API documentation with Swagger, system architecture diagrams, and README for local setup
-
-Accessibility & Security: Follows OWASP and universal design principles
-
-Submission: Delivered as a zip file with runnable code, documentation, test data, and a 15–20 minute demo video
-
-The project encourages creativity in design and implementation, and groups are advised to prioritize features realistically, ensuring completed parts are fully functional and of high quality.
+### Technical Features
+- 🔒 Secure authentication with JWT?
+- 📱 Mobile-responsive design
+- 🔄 CI/CD pipeline with >50% test coverage
+- 📚 REST API with RestDocs documentation
+- 🛡️ OWASP security compliance
 
 ## Technology Choices and Justifications
 Comment and edit:
 
+### Database Architecture
+- **Development Environment: H2 Database**
+  - light-weight in-file database perfect for development and testing
+  - No separate installation required
+  - Automatic schema creation and fast startup
+  - Supports both SQL mode and JPA operations
 
-- **Database:** MySQL/H2 + , explain the reasons and advantages of this combination. - ORM, JPA and SQL-injections
-// TODO: other things to justify
--  Netlify
--  Heroku
+- **Production Environment: PostgreSQL on Heroku**
+  - Enterprise-grade reliability and performance
+  - Excellent support for JSON data types
+  - Automatic backups and monitoring through Heroku
+  - Seamless scaling capabilities
 
-- Websocket implementation
-- Spring security setup—main topics, the token setup, HTTP and XSS defence
+- **Data Access Layer** --- Dobbelsjekk
+  - Spring Data JPA for ORM functionality
+  - Type-safe queries using JPA Criteria API
+  - Prepared statements to prevent SQL injection
+  - Custom repository implementations for complex queries
+  - Database migration handled by Flyway
 
+
+  ### Security Architecture
+
+- **Authentication**
+  - JWT-based stateless authentication
+  - Refresh token rotation
+  - Secure token storage in HttpOnly cookies
+  - Role-based access control (RBAC)
+
+- **API Security**
+  - CORS configuration with specific origins
+  - CSRF protection for state-changing operations
+  - Rate limiting for API endpoints
+  - Request validation using DTOs
+
+- **Data Protection**
+  - Password hashing with BCrypt
+  - Input sanitization
+  - XSS protection headers
+  - Content Security Policy (CSP)
+  - Secure file upload handling
+
+
+  ### Real-time Communication
+
+- **WebSocket Implementation**
+  - STOMP protocol over WebSocket
+  - SockJS fallback for legacy browsers
+  - Message broker for scalable communication
+  - Real-time updates for: --- dobbelsjekk
+    - Chat messages
+    - Listing status changes
+    - Price updates
+    - Notification delivery
+
+### Deployment Infrastructure
+
+- **Backend Deployment: Heroku**
+  - Automated deployment through Git integration
+  - Built-in SSL/TLS security
+  - Automatic load balancing
+  - Easy environment variable management
+  - Integrated logging and monitoring
+  - Dyno-based scaling for cost efficiency
+
+- **Frontend Deployment: Netlify**
+  - Continuous deployment from Git
+  - Automatic build optimization
+  - Global CDN distribution
+  - Built-in form handling
+  - Instant cache invalidation
 
 
 ## Application Structure
@@ -109,12 +161,7 @@ Describe the architecture and structure of your project. Include:
 - Class diagrams and ER diagrams (remember illustrations!)
 - Brief explanation of Controller, Service, Repository, DTOs, and Models.
 
-## Security and Authentication
-Describe how security is handled:
-- JWT authentication
-- Refresh Tokens
-- Authorization levels (user/admin)
-- Password encryption
+
 
 ## API Documentation
 Provide information on how the API is documented:
