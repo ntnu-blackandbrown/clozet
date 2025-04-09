@@ -679,6 +679,7 @@ const handleShowProduct = (productId) => {
   background: #ffffff;
   position: relative;
   overflow: hidden;
+  border-radius: 16px;
 }
 
 .chat-content {
@@ -740,16 +741,17 @@ const handleShowProduct = (productId) => {
   background-color: #4caf50;
   color: white;
   border: none;
-  border-radius: 0.375rem;
+  border-radius: 12px;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .buy-button:hover:not(:disabled) {
   background-color: #45a049;
+  transform: translateY(-1px);
 }
 
 .buy-button:disabled {
@@ -784,7 +786,7 @@ const handleShowProduct = (productId) => {
   overflow-y: auto;
   margin-bottom: 20px;
   border: 1px solid #eee;
-  border-radius: 4px;
+  border-radius: 12px;
   padding: 15px;
 }
 
@@ -834,19 +836,21 @@ const handleShowProduct = (productId) => {
   max-width: 80%;
   margin-bottom: 10px;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: 18px;
 }
 
 .message-sent {
   align-self: flex-end;
   background-color: #e3f2fd;
   border-left: 4px solid #2196f3;
+  border-radius: 18px 4px 18px 18px;
 }
 
 .message-received {
   align-self: flex-start;
   background-color: #f1f8e9;
   border-left: 4px solid #8bc34a;
+  border-radius: 4px 18px 18px 18px;
 }
 
 .message-header {
@@ -911,21 +915,27 @@ const handleShowProduct = (productId) => {
 .message-input textarea {
   width: 100%;
   min-height: 80px;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 12px;
   margin-bottom: 10px;
   resize: vertical;
 }
 
 .message-input button {
   align-self: flex-end;
-  padding: 8px 20px;
+  padding: 10px 22px;
   background-color: #1976d2;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 12px;
   cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.message-input button:hover:not(:disabled) {
+  background-color: #1565c0;
+  transform: translateY(-1px);
 }
 
 .message-input button:disabled {
@@ -964,9 +974,10 @@ const handleShowProduct = (productId) => {
   color: white;
   border: none;
   padding: 8px 12px;
-  border-radius: 4px;
+  border-radius: 12px;
   font-size: 0.9rem;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 /* Mobile Styles */
