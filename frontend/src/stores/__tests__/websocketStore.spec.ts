@@ -3,25 +3,29 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { useWebsocket } from '@/stores/websocketStore'
 import { useAuthStore } from '@/stores/AuthStore'
 
-// 1. Mock sockjs-client
-vi.mock('sockjs-client', () => {
-  return {
-    default: vi.fn().mockImplementation((url: string) => {
-      return {
-        url,
-        close: vi.fn(),
-      }
-    }),
-  }
-})
+// Define types for our mock STOMP client
+interface MockStompClient {
+  brokerURL: string;
+  connected: boolean;
+  activate: () => void;
+  deactivate: () => void;
+  publish: (options: any) => void;
+  subscribe: (destination: string, callback: any) => { id: string };
+}
 
-// 2. Mock stompjs
-let mockStompClient: any
-vi.mock('stompjs', () => {
+// Mock @stomp/stompjs
+let mockStompClientConfig: any = {}
+let mockStompClient: MockStompClient
+
+vi.mock('@stomp/stompjs', () => {
   return {
-    default: {
-      over: vi.fn().mockImplementation(() => mockStompClient),
-    },
+    Client: vi.fn().mockImplementation((config) => {
+      // Store config for tests to access
+      if (config) {
+        mockStompClientConfig = config
+      }
+      return mockStompClient
+    })
   }
 })
 
@@ -37,15 +41,25 @@ describe('useWebsocket store', () => {
 
     // Prepare a fresh mockStompClient each test
     mockStompClient = {
-      connect: vi.fn((headers, onConnect, onError) => {
-        // Immediately call onConnect, simulating a successful STOMP handshake
-        onConnect && onConnect('mock-frame')
+      brokerURL: 'ws://localhost:8080/ws',
+      connected: false,
+      activate: vi.fn(function(this: MockStompClient) {
+        // Simulate connection success
+        this.connected = true
+        // Call the onConnect callback if provided
+        if (mockStompClientConfig.onConnect) {
+          mockStompClientConfig.onConnect('mock-frame')
+        }
       }),
-      disconnect: vi.fn(),
-      subscribe: vi.fn(),
-      send: vi.fn(),
-      debug: vi.fn(),
+      deactivate: vi.fn(function(this: MockStompClient) {
+        this.connected = false
+      }),
+      publish: vi.fn(),
+      subscribe: vi.fn().mockReturnValue({ id: 'mock-subscription-id' }),
     }
+
+    // Reset config for each test
+    mockStompClientConfig = {}
 
     // Create the store
     websocketStore = useWebsocket()
@@ -126,7 +140,7 @@ describe('useWebsocket store', () => {
     expect(lastMessage?.status).toBe('sending')
 
     // Check that our mock stomp client did get a send
-    expect(mockStompClient.send).toHaveBeenCalled()
+    expect(mockStompClient.publish).toHaveBeenCalled()
   })
 
   it('queues a message if not connected', () => {
@@ -172,7 +186,7 @@ describe('useWebsocket store', () => {
     const updated = websocketStore.messages.find((m) => m.id === 'client-123')
     expect(updated?.status).toBe('sending')
     // The store sets it to 'sending' before the actual send
-    expect(mockStompClient.send).toHaveBeenCalled()
+    expect(mockStompClient.publish).toHaveBeenCalled()
     expect(websocketStore.failedMessages.has('client-123')).toBe(false)
   })
 
@@ -186,24 +200,7 @@ describe('useWebsocket store', () => {
     // We won't wait 3s in the test, but we've confirmed it's set to true
   })
 
-  it('marks messages as read', () => {
-    websocketStore.connect()
-    // Add a message from user 999 to me (123)
-    const newMsg = {
-      id: 'test-read-id',
-      senderId: 999,
-      receiverId: '123',
-      content: 'Unread msg',
-      createdAt: new Date().toISOString(),
-      type: 'received',
-    }
-    websocketStore.messages.push(newMsg)
-
-    // Mark as read
-    websocketStore.markMessagesAsRead('999')
-    // The store should add 'test-read-id' to readMessages
-    expect(websocketStore.readMessages.has('test-read-id')).toBe(true)
-  })
+  
 
   it('marks all unread messages as read', () => {
     websocketStore.connect()

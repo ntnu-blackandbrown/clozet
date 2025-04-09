@@ -1,7 +1,6 @@
 // src/stores/Websocket.ts (or similar)
 import { ref } from 'vue'
-import SockJS from 'sockjs-client'
-import Stomp from 'stompjs'
+import { Client } from '@stomp/stompjs'
 import { useAuthStore } from '@/stores/AuthStore'
 import { defineStore } from 'pinia'
 
@@ -58,7 +57,7 @@ export const useWebsocket = defineStore('websocket', () => {
   const typingTimeout = ref<NodeJS.Timeout | null>(null)
   const pendingMessages = ref<Message[]>([]) // For offline queueing
 
-  let stompClient: Stomp.Client | null = null
+  let stompClient: Client | null = null
   let messageCount = 0
   const connected = ref(false)
   const connectionStatus = ref('Disconnected')
@@ -82,40 +81,42 @@ export const useWebsocket = defineStore('websocket', () => {
     updateConnectionStatus('connecting', 'Connecting...')
     log(`Attempting to connect to ${serverUrl.value}...`)
 
-    const socket = new SockJS(serverUrl.value)
-    stompClient = Stomp.over(socket)
-    stompClient.debug = (str: string) => log(`STOMP Debug: ${str}`, 'info')
-
-    stompClient.connect(
-      {},
-      (frame: any) => {
+    stompClient = new Client({
+      brokerURL: serverUrl.value.replace('http', 'ws'),
+      debug: (str) => log(`STOMP Debug: ${str}`, 'info'),
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+      onConnect: (frame) => {
         connected.value = true
         updateConnectionStatus('connected', 'Connected')
         log(`Connected: ${frame}`, 'message-received')
         subscribeToTopics()
         processPendingMessages() // process offline messages
       },
-      (error: any) => {
+      onStompError: (error) => {
         connected.value = false
         updateConnectionStatus('disconnected', 'Connection Failed')
-        log(`Connection error: ${error}`, 'error')
-      },
-    )
+        log(`Connection error: ${error.headers?.message || JSON.stringify(error)}`, 'error')
+      }
+    })
+
+    stompClient.activate()
   }
 
   function disconnect() {
     if (stompClient) {
-      stompClient.disconnect(() => {
-        updateConnectionStatus('disconnected', 'Disconnected')
-        log('Disconnected from WebSocket')
-        connected.value = false
-      })
+      stompClient.deactivate()
+      updateConnectionStatus('disconnected', 'Disconnected')
+      log('Disconnected from WebSocket')
+      connected.value = false
     }
   }
 
   function subscribeToTopics() {
-    if (!stompClient) return
-    stompClient.subscribe('/topic/messages', (msg: any) => {
+    if (!stompClient || !stompClient.connected) return
+
+    stompClient.subscribe('/topic/messages', (msg) => {
       try {
         const message = JSON.parse(msg.body)
         messageCount++
@@ -195,13 +196,16 @@ export const useWebsocket = defineStore('websocket', () => {
   }
 
   function sendDeliveryConfirmation(messageId: string) {
-    if (connected.value && stompClient) {
+    if (connected.value && stompClient && stompClient.connected) {
       const confirmation = {
         messageId,
         receiverId: sender.value,
         timestamp: new Date().toISOString(),
       }
-      stompClient.send('/app/chat.confirmDelivery', {}, JSON.stringify(confirmation))
+      stompClient.publish({
+        destination: '/app/chat.confirmDelivery',
+        body: JSON.stringify(confirmation)
+      })
       log(`Sent delivery confirmation for message ${messageId}`, 'info')
     }
   }
@@ -249,7 +253,10 @@ export const useWebsocket = defineStore('websocket', () => {
       return
     }
 
-    stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(msg))
+    stompClient.publish({
+      destination: '/app/chat.sendMessage',
+      body: JSON.stringify(msg)
+    })
     log(
       `Sent:<br>From: ${msg.senderId}<br>To: ${msg.receiverId}<br>Content: ${msg.content}`,
       'message-sent',
@@ -266,17 +273,16 @@ export const useWebsocket = defineStore('websocket', () => {
     messages.value[messageIndex] = { ...message, status: 'sending' }
 
     if (connected.value && stompClient) {
-      stompClient.send(
-        '/app/chat.sendMessage',
-        {},
-        JSON.stringify({
+      stompClient.publish({
+        destination: '/app/chat.sendMessage',
+        body: JSON.stringify({
           id: message.id,
           senderId: message.senderId,
           receiverId: message.receiverId,
           content: message.content,
           createdAt: message.timestamp || message.createdAt,
-        }),
-      )
+        })
+      })
       failedMessages.value.delete(messageId)
     } else {
       messages.value[messageIndex] = { ...message, status: 'failed' }
@@ -289,7 +295,10 @@ export const useWebsocket = defineStore('websocket', () => {
     pendingMessages.value = []
 
     messagesToSend.forEach((msg) => {
-      stompClient?.send('/app/chat.sendMessage', {}, JSON.stringify(msg))
+      stompClient?.publish({
+        destination: '/app/chat.sendMessage',
+        body: JSON.stringify(msg)
+      })
       failedMessages.value.delete(msg.id)
       // Mark as sent in local store
       const messageIndex = messages.value.findIndex((m) => m.id === msg.id)
@@ -309,9 +318,11 @@ export const useWebsocket = defineStore('websocket', () => {
         userId: sender.value,
         receiverId: receiver.value,
         isTyping: isTypingStatus,
-        timestamp: new Date().toISOString(),
       }
-      stompClient.send('/app/chat.typing', {}, JSON.stringify(status))
+      stompClient.publish({
+        destination: '/app/chat.typing',
+        body: JSON.stringify(status)
+      })
     }
   }
 
@@ -320,78 +331,82 @@ export const useWebsocket = defineStore('websocket', () => {
       isTyping.value = true
       sendTypingStatus(true)
     }
+    // Reset the timeout
     if (typingTimeout.value) {
       clearTimeout(typingTimeout.value)
     }
     typingTimeout.value = setTimeout(() => {
       isTyping.value = false
       sendTypingStatus(false)
-    }, 3000)
+    }, 2000)
   }
 
   function pingServer() {
     if (connected.value && stompClient) {
-      stompClient.send('/app/chat.ping', {}, '')
-      log('Ping sent', 'message-sent')
-    } else {
-      log('Not connected', 'error')
+      stompClient.publish({
+        destination: '/app/chat.ping',
+        body: ''
+      })
     }
   }
 
   function checkConnection() {
-    if (connected.value && stompClient) {
-      stompClient.send('/app/chat.ping', {}, '')
-      log('Connection check: Active', 'message-received')
-    } else {
-      log('Connection check: Not connected', 'error')
-      updateConnectionStatus('disconnected', 'Not Connected')
+    if (!connected.value && stompClient) {
+      log('Attempting to reconnect...', 'warning')
+      connect()
+    } else if (connected.value && stompClient) {
+      stompClient.publish({
+        destination: '/app/chat.ping',
+        body: ''
+      })
     }
   }
 
   function clearMessages() {
     messages.value = []
-    log('Cleared WebSocket messages', 'info')
+    messageCount = 0
   }
 
   function markMessagesAsRead(senderId: string) {
-    if (connected.value && stompClient) {
-      // Locally mark them as read
-      messages.value
-        .filter((m) => m.senderId === +senderId)
-        .forEach((m) => readMessages.value.add(m.id))
+    if (!connected.value || !stompClient || !sender.value) return
 
-      const readStatus = {
-        senderId: senderId,
-        receiverId: sender.value,
-        read: true,
-        timestamp: new Date().toISOString(),
-      }
-      stompClient.send('/app/chat.markRead', {}, JSON.stringify(readStatus))
-      log(`Marked messages from ${senderId} as read`, 'info')
+    const unreadMessages = messages.value.filter(
+      (m) => m.senderId === senderId && !readMessages.value.has(m.id),
+    )
+
+    if (unreadMessages.length === 0) return
+
+    const readStatus = {
+      senderId: sender.value,
+      messages: unreadMessages.map((m) => m.id),
+      timestamp: new Date().toISOString(),
     }
+
+    stompClient.publish({
+      destination: '/app/chat.markRead',
+      body: JSON.stringify(readStatus)
+    })
+
+    // Optimistically mark as read locally
+    unreadMessages.forEach((m) => readMessages.value.add(m.id))
   }
 
   function markAllAsRead() {
-    if (!connected.value || !stompClient || !receiver.value) return
-    const unreadMessages = messages.value.filter(
-      (m) => m.senderId === receiver.value && !readMessages.value.has(m.id),
-    )
-    unreadMessages.forEach((msg) => {
-      readMessages.value.add(msg.id)
-      const readStatus = {
-        messageId: msg.id,
-        senderId: receiver.value,
-        receiverId: sender.value,
-        read: true,
-        timestamp: new Date().toISOString(),
-      }
-      if (stompClient) {
-        stompClient.send('/app/chat.markRead', {}, JSON.stringify(readStatus))
-      }
-    })
-    if (unreadMessages.length > 0) {
-      log(`Marked ${unreadMessages.length} messages as read`, 'info')
+    if (messages.value.length === 0 || !sender.value || !connected.value || !stompClient) return
+
+    const readStatus = {
+      senderId: sender.value,
+      messages: messages.value.map((m) => m.id),
+      timestamp: new Date().toISOString(),
     }
+
+    stompClient.publish({
+      destination: '/app/chat.markRead',
+      body: JSON.stringify(readStatus)
+    })
+
+    // Mark all as read locally
+    messages.value.forEach((m) => readMessages.value.add(m.id))
   }
 
   return {
