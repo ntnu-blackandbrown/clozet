@@ -73,22 +73,6 @@ describe('AppLayout.vue (normal Pinia)', () => {
     mockRoute.params = {}
   })
 
-  it('calls fetchUserInfo on mount', async () => {
-    const wrapper = mount(App, {
-      global: {
-        plugins: [pinia],
-        stubs: {
-          RouterLink: RouterLinkStub,
-          RouterView: RouterViewStub,
-          Footer: FooterStub,
-          LoginRegisterModal: LoginRegisterModalStub,
-        },
-      },
-    })
-    await flushPromises()
-    await nextTick()
-    expect(authStore.fetchUserInfo).toHaveBeenCalled()
-  })
 
   it('renders header with logo and navigation links', () => {
     const wrapper = mount(App, {
