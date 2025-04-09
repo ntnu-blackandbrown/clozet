@@ -4,8 +4,8 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useCategoryStore } from '@/stores/Category'
 import { useShippingOptionStore } from '@/stores/ShippingOption'
-import { useField, useForm } from 'vee-validate'
-import * as yup from 'yup'
+import { useValidatedForm, useValidatedField } from '@/utils/validation/useValidation'
+import { productSchema } from '@/utils/validation/schemas'
 import { useLocationStore } from '@/stores/Location'
 import { ProductService } from '@/api/services/ProductService'
 // Define interfaces for TypeScript
@@ -42,44 +42,22 @@ const categoryStore = useCategoryStore()
 const shippingOptionStore = useShippingOptionStore()
 const locationStore = useLocationStore()
 
-// Form validation schema
-const productSchema = yup.object({
-  title: yup.string().required('Title is required'),
-  shortDescription: yup.string().required('Short description is required'),
-  longDescription: yup.string().required('Long description is required'),
-  price: yup
-    .number()
-    .required('Price is required')
-    .positive('Price must be positive')
-    .min(0, 'Price must be at least 0'),
-  categoryId: yup.string().required('Category is required'),
-  locationId: yup.string().required('Location is required'),
-  shippingOptionId: yup.string().required('Shipping option is required'),
-  condition: yup.string().required('Condition is required'),
-  size: yup.string().required('Size is required'),
-  brand: yup.string().required('Brand is required'),
-  color: yup.string().required('Color is required'),
-  isVippsPaymentEnabled: yup.boolean(),
-})
-
-// Form data
-const formData = ref({
+// Initial form data structure (matching schema keys)
+const initialFormData = {
   title: '',
   shortDescription: '',
   longDescription: '',
-  price: '',
+  price: '', // Keep as string for input binding, schema handles number conversion
   categoryId: '',
   locationId: '',
   shippingOptionId: '',
-  latitude: '',
-  longitude: '',
   condition: '',
   size: '',
   brand: '',
   color: '',
   isVippsPaymentEnabled: false,
-  images: [], // Array to store image files
-})
+  // images are handled separately
+}
 
 // Image upload state
 const imageFiles = ref<File[]>([])
@@ -88,7 +66,6 @@ const isDragging = ref(false)
 const maxImages = 5
 
 // Form validation
-const isSubmitting = ref(false)
 const testResult = ref('')
 
 // Categories (to be fetched from backend)
@@ -118,55 +95,34 @@ const sizes = ref(['XS', 'S', 'M', 'L', 'XL', 'XXL'])
 // Add preview modal state
 const showPreview = ref(false)
 
-// Setup form validation
-const { handleSubmit, errors, resetForm } = useForm({
-  validationSchema: productSchema,
-})
+// Setup form validation using the new hook
+const { handleSubmit, errors, resetForm, isFormValid: isVeeValid, isSubmitting, values } = useValidatedForm(
+  productSchema,
+  initialFormData,
+)
 
-// Setup form fields with proper typing
-const { value: title, errorMessage: titleError } = useField<string>('title')
+// Setup form fields with the new hook, specifying types
+const { value: title, errorMessage: titleError } = useValidatedField<string>('title')
 const { value: shortDescription, errorMessage: shortDescriptionError } =
-  useField<string>('shortDescription')
+  useValidatedField<string>('shortDescription')
 const { value: longDescription, errorMessage: longDescriptionError } =
-  useField<string>('longDescription')
-const { value: price, errorMessage: priceError } = useField<string>('price')
-const { value: categoryId, errorMessage: categoryIdError } = useField<string>('categoryId')
-const { value: locationId, errorMessage: locationIdError } = useField<string>('locationId')
+  useValidatedField<string>('longDescription')
+const { value: price, errorMessage: priceError } = useValidatedField<string>('price')
+const { value: categoryId, errorMessage: categoryIdError } = useValidatedField<string>('categoryId')
+const { value: locationId, errorMessage: locationIdError } = useValidatedField<string>('locationId')
 const { value: shippingOptionId, errorMessage: shippingOptionIdError } =
-  useField<string>('shippingOptionId')
-const { value: condition, errorMessage: conditionError } = useField<string>('condition')
-const { value: size, errorMessage: sizeError } = useField<string>('size')
-const { value: brand, errorMessage: brandError } = useField<string>('brand')
-const { value: color, errorMessage: colorError } = useField<string>('color')
-const { value: isVippsPaymentEnabled } = useField<boolean>('isVippsPaymentEnabled')
+  useValidatedField<string>('shippingOptionId')
+const { value: condition, errorMessage: conditionError } = useValidatedField<string>('condition')
+const { value: size, errorMessage: sizeError } = useValidatedField<string>('size')
+const { value: brand, errorMessage: brandError } = useValidatedField<string>('brand')
+const { value: color, errorMessage: colorError } = useValidatedField<string>('color')
+const { value: isVippsPaymentEnabled } = useValidatedField<boolean>('isVippsPaymentEnabled')
 
-// Computed property to check if form is valid
+// Updated computed property to check if form is valid, also considering image requirement
 const isFormValid = computed(() => {
-  return (
-    !errors.value.title &&
-    !errors.value.shortDescription &&
-    !errors.value.longDescription &&
-    !errors.value.price &&
-    !errors.value.categoryId &&
-    !errors.value.locationId &&
-    !errors.value.shippingOptionId &&
-    !errors.value.condition &&
-    !errors.value.size &&
-    !errors.value.brand &&
-    !errors.value.color &&
-    title.value &&
-    shortDescription.value &&
-    longDescription.value &&
-    price.value &&
-    categoryId.value &&
-    locationId.value &&
-    shippingOptionId.value &&
-    condition.value &&
-    size.value &&
-    brand.value &&
-    color.value &&
-    imageFiles.value.length > 0
-  )
+  // useValidatedForm already provides isFormValid (isVeeValid here)
+  // We just need to add the image check
+  return isVeeValid.value && imageFiles.value.length > 0
 })
 
 const handleImageUpload = (event: Event) => {
@@ -210,29 +166,32 @@ const removeImage = (index: number) => {
   imagePreviews.value.splice(index, 1)
 }
 
-const onSubmit = handleSubmit(async (values) => {
+const onSubmit = handleSubmit(async (formValues) => {
   if (imageFiles.value.length === 0) {
     alert('Please upload at least one image')
+    // Since handleSubmit catches this via isFormValid, this alert might be redundant
+    // but can be kept for explicit user feedback if desired.
     return
   }
 
-  isSubmitting.value = true
+  // isSubmitting is now managed by the hook
   testResult.value = 'Submitting product...'
 
   try {
+    // Use formValues directly from the handleSubmit callback
     const payload = {
-      title: values.title,
-      shortDescription: values.shortDescription,
-      longDescription: values.longDescription,
-      price: parseFloat(values.price),
-      categoryId: parseInt(values.categoryId),
-      locationId: parseInt(values.locationId),
-      shippingOptionId: parseInt(values.shippingOptionId),
-      condition: values.condition,
-      size: values.size,
-      brand: values.brand,
-      color: values.color,
-      isVippsPaymentEnabled: values.isVippsPaymentEnabled,
+      title: formValues.title,
+      shortDescription: formValues.shortDescription,
+      longDescription: formValues.longDescription,
+      price: parseFloat(formValues.price), // Ensure price is parsed correctly
+      categoryId: parseInt(formValues.categoryId),
+      locationId: parseInt(formValues.locationId),
+      shippingOptionId: parseInt(formValues.shippingOptionId),
+      condition: formValues.condition,
+      size: formValues.size,
+      brand: formValues.brand,
+      color: formValues.color,
+      isVippsPaymentEnabled: formValues.isVippsPaymentEnabled,
     }
 
     // 1. Create the item first
@@ -261,8 +220,6 @@ const onSubmit = handleSubmit(async (values) => {
   } catch (error: any) {
     testResult.value = `Error: ${error.response?.data?.message || error.message}`
     console.error('Error:', error)
-  } finally {
-    isSubmitting.value = false
   }
 })
 
@@ -285,8 +242,8 @@ const sendTestData = async () => {
       categoryId: 1,
       locationId: 1,
       shippingOptionId: 1,
-      latitude: 59.913868,
-      longitude: 10.752245,
+      // latitude: 59.913868, // Remove latitude/longitude if not in schema/form
+      // longitude: 10.752245,
       condition: 'New',
       size: 'M',
       brand: 'Test Brand',
@@ -380,7 +337,7 @@ const sendTestData = async () => {
             </div>
           </div>
         </div>
-        <span class="error-message" v-if="imageFiles.length === 0"
+        <span class="error-message" v-if="!isFormValid && imageFiles.length === 0"
           >At least one image is required</span
         >
       </section>
@@ -452,8 +409,8 @@ const sendTestData = async () => {
           <label for="condition">Condition</label>
           <select id="condition" v-model="condition" :class="{ error: conditionError }">
             <option value="">Select condition</option>
-            <option v-for="condition in conditions" :key="condition" :value="condition">
-              {{ condition }}
+            <option v-for="c in conditions" :key="c" :value="c">
+              {{ c }}
             </option>
           </select>
           <span class="error-message" v-if="conditionError">{{ conditionError }}</span>
@@ -463,8 +420,8 @@ const sendTestData = async () => {
           <label for="size">Size</label>
           <select id="size" v-model="size" :class="{ error: sizeError }">
             <option value="">Select size</option>
-            <option v-for="size in sizes" :key="size" :value="size">
-              {{ size }}
+            <option v-for="s in sizes" :key="s" :value="s">
+              {{ s }}
             </option>
           </select>
           <span class="error-message" v-if="sizeError">{{ sizeError }}</span>
@@ -538,11 +495,11 @@ const sendTestData = async () => {
         <button class="close-button" @click="showPreview = false">×</button>
         <ProductDisplay
           :images="imagePreviews"
-          :title="title"
-          :description_full="longDescription"
+          :title="title || ''"
+          :description_full="longDescription || ''"
           :category="categories.find((c: Category) => c.id === parseInt(categoryId))?.name || ''"
           :location="locations.find((l: Location) => l.id === parseInt(locationId))?.name || ''"
-          :price="Number(price)"
+          :price="Number(price) || 0"
           :seller="userStore.user?.firstName || userStore.user?.usernameOrEmail || 'Current User'"
           :shipping_options="
             shippingOptions.find((s: ShippingOption) => s.id === parseInt(shippingOptionId))
