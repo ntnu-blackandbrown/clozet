@@ -662,20 +662,6 @@ main {
   }
 }
 
-.admin-link {
-  background-color: #bf616a;
-  color: white;
-  font-weight: 600;
-  border-radius: 4px;
-  padding: 6px 12px;
-  margin-right: 16px;
-}
-
-.admin-link:hover {
-  background-color: #a5545c;
-  color: white;
-}
-
 /* Animation for hamburger to X */
 .hamburger-menu-btn.is-active .hamburger-bar:nth-child(1) {
   transform: translateY(9px) rotate(45deg);
