@@ -89,6 +89,11 @@ const isCurrentUserSeller = computed(() => {
   return authStore.user && authStore.user.id === sellerId.value
 })
 
+// Add computed property to check for admin role
+const isAdmin = computed(() => {
+  return authStore.user?.role === 'ADMIN'
+})
+
 const isItemAvailable = computed(() => {
   // Check both potential availability flags for robustness
   return item.value?.available !== false && item.value?.isAvailable !== false
@@ -378,16 +383,16 @@ const handleDeleteClick = async () => {
           <button
             class="contact-button"
             @click="handleContactSeller"
-            :disabled="!isItemAvailable || !authStore.isLoggedIn"
-            :title="!authStore.isLoggedIn ? 'Please log in to contact seller' : !isItemAvailable ? 'Item is not available' : ''"
+            :disabled="!isItemAvailable || !authStore.isLoggedIn || isAdmin"
+            :title="isAdmin ? 'Admin cannot contact seller' : !authStore.isLoggedIn ? 'Please log in to contact seller' : !isItemAvailable ? 'Item is not available' : ''"
           >
             Contact Seller
           </button>
           <button
             class="buy-button"
             @click="handleBuyClick"
-            :disabled="!isItemAvailable"
-            :title="!isItemAvailable ? 'Item is not available' : ''"
+            :disabled="!isItemAvailable || isAdmin"
+            :title="isAdmin ? 'Admin cannot buy items' : !isItemAvailable ? 'Item is not available' : ''"
            >
             Buy Item
           </button>
