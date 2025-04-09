@@ -105,10 +105,11 @@ export const useWebsocket = defineStore('websocket', () => {
 
   function disconnect() {
     if (stompClient) {
-      stompClient.disconnect()
-      updateConnectionStatus('disconnected', 'Disconnected')
-      log('Disconnected from WebSocket')
-      connected.value = false
+      stompClient.disconnect(() => {
+        updateConnectionStatus('disconnected', 'Disconnected')
+        log('Disconnected from WebSocket')
+        connected.value = false
+      })
     }
   }
 
