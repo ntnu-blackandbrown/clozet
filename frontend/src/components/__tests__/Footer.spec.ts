@@ -62,7 +62,7 @@ describe('Footer.vue', () => {
     expect(anchorTexts).toEqual(['FAQ', 'Contact Us', 'Terms of Service', 'Privacy Policy'])
   })
 
-  it('renders Newsletter section with input and subscribe button', () => {
+    it('renders Account section', () => {
     const wrapper = mount(Footer, {
       global: {
         stubs: {
@@ -72,13 +72,9 @@ describe('Footer.vue', () => {
     })
     // Assuming Newsletter is the fourth .footer-section.
     const newsletterSection = wrapper.findAll('.footer-section')[3]
-    expect(newsletterSection.text()).toContain('Newsletter')
-    expect(newsletterSection.text()).toContain('Subscribe to get updates')
-    const input = newsletterSection.find('input[type="email"]')
-    expect(input.exists()).toBe(true)
-    const button = newsletterSection.find('button')
-    expect(button.exists()).toBe(true)
-    expect(button.text()).toBe('Subscribe')
+    expect(newsletterSection.text()).toContain('Account')
+    expect(newsletterSection.text()).toContain('Login')
+    expect(newsletterSection.text()).toContain('Register')
   })
 
   it('renders footer bottom with the current year', () => {
