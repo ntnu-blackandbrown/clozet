@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useCategoryStore } from '@/stores/Category'
 import { useShippingOptionStore } from '@/stores/ShippingOption'
@@ -8,6 +8,10 @@ import { useValidatedForm, useValidatedField } from '@/utils/validation/useValid
 import { productSchema } from '@/utils/validation/schemas'
 import { useLocationStore } from '@/stores/Location'
 import { ProductService } from '@/api/services/ProductService'
+
+// Define props
+const props = defineProps<{ id?: number }>()
+
 // Define interfaces for TypeScript
 interface Category {
   id: number
@@ -37,6 +41,7 @@ interface User {
 }
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useAuthStore()
 const categoryStore = useCategoryStore()
 const shippingOptionStore = useShippingOptionStore()
@@ -68,6 +73,9 @@ const maxImages = 5
 // Form validation
 const testResult = ref('')
 
+// Determine if we are in edit mode
+const isEditMode = computed(() => !!props.id)
+
 // Categories (to be fetched from backend)
 const categories = ref<Category[]>([])
 // Shipping options (to be fetched from backend)
@@ -76,7 +84,7 @@ const shippingOptions = ref<ShippingOption[]>([])
 // Locations (to be fetched from backend)
 const locations = ref<Location[]>([])
 
-//on mount, fetch categories
+//on mount, fetch categories, options, locations and potentially existing item data
 onMounted(async () => {
   await categoryStore.fetchCategories()
   categories.value = categoryStore.categories
@@ -84,6 +92,45 @@ onMounted(async () => {
   shippingOptions.value = shippingOptionStore.shippingOptions
   await locationStore.fetchLocations()
   locations.value = locationStore.locations
+
+  if (isEditMode.value && props.id) {
+    // Fetch item data for editing
+    try {
+      const itemResponse = await ProductService.getItemById(props.id)
+      const itemData = itemResponse.data
+
+      // Populate form fields with existing data
+      title.value = itemData.title
+      shortDescription.value = itemData.shortDescription
+      longDescription.value = itemData.longDescription
+      price.value = itemData.price.toString()
+      categoryId.value = itemData.categoryId.toString()
+      locationId.value = itemData.locationId.toString()
+      shippingOptionId.value = itemData.shippingOptionId.toString()
+      condition.value = itemData.condition
+      size.value = itemData.size
+      brand.value = itemData.brand
+      color.value = itemData.color
+      isVippsPaymentEnabled.value = itemData.vippsPaymentEnabled
+
+      // Fetch and populate images
+      const imagesResponse = await ProductService.getItemImages(props.id)
+      const fetchedImages = imagesResponse.data
+
+      // We need to convert image URLs back to File objects or manage them differently
+      // For simplicity here, we'll just store URLs for preview, but submission needs adjustment
+      imagePreviews.value = fetchedImages.map((img: any) => img.imageUrl)
+      // Note: We cannot easily recreate File objects from URLs. Image updating might need a separate logic.
+      // For now, we'll clear the `imageFiles` ref in edit mode, requiring re-upload if changes are needed.
+      imageFiles.value = [] // Clear file list, user must re-upload to change images.
+
+    } catch (error) {
+      console.error("Error fetching item data for edit:", error)
+      // Optionally redirect or show an error message
+      testResult.value = 'Error loading item data.'
+      router.push('/') // Redirect home on error
+    }
+  }
 })
 
 // Condition options
@@ -118,11 +165,14 @@ const { value: brand, errorMessage: brandError } = useValidatedField<string>('br
 const { value: color, errorMessage: colorError } = useValidatedField<string>('color')
 const { value: isVippsPaymentEnabled } = useValidatedField<boolean>('isVippsPaymentEnabled')
 
-// Updated computed property to check if form is valid, also considering image requirement
+// Updated computed property to check if form is valid
 const isFormValid = computed(() => {
-  // useValidatedForm already provides isFormValid (isVeeValid here)
-  // We just need to add the image check
-  return isVeeValid.value && imageFiles.value.length > 0
+  // In edit mode, image upload might not be strictly required if keeping old ones
+  // However, our current setup requires re-upload for changes.
+  // Let's keep the check simple: form must be valid according to VeeValidate.
+  // We might need more complex logic if we allow keeping existing images without re-uploading.
+  const imagesRequired = !isEditMode.value // Only require images for new products
+  return isVeeValid.value && (imagesRequired ? imageFiles.value.length > 0 : true)
 })
 
 const handleImageUpload = (event: Event) => {
@@ -167,18 +217,15 @@ const removeImage = (index: number) => {
 }
 
 const onSubmit = handleSubmit(async (formValues) => {
-  if (imageFiles.value.length === 0) {
-    alert('Please upload at least one image')
-    // Since handleSubmit catches this via isFormValid, this alert might be redundant
-    // but can be kept for explicit user feedback if desired.
+  // Check image requirement again, especially for create mode
+  if (!isEditMode.value && imageFiles.value.length === 0) {
+    alert('Please upload at least one image for a new product.')
     return
   }
 
-  // isSubmitting is now managed by the hook
-  testResult.value = 'Submitting product...'
+  testResult.value = isEditMode.value ? 'Updating product...' : 'Submitting product...'
 
   try {
-    // Use formValues directly from the handleSubmit callback
     const payload = {
       title: formValues.title,
       shortDescription: formValues.shortDescription,
@@ -192,34 +239,66 @@ const onSubmit = handleSubmit(async (formValues) => {
       brand: formValues.brand,
       color: formValues.color,
       isVippsPaymentEnabled: formValues.isVippsPaymentEnabled,
+      // sellerId is handled by the backend using the authenticated user
     }
 
-    // 1. Create the item first
-    const response = await ProductService.createItem(payload)
+    let itemId: number;
 
-    const itemId = response.data.id
-    testResult.value = `Success! Item created with ID: ${itemId}`
-    console.log('Product created:', response.data)
+    if (isEditMode.value && props.id) {
+      // 1. Update the item details
+      const response = await ProductService.updateItem(props.id, payload)
+      itemId = response.data.id
+      testResult.value = `Success! Item updated with ID: ${itemId}`
+      console.log('Product updated:', response.data)
 
-    // 2. Upload each image
-    for (const file of imageFiles.value) {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('itemId', itemId.toString())
+      // 2. Handle image updates (if new images were added)
+      // This part is tricky because we cleared imageFiles. If the user adds new images,
+      // we need to upload them. If they didn't, we assume they keep the old ones.
+      // The backend might need logic to handle removal of old images if new ones are uploaded.
+      if (imageFiles.value.length > 0) {
+        console.log('New images detected for upload during update...')
+        // Potential: Delete existing images before uploading new ones? Requires backend support.
+        // await ProductService.deleteItemImages(itemId); // Example: if backend supports this
+        for (const file of imageFiles.value) {
+          const formData = new FormData()
+          formData.append('file', file)
+          formData.append('itemId', itemId.toString())
+          await ProductService.uploadImages(formData)
+        }
+        testResult.value += ' and new images uploaded successfully.'
+        console.log('New images uploaded.')
+      } else {
+        testResult.value += '. Kept existing images.'
+      }
 
-      await ProductService.uploadImages(formData)
+    } else {
+      // Create Mode
+      // 1. Create the item first
+      const response = await ProductService.createItem(payload)
+      itemId = response.data.id
+      testResult.value = `Success! Item created with ID: ${itemId}`
+      console.log('Product created:', response.data)
+
+      // 2. Upload each image
+      for (const file of imageFiles.value) {
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('itemId', itemId.toString())
+        await ProductService.uploadImages(formData)
+      }
+      testResult.value += ' and images uploaded successfully.'
+      console.log('All images uploaded.')
     }
 
-    testResult.value += ' and images uploaded successfully.'
-    console.log('All images uploaded.')
-
-    // Optional: redirect
+    // Optional: redirect after success
     setTimeout(() => {
-      router.push('/')
-    }, 1000)
+      // Redirect to the product detail page after create/update
+      router.push(`/products/${itemId}`)
+    }, 1500)
+
   } catch (error: any) {
     testResult.value = `Error: ${error.response?.data?.message || error.message}`
-    console.error('Error:', error)
+    console.error('Error submitting form:', error)
   }
 })
 
@@ -227,7 +306,7 @@ const onSubmit = handleSubmit(async (formValues) => {
 
 <template>
   <div class="create-product-container">
-    <h1>Create New Product</h1>
+    <h1>{{ isEditMode ? 'Edit Product' : 'Create New Product' }}</h1>
 
     <form @submit.prevent="onSubmit" class="product-form">
       <!-- Image Upload Section -->
@@ -285,8 +364,11 @@ const onSubmit = handleSubmit(async (formValues) => {
             </div>
           </div>
         </div>
-        <span class="error-message" v-if="!isFormValid && imageFiles.length === 0"
-          >At least one image is required</span
+        <span class="error-message" v-if="!isFormValid && !isEditMode && imageFiles.length === 0"
+          >At least one image is required for a new product</span
+        >
+        <span class="info-message" v-if="isEditMode && imageFiles.length === 0"
+         >Current images will be kept. Upload new images to replace them.</span
         >
       </section>
 
@@ -430,8 +512,9 @@ const onSubmit = handleSubmit(async (formValues) => {
 
       <div class="form-actions">
         <button type="button" @click="router.back()" class="cancel-button">Cancel</button>
+        <button type="button" @click="showPreview = true" class="preview-button" :disabled="!isVeeValid">Preview</button>
         <button type="submit" class="submit-button" :disabled="!isFormValid || isSubmitting">
-          {{ isSubmitting ? 'Creating...' : 'Create Product' }}
+          {{ isSubmitting ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Product' : 'Create Product') }}
         </button>
       </div>
     </form>
@@ -791,5 +874,13 @@ textarea:focus {
 
 .close-button:hover {
   color: #333;
+}
+
+/* Add style for info message */
+.info-message {
+  display: block;
+  margin-top: 0.5rem;
+  color: #3b82f6; /* Blue color for info */
+  font-size: 0.875rem;
 }
 </style>
