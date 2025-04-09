@@ -223,63 +223,11 @@ const onSubmit = handleSubmit(async (formValues) => {
   }
 })
 
-const handlePreview = () => {
-  showPreview.value = true
-}
-
-// Function to send test data to the ItemController
-const sendTestData = async () => {
-  try {
-    testResult.value = 'Sending test data...'
-
-    // Create mock data based on the CreateItemDTO expected by the backend
-    const mockData = {
-      title: 'Test Product',
-      shortDescription: 'This is a test product',
-      longDescription:
-        'This is a longer description for the test product. It contains more details about the product.',
-      price: 299.99,
-      categoryId: 1,
-      locationId: 1,
-      shippingOptionId: 1,
-      // latitude: 59.913868, // Remove latitude/longitude if not in schema/form
-      // longitude: 10.752245,
-      condition: 'New',
-      size: 'M',
-      brand: 'Test Brand',
-      color: 'Blue',
-      isVippsPaymentEnabled: true,
-    }
-
-    // Send the request to the backend
-    const response = await ProductService.createItem(mockData)
-
-    testResult.value = `Success! Item created with ID: ${response.data.id}`
-    console.log('Test data sent successfully:', response.data)
-  } catch (error: any) {
-    testResult.value = `Error: ${error.message}`
-    console.error('Error sending test data:', error)
-  }
-}
 </script>
 
 <template>
   <div class="create-product-container">
     <h1>Create New Product</h1>
-
-    <!-- Test Button Section -->
-    <div class="test-section">
-      <h2>Test API Connection</h2>
-      <p>Click the button below to send test data to the backend:</p>
-      <button @click="sendTestData" class="test-button">Send Test Data</button>
-      <div
-        v-if="testResult"
-        class="test-result"
-        :class="{ success: testResult.includes('Success') }"
-      >
-        {{ testResult }}
-      </div>
-    </div>
 
     <form @submit.prevent="onSubmit" class="product-form">
       <!-- Image Upload Section -->
@@ -482,7 +430,6 @@ const sendTestData = async () => {
 
       <div class="form-actions">
         <button type="button" @click="router.back()" class="cancel-button">Cancel</button>
-        <button type="button" class="preview-button" @click="handlePreview">Preview Product</button>
         <button type="submit" class="submit-button" :disabled="!isFormValid || isSubmitting">
           {{ isSubmitting ? 'Creating...' : 'Create Product' }}
         </button>
