@@ -709,4 +709,99 @@ const handleDeleteClick = async () => {
   cursor: not-allowed;
   opacity: 0.7;
 }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .product-display {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .product-image-container {
+    flex-direction: column;
+    margin-right: 0;
+    margin-bottom: 1.5rem;
+    align-items: center; /* Center images */
+  }
+
+  .gallery-container {
+    flex-direction: row; /* Horizontal gallery on small screens */
+    overflow-x: auto; /* Allow horizontal scrolling */
+    overflow-y: hidden;
+    width: 100%; /* Take full width */
+    height: auto; /* Adjust height automatically */
+    margin-right: 0;
+    margin-bottom: 1rem; /* Space below gallery */
+    padding-bottom: 5px; /* Prevent scrollbar overlap */
+  }
+
+  .gallery-item {
+    width: 70px; /* Slightly smaller thumbnails */
+    height: 70px;
+    margin-bottom: 0; /* Remove bottom margin */
+    margin-right: 10px; /* Add right margin for horizontal spacing */
+  }
+
+  .main-image-container {
+    width: 100%; /* Ensure main image container takes full width */
+  }
+
+  .main-image {
+    max-width: 100%; /* Allow image to scale down */
+    max-height: 400px; /* Limit max height */
+    margin: 0 auto; /* Center the main image */
+  }
+
+  .product-details h3 {
+    font-size: 1.5rem; /* Adjust title size */
+  }
+
+  .action-buttons {
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: stretch; /* Make buttons full width */
+    gap: 0.75rem; /* Adjust gap */
+  }
+
+  .action-buttons button,
+  .action-buttons .wishlist-button-container { /* Target WishlistButton container */
+    width: 100%;
+    text-align: center;
+  }
+
+  .product-details-list {
+    padding: 0.75rem;
+  }
+
+  .detail-item {
+    flex-direction: column; /* Stack label and value */
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+
+  .detail-label {
+    min-width: auto;
+    margin-bottom: 0.25rem;
+    font-size: 0.8rem;
+    color: #475569;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-details h3 {
+    font-size: 1.3rem;
+  }
+
+  .contact-button,
+  .buy-button,
+  .edit-button,
+  .delete-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.8rem;
+  }
+
+  .gallery-item {
+    width: 60px;
+    height: 60px;
+  }
+}
 </style>
