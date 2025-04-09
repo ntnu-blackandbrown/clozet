@@ -139,8 +139,6 @@ const conditions = ref(['New', 'Like New', 'Good', 'Fair', 'Poor'])
 // Size options
 const sizes = ref(['XS', 'S', 'M', 'L', 'XL', 'XXL'])
 
-// Add preview modal state
-const showPreview = ref(false)
 
 // Setup form validation using the new hook
 const { handleSubmit, errors, resetForm, isFormValid: isVeeValid, isSubmitting, values } = useValidatedForm(
@@ -512,36 +510,12 @@ const onSubmit = handleSubmit(async (formValues) => {
 
       <div class="form-actions">
         <button type="button" @click="router.back()" class="cancel-button">Cancel</button>
-        <button type="button" @click="showPreview = true" class="preview-button" :disabled="!isVeeValid">Preview</button>
         <button type="submit" class="submit-button" :disabled="!isFormValid || isSubmitting">
           {{ isSubmitting ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Product' : 'Create Product') }}
         </button>
       </div>
     </form>
 
-    <!-- Preview Modal -->
-    <div v-if="showPreview" class="preview-modal">
-      <div class="preview-modal-content">
-        <button class="close-button" @click="showPreview = false">×</button>
-        <ProductDisplay
-          :images="imagePreviews"
-          :title="title || ''"
-          :description_full="longDescription || ''"
-          :category="categories.find((c: Category) => c.id === parseInt(categoryId))?.name || ''"
-          :location="locations.find((l: Location) => l.id === parseInt(locationId))?.name || ''"
-          :price="Number(price) || 0"
-          :seller="userStore.user?.firstName || userStore.user?.usernameOrEmail || 'Current User'"
-          :shipping_options="
-            shippingOptions.find((s: ShippingOption) => s.id === parseInt(shippingOptionId))
-              ?.name || ''
-          "
-          :status="'Available'"
-          :created_at="new Date().toLocaleDateString()"
-          :updated_at="new Date().toLocaleDateString()"
-          :purchased="false"
-        />
-      </div>
-    </div>
   </div>
 </template>
 
