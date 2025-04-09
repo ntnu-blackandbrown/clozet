@@ -462,11 +462,11 @@ body {
   opacity: 0.9;
 }
 
-.login-button {
-  background-color: var(--color-white);
+.login-btn {
+  background-color: #f1e7ca; /* Parchment color */
   color: var(--color-limed-spruce);
   padding: var(--spacing-sm) var(--spacing-lg);
-  border: 2px solid var(--color-limed-spruce);
+  border: none; /* Remove border to match logout button */
   border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.95rem;
@@ -474,14 +474,14 @@ body {
   transition: var(--transition-bounce);
 }
 
-.login-button:hover {
-  background-color: var(--color-limed-spruce);
-  color: var(--color-white);
+.login-btn:hover {
+  background-color: #e8ddb8; /* Slightly darker shade on hover */
+  color: var(--color-limed-spruce);
   transform: translateY(-2px);
   box-shadow: var(--box-shadow-medium);
 }
 
-.logout-button {
+.logout-btn {
   background-color: #f1e7ca;
   color: var(--color-limed-spruce);
   padding: var(--spacing-sm) var(--spacing-lg);
@@ -493,7 +493,7 @@ body {
   transition: var(--transition-bounce);
 }
 
-.logout-button:hover {
+.logout-btn:hover {
   background-color: #e8ddb8; /* Slightly darker shade */
   color: var(--color-limed-spruce);
   transform: translateY(-2px);
