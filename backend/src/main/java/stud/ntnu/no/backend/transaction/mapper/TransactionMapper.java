@@ -10,8 +10,8 @@ import stud.ntnu.no.backend.transaction.entity.Transaction;
 
 /**
  * Mapper for converting between Transaction entities and DTOs.
- * <p>
- * This class provides methods to convert Transaction entities to DTOs and vice versa.
+ *
+ * <p>This class provides methods to convert Transaction entities to DTOs and vice versa.
  */
 @Component
 public class TransactionMapper {
@@ -64,8 +64,7 @@ public class TransactionMapper {
 
     // Handle item if itemId is provided
     if (dto.getItemId() != null) {
-      Item item = itemRepository.findById(dto.getItemId())
-          .orElse(null);
+      Item item = itemRepository.findById(dto.getItemId()).orElse(null);
       transaction.setItem(item);
     }
 

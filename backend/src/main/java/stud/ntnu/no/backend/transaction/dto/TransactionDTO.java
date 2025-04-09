@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 
 /**
  * Data Transfer Object for a transaction.
- * <p>
- * This class holds information about a transaction, including its ID, item ID, buyer ID, seller ID,
- * amount, status, payment method, and timestamps.
+ *
+ * <p>This class holds information about a transaction, including its ID, item ID, buyer ID, seller
+ * ID, amount, status, payment method, and timestamps.
  */
 public class TransactionDTO {
 

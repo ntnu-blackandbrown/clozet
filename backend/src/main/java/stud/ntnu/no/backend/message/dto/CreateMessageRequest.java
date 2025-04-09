@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 
 /**
  * Request object for creating a new message.
- * <p>
- * This class holds information about the sender, receiver, content, and timestamp of a message to
- * be created.
+ *
+ * <p>This class holds information about the sender, receiver, content, and timestamp of a message
+ * to be created.
  */
 public class CreateMessageRequest {
 
@@ -16,20 +16,19 @@ public class CreateMessageRequest {
   private LocalDateTime timestamp;
 
   // Default constructor
-  public CreateMessageRequest() {
-  }
+  public CreateMessageRequest() {}
 
   /**
    * Constructs a new CreateMessageRequest with the specified details.
    *
-   * @param senderId   the ID of the sender
+   * @param senderId the ID of the sender
    * @param receiverId the ID of the receiver
-   * @param content    the content of the message
-   * @param timestamp  the timestamp of the message
+   * @param content the content of the message
+   * @param timestamp the timestamp of the message
    */
   // Constructor with arguments
-  public CreateMessageRequest(String senderId, String receiverId, String content,
-      LocalDateTime timestamp) {
+  public CreateMessageRequest(
+      String senderId, String receiverId, String content, LocalDateTime timestamp) {
     this.senderId = senderId;
     this.receiverId = receiverId;
     this.content = content;

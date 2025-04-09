@@ -13,7 +13,8 @@ import stud.ntnu.no.backend.user.repository.UserRepository;
 public class ItemServiceConfig {
 
   @Bean
-  public ItemService itemService(ItemRepository itemRepository,
+  public ItemService itemService(
+      ItemRepository itemRepository,
       CategoryRepository categoryRepository,
       UserRepository userRepository,
       LocationRepository locationRepository,
@@ -25,7 +26,6 @@ public class ItemServiceConfig {
         userRepository,
         locationRepository,
         shippingOptionRepository,
-        itemMapper
-    );
+        itemMapper);
   }
-} 
+}

@@ -16,23 +16,25 @@ public class FavoriteDTO {
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
-  /**
-   * Empty constructor for FavoriteDTO.
-   */
-  public FavoriteDTO() {
-  }
+  /** Empty constructor for FavoriteDTO. */
+  public FavoriteDTO() {}
 
   /**
    * Constructor to create a new FavoriteDTO object with all fields.
    *
-   * @param id        The ID of the favorite
-   * @param userId    The ID of the user
-   * @param itemId    The ID of the item that is favorited
-   * @param active    The status of the favorite (active/inactive)
+   * @param id The ID of the favorite
+   * @param userId The ID of the user
+   * @param itemId The ID of the item that is favorited
+   * @param active The status of the favorite (active/inactive)
    * @param createdAt The creation timestamp
    * @param updatedAt The last update timestamp
    */
-  public FavoriteDTO(Long id, String userId, Long itemId, boolean active, LocalDateTime createdAt,
+  public FavoriteDTO(
+      Long id,
+      String userId,
+      Long itemId,
+      boolean active,
+      LocalDateTime createdAt,
       LocalDateTime updatedAt) {
     this.id = id;
     this.userId = userId;
@@ -159,12 +161,12 @@ public class FavoriteDTO {
       return false;
     }
     FavoriteDTO that = (FavoriteDTO) o;
-    return active == that.active &&
-        Objects.equals(id, that.id) &&
-        Objects.equals(userId, that.userId) &&
-        Objects.equals(itemId, that.itemId) &&
-        Objects.equals(createdAt, that.createdAt) &&
-        Objects.equals(updatedAt, that.updatedAt);
+    return active == that.active
+        && Objects.equals(id, that.id)
+        && Objects.equals(userId, that.userId)
+        && Objects.equals(itemId, that.itemId)
+        && Objects.equals(createdAt, that.createdAt)
+        && Objects.equals(updatedAt, that.updatedAt);
   }
 
   @Override
@@ -174,13 +176,20 @@ public class FavoriteDTO {
 
   @Override
   public String toString() {
-    return "FavoriteDTO{" +
-        "id=" + id +
-        ", userId='" + userId + '\'' +
-        ", itemId=" + itemId +
-        ", active=" + active +
-        ", createdAt=" + createdAt +
-        ", updatedAt=" + updatedAt +
-        '}';
+    return "FavoriteDTO{"
+        + "id="
+        + id
+        + ", userId='"
+        + userId
+        + '\''
+        + ", itemId="
+        + itemId
+        + ", active="
+        + active
+        + ", createdAt="
+        + createdAt
+        + ", updatedAt="
+        + updatedAt
+        + '}';
   }
 }

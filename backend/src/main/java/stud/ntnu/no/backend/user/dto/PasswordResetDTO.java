@@ -2,8 +2,8 @@ package stud.ntnu.no.backend.user.dto;
 
 /**
  * Data Transfer Object for resetting a user's password.
- * <p>
- * This class holds the token and new password required to reset a user's password.
+ *
+ * <p>This class holds the token and new password required to reset a user's password.
  */
 public class PasswordResetDTO {
 

@@ -5,9 +5,9 @@ import java.util.List;
 
 /**
  * Data Transfer Object for a conversation.
- * <p>
- * This class holds information about a conversation, including its ID, participants, last message,
- * and a list of messages.
+ *
+ * <p>This class holds information about a conversation, including its ID, participants, last
+ * message, and a list of messages.
  */
 public class ConversationDTO {
 
@@ -21,24 +21,29 @@ public class ConversationDTO {
   private List<MessageDTO> messages;
 
   // Constructors
-  public ConversationDTO() {
-  }
+  public ConversationDTO() {}
 
   /**
    * Constructs a new ConversationDTO with the specified details.
    *
-   * @param conversationId  the ID of the conversation
-   * @param senderId        the ID of the sender
-   * @param receiverId      the ID of the receiver
-   * @param itemId          the ID of the item
-   * @param lastMessage     the last message in the conversation
+   * @param conversationId the ID of the conversation
+   * @param senderId the ID of the sender
+   * @param receiverId the ID of the receiver
+   * @param itemId the ID of the item
+   * @param lastMessage the last message in the conversation
    * @param lastMessageTime the time of the last message
-   * @param archived        whether the conversation is archived
-   * @param messages        the list of messages in the conversation
+   * @param archived whether the conversation is archived
+   * @param messages the list of messages in the conversation
    */
-  public ConversationDTO(String conversationId, String senderId, String receiverId,
-      Long itemId, String lastMessage, LocalDateTime lastMessageTime,
-      boolean archived, List<MessageDTO> messages) {
+  public ConversationDTO(
+      String conversationId,
+      String senderId,
+      String receiverId,
+      Long itemId,
+      String lastMessage,
+      LocalDateTime lastMessageTime,
+      boolean archived,
+      List<MessageDTO> messages) {
     this.conversationId = conversationId;
     this.senderId = senderId;
     this.receiverId = receiverId;

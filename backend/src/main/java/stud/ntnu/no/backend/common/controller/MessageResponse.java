@@ -1,8 +1,6 @@
 package stud.ntnu.no.backend.common.controller;
 
-/**
- * Represents a response containing a message.
- */
+/** Represents a response containing a message. */
 public class MessageResponse {
 
   private String message;

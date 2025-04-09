@@ -12,18 +12,22 @@ public class ItemMarketPlaceMapper {
 
   public ItemMarketPlaceDTO toItemMarketPlaceDTO(Item item, User currentUser) {
     // Find the primary image or first by display order
-    String imageUrl = item.getImages().stream()
-        .sorted(Comparator.comparing(ItemImage::isPrimary).reversed()
-            .thenComparing(ItemImage::getDisplayOrder))
-        .findFirst()
-        .map(ItemImage::getImageUrl)
-        .orElse(null);
+    String imageUrl =
+        item.getImages().stream()
+            .sorted(
+                Comparator.comparing(ItemImage::isPrimary)
+                    .reversed()
+                    .thenComparing(ItemImage::getDisplayOrder))
+            .findFirst()
+            .map(ItemImage::getImageUrl)
+            .orElse(null);
 
     // Check if item is wishlisted by current user
     boolean isWishlisted = false;
     if (currentUser != null) {
-      isWishlisted = item.getFavorites().stream()
-          .anyMatch(favorite -> favorite.getUser().getId().equals(currentUser.getId()));
+      isWishlisted =
+          item.getFavorites().stream()
+              .anyMatch(favorite -> favorite.getUser().getId().equals(currentUser.getId()));
     }
 
     return new ItemMarketPlaceDTO(
@@ -34,7 +38,6 @@ public class ItemMarketPlaceMapper {
         imageUrl,
         item.getLocation().getCity(),
         item.isVippsPaymentEnabled(),
-        isWishlisted
-    );
+        isWishlisted);
   }
 }

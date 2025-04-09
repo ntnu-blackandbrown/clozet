@@ -16,8 +16,8 @@ import stud.ntnu.no.backend.message.repository.MessageRepository;
 
 /**
  * Implementation of the MessageService interface.
- * <p>
- * This class provides methods for managing messages, including CRUD operations.
+ *
+ * <p>This class provides methods for managing messages, including CRUD operations.
  */
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -32,11 +32,13 @@ public class MessageServiceImpl implements MessageService {
    * Constructs a new MessageServiceImpl with the specified dependencies.
    *
    * @param messageRepository the MessageRepository
-   * @param messageMapper     the MessageMapper
-   * @param webSocketService  the WebSocketService
+   * @param messageMapper the MessageMapper
+   * @param webSocketService the WebSocketService
    */
   @Autowired
-  public MessageServiceImpl(MessageRepository messageRepository, MessageMapper messageMapper,
+  public MessageServiceImpl(
+      MessageRepository messageRepository,
+      MessageMapper messageMapper,
       WebSocketService webSocketService) {
     this.messageRepository = messageRepository;
     this.messageMapper = messageMapper;
@@ -54,8 +56,8 @@ public class MessageServiceImpl implements MessageService {
   @Override
   public MessageDTO getMessageById(Long id) {
     logger.info("Retrieving message with ID: {}", id);
-    Message message = messageRepository.findById(id)
-        .orElseThrow(() -> new MessageNotFoundException(id));
+    Message message =
+        messageRepository.findById(id).orElseThrow(() -> new MessageNotFoundException(id));
     return messageMapper.toDTO(message);
   }
 
@@ -75,8 +77,8 @@ public class MessageServiceImpl implements MessageService {
   @Override
   public MessageDTO updateMessage(Long id, UpdateMessageRequest request) {
     logger.info("Updating message with ID: {}", id);
-    Message message = messageRepository.findById(id)
-        .orElseThrow(() -> new MessageNotFoundException(id));
+    Message message =
+        messageRepository.findById(id).orElseThrow(() -> new MessageNotFoundException(id));
 
     messageMapper.updateEntityFromRequest(message, request);
     Message updatedMessage = messageRepository.save(message);
@@ -91,8 +93,8 @@ public class MessageServiceImpl implements MessageService {
   @Override
   public MessageDTO markAsRead(Long id) {
     logger.info("Marking message as read with ID: {}", id);
-    Message message = messageRepository.findById(id)
-        .orElseThrow(() -> new MessageNotFoundException(id));
+    Message message =
+        messageRepository.findById(id).orElseThrow(() -> new MessageNotFoundException(id));
 
     // Only update if not already read
     if (!message.isRead()) {

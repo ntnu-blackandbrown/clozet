@@ -19,8 +19,9 @@ import stud.ntnu.no.backend.user.service.UserProfileService;
 
 /**
  * REST controller for managing user profile images.
- * <p>
- * This controller provides endpoints for uploading, retrieving, and deleting user profile images.
+ *
+ * <p>This controller provides endpoints for uploading, retrieving, and deleting user profile
+ * images.
  */
 @RestController
 @RequestMapping("/api/users/profile")
@@ -43,14 +44,13 @@ public class UserImageController {
   /**
    * Uploads a profile image for a user.
    *
-   * @param file   the MultipartFile containing the image
+   * @param file the MultipartFile containing the image
    * @param userId the ID of the user
    * @return the URL of the uploaded image or an error message if the upload fails
    */
   @PostMapping("/image")
   public ResponseEntity<?> uploadProfileImage(
-      @RequestParam("file") MultipartFile file,
-      @RequestParam("userId") Long userId) {
+      @RequestParam("file") MultipartFile file, @RequestParam("userId") Long userId) {
     logger.debug("Uploading profile image for user ID: {}", userId);
     try {
       String imageUrl = userProfileService.uploadProfilePicture(file, userId);

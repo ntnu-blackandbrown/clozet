@@ -22,7 +22,8 @@ public interface UserMapper {
   @Mapping(target = "active", ignore = true)
   @Mapping(target = "verificationToken", ignore = true)
   @Mapping(target = "verificationTokenExpiry", ignore = true)
-  // User has a setFullName() method which MapStruct sees as a target property. Ignore if not needed.
+  // User has a setFullName() method which MapStruct sees as a target property. Ignore if not
+  // needed.
   @Mapping(target = "fullName", ignore = true)
   User toEntity(RegisterUserDTO dto);
 }

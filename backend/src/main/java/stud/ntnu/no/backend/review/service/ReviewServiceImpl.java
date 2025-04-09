@@ -14,8 +14,8 @@ import stud.ntnu.no.backend.review.repository.ReviewRepository;
 
 /**
  * Implementation of the ReviewService interface.
- * <p>
- * This class provides methods for managing reviews, including CRUD operations.
+ *
+ * <p>This class provides methods for managing reviews, including CRUD operations.
  */
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -29,7 +29,7 @@ public class ReviewServiceImpl implements ReviewService {
    * Constructs a new ReviewServiceImpl with the specified dependencies.
    *
    * @param reviewRepository the ReviewRepository
-   * @param reviewMapper     the ReviewMapper
+   * @param reviewMapper the ReviewMapper
    */
   public ReviewServiceImpl(ReviewRepository reviewRepository, ReviewMapper reviewMapper) {
     this.reviewRepository = reviewRepository;
@@ -45,8 +45,10 @@ public class ReviewServiceImpl implements ReviewService {
   @Override
   public ReviewDTO getReview(Long id) {
     logger.info("Fetching review with id: " + id);
-    Review review = reviewRepository.findById(id)
-        .orElseThrow(() -> new ReviewNotFoundException("Review not found with id: " + id));
+    Review review =
+        reviewRepository
+            .findById(id)
+            .orElseThrow(() -> new ReviewNotFoundException("Review not found with id: " + id));
     return reviewMapper.toDto(review);
   }
 
@@ -77,8 +79,10 @@ public class ReviewServiceImpl implements ReviewService {
   @Transactional
   public ReviewDTO updateReview(Long id, ReviewDTO reviewDTO) {
     logger.info("Updating review with id: " + id);
-    Review existingReview = reviewRepository.findById(id)
-        .orElseThrow(() -> new ReviewNotFoundException("Review not found with id: " + id));
+    Review existingReview =
+        reviewRepository
+            .findById(id)
+            .orElseThrow(() -> new ReviewNotFoundException("Review not found with id: " + id));
 
     validateUpdateReview(reviewDTO);
 
@@ -105,8 +109,8 @@ public class ReviewServiceImpl implements ReviewService {
 
   /**
    * Validates the given ReviewDTO.
-   * <p>
-   * This method checks that the rating is not null and is between 1 and 5, and that the reviewer
+   *
+   * <p>This method checks that the rating is not null and is between 1 and 5, and that the reviewer
    * and reviewee IDs are not null and not the same.
    *
    * @param reviewDTO the ReviewDTO to validate
@@ -136,8 +140,8 @@ public class ReviewServiceImpl implements ReviewService {
 
   /**
    * Validates the given ReviewDTO for update.
-   * <p>
-   * This method checks that the rating, if provided, is between 1 and 5.
+   *
+   * <p>This method checks that the rating, if provided, is between 1 and 5.
    *
    * @param reviewDTO the ReviewDTO to validate
    * @throws ReviewValidationException if validation fails

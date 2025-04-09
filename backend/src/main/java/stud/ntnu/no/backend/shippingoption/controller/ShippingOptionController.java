@@ -19,8 +19,8 @@ import stud.ntnu.no.backend.shippingoption.service.ShippingOptionService;
 
 /**
  * REST controller for managing shipping options.
- * <p>
- * This controller provides endpoints for CRUD operations on shipping options.
+ *
+ * <p>This controller provides endpoints for CRUD operations on shipping options.
  */
 @RestController
 @RequestMapping("/api/shipping-options")
@@ -71,23 +71,23 @@ public class ShippingOptionController {
   @PostMapping
   public ResponseEntity<ShippingOptionDTO> createShippingOption(
       @RequestBody CreateShippingOptionDTO shippingOptionDTO) {
-    logger.info("Received request to create a new shipping option with name: {}",
+    logger.info(
+        "Received request to create a new shipping option with name: {}",
         shippingOptionDTO.getName());
-    return new ResponseEntity<>(shippingOptionService.createShippingOption(shippingOptionDTO),
-        HttpStatus.CREATED);
+    return new ResponseEntity<>(
+        shippingOptionService.createShippingOption(shippingOptionDTO), HttpStatus.CREATED);
   }
 
   /**
    * Updates an existing shipping option.
    *
-   * @param id                the ID of the shipping option to update
+   * @param id the ID of the shipping option to update
    * @param shippingOptionDTO the CreateShippingOptionDTO with updated information
    * @return the updated ShippingOptionDTO
    */
   @PutMapping("/{id}")
   public ResponseEntity<ShippingOptionDTO> updateShippingOption(
-      @PathVariable Long id,
-      @RequestBody CreateShippingOptionDTO shippingOptionDTO) {
+      @PathVariable Long id, @RequestBody CreateShippingOptionDTO shippingOptionDTO) {
     logger.info("Received request to update shipping option with id: {}", id);
     return ResponseEntity.ok(shippingOptionService.updateShippingOption(id, shippingOptionDTO));
   }

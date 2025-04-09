@@ -4,9 +4,8 @@ import java.time.LocalDateTime;
 
 /**
  * Represents an error response.
- * <p>
- * Contains details about the error, including a message, timestamp, and status code.
- * </p>
+ *
+ * <p>Contains details about the error, including a message, timestamp, and status code.
  */
 public class ErrorResponse {
 
@@ -17,9 +16,9 @@ public class ErrorResponse {
   /**
    * Constructs an {@code ErrorResponse} with the specified details.
    *
-   * @param message   the error message
+   * @param message the error message
    * @param timestamp the time the error occurred
-   * @param status    the HTTP status code
+   * @param status the HTTP status code
    */
   public ErrorResponse(String message, LocalDateTime timestamp, int status) {
     this.message = message;

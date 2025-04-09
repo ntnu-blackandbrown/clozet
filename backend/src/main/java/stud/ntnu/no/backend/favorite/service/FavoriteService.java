@@ -34,7 +34,7 @@ public interface FavoriteService {
    * @param id The ID of the favorite
    * @return FavoriteDTO object for the specific favorite
    * @throws FavoriteValidationException if the ID is null
-   * @throws FavoriteNotFoundException   if the favorite is not found
+   * @throws FavoriteNotFoundException if the favorite is not found
    */
   FavoriteDTO getFavoriteById(Long id);
 
@@ -50,11 +50,11 @@ public interface FavoriteService {
   /**
    * Updates an existing favorite.
    *
-   * @param id      The ID of the favorite
+   * @param id The ID of the favorite
    * @param request Request with updated data
    * @return FavoriteDTO object for the updated favorite
    * @throws FavoriteValidationException if the ID or request is invalid
-   * @throws FavoriteNotFoundException   if the favorite is not found
+   * @throws FavoriteNotFoundException if the favorite is not found
    */
   FavoriteDTO updateFavorite(Long id, CreateFavoriteRequest request);
 
@@ -63,7 +63,7 @@ public interface FavoriteService {
    *
    * @param id The ID of the favorite
    * @throws FavoriteValidationException if the ID is null
-   * @throws FavoriteNotFoundException   if the favorite is not found
+   * @throws FavoriteNotFoundException if the favorite is not found
    */
   void deleteFavorite(Long id);
 }

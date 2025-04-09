@@ -19,10 +19,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * Utility class for handling JWT operations.
- * <p>
- * This class provides methods for generating, validating, and extracting information from JWT
+ *
+ * <p>This class provides methods for generating, validating, and extracting information from JWT
  * tokens.
- * </p>
  */
 @Component
 public class JwtUtils {

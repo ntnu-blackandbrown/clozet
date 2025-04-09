@@ -21,10 +21,9 @@ import stud.ntnu.no.backend.common.security.util.JwtUtils;
 
 /**
  * Filter for authenticating requests using JWT tokens.
- * <p>
- * This filter extracts JWT tokens from cookies, validates them, and sets the authentication context
- * if valid.
- * </p>
+ *
+ * <p>This filter extracts JWT tokens from cookies, validates them, and sets the authentication
+ * context if valid.
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -32,24 +31,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
   private static final String JWT_COOKIE_NAME = "jwt";
 
-  @Autowired
-  private JwtUtils jwtUtils;
+  @Autowired private JwtUtils jwtUtils;
 
-  @Autowired
-  private UserDetailsService userDetailsService;
+  @Autowired private UserDetailsService userDetailsService;
 
   /**
    * Filters incoming requests to authenticate users based on JWT tokens.
    *
-   * @param request     the HTTP request
-   * @param response    the HTTP response
+   * @param request the HTTP request
+   * @param response the HTTP response
    * @param filterChain the filter chain
    * @throws ServletException if a servlet error occurs
-   * @throws IOException      if an I/O error occurs
+   * @throws IOException if an I/O error occurs
    */
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-      FilterChain filterChain)
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
     logger.debug("Processing request to {}: {}", request.getMethod(), request.getRequestURI());
@@ -63,8 +60,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         logger.debug("Username from token: {}", username);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-            userDetails, null, userDetails.getAuthorities());
+        UsernamePasswordAuthenticationToken authentication =
+            new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         logger.debug("Authentication set for user: {}", username);

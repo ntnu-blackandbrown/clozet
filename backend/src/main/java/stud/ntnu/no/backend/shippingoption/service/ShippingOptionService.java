@@ -6,8 +6,8 @@ import stud.ntnu.no.backend.shippingoption.dto.ShippingOptionDTO;
 
 /**
  * Service interface for managing shipping options.
- * <p>
- * This interface defines methods for CRUD operations on shipping options.
+ *
+ * <p>This interface defines methods for CRUD operations on shipping options.
  */
 public interface ShippingOptionService {
 
@@ -37,7 +37,7 @@ public interface ShippingOptionService {
   /**
    * Updates an existing shipping option.
    *
-   * @param id                the ID of the shipping option to update
+   * @param id the ID of the shipping option to update
    * @param shippingOptionDTO the CreateShippingOptionDTO with updated information
    * @return the updated ShippingOptionDTO
    */

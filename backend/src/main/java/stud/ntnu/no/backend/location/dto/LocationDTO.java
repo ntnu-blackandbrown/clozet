@@ -2,8 +2,8 @@ package stud.ntnu.no.backend.location.dto;
 
 /**
  * Represents a Data Transfer Object for a location.
- * <p>
- * This class holds information about a location, including its ID, city, region, latitude,
+ *
+ * <p>This class holds information about a location, including its ID, city, region, latitude,
  * longitude, and a combined name for display purposes.
  */
 public class LocationDTO {

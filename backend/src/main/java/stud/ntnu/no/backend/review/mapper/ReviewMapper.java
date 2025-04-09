@@ -8,8 +8,8 @@ import stud.ntnu.no.backend.review.entity.Review;
 
 /**
  * Mapper for converting between Review entities and DTOs.
- * <p>
- * This interface uses MapStruct to generate the implementation.
+ *
+ * <p>This interface uses MapStruct to generate the implementation.
  */
 @Mapper(componentModel = "spring")
 public interface ReviewMapper {

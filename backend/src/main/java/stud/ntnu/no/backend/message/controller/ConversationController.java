@@ -16,8 +16,8 @@ import stud.ntnu.no.backend.message.service.ConversationService;
 
 /**
  * REST controller for managing conversations.
- * <p>
- * This controller provides endpoints for retrieving and archiving user conversations.
+ *
+ * <p>This controller provides endpoints for retrieving and archiving user conversations.
  */
 @RestController
 @RequestMapping("/api/conversations")
@@ -53,13 +53,12 @@ public class ConversationController {
    * Archives a conversation for a user.
    *
    * @param conversationId the ID of the conversation
-   * @param userId         the ID of the user
+   * @param userId the ID of the user
    * @return a ResponseEntity with status 200 (OK)
    */
   @PostMapping("/{conversationId}/archive")
   public ResponseEntity<Void> archiveConversation(
-      @PathVariable String conversationId,
-      @RequestParam String userId) {
+      @PathVariable String conversationId, @RequestParam String userId) {
     logger.info("Archiving conversation: {} for user: {}", conversationId, userId);
     conversationService.archiveConversation(conversationId, userId);
     return ResponseEntity.ok().build();

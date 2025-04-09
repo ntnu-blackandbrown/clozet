@@ -28,20 +28,19 @@ import stud.ntnu.no.backend.user.repository.UserRepository;
 /**
  * Implementation of the {@link ItemService} interface that provides business logic for managing
  * marketplace items.
- * <p>
- * This service handles operations related to items such as creation, retrieval, modification, and
- * deletion. It enforces business rules, performs validation, and coordinates with various
+ *
+ * <p>This service handles operations related to items such as creation, retrieval, modification,
+ * and deletion. It enforces business rules, performs validation, and coordinates with various
  * repositories to maintain data integrity.
- * </p>
- * <p>
- * Key responsibilities include:
+ *
+ * <p>Key responsibilities include:
+ *
  * <ul>
- *   <li>Managing item lifecycle (creation, update, deactivation, activation, deletion)</li>
- *   <li>Enforcing ownership validation to ensure users can only modify their own items</li>
- *   <li>Validating item data before persistence</li>
- *   <li>Coordinating with related entities like categories, users, locations, and shipping options</li>
+ *   <li>Managing item lifecycle (creation, update, deactivation, activation, deletion)
+ *   <li>Enforcing ownership validation to ensure users can only modify their own items
+ *   <li>Validating item data before persistence
+ *   <li>Coordinating with related entities like categories, users, locations, and shipping options
  * </ul>
- * </p>
  */
 @Service
 public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemService {
@@ -58,14 +57,15 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
   /**
    * Constructs a new ItemServiceImpl with the required dependencies.
    *
-   * @param itemRepository           the repository for item data access
-   * @param categoryRepository       the repository for category data access
-   * @param userRepository           the repository for user data access
-   * @param locationRepository       the repository for location data access
+   * @param itemRepository the repository for item data access
+   * @param categoryRepository the repository for category data access
+   * @param userRepository the repository for user data access
+   * @param locationRepository the repository for location data access
    * @param shippingOptionRepository the repository for shipping option data access
-   * @param itemMapper               the mapper for converting between DTOs and entities
+   * @param itemMapper the mapper for converting between DTOs and entities
    */
-  public ItemServiceImpl(ItemRepository itemRepository,
+  public ItemServiceImpl(
+      ItemRepository itemRepository,
       CategoryRepository categoryRepository,
       UserRepository userRepository,
       LocationRepository locationRepository,
@@ -94,8 +94,7 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
   @Override
   public ItemDTO getItem(Long id) {
     logger.info("Fetching item with id: {}", id);
-    Item item = itemRepository.findById(id)
-        .orElseThrow(() -> new ItemNotFoundException(id));
+    Item item = itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException(id));
     return itemMapper.toDto(item);
   }
 
@@ -129,17 +128,23 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
   @Override
   public ItemDTO createItem(CreateItemDTO itemDTO, Long userId) {
     logger.info("Creating item: {}", itemDTO);
-    Category category = categoryRepository.findById(itemDTO.getCategoryId())
-        .orElseThrow(() -> new ItemValidationException("Category not found"));
+    Category category =
+        categoryRepository
+            .findById(itemDTO.getCategoryId())
+            .orElseThrow(() -> new ItemValidationException("Category not found"));
 
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
+    User user =
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
-    Location location = locationRepository.findById(itemDTO.getLocationId())
-        .orElseThrow(() -> new ItemValidationException("Location not found"));
+    Location location =
+        locationRepository
+            .findById(itemDTO.getLocationId())
+            .orElseThrow(() -> new ItemValidationException("Location not found"));
 
-    ShippingOption shippingOption = shippingOptionRepository.findById(itemDTO.getShippingOptionId())
-        .orElseThrow(() -> new ItemValidationException("Shipping option not found"));
+    ShippingOption shippingOption =
+        shippingOptionRepository
+            .findById(itemDTO.getShippingOptionId())
+            .orElseThrow(() -> new ItemValidationException("Shipping option not found"));
 
     validateItem(itemDTO);
 
@@ -155,20 +160,26 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
 
     Category category = null;
     if (itemDTO.getCategoryId() != null) {
-      category = categoryRepository.findById(itemDTO.getCategoryId())
-          .orElseThrow(() -> new ItemValidationException("Category not found"));
+      category =
+          categoryRepository
+              .findById(itemDTO.getCategoryId())
+              .orElseThrow(() -> new ItemValidationException("Category not found"));
     }
 
     Location location = null;
     if (itemDTO.getLocationId() != null) {
-      location = locationRepository.findById(itemDTO.getLocationId())
-          .orElseThrow(() -> new ItemValidationException("Location not found"));
+      location =
+          locationRepository
+              .findById(itemDTO.getLocationId())
+              .orElseThrow(() -> new ItemValidationException("Location not found"));
     }
 
     ShippingOption shippingOption = null;
     if (itemDTO.getShippingOptionId() != null) {
-      shippingOption = shippingOptionRepository.findById(itemDTO.getShippingOptionId())
-          .orElseThrow(() -> new ItemValidationException("Shipping option not found"));
+      shippingOption =
+          shippingOptionRepository
+              .findById(itemDTO.getShippingOptionId())
+              .orElseThrow(() -> new ItemValidationException("Shipping option not found"));
     }
 
     validateItem(itemDTO);
@@ -206,22 +217,21 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
 
   /**
    * Retrieves an item and verifies that the specified user is the owner.
-   * <p>
-   * This helper method is used by operations that modify items to ensure that only the owner can
+   *
+   * <p>This helper method is used by operations that modify items to ensure that only the owner can
    * make changes to an item. It first fetches the item by ID and then checks if the provided user
    * ID matches the seller ID.
-   * </p>
    *
    * @param itemId the unique identifier of the item to find
    * @param userId the unique identifier of the user attempting to access the item
    * @return the found item if the user is the owner
-   * @throws ItemNotFoundException   if no item exists with the given ID
+   * @throws ItemNotFoundException if no item exists with the given ID
    * @throws ItemValidationException if the specified user is not the owner of the item
    */
   private Item findItemAndVerifyOwnership(Long itemId, Long userId) {
     logger.info("Finding item with id: {}", itemId);
-    Item item = itemRepository.findById(itemId)
-        .orElseThrow(() -> new ItemNotFoundException(itemId));
+    Item item =
+        itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(itemId));
 
     if (!item.getSeller().getId().equals(userId)) {
       throw new ItemValidationException("You don't have permission to modify this item");
@@ -232,11 +242,10 @@ public class ItemServiceImpl implements stud.ntnu.no.backend.item.service.ItemSe
 
   /**
    * Validates an item's data before creation or update.
-   * <p>
-   * This method checks that the required fields are not empty and that business rules are
+   *
+   * <p>This method checks that the required fields are not empty and that business rules are
    * satisfied. For example, it ensures that titles and descriptions are not blank and that prices
    * are not negative.
-   * </p>
    *
    * @param itemDTO the data transfer object containing the item details to validate
    * @throws ItemValidationException if any validation fails

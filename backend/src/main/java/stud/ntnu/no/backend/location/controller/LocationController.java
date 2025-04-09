@@ -17,9 +17,7 @@ import stud.ntnu.no.backend.location.dto.CreateLocationDTO;
 import stud.ntnu.no.backend.location.dto.LocationDTO;
 import stud.ntnu.no.backend.location.service.LocationService;
 
-/**
- * REST controller for managing locations. Provides endpoints for CRUD operations on locations.
- */
+/** REST controller for managing locations. Provides endpoints for CRUD operations on locations. */
 @RestController
 @RequestMapping("/api/locations")
 public class LocationController {
@@ -70,14 +68,13 @@ public class LocationController {
   /**
    * Updates an existing location.
    *
-   * @param id          The ID of the location to update
+   * @param id The ID of the location to update
    * @param locationDTO The DTO containing updated location details
    * @return A ResponseEntity containing the updated LocationDTO
    */
   @PutMapping("/{id}")
   public ResponseEntity<LocationDTO> updateLocation(
-      @PathVariable Long id,
-      @RequestBody CreateLocationDTO locationDTO) {
+      @PathVariable Long id, @RequestBody CreateLocationDTO locationDTO) {
     logger.info("Received request to update location with id: {}", id);
     return ResponseEntity.ok(locationService.updateLocation(id, locationDTO));
   }

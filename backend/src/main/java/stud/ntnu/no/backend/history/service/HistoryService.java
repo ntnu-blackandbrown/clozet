@@ -33,7 +33,7 @@ public interface HistoryService {
    * Pauses or resumes the user's history.
    *
    * @param userId the user ID
-   * @param pause  true to pause, false to resume
+   * @param pause true to pause, false to resume
    */
   void pauseHistory(Long userId, boolean pause);
 

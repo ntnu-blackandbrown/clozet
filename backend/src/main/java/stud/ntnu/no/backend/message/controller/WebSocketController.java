@@ -8,8 +8,8 @@ import org.springframework.stereotype.Controller;
 
 /**
  * WebSocket controller for handling chat messages.
- * <p>
- * This controller provides endpoints for WebSocket communication.
+ *
+ * <p>This controller provides endpoints for WebSocket communication.
  */
 @Controller
 public class WebSocketController {
@@ -27,4 +27,4 @@ public class WebSocketController {
     logger.info("Received ping message");
     return "pong";
   }
-} 
+}

@@ -19,7 +19,10 @@ import org.springframework.web.multipart.MultipartFile;
  * 'app.storage.use-cloudinary' is set to false or not set.
  */
 @Service("localFileStorageService")
-@ConditionalOnProperty(name = "app.storage.use-cloudinary", havingValue = "false", matchIfMissing = true)
+@ConditionalOnProperty(
+    name = "app.storage.use-cloudinary",
+    havingValue = "false",
+    matchIfMissing = true)
 public class LocalFileStorageService implements FileStorageService {
 
   private static final Logger logger = LoggerFactory.getLogger(LocalFileStorageService.class);
@@ -45,7 +48,7 @@ public class LocalFileStorageService implements FileStorageService {
   /**
    * Stores a file locally under a specific item directory.
    *
-   * @param file   The file to store
+   * @param file The file to store
    * @param itemId The ID of the item associated with the file
    * @return The path of the stored file
    * @throws IOException If an error occurs during file storage
@@ -60,8 +63,10 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
-    String extension = originalFilename.contains(".") ?
-        originalFilename.substring(originalFilename.lastIndexOf(".")) : "";
+    String extension =
+        originalFilename.contains(".")
+            ? originalFilename.substring(originalFilename.lastIndexOf("."))
+            : "";
     String filename = UUID.randomUUID() + extension;
 
     Path targetLocation = itemDirectory.resolve(filename);

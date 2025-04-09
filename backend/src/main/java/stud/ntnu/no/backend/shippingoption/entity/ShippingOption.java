@@ -11,10 +11,10 @@ import stud.ntnu.no.backend.item.entity.Item;
 
 /**
  * Entity representing a shipping option.
- * <p>
- * This class is mapped to the "shipping_options" table in the database and holds information about
- * a shipping option, including its ID, name, description, estimated delivery days, price, tracking
- * status, and associated items.
+ *
+ * <p>This class is mapped to the "shipping_options" table in the database and holds information
+ * about a shipping option, including its ID, name, description, estimated delivery days, price,
+ * tracking status, and associated items.
  */
 @Entity
 @Table(name = "shipping_options")

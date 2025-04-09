@@ -11,8 +11,7 @@ public class UpdateItemImageRequest {
   private Integer displayOrder;
 
   // Constructor
-  public UpdateItemImageRequest() {
-  }
+  public UpdateItemImageRequest() {}
 
   // Getters and setters
 

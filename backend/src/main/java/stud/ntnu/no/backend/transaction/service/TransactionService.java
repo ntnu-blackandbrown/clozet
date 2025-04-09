@@ -8,8 +8,8 @@ import stud.ntnu.no.backend.transaction.dto.UpdateTransactionRequest;
 
 /**
  * Service interface for managing transactions.
- * <p>
- * This interface defines methods for CRUD operations on transactions.
+ *
+ * <p>This interface defines methods for CRUD operations on transactions.
  */
 public interface TransactionService {
 
@@ -39,7 +39,7 @@ public interface TransactionService {
   /**
    * Updates an existing transaction.
    *
-   * @param id  the ID of the transaction to update
+   * @param id the ID of the transaction to update
    * @param dto the UpdateTransactionRequest with updated information
    * @return the updated TransactionDTO
    */
@@ -56,7 +56,7 @@ public interface TransactionService {
    * Retrieves transactions created between the specified dates.
    *
    * @param start the start date and time
-   * @param end   the end date and time
+   * @param end the end date and time
    * @return a list of TransactionDTOs
    */
   List<TransactionDTO> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);

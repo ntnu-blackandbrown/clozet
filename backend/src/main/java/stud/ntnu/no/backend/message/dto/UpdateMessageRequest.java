@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 
 /**
  * Request object for updating a message.
- * <p>
- * This class holds information about the content and timestamp of a message to be updated.
+ *
+ * <p>This class holds information about the content and timestamp of a message to be updated.
  */
 public class UpdateMessageRequest {
 
@@ -13,13 +13,12 @@ public class UpdateMessageRequest {
   private LocalDateTime timestamp;
 
   // Default constructor
-  public UpdateMessageRequest() {
-  }
+  public UpdateMessageRequest() {}
 
   /**
    * Constructs a new UpdateMessageRequest with the specified content and timestamp.
    *
-   * @param content   the content of the message
+   * @param content the content of the message
    * @param timestamp the timestamp of the message
    */
   public UpdateMessageRequest(String content, LocalDateTime timestamp) {

@@ -22,7 +22,7 @@ public interface CategoryService {
    * @param id ID of the category to retrieve
    * @return The category DTO
    * @throws stud.ntnu.no.backend.category.exception.CategoryNotFoundException if the category is
-   *                                                                           not found
+   *     not found
    */
   CategoryDTO getCategory(Long id);
 
@@ -37,11 +37,11 @@ public interface CategoryService {
   /**
    * Updates an existing category with new data.
    *
-   * @param id          ID of the category to update
+   * @param id ID of the category to update
    * @param categoryDTO New data for the category
    * @return The updated category DTO
    * @throws stud.ntnu.no.backend.category.exception.CategoryNotFoundException if the category is
-   *                                                                           not found
+   *     not found
    */
   CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO);
 
@@ -50,7 +50,7 @@ public interface CategoryService {
    *
    * @param id ID of the category to delete
    * @throws stud.ntnu.no.backend.category.exception.CategoryNotFoundException if the category is
-   *                                                                           not found
+   *     not found
    */
   void deleteCategory(Long id);
 

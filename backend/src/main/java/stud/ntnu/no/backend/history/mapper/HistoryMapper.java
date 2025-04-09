@@ -6,15 +6,11 @@ import org.springframework.stereotype.Component;
 import stud.ntnu.no.backend.history.dto.HistoryDTO;
 import stud.ntnu.no.backend.history.entity.History;
 
-/**
- * Mapper class to convert between History entity and HistoryDTO.
- */
+/** Mapper class to convert between History entity and HistoryDTO. */
 @Component
 public class HistoryMapper {
 
-  /**
-   * Converts a History entity to a HistoryDTO.
-   */
+  /** Converts a History entity to a HistoryDTO. */
   public HistoryDTO toDto(History history) {
     HistoryDTO dto = new HistoryDTO();
     dto.setId(history.getId());
@@ -26,12 +22,8 @@ public class HistoryMapper {
     return dto;
   }
 
-  /**
-   * Converts a list of History entities to a list of HistoryDTOs.
-   */
+  /** Converts a list of History entities to a list of HistoryDTOs. */
   public List<HistoryDTO> toDtoList(List<History> histories) {
-    return histories.stream()
-        .map(this::toDto)
-        .collect(Collectors.toList());
+    return histories.stream().map(this::toDto).collect(Collectors.toList());
   }
 }

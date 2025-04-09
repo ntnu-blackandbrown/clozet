@@ -39,9 +39,7 @@ public class Favorite {
   @Column(name = "active", nullable = false, columnDefinition = "boolean default false")
   private boolean active;
 
-  /**
-   * Empty constructor for Favorite. Required by JPA.
-   */
+  /** Empty constructor for Favorite. Required by JPA. */
   public Favorite() {
     this.createdAt = LocalDateTime.now();
     this.active = false;
@@ -50,11 +48,11 @@ public class Favorite {
   /**
    * Constructor to create a new Favorite object with all fields.
    *
-   * @param id        The ID of the favorite
-   * @param user      The user who owns the favorite
-   * @param item      The item that is favorited
+   * @param id The ID of the favorite
+   * @param user The user who owns the favorite
+   * @param item The item that is favorited
    * @param createdAt The creation timestamp
-   * @param active    The status of the favorite (active/inactive)
+   * @param active The status of the favorite (active/inactive)
    */
   public Favorite(Long id, User user, Item item, LocalDateTime createdAt, boolean active) {
     this.id = id;

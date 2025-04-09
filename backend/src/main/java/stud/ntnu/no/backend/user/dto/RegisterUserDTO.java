@@ -2,8 +2,8 @@ package stud.ntnu.no.backend.user.dto;
 
 /**
  * Data Transfer Object for registering a new user.
- * <p>
- * This class holds the information required to register a new user, including username, email,
+ *
+ * <p>This class holds the information required to register a new user, including username, email,
  * password, first name, and last name.
  */
 public class RegisterUserDTO {

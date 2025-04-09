@@ -2,9 +2,9 @@ package stud.ntnu.no.backend.transaction.dto;
 
 /**
  * Data Transfer Object for creating a transaction.
- * <p>
- * This class holds information required to create a new transaction, including item ID, buyer ID,
- * seller ID, amount, status, and payment method.
+ *
+ * <p>This class holds information required to create a new transaction, including item ID, buyer
+ * ID, seller ID, amount, status, and payment method.
  */
 public class CreateTransactionDTO {
 
@@ -16,11 +16,15 @@ public class CreateTransactionDTO {
   private String paymentMethod;
 
   // Constructors
-  public CreateTransactionDTO() {
-  }
+  public CreateTransactionDTO() {}
 
-  public CreateTransactionDTO(Long itemId, String buyerId, String sellerId, double amount,
-      String status, String paymentMethod) {
+  public CreateTransactionDTO(
+      Long itemId,
+      String buyerId,
+      String sellerId,
+      double amount,
+      String status,
+      String paymentMethod) {
     this.itemId = itemId;
     this.buyerId = buyerId;
     this.sellerId = sellerId;

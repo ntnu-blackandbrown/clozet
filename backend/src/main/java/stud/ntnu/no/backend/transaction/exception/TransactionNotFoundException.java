@@ -4,8 +4,8 @@ import stud.ntnu.no.backend.common.exception.BaseException;
 
 /**
  * Exception thrown when a transaction is not found.
- * <p>
- * This exception is mapped to a 404 Not Found HTTP status code.
+ *
+ * <p>This exception is mapped to a 404 Not Found HTTP status code.
  */
 public class TransactionNotFoundException extends BaseException {
 

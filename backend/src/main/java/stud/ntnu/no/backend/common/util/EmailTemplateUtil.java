@@ -13,10 +13,9 @@ import org.springframework.util.FileCopyUtils;
 
 /**
  * Utility class for loading and processing email templates.
- * <p>
- * Provides methods to load HTML templates, inject CSS styles, and replace placeholders with actual
- * values.
- * </p>
+ *
+ * <p>Provides methods to load HTML templates, inject CSS styles, and replace placeholders with
+ * actual values.
  */
 public class EmailTemplateUtil {
 
@@ -28,7 +27,7 @@ public class EmailTemplateUtil {
    * Loads an email template from the resources directory.
    *
    * @param templateName the filename without path or extension (e.g., "verification" for
-   *                     "templates/email/verification.html")
+   *     "templates/email/verification.html")
    * @return the template content as a string
    * @throws IOException if the template cannot be read
    */
@@ -51,23 +50,21 @@ public class EmailTemplateUtil {
   private static String injectCss(String template) throws IOException {
     if (cachedCss == null) {
       Resource cssResource = new ClassPathResource(CSS_PATH);
-      try (Reader reader = new InputStreamReader(cssResource.getInputStream(),
-          StandardCharsets.UTF_8)) {
+      try (Reader reader =
+          new InputStreamReader(cssResource.getInputStream(), StandardCharsets.UTF_8)) {
         cachedCss = FileCopyUtils.copyToString(reader);
       }
     }
 
     // Replace the style tag content with our common CSS
     return template.replaceFirst(
-        "<style>[\\s\\S]*?</style>",
-        "<style>\n" + cachedCss + "\n</style>"
-    );
+        "<style>[\\s\\S]*?</style>", "<style>\n" + cachedCss + "\n</style>");
   }
 
   /**
    * Processes a template by replacing placeholders with values.
    *
-   * @param template  the template string
+   * @param template the template string
    * @param variables a map of placeholder names and their values
    * @return the processed template
    */
@@ -89,4 +86,4 @@ public class EmailTemplateUtil {
     variables.put("currentYear", String.valueOf(Year.now().getValue()));
     return variables;
   }
-} 
+}

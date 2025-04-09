@@ -35,7 +35,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
    * @param pageable Pagination information
    * @return List of categories ordered by popularity
    */
-  @Query("SELECT c FROM Category c JOIN c.items i JOIN i.favorites f GROUP BY c ORDER BY COUNT(f) DESC")
+  @Query(
+      "SELECT c FROM Category c JOIN c.items i JOIN i.favorites f GROUP BY c ORDER BY COUNT(f) DESC")
   List<Category> findTopCategoriesByFavoriteCount(Pageable pageable);
 
   /**

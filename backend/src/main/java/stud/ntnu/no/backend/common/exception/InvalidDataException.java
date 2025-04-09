@@ -1,9 +1,6 @@
 package stud.ntnu.no.backend.common.exception;
 
-
-/**
- * Exception thrown when invalid data is encountered.
- */
+/** Exception thrown when invalid data is encountered. */
 public class InvalidDataException extends BaseException {
 
   /**

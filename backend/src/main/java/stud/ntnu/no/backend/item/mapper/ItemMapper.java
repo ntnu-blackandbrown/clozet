@@ -72,12 +72,14 @@ public class ItemMapper {
     if (items == null) {
       return null;
     }
-    return items.stream()
-        .map(this::toDto)
-        .collect(Collectors.toList());
+    return items.stream().map(this::toDto).collect(Collectors.toList());
   }
 
-  public Item toEntity(CreateItemDTO dto, Category category, User seller, Location location,
+  public Item toEntity(
+      CreateItemDTO dto,
+      Category category,
+      User seller,
+      Location location,
       ShippingOption shippingOption) {
     if (dto == null) {
       return null;
@@ -108,8 +110,12 @@ public class ItemMapper {
     return item;
   }
 
-  public void updateEntityFromDto(Item item, CreateItemDTO dto, Category category,
-      Location location, ShippingOption shippingOption) {
+  public void updateEntityFromDto(
+      Item item,
+      CreateItemDTO dto,
+      Category category,
+      Location location,
+      ShippingOption shippingOption) {
     if (item == null || dto == null) {
       return;
     }

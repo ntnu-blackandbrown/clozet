@@ -21,8 +21,8 @@ import stud.ntnu.no.backend.message.service.MessageService;
 
 /**
  * REST controller for managing messages.
- * <p>
- * This controller provides endpoints for CRUD operations on messages.
+ *
+ * <p>This controller provides endpoints for CRUD operations on messages.
  */
 @RestController
 @RequestMapping("/api/messages")
@@ -79,14 +79,13 @@ public class MessageController {
   /**
    * Updates an existing message.
    *
-   * @param id      the ID of the message to update
+   * @param id the ID of the message to update
    * @param request the UpdateMessageRequest with updated information
    * @return the updated MessageDTO
    */
   @PutMapping("/{id}")
   public ResponseEntity<MessageDTO> updateMessage(
-      @PathVariable Long id,
-      @RequestBody UpdateMessageRequest request) {
+      @PathVariable Long id, @RequestBody UpdateMessageRequest request) {
     logger.info("Updating message with ID: {}", id);
     return ResponseEntity.ok(messageService.updateMessage(id, request));
   }

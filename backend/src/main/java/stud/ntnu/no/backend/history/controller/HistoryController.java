@@ -33,7 +33,7 @@ public class HistoryController {
    * Adds an item to the user's history.
    *
    * @param itemId the ID of the item to add
-   * @param user   the authenticated user
+   * @param user the authenticated user
    * @return the added HistoryDTO
    */
   @PostMapping("/add/{itemId}")
@@ -49,7 +49,7 @@ public class HistoryController {
    * Removes an item from the user's history.
    *
    * @param itemId the ID of the item to remove
-   * @param user   the authenticated user
+   * @param user the authenticated user
    */
   @DeleteMapping("/remove/{itemId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -76,7 +76,7 @@ public class HistoryController {
    * Pauses or resumes the user's history tracking.
    *
    * @param pause true to pause, false to resume
-   * @param user  the authenticated user
+   * @param user the authenticated user
    */
   @PostMapping("/pause/{pause}")
   @ResponseStatus(HttpStatus.OK)

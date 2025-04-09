@@ -13,17 +13,13 @@ import stud.ntnu.no.backend.item.repository.ItemRepository;
 import stud.ntnu.no.backend.user.entity.User;
 import stud.ntnu.no.backend.user.repository.UserRepository;
 
-/**
- * Mapper class for converting between Favorite entity and DTO objects.
- */
+/** Mapper class for converting between Favorite entity and DTO objects. */
 @Mapper(componentModel = "spring")
 public abstract class FavoriteMapper {
 
-  @Autowired
-  protected UserRepository userRepository;
+  @Autowired protected UserRepository userRepository;
 
-  @Autowired
-  protected ItemRepository itemRepository;
+  @Autowired protected ItemRepository itemRepository;
 
   /**
    * Maps a Favorite entity to a FavoriteDTO.
@@ -60,11 +56,15 @@ public abstract class FavoriteMapper {
     // Convert String userId to Long for repository lookup
     Long userIdLong = Long.parseLong(request.getUserId());
 
-    User user = userRepository.findById(userIdLong)
-        .orElseThrow(() -> new RuntimeException("User not found"));
+    User user =
+        userRepository
+            .findById(userIdLong)
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
-    Item item = itemRepository.findById(request.getItemId())
-        .orElseThrow(() -> new RuntimeException("Item not found"));
+    Item item =
+        itemRepository
+            .findById(request.getItemId())
+            .orElseThrow(() -> new RuntimeException("Item not found"));
 
     Favorite favorite = new Favorite();
     favorite.setUser(user);
@@ -78,7 +78,7 @@ public abstract class FavoriteMapper {
    * Updates an existing Favorite entity based on data from a CreateFavoriteRequest.
    *
    * @param favorite The Favorite entity to be updated
-   * @param request  CreateFavoriteRequest with updated data
+   * @param request CreateFavoriteRequest with updated data
    */
   public void updateEntity(Favorite favorite, CreateFavoriteRequest request) {
     if (request == null) {

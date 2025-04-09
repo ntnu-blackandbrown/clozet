@@ -5,8 +5,8 @@ import stud.ntnu.no.backend.review.dto.ReviewDTO;
 
 /**
  * Service interface for managing reviews.
- * <p>
- * This interface defines methods for CRUD operations on reviews.
+ *
+ * <p>This interface defines methods for CRUD operations on reviews.
  */
 public interface ReviewService {
 
@@ -52,7 +52,7 @@ public interface ReviewService {
   /**
    * Updates an existing review.
    *
-   * @param id        the ID of the review to update
+   * @param id the ID of the review to update
    * @param reviewDTO the ReviewDTO with updated information
    * @return the updated ReviewDTO
    */

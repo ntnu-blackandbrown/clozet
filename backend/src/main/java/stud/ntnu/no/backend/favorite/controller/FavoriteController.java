@@ -95,13 +95,13 @@ public class FavoriteController {
   /**
    * Updates an existing favorite.
    *
-   * @param id      The ID of the favorite
+   * @param id The ID of the favorite
    * @param request Data for updating the favorite
    * @return The updated favorite
    */
   @PutMapping("/{id}")
-  public ResponseEntity<FavoriteDTO> updateFavorite(@PathVariable Long id,
-      @RequestBody CreateFavoriteRequest request) {
+  public ResponseEntity<FavoriteDTO> updateFavorite(
+      @PathVariable Long id, @RequestBody CreateFavoriteRequest request) {
     logger.info("Received request to update favorite with ID: {}, request: {}", id, request);
     FavoriteDTO updatedFavorite = favoriteService.updateFavorite(id, request);
     logger.info("Updated favorite: {}", updatedFavorite);

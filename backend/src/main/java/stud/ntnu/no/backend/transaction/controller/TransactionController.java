@@ -23,15 +23,13 @@ import stud.ntnu.no.backend.transaction.service.TransactionService;
 
 /**
  * REST controller for managing transaction-related operations.
- * <p>
- * This controller provides RESTful API endpoints for creating, retrieving, updating, and deleting
- * transactions. It handles requests related to buyers purchasing items from sellers, tracking
- * transaction history, and managing the transaction lifecycle.
- * </p>
- * <p>
- * All endpoints return appropriate HTTP status codes and structured response data using the
+ *
+ * <p>This controller provides RESTful API endpoints for creating, retrieving, updating, and
+ * deleting transactions. It handles requests related to buyers purchasing items from sellers,
+ * tracking transaction history, and managing the transaction lifecycle.
+ *
+ * <p>All endpoints return appropriate HTTP status codes and structured response data using the
  * {@link TransactionDTO} format.
- * </p>
  */
 @RestController
 @RequestMapping("/api/transactions")
@@ -52,10 +50,9 @@ public class TransactionController {
 
   /**
    * Retrieves all transactions in the system.
-   * <p>
-   * This endpoint returns a collection of all transactions, sorted by creation date in descending
-   * order by default.
-   * </p>
+   *
+   * <p>This endpoint returns a collection of all transactions, sorted by creation date in
+   * descending order by default.
    *
    * @return a ResponseEntity containing a list of TransactionDTOs and HTTP status 200 (OK)
    */
@@ -67,16 +64,13 @@ public class TransactionController {
 
   /**
    * Retrieves a specific transaction by its unique identifier.
-   * <p>
-   * This endpoint attempts to find and return a transaction that matches the provided ID.
-   * </p>
+   *
+   * <p>This endpoint attempts to find and return a transaction that matches the provided ID.
    *
    * @param id the unique identifier of the transaction
    * @return a ResponseEntity containing the TransactionDTO and HTTP status 200 (OK)
    * @throws stud.ntnu.no.backend.transaction.exception.TransactionNotFoundException if no
-   *                                                                                 transaction
-   *                                                                                 with the given
-   *                                                                                 ID exists
+   *     transaction with the given ID exists
    */
   @GetMapping("/{id}")
   public ResponseEntity<TransactionDTO> getTransactionById(@PathVariable Long id) {
@@ -86,19 +80,17 @@ public class TransactionController {
 
   /**
    * Creates a new transaction in the system.
-   * <p>
-   * This endpoint processes the request to create a new transaction record. The transaction will be
-   * associated with the specified buyer, seller, and item.
-   * </p>
+   *
+   * <p>This endpoint processes the request to create a new transaction record. The transaction will
+   * be associated with the specified buyer, seller, and item.
    *
    * @param dto the data transfer object containing transaction details
    * @return a ResponseEntity containing the created TransactionDTO and HTTP status 201 (Created)
-   * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException     if the buyer or seller
-   *                                                                       does not exist
-   * @throws stud.ntnu.no.backend.item.exception.ItemNotFoundException     if the item does not
-   *                                                                       exist
+   * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException if the buyer or seller does
+   *     not exist
+   * @throws stud.ntnu.no.backend.item.exception.ItemNotFoundException if the item does not exist
    * @throws stud.ntnu.no.backend.item.exception.ItemNotAvailableException if the item is not
-   *                                                                       available for purchase
+   *     available for purchase
    */
   @PostMapping
   public ResponseEntity<TransactionDTO> createTransaction(
@@ -109,44 +101,36 @@ public class TransactionController {
 
   /**
    * Updates an existing transaction.
-   * <p>
-   * This endpoint updates a transaction with the provided data. Only specific fields can be updated
-   * after a transaction is created, such as the status, payment details, or shipping information.
-   * </p>
    *
-   * @param id  the unique identifier of the transaction to update
+   * <p>This endpoint updates a transaction with the provided data. Only specific fields can be
+   * updated after a transaction is created, such as the status, payment details, or shipping
+   * information.
+   *
+   * @param id the unique identifier of the transaction to update
    * @param dto the data transfer object containing updated transaction information
    * @return a ResponseEntity containing the updated TransactionDTO and HTTP status 200 (OK)
-   * @throws stud.ntnu.no.backend.transaction.exception.TransactionNotFoundException   if no
-   *                                                                                   transaction
-   *                                                                                   with the
-   *                                                                                   given ID
-   *                                                                                   exists
+   * @throws stud.ntnu.no.backend.transaction.exception.TransactionNotFoundException if no
+   *     transaction with the given ID exists
    * @throws stud.ntnu.no.backend.transaction.exception.TransactionValidationException if the update
-   *                                                                                   violates
-   *                                                                                   business
-   *                                                                                   rules
+   *     violates business rules
    */
   @PutMapping("/{id}")
-  public ResponseEntity<TransactionDTO> updateTransaction(@PathVariable Long id,
-      @RequestBody UpdateTransactionRequest dto) {
+  public ResponseEntity<TransactionDTO> updateTransaction(
+      @PathVariable Long id, @RequestBody UpdateTransactionRequest dto) {
     logger.info("Updating transaction with ID: {}", id);
     return ResponseEntity.ok(transactionService.updateTransaction(id, dto));
   }
 
   /**
    * Deletes a transaction by its unique identifier.
-   * <p>
-   * This endpoint removes a transaction from the system. Depending on the implementation, this may
-   * be a soft delete (marking as inactive) or a hard delete.
-   * </p>
+   *
+   * <p>This endpoint removes a transaction from the system. Depending on the implementation, this
+   * may be a soft delete (marking as inactive) or a hard delete.
    *
    * @param id the unique identifier of the transaction to delete
    * @return a ResponseEntity with HTTP status 204 (No Content)
    * @throws stud.ntnu.no.backend.transaction.exception.TransactionNotFoundException if no
-   *                                                                                 transaction
-   *                                                                                 with the given
-   *                                                                                 ID exists
+   *     transaction with the given ID exists
    */
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
@@ -157,19 +141,19 @@ public class TransactionController {
 
   /**
    * Retrieves transactions created between the specified dates.
-   * <p>
-   * This endpoint filters transactions based on their creation timestamp falling within the
+   *
+   * <p>This endpoint filters transactions based on their creation timestamp falling within the
    * specified date range.
-   * </p>
    *
    * @param start the start date and time (inclusive) in ISO 8601 format
-   * @param end   the end date and time (inclusive) in ISO 8601 format
+   * @param end the end date and time (inclusive) in ISO 8601 format
    * @return a ResponseEntity containing a list of matching TransactionDTOs and HTTP status 200 (OK)
    * @throws IllegalArgumentException if the start date is after the end date
    */
   @GetMapping("/between")
   public ResponseEntity<List<TransactionDTO>> getTransactionsBetweenDates(
-      @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+      @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+          LocalDateTime start,
       @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
     logger.info("Fetching transactions between {} and {}", start, end);
     return ResponseEntity.ok(transactionService.findByCreatedAtBetween(start, end));
@@ -177,15 +161,14 @@ public class TransactionController {
 
   /**
    * Retrieves all transactions associated with a specific buyer.
-   * <p>
-   * This endpoint returns all transactions where the specified user is the buyer, allowing users to
-   * view their purchase history.
-   * </p>
+   *
+   * <p>This endpoint returns all transactions where the specified user is the buyer, allowing users
+   * to view their purchase history.
    *
    * @param buyerId the unique identifier of the buyer
    * @return a ResponseEntity containing a list of matching TransactionDTOs and HTTP status 200 (OK)
    * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException if no user with the given ID
-   *                                                                   exists
+   *     exists
    */
   @GetMapping("/buyer/{buyerId}")
   public ResponseEntity<List<TransactionDTO>> getTransactionsByBuyerId(
@@ -196,34 +179,24 @@ public class TransactionController {
 
   /**
    * Processes a complete purchase transaction and updates the item availability.
-   * <p>
-   * This specialized endpoint handles the purchase flow, creating a transaction record and marking
-   * the associated item as no longer available for purchase.
-   * </p>
+   *
+   * <p>This specialized endpoint handles the purchase flow, creating a transaction record and
+   * marking the associated item as no longer available for purchase.
    *
    * @param dto the data transfer object containing transaction and purchase details
    * @return a ResponseEntity containing the created TransactionDTO and HTTP status 201 (Created)
-   * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException                 if the buyer
-   *                                                                                   or seller
-   *                                                                                   does not
-   *                                                                                   exist
-   * @throws stud.ntnu.no.backend.item.exception.ItemNotFoundException                 if the item
-   *                                                                                   does not
-   *                                                                                   exist
-   * @throws stud.ntnu.no.backend.item.exception.ItemNotAvailableException             if the item
-   *                                                                                   is not
-   *                                                                                   available for
-   *                                                                                   purchase
+   * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException if the buyer or seller does
+   *     not exist
+   * @throws stud.ntnu.no.backend.item.exception.ItemNotFoundException if the item does not exist
+   * @throws stud.ntnu.no.backend.item.exception.ItemNotAvailableException if the item is not
+   *     available for purchase
    * @throws stud.ntnu.no.backend.transaction.exception.TransactionValidationException if the
-   *                                                                                   purchase
-   *                                                                                   violates
-   *                                                                                   business
-   *                                                                                   rules
+   *     purchase violates business rules
    */
   @PostMapping("/purchase")
   public ResponseEntity<TransactionDTO> purchaseItem(@RequestBody CreateTransactionRequest dto) {
     logger.info("Processing purchase for item ID: {}", dto.getItemId());
-    return new ResponseEntity<>(transactionService.handlePurchaseTransaction(dto),
-        HttpStatus.CREATED);
+    return new ResponseEntity<>(
+        transactionService.handlePurchaseTransaction(dto), HttpStatus.CREATED);
   }
 }

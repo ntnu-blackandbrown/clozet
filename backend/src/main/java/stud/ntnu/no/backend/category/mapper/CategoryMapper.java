@@ -24,7 +24,10 @@ public interface CategoryMapper {
    */
   @Mapping(source = "parent.id", target = "parentId")
   @Mapping(source = "parent.name", target = "parentName")
-  @Mapping(source = "subcategories", target = "subcategoryIds", qualifiedByName = "subcategoriesToIds")
+  @Mapping(
+      source = "subcategories",
+      target = "subcategoryIds",
+      qualifiedByName = "subcategoriesToIds")
   CategoryDTO toDto(Category category);
 
   /**
@@ -38,9 +41,7 @@ public interface CategoryMapper {
     if (subcategories == null) {
       return null;
     }
-    return subcategories.stream()
-        .map(Category::getId)
-        .collect(Collectors.toList());
+    return subcategories.stream().map(Category::getId).collect(Collectors.toList());
   }
 
   /**

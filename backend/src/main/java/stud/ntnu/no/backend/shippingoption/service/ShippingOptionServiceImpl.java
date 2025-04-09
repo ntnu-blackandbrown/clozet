@@ -15,8 +15,8 @@ import stud.ntnu.no.backend.shippingoption.repository.ShippingOptionRepository;
 
 /**
  * Implementation of the ShippingOptionService interface.
- * <p>
- * This class provides methods for managing shipping options, including CRUD operations.
+ *
+ * <p>This class provides methods for managing shipping options, including CRUD operations.
  */
 @Service
 public class ShippingOptionServiceImpl implements ShippingOptionService {
@@ -30,9 +30,10 @@ public class ShippingOptionServiceImpl implements ShippingOptionService {
    * Constructs a new ShippingOptionServiceImpl with the specified dependencies.
    *
    * @param shippingOptionRepository the ShippingOptionRepository
-   * @param shippingOptionMapper     the ShippingOptionMapper
+   * @param shippingOptionMapper the ShippingOptionMapper
    */
-  public ShippingOptionServiceImpl(ShippingOptionRepository shippingOptionRepository,
+  public ShippingOptionServiceImpl(
+      ShippingOptionRepository shippingOptionRepository,
       ShippingOptionMapper shippingOptionMapper) {
     this.shippingOptionRepository = shippingOptionRepository;
     this.shippingOptionMapper = shippingOptionMapper;
@@ -47,8 +48,10 @@ public class ShippingOptionServiceImpl implements ShippingOptionService {
   @Override
   public ShippingOptionDTO getShippingOption(Long id) {
     logger.info("Fetching shipping option with id: {}", id);
-    ShippingOption shippingOption = shippingOptionRepository.findById(id)
-        .orElseThrow(() -> new ShippingOptionNotFoundException(id));
+    ShippingOption shippingOption =
+        shippingOptionRepository
+            .findById(id)
+            .orElseThrow(() -> new ShippingOptionNotFoundException(id));
     return shippingOptionMapper.toDto(shippingOption);
   }
 
@@ -64,11 +67,13 @@ public class ShippingOptionServiceImpl implements ShippingOptionService {
 
   @Override
   @Transactional
-  public ShippingOptionDTO updateShippingOption(Long id,
-      CreateShippingOptionDTO shippingOptionDTO) {
+  public ShippingOptionDTO updateShippingOption(
+      Long id, CreateShippingOptionDTO shippingOptionDTO) {
     logger.info("Updating shipping option with id: {}", id);
-    ShippingOption shippingOption = shippingOptionRepository.findById(id)
-        .orElseThrow(() -> new ShippingOptionNotFoundException(id));
+    ShippingOption shippingOption =
+        shippingOptionRepository
+            .findById(id)
+            .orElseThrow(() -> new ShippingOptionNotFoundException(id));
 
     validateShippingOption(shippingOptionDTO);
     shippingOptionMapper.updateShippingOptionFromDto(shippingOptionDTO, shippingOption);
@@ -88,8 +93,8 @@ public class ShippingOptionServiceImpl implements ShippingOptionService {
 
   /**
    * Validates the given CreateShippingOptionDTO.
-   * <p>
-   * This method checks that the name is not null or empty, the price is non-negative, and the
+   *
+   * <p>This method checks that the name is not null or empty, the price is non-negative, and the
    * estimated days are non-negative.
    *
    * @param shippingOptionDTO the CreateShippingOptionDTO to validate

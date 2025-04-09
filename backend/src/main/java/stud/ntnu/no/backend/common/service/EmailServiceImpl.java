@@ -16,10 +16,9 @@ import stud.ntnu.no.backend.common.util.EmailTemplateUtil;
 
 /**
  * Implementation of the {@link EmailService} interface.
- * <p>
- * Provides methods to send various types of emails, including verification, password reset, and
+ *
+ * <p>Provides methods to send various types of emails, including verification, password reset, and
  * confirmation emails.
- * </p>
  */
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -39,7 +38,7 @@ public class EmailServiceImpl implements EmailService {
    * Sends a verification email to the specified email address.
    *
    * @param toEmail the recipient's email address
-   * @param token   the verification token
+   * @param token the verification token
    */
   @Override
   public void sendVerificationEmail(String toEmail, String token) {
@@ -65,7 +64,7 @@ public class EmailServiceImpl implements EmailService {
    * Sends a password reset email to the specified email address.
    *
    * @param toEmail the recipient's email address
-   * @param token   the password reset token
+   * @param token the password reset token
    */
   @Override
   public void sendPasswordResetEmail(String toEmail, String token) {
@@ -106,8 +105,8 @@ public class EmailServiceImpl implements EmailService {
       sendHtmlEmail(email, subject, htmlContent);
       logger.info("Password change confirmation email sent to: {}", email);
     } catch (IOException e) {
-      logger.error("Failed to load password change confirmation email template: {}", e.getMessage(),
-          e);
+      logger.error(
+          "Failed to load password change confirmation email template: {}", e.getMessage(), e);
       throw new RuntimeException("Failed to send password change confirmation email", e);
     }
   }
@@ -131,8 +130,8 @@ public class EmailServiceImpl implements EmailService {
       sendHtmlEmail(email, subject, htmlContent);
       logger.info("Password reset confirmation email sent to: {}", email);
     } catch (IOException e) {
-      logger.error("Failed to load password reset confirmation email template: {}", e.getMessage(),
-          e);
+      logger.error(
+          "Failed to load password reset confirmation email template: {}", e.getMessage(), e);
       throw new RuntimeException("Failed to send password reset confirmation email", e);
     }
   }
@@ -140,8 +139,8 @@ public class EmailServiceImpl implements EmailService {
   /**
    * Sends an HTML email to the specified email address.
    *
-   * @param toEmail     the recipient's email address
-   * @param subject     the subject of the email
+   * @param toEmail the recipient's email address
+   * @param subject the subject of the email
    * @param htmlContent the HTML content of the email
    */
   @Override

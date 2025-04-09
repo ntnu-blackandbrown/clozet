@@ -4,10 +4,9 @@ import stud.ntnu.no.backend.common.exception.BaseException;
 
 /**
  * Exception thrown when a message is not found.
- * <p>
- * This exception is mapped to a 404 Not Found HTTP status code.
+ *
+ * <p>This exception is mapped to a 404 Not Found HTTP status code.
  */
-
 public class MessageNotFoundException extends BaseException {
 
   /**

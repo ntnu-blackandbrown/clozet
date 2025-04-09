@@ -40,14 +40,13 @@ public class ImageController {
   /**
    * Uploads an image for a specific item.
    *
-   * @param file   The image file to upload
+   * @param file The image file to upload
    * @param itemId The ID of the item the image is associated with
    * @return The URL of the uploaded image or an error message
    */
   @PostMapping("/upload")
   public ResponseEntity<?> uploadImage(
-      @RequestParam("file") MultipartFile file,
-      @RequestParam("itemId") Long itemId) {
+      @RequestParam("file") MultipartFile file, @RequestParam("itemId") Long itemId) {
 
     logger.info("Uploading image for item ID: {}", itemId);
     try {

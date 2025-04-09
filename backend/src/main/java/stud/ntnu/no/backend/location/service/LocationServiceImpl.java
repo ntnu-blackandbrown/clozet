@@ -16,8 +16,8 @@ import stud.ntnu.no.backend.location.repository.LocationRepository;
 
 /**
  * Implementation of the LocationService interface.
- * <p>
- * This class provides methods for managing locations, including CRUD operations.
+ *
+ * <p>This class provides methods for managing locations, including CRUD operations.
  */
 @Service
 public class LocationServiceImpl implements LocationService {
@@ -30,7 +30,7 @@ public class LocationServiceImpl implements LocationService {
    * Constructs a new LocationServiceImpl with the specified repository and mapper.
    *
    * @param locationRepository the LocationRepository
-   * @param locationMapper     the LocationMapper
+   * @param locationMapper the LocationMapper
    */
   public LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper) {
     this.locationRepository = locationRepository;
@@ -46,8 +46,8 @@ public class LocationServiceImpl implements LocationService {
   @Override
   public LocationDTO getLocation(Long id) {
     logger.info("Fetching location with id: {}", id);
-    Location location = locationRepository.findById(id)
-        .orElseThrow(() -> new LocationNotFoundException(id));
+    Location location =
+        locationRepository.findById(id).orElseThrow(() -> new LocationNotFoundException(id));
     return locationMapper.toDto(location);
   }
 
@@ -65,8 +65,8 @@ public class LocationServiceImpl implements LocationService {
   @Transactional
   public LocationDTO updateLocation(Long id, CreateLocationDTO locationDTO) {
     logger.info("Updating location with id: {}", id);
-    Location location = locationRepository.findById(id)
-        .orElseThrow(() -> new LocationNotFoundException(id));
+    Location location =
+        locationRepository.findById(id).orElseThrow(() -> new LocationNotFoundException(id));
 
     validateLocation(locationDTO);
     locationMapper.updateLocationFromDto(locationDTO, location);
@@ -86,9 +86,9 @@ public class LocationServiceImpl implements LocationService {
 
   /**
    * Validates the given CreateLocationDTO.
-   * <p>
-   * This method checks that the city and region are not empty and that the latitude and longitude
-   * are within valid ranges.
+   *
+   * <p>This method checks that the city and region are not empty and that the latitude and
+   * longitude are within valid ranges.
    *
    * @param locationDTO the CreateLocationDTO to validate
    * @throws LocationValidationException if validation fails

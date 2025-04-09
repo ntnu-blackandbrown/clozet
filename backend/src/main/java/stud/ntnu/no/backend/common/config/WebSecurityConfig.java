@@ -9,9 +9,8 @@ import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * Configuration class for web security.
- * <p>
- * Configures security settings for WebSocket endpoints.
- * </p>
+ *
+ * <p>Configures security settings for WebSocket endpoints.
  */
 @Configuration
 @EnableWebSecurity
@@ -27,11 +26,9 @@ public class WebSecurityConfig {
   @Bean
   @Order(1) // Higher precedence than the default filter chain
   public SecurityFilterChain webSocketSecurityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .securityMatcher("/ws/**")  // Apply only to WebSocket endpoints
+    http.securityMatcher("/ws/**") // Apply only to WebSocket endpoints
         .csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(authorize -> authorize
-            .anyRequest().permitAll());
+        .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
 
     return http.build();
   }

@@ -15,8 +15,8 @@ import stud.ntnu.no.backend.message.service.MessageService;
 
 /**
  * WebSocket controller for handling chat messages.
- * <p>
- * This controller provides endpoints for sending and marking messages as read via WebSocket.
+ *
+ * <p>This controller provides endpoints for sending and marking messages as read via WebSocket.
  */
 @Controller
 public class WebSocketMessageController {
@@ -29,12 +29,12 @@ public class WebSocketMessageController {
   /**
    * Constructs a new WebSocketMessageController with the specified service and messaging template.
    *
-   * @param messageService    the MessageService
+   * @param messageService the MessageService
    * @param messagingTemplate the SimpMessagingTemplate
    */
   @Autowired
-  public WebSocketMessageController(MessageService messageService,
-      SimpMessagingTemplate messagingTemplate) {
+  public WebSocketMessageController(
+      MessageService messageService, SimpMessagingTemplate messagingTemplate) {
     this.messageService = messageService;
     this.messagingTemplate = messagingTemplate;
   }

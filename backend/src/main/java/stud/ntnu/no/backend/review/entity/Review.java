@@ -14,9 +14,9 @@ import stud.ntnu.no.backend.user.entity.User;
 
 /**
  * Entity representing a review.
- * <p>
- * This class is mapped to the "REVIEWS" table in the database and holds information about a review,
- * including its ID, comment, rating, creation time, reviewee, reviewer, and associated
+ *
+ * <p>This class is mapped to the "REVIEWS" table in the database and holds information about a
+ * review, including its ID, comment, rating, creation time, reviewee, reviewer, and associated
  * transaction.
  */
 @Entity

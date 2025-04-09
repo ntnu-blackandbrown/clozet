@@ -4,9 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import stud.ntnu.no.backend.itemimage.dto.ItemImageDTO;
 
-/**
- * DTO for displaying detailed product information.
- */
+/** DTO for displaying detailed product information. */
 public class ProductDisplayDTO {
 
   private Long id;
@@ -24,14 +22,23 @@ public class ProductDisplayDTO {
   private List<ItemImageDTO> images;
 
   // Default constructor
-  public ProductDisplayDTO() {
-  }
+  public ProductDisplayDTO() {}
 
   // Full constructor
-  public ProductDisplayDTO(Long id, String title, String fullDescription, double price,
-      Long categoryId, String categoryName, String locationName,
-      String sellerFullName, String shippingOptionName, boolean isAvailable,
-      LocalDateTime updatedAt, LocalDateTime createdAt, List<ItemImageDTO> images) {
+  public ProductDisplayDTO(
+      Long id,
+      String title,
+      String fullDescription,
+      double price,
+      Long categoryId,
+      String categoryName,
+      String locationName,
+      String sellerFullName,
+      String shippingOptionName,
+      boolean isAvailable,
+      LocalDateTime updatedAt,
+      LocalDateTime createdAt,
+      List<ItemImageDTO> images) {
     this.id = id;
     this.title = title;
     this.fullDescription = fullDescription;

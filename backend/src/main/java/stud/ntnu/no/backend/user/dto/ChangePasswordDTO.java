@@ -2,8 +2,8 @@ package stud.ntnu.no.backend.user.dto;
 
 /**
  * Data Transfer Object for changing a user's password.
- * <p>
- * This class holds the current and new passwords required to change a user's password.
+ *
+ * <p>This class holds the current and new passwords required to change a user's password.
  */
 public class ChangePasswordDTO {
 
@@ -45,4 +45,4 @@ public class ChangePasswordDTO {
   public void setNewPassword(String newPassword) {
     this.newPassword = newPassword;
   }
-} 
+}

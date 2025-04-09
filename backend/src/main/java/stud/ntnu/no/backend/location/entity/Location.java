@@ -9,8 +9,8 @@ import jakarta.persistence.Table;
 
 /**
  * Represents a location entity.
- * <p>
- * This class is mapped to the "locations" table in the database and holds information about a
+ *
+ * <p>This class is mapped to the "locations" table in the database and holds information about a
  * location, including its ID, city, region, latitude, and longitude.
  */
 @Entity
@@ -122,6 +122,4 @@ public class Location {
   public void setId(Long id) {
     this.id = id;
   }
-
-
 }

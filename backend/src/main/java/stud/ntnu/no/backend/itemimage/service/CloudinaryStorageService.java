@@ -32,7 +32,7 @@ public class CloudinaryStorageService implements FileStorageService {
   /**
    * Stores a file in Cloudinary under a specific item folder.
    *
-   * @param file   The file to store
+   * @param file The file to store
    * @param itemId The ID of the item associated with the file
    * @return The URL of the stored file
    * @throws IOException If an error occurs during file upload
@@ -40,10 +40,8 @@ public class CloudinaryStorageService implements FileStorageService {
   @Override
   public String storeFile(MultipartFile file, Long itemId) throws IOException {
     logger.info("Storing file in Cloudinary for item ID: {}", itemId);
-    Map<String, Object> params = ObjectUtils.asMap(
-        "folder", "items/" + itemId,
-        "resource_type", "auto"
-    );
+    Map<String, Object> params =
+        ObjectUtils.asMap("folder", "items/" + itemId, "resource_type", "auto");
 
     Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), params);
     String url = (String) uploadResult.get("secure_url");

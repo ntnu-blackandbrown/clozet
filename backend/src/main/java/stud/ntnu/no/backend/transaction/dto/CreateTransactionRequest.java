@@ -2,9 +2,9 @@ package stud.ntnu.no.backend.transaction.dto;
 
 /**
  * Request object for creating a transaction.
- * <p>
- * This class holds information required to create a new transaction, including item ID, buyer ID,
- * seller ID, amount, status, and payment method.
+ *
+ * <p>This class holds information required to create a new transaction, including item ID, buyer
+ * ID, seller ID, amount, status, and payment method.
  */
 public class CreateTransactionRequest {
 
@@ -16,11 +16,15 @@ public class CreateTransactionRequest {
   private String paymentMethod;
 
   // Constructors
-  public CreateTransactionRequest() {
-  }
+  public CreateTransactionRequest() {}
 
-  public CreateTransactionRequest(Long itemId, String buyerId, String sellerId, double amount,
-      String status, String paymentMethod) {
+  public CreateTransactionRequest(
+      Long itemId,
+      String buyerId,
+      String sellerId,
+      double amount,
+      String status,
+      String paymentMethod) {
     this.itemId = itemId;
     this.buyerId = buyerId;
     this.sellerId = sellerId;

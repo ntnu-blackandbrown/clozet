@@ -7,8 +7,8 @@ import stud.ntnu.no.backend.review.entity.Review;
 
 /**
  * Repository interface for Review entities.
- * <p>
- * This interface extends JpaRepository to provide CRUD operations for Review entities.
+ *
+ * <p>This interface extends JpaRepository to provide CRUD operations for Review entities.
  */
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {

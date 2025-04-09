@@ -27,10 +27,9 @@ import stud.ntnu.no.backend.common.security.filter.JwtAuthenticationFilter;
 
 /**
  * Configuration class for setting up security filters and authentication.
- * <p>
- * This class configures CORS, CSRF, session management, and exception handling. It also sets up the
- * security filter chain and password encoding.
- * </p>
+ *
+ * <p>This class configures CORS, CSRF, session management, and exception handling. It also sets up
+ * the security filter chain and password encoding.
  */
 @Configuration
 @EnableWebSecurity
@@ -73,12 +72,11 @@ public class SecurityConfig {
 
     // Instead of using patterns, we'll validate origins in the configure method
     corsConfig.setAllowedOrigins(Collections.emptyList()); // We'll manually validate origins
-    corsConfig.setAllowedOriginPatterns(
-        List.of("*")); // Allow any origin for initial processing
+    corsConfig.setAllowedOriginPatterns(List.of("*")); // Allow any origin for initial processing
     corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
     corsConfig.setAllowedHeaders(
-        Arrays.asList("Content-Type", "Authorization", "Accept", "X-Requested-With",
-            "remember-me"));
+        Arrays.asList(
+            "Content-Type", "Authorization", "Accept", "X-Requested-With", "remember-me"));
     corsConfig.setExposedHeaders(List.of("Content-Type"));
     corsConfig.setAllowCredentials(true);
     corsConfig.setMaxAge(3600L);
@@ -98,9 +96,9 @@ public class SecurityConfig {
         CorsConfiguration config = corsConfig.applyPermitDefaultValues();
 
         // Only allow specific origins
-        if (origin != null && (
-            origin.equals("http://localhost:5173") ||
-                origin.equals("https://clozet.netlify.app"))) {
+        if (origin != null
+            && (origin.equals("http://localhost:5173")
+                || origin.equals("https://clozet.netlify.app"))) {
           logger.info("Setting Access-Control-Allow-Origin to: {}", origin);
           config.setAllowedOrigins(Collections.singletonList(origin));
         }
@@ -121,26 +119,35 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     logger.info("Configuring security filter chain");
 
-    http
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+    http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(csrf -> csrf.disable())
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .exceptionHandling(exc -> exc
-            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-        )
-        .authorizeHttpRequests(auth -> auth
-            // Tillat bruk av register, verify, og passordreset
-            .requestMatchers("/api/users/**", "/api/users/verify", "/api/password/**",
-                "/api/prod-test/verification").permitAll()
-            // Evt. /api/auth/** og H2 console
-            .requestMatchers("/api/auth/**").permitAll()
-            .requestMatchers("/api/test-image/upload").permitAll()
-            .requestMatchers("/h2-console/**").permitAll()
-            .requestMatchers("/ws/**").permitAll()
-            .requestMatchers("/api/**").permitAll()
-            .anyRequest().authenticated()
-        )
+        .exceptionHandling(
+            exc -> exc.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+        .authorizeHttpRequests(
+            auth ->
+                auth
+                    // Tillat bruk av register, verify, og passordreset
+                    .requestMatchers(
+                        "/api/users/**",
+                        "/api/users/verify",
+                        "/api/password/**",
+                        "/api/prod-test/verification")
+                    .permitAll()
+                    // Evt. /api/auth/** og H2 console
+                    .requestMatchers("/api/auth/**")
+                    .permitAll()
+                    .requestMatchers("/api/test-image/upload")
+                    .permitAll()
+                    .requestMatchers("/h2-console/**")
+                    .permitAll()
+                    .requestMatchers("/ws/**")
+                    .permitAll()
+                    .requestMatchers("/api/**")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
     // Tillat at H2-console vises
@@ -158,8 +165,7 @@ public class SecurityConfig {
    */
   @Bean
   public AuthenticationManager authenticationManager(
-      AuthenticationConfiguration authenticationConfiguration)
-      throws Exception {
+      AuthenticationConfiguration authenticationConfiguration) throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
   }
 

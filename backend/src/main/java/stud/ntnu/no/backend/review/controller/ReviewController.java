@@ -17,8 +17,8 @@ import stud.ntnu.no.backend.review.service.ReviewService;
 
 /**
  * REST controller for managing reviews.
- * <p>
- * This controller provides endpoints for CRUD operations on reviews.
+ *
+ * <p>This controller provides endpoints for CRUD operations on reviews.
  */
 @RestController
 @RequestMapping("/api/reviews")
@@ -99,13 +99,13 @@ public class ReviewController {
   /**
    * Updates an existing review.
    *
-   * @param id        the ID of the review to update
+   * @param id the ID of the review to update
    * @param reviewDTO the ReviewDTO with updated information
    * @return the updated ReviewDTO
    */
   @PutMapping("/{id}")
-  public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id,
-      @Valid @RequestBody ReviewDTO reviewDTO) {
+  public ResponseEntity<ReviewDTO> updateReview(
+      @PathVariable Long id, @Valid @RequestBody ReviewDTO reviewDTO) {
     logger.info("Updating review with id: " + id);
     return ResponseEntity.ok(reviewService.updateReview(id, reviewDTO));
   }

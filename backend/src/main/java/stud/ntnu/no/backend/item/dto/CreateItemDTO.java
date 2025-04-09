@@ -9,10 +9,10 @@ import stud.ntnu.no.backend.itemimage.dto.CreateItemImageDTO;
 /**
  * DTO for creating a new item.
  *
- * <p>This class encapsulates all required data for creating a new item in the system,
- * including basic item details, location information, and associated images.</p>
+ * <p>This class encapsulates all required data for creating a new item in the system, including
+ * basic item details, location information, and associated images.
  *
- * <p>All required fields are validated with appropriate constraints.</p>
+ * <p>All required fields are validated with appropriate constraints.
  */
 public class CreateItemDTO {
 
@@ -60,34 +60,43 @@ public class CreateItemDTO {
 
   private List<CreateItemImageDTO> images;
 
-  /**
-   * Default constructor.
-   */
-  public CreateItemDTO() {
-  }
+  /** Default constructor. */
+  public CreateItemDTO() {}
 
   /**
    * Full constructor with all item properties.
    *
-   * @param title                 the item title
-   * @param shortDescription      brief description of the item
-   * @param longDescription       detailed description of the item
-   * @param price                 the item price
-   * @param categoryId            the ID of the item's category
-   * @param locationId            the ID of the item's location
-   * @param shippingOptionId      the ID of the shipping option
-   * @param latitude              geographical latitude of the item
-   * @param longitude             geographical longitude of the item
-   * @param condition             physical condition of the item
-   * @param size                  size of the item
-   * @param brand                 brand of the item
-   * @param color                 color of the item
+   * @param title the item title
+   * @param shortDescription brief description of the item
+   * @param longDescription detailed description of the item
+   * @param price the item price
+   * @param categoryId the ID of the item's category
+   * @param locationId the ID of the item's location
+   * @param shippingOptionId the ID of the shipping option
+   * @param latitude geographical latitude of the item
+   * @param longitude geographical longitude of the item
+   * @param condition physical condition of the item
+   * @param size size of the item
+   * @param brand brand of the item
+   * @param color color of the item
    * @param isVippsPaymentEnabled whether Vipps payment is enabled
-   * @param images                list of images associated with the item
+   * @param images list of images associated with the item
    */
-  public CreateItemDTO(String title, String shortDescription, String longDescription, double price,
-      Long categoryId, Long locationId, Long shippingOptionId, double latitude, double longitude,
-      String condition, String size, String brand, String color, boolean isVippsPaymentEnabled,
+  public CreateItemDTO(
+      String title,
+      String shortDescription,
+      String longDescription,
+      double price,
+      Long categoryId,
+      Long locationId,
+      Long shippingOptionId,
+      double latitude,
+      double longitude,
+      String condition,
+      String size,
+      String brand,
+      String color,
+      boolean isVippsPaymentEnabled,
       List<CreateItemImageDTO> images) {
     this.title = title;
     this.shortDescription = shortDescription;

@@ -13,9 +13,8 @@ import java.time.LocalDateTime;
 
 /**
  * Represents a password reset token entity.
- * <p>
- * This entity is used to store password reset tokens associated with users.
- * </p>
+ *
+ * <p>This entity is used to store password reset tokens associated with users.
  */
 @Entity
 @Table(name = "password_reset_tokens")
@@ -35,15 +34,14 @@ public class PasswordResetToken {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  protected PasswordResetToken() {
-  }
+  protected PasswordResetToken() {}
 
   /**
    * Constructs a new PasswordResetToken with the specified token, expiry date, and user.
    *
-   * @param token      the token string
+   * @param token the token string
    * @param expiryDate the expiry date of the token
-   * @param user       the user associated with the token
+   * @param user the user associated with the token
    */
   public PasswordResetToken(String token, LocalDateTime expiryDate, User user) {
     this.token = token;

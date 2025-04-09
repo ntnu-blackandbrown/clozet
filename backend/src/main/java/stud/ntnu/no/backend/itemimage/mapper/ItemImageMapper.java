@@ -10,14 +10,11 @@ import stud.ntnu.no.backend.itemimage.dto.CreateItemImageDTO;
 import stud.ntnu.no.backend.itemimage.dto.ItemImageDTO;
 import stud.ntnu.no.backend.itemimage.entity.ItemImage;
 
-/**
- * Mapper class for converting between ItemImage entity and DTO objects.
- */
+/** Mapper class for converting between ItemImage entity and DTO objects. */
 @Component
 public class ItemImageMapper {
 
-  @Autowired
-  private ItemRepository itemRepository;
+  @Autowired private ItemRepository itemRepository;
 
   /**
    * Converts an ItemImage entity to an ItemImageDTO.
@@ -35,8 +32,7 @@ public class ItemImageMapper {
         entity.getItem() != null ? entity.getItem().getId() : null,
         entity.getImageUrl(),
         entity.isPrimary(),
-        entity.getDisplayOrder()
-    );
+        entity.getDisplayOrder());
   }
 
   /**
@@ -50,9 +46,7 @@ public class ItemImageMapper {
       return null;
     }
 
-    return entities.stream()
-        .map(this::toDTO)
-        .collect(Collectors.toList());
+    return entities.stream().map(this::toDTO).collect(Collectors.toList());
   }
 
   /**
@@ -68,8 +62,11 @@ public class ItemImageMapper {
     itemImage.setDisplayOrder(dto.getDisplayOrder());
 
     if (dto.getItemId() != null) {
-      Item item = itemRepository.findById(dto.getItemId())
-          .orElseThrow(() -> new RuntimeException("Item not found with id: " + dto.getItemId()));
+      Item item =
+          itemRepository
+              .findById(dto.getItemId())
+              .orElseThrow(
+                  () -> new RuntimeException("Item not found with id: " + dto.getItemId()));
       itemImage.setItem(item);
     }
 
@@ -79,17 +76,20 @@ public class ItemImageMapper {
   /**
    * Updates an existing ItemImage entity from a CreateItemImageDTO.
    *
-   * @param dto       The CreateItemImageDTO containing updated data
+   * @param dto The CreateItemImageDTO containing updated data
    * @param itemImage The ItemImage entity to update
    */
   public void updateItemImageFromDto(CreateItemImageDTO dto, ItemImage itemImage) {
     if (dto.getImageUrl() != null) {
       itemImage.setImageUrl(dto.getImageUrl());
     }
-    if (dto.getItemId() != null && (itemImage.getItem() == null || !itemImage.getItem().getId()
-        .equals(dto.getItemId()))) {
-      Item item = itemRepository.findById(dto.getItemId())
-          .orElseThrow(() -> new RuntimeException("Item not found with id: " + dto.getItemId()));
+    if (dto.getItemId() != null
+        && (itemImage.getItem() == null || !itemImage.getItem().getId().equals(dto.getItemId()))) {
+      Item item =
+          itemRepository
+              .findById(dto.getItemId())
+              .orElseThrow(
+                  () -> new RuntimeException("Item not found with id: " + dto.getItemId()));
       itemImage.setItem(item);
     }
     itemImage.setPrimary(dto.isPrimary());

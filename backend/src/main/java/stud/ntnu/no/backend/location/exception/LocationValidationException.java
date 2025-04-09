@@ -4,8 +4,8 @@ import stud.ntnu.no.backend.common.exception.BaseException;
 
 /**
  * Exception thrown when a location validation fails.
- * <p>
- * This exception is mapped to a 400 Bad Request HTTP status code.
+ *
+ * <p>This exception is mapped to a 400 Bad Request HTTP status code.
  */
 public class LocationValidationException extends BaseException {
 

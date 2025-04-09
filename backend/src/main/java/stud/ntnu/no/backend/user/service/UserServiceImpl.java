@@ -33,27 +33,24 @@ import stud.ntnu.no.backend.user.repository.VerificationTokenRepository;
 
 /**
  * Implementation of the UserService abstract class for managing user-related operations.
- * <p>
- * This service provides a complete implementation of user management functionality including user
- * registration, authentication, profile management, and account verification. It handles
+ *
+ * <p>This service provides a complete implementation of user management functionality including
+ * user registration, authentication, profile management, and account verification. It handles
  * communication with the user repository for database operations, handles password encoding and
  * verification, and manages email communication for account-related actions.
- * </p>
- * <p>
- * Key responsibilities include:
+ *
+ * <p>Key responsibilities include:
+ *
  * <ul>
- *   <li>User registration with email verification</li>
- *   <li>User authentication</li>
- *   <li>User profile management (update, delete)</li>
- *   <li>Password change and reset functionality</li>
- *   <li>User retrieval by various criteria</li>
+ *   <li>User registration with email verification
+ *   <li>User authentication
+ *   <li>User profile management (update, delete)
+ *   <li>Password change and reset functionality
+ *   <li>User retrieval by various criteria
  * </ul>
- * </p>
- * <p>
- * This implementation uses Spring Security for authentication and authorization,
- * a password encoder for secure password storage, and an email service for
- * communicating with users.
- * </p>
+ *
+ * <p>This implementation uses Spring Security for authentication and authorization, a password
+ * encoder for secure password storage, and an email service for communicating with users.
  */
 @Service
 public class UserServiceImpl extends UserService {
@@ -64,11 +61,13 @@ public class UserServiceImpl extends UserService {
   private final PasswordEncoder passwordEncoder;
   private final EmailService emailService;
   private final VerificationTokenRepository verificationTokenRepository;
+
   @Value("${app.email.verification-expiry-hours:24}")
   private int verificationExpiryHours;
 
   @Autowired
-  public UserServiceImpl(UserRepository userRepository,
+  public UserServiceImpl(
+      UserRepository userRepository,
       UserMapper userMapper,
       PasswordEncoder passwordEncoder,
       EmailService emailService,
@@ -82,17 +81,17 @@ public class UserServiceImpl extends UserService {
 
   /**
    * Retrieves the currently authenticated user from the security context.
-   * <p>
-   * This method checks the current security context for an authenticated user and returns the
+   *
+   * <p>This method checks the current security context for an authenticated user and returns the
    * corresponding User entity. It handles two authentication scenarios:
-   * </p>
+   *
    * <ol>
-   *   <li>When the principal is a CustomUserDetails instance (most common case)</li>
-   *   <li>When only the username is available in the authentication</li>
+   *   <li>When the principal is a CustomUserDetails instance (most common case)
+   *   <li>When only the username is available in the authentication
    * </ol>
    *
    * @return the currently authenticated User entity
-   * @throws RuntimeException      if no authenticated user is found in the security context
+   * @throws RuntimeException if no authenticated user is found in the security context
    * @throws UserNotFoundException if the authenticated username cannot be found in the database
    */
   @Override
@@ -108,33 +107,30 @@ public class UserServiceImpl extends UserService {
     }
 
     String username = authentication.getName();
-    return userRepository.findByUsername(username)
+    return userRepository
+        .findByUsername(username)
         .orElseThrow(() -> new UserNotFoundException("Username " + username + " not found"));
   }
 
   /**
    * Retrieves all users from the database.
-   * <p>
-   * This method fetches all user records from the database and converts them to DTOs for external
-   * use.
-   * </p>
+   *
+   * <p>This method fetches all user records from the database and converts them to DTOs for
+   * external use.
    *
    * @return a list of user DTOs representing all users in the system
    */
   @Override
   public List<UserDTO> getAllUsers() {
     logger.info("Getting all users");
-    return userRepository.findAll().stream()
-        .map(userMapper::toDto)
-        .collect(Collectors.toList());
+    return userRepository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
   }
 
   /**
    * Retrieves a user by their unique identifier.
-   * <p>
-   * This method attempts to find a user with the specified ID and converts the entity to a DTO if
-   * found.
-   * </p>
+   *
+   * <p>This method attempts to find a user with the specified ID and converts the entity to a DTO
+   * if found.
    *
    * @param id the unique identifier of the user to retrieve
    * @return the UserDTO representing the requested user
@@ -143,17 +139,17 @@ public class UserServiceImpl extends UserService {
   @Override
   public UserDTO getUserById(Long id) {
     logger.info("Getting user by ID: {}", id);
-    return userRepository.findById(id)
+    return userRepository
+        .findById(id)
         .map(userMapper::toDto)
         .orElseThrow(() -> new UserNotFoundException(id));
   }
 
   /**
    * Retrieves a user by their username.
-   * <p>
-   * This method attempts to find a user with the specified username and converts the entity to a
+   *
+   * <p>This method attempts to find a user with the specified username and converts the entity to a
    * DTO if found.
-   * </p>
    *
    * @param username the username of the user to retrieve
    * @return the UserDTO representing the requested user
@@ -162,7 +158,8 @@ public class UserServiceImpl extends UserService {
   @Override
   public UserDTO getUserByUsername(String username) {
     logger.info("Getting user by username: {}", username);
-    return userRepository.findByUsername(username)
+    return userRepository
+        .findByUsername(username)
         .map(userMapper::toDto)
         .orElseThrow(() -> new UserNotFoundException("Username " + username + " not found"));
   }
@@ -229,19 +226,19 @@ public class UserServiceImpl extends UserService {
   @Override
   public UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
     logger.info("Updating user with ID: {}", id);
-    User existingUser = userRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException(id));
+    User existingUser =
+        userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 
-    if (updateUserDTO.getUsername() != null && !updateUserDTO.getUsername()
-        .equals(existingUser.getUsername())) {
+    if (updateUserDTO.getUsername() != null
+        && !updateUserDTO.getUsername().equals(existingUser.getUsername())) {
       if (userRepository.findByUsername(updateUserDTO.getUsername()).isPresent()) {
         throw new UsernameAlreadyExistsException(updateUserDTO.getUsername());
       }
       existingUser.setUsername(updateUserDTO.getUsername());
     }
 
-    if (updateUserDTO.getEmail() != null && !updateUserDTO.getEmail()
-        .equals(existingUser.getEmail())) {
+    if (updateUserDTO.getEmail() != null
+        && !updateUserDTO.getEmail().equals(existingUser.getEmail())) {
       if (userRepository.existsByEmail(updateUserDTO.getEmail())) {
         throw new EmailAlreadyInUseException(updateUserDTO.getEmail());
       }
@@ -282,13 +279,15 @@ public class UserServiceImpl extends UserService {
 
     if (usernameOrEmail.contains("@")) {
       // If input looks like an email, find by email
-      return userRepository.findByEmail(usernameOrEmail)
+      return userRepository
+          .findByEmail(usernameOrEmail)
           .map(userMapper::toDto)
           .orElseThrow(
               () -> new UserNotFoundException("No user found with email: " + usernameOrEmail));
     } else {
       // Otherwise find by username
-      return userRepository.findByUsername(usernameOrEmail)
+      return userRepository
+          .findByUsername(usernameOrEmail)
           .map(userMapper::toDto)
           .orElseThrow(
               () -> new UserNotFoundException("Username " + usernameOrEmail + " not found"));
@@ -300,18 +299,22 @@ public class UserServiceImpl extends UserService {
   public void changePassword(String username, ChangePasswordDTO changePasswordDTO) {
     logger.info("Changing password for user: {}", username);
     System.out.println("UserServiceImpl.changePassword - Username: " + username);
-    System.out.println("UserServiceImpl.changePassword - Current Password: " +
-        (changePasswordDTO.getCurrentPassword() != null ? "******" : "null"));
-    System.out.println("UserServiceImpl.changePassword - New Password: " +
-        (changePasswordDTO.getNewPassword() != null ? "******" : "null"));
+    System.out.println(
+        "UserServiceImpl.changePassword - Current Password: "
+            + (changePasswordDTO.getCurrentPassword() != null ? "******" : "null"));
+    System.out.println(
+        "UserServiceImpl.changePassword - New Password: "
+            + (changePasswordDTO.getNewPassword() != null ? "******" : "null"));
 
-    User user = userRepository.findByUsername(username)
-        .orElseThrow(() -> new UserNotFoundException("Username " + username + " not found"));
+    User user =
+        userRepository
+            .findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException("Username " + username + " not found"));
     System.out.println("UserServiceImpl.changePassword - User found: " + user.getId());
 
     // Verify current password
-    boolean passwordMatches = passwordEncoder.matches(changePasswordDTO.getCurrentPassword(),
-        user.getPasswordHash());
+    boolean passwordMatches =
+        passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), user.getPasswordHash());
     System.out.println("UserServiceImpl.changePassword - Password matches: " + passwordMatches);
 
     if (!passwordMatches) {

@@ -2,9 +2,9 @@ package stud.ntnu.no.backend.user.dto;
 
 /**
  * Data Transfer Object for updating a user's information.
- * <p>
- * This class holds the information required to update a user's details, including username, email,
- * first name, last name, active status, and role.
+ *
+ * <p>This class holds the information required to update a user's details, including username,
+ * email, first name, last name, active status, and role.
  */
 public class UpdateUserDTO {
 

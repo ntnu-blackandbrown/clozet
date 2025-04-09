@@ -2,8 +2,8 @@ package stud.ntnu.no.backend.transaction.dto;
 
 /**
  * Request object for updating a transaction.
- * <p>
- * This class holds information required to update a transaction, including status and payment
+ *
+ * <p>This class holds information required to update a transaction, including status and payment
  * method.
  */
 public class UpdateTransactionRequest {
@@ -12,8 +12,7 @@ public class UpdateTransactionRequest {
   private String paymentMethod;
 
   // Constructors
-  public UpdateTransactionRequest() {
-  }
+  public UpdateTransactionRequest() {}
 
   public UpdateTransactionRequest(String status, String paymentMethod) {
     this.status = status;

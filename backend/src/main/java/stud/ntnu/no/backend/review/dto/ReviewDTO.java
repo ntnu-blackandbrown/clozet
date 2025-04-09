@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 
 /**
  * Data Transfer Object for a review.
- * <p>
- * This class holds information about a review, including its ID, comment, rating, creation time,
+ *
+ * <p>This class holds information about a review, including its ID, comment, rating, creation time,
  * reviewee and reviewer details, and transaction ID.
  */
 public class ReviewDTO {

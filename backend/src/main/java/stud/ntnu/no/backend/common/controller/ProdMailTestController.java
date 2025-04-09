@@ -10,17 +10,15 @@ import stud.ntnu.no.backend.common.service.EmailService;
 
 /**
  * Controller for testing email sending in production.
- * <p>
- * Provides an endpoint to send a verification email.
- * </p>
+ *
+ * <p>Provides an endpoint to send a verification email.
  */
 @RestController
 @RequestMapping("/api/prod-test")
 @Profile("prod") // Ensures this controller is active only in the production environment
 public class ProdMailTestController {
 
-  @Autowired
-  private EmailService emailService;
+  @Autowired private EmailService emailService;
 
   /**
    * Sends a verification email to a predefined address.

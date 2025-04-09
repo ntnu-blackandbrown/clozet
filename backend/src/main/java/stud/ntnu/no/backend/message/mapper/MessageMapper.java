@@ -11,15 +11,14 @@ import stud.ntnu.no.backend.message.entity.Message;
 
 /**
  * Mapper for converting between Message entities and DTOs.
- * <p>
- * This class provides methods to convert between Message entities and their corresponding Data
+ *
+ * <p>This class provides methods to convert between Message entities and their corresponding Data
  * Transfer Objects (DTOs).
  */
 @Component
 public class MessageMapper {
 
-  @Autowired
-  private ItemRepository itemRepository;
+  @Autowired private ItemRepository itemRepository;
 
   /**
    * Converts a Message entity to a MessageDTO.
@@ -35,8 +34,7 @@ public class MessageMapper {
         message.getItem() != null ? message.getItem().getId() : null,
         message.getContent(),
         message.getCreatedAt(),
-        message.isRead()
-    );
+        message.isRead());
   }
 
   /**
@@ -51,9 +49,8 @@ public class MessageMapper {
     message.setReceiverId(request.getReceiverId());
     message.setContent(request.getContent());
     message.setRead(false); // Default to false as there's no isRead in the DTO
-    message.setCreatedAt(request.getTimestamp() != null ?
-        request.getTimestamp() :
-        LocalDateTime.now());
+    message.setCreatedAt(
+        request.getTimestamp() != null ? request.getTimestamp() : LocalDateTime.now());
 
     // Item association removed since itemId is not in the DTO anymore
 

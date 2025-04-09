@@ -16,20 +16,19 @@ import stud.ntnu.no.backend.category.repository.CategoryRepository;
 
 /**
  * Implementation of the CategoryService interface for managing category operations.
- * <p>
- * This service handles business logic for category management, including creation, retrieval,
+ *
+ * <p>This service handles business logic for category management, including creation, retrieval,
  * update, and deletion operations. It interacts with the repository layer for database operations
  * and uses a mapper for entity-DTO conversions.
- * </p>
- * <p>
- * Key responsibilities include:
+ *
+ * <p>Key responsibilities include:
+ *
  * <ul>
- *   <li>Managing the lifecycle of category records</li>
- *   <li>Ensuring data integrity and validation</li>
- *   <li>Providing specialized query operations like finding top categories</li>
- *   <li>Handling timestamps for creation and updates</li>
+ *   <li>Managing the lifecycle of category records
+ *   <li>Ensuring data integrity and validation
+ *   <li>Providing specialized query operations like finding top categories
+ *   <li>Handling timestamps for creation and updates
  * </ul>
- * </p>
  */
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -40,13 +39,12 @@ public class CategoryServiceImpl implements CategoryService {
 
   /**
    * Constructor for dependency injection.
-   * <p>
-   * Initializes the service with required dependencies allowing for loose coupling and easier
+   *
+   * <p>Initializes the service with required dependencies allowing for loose coupling and easier
    * testing.
-   * </p>
    *
    * @param categoryRepository Repository for database operations on categories
-   * @param categoryMapper     Mapper for entity-DTO conversions to separate data layers
+   * @param categoryMapper Mapper for entity-DTO conversions to separate data layers
    */
   public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
     this.categoryRepository = categoryRepository;
@@ -55,10 +53,9 @@ public class CategoryServiceImpl implements CategoryService {
 
   /**
    * {@inheritDoc}
-   * <p>
-   * Implementation retrieves all categories from the repository without filtering. Categories are
-   * mapped to DTOs before being returned to the caller.
-   * </p>
+   *
+   * <p>Implementation retrieves all categories from the repository without filtering. Categories
+   * are mapped to DTOs before being returned to the caller.
    */
   @Override
   public List<CategoryDTO> getAllCategories() {
@@ -70,37 +67,37 @@ public class CategoryServiceImpl implements CategoryService {
 
   /**
    * {@inheritDoc}
-   * <p>
-   * Implementation performs a repository lookup by primary key and throws a specific exception if
-   * the category is not found, ensuring clear error messages.
-   * </p>
+   *
+   * <p>Implementation performs a repository lookup by primary key and throws a specific exception
+   * if the category is not found, ensuring clear error messages.
    *
    * @throws CategoryNotFoundException with detailed message when the category is not found
    */
   @Override
   public CategoryDTO getCategory(Long id) {
     logger.info("Fetching category with id: {}", id);
-    return categoryRepository.findById(id)
+    return categoryRepository
+        .findById(id)
         .map(categoryMapper::toDto)
-        .orElseThrow(() -> {
-          logger.warn("Category not found with id: {}", id);
-          return new CategoryNotFoundException("Category not found with id: " + id);
-        });
+        .orElseThrow(
+            () -> {
+              logger.warn("Category not found with id: {}", id);
+              return new CategoryNotFoundException("Category not found with id: " + id);
+            });
   }
 
   /**
    * {@inheritDoc}
-   * <p>
-   * Implementation uses a multi-level fallback approach to find popular categories:
-   * </p>
+   *
+   * <p>Implementation uses a multi-level fallback approach to find popular categories:
+   *
    * <ol>
-   *   <li>First tries to find categories with the most favorites</li>
-   *   <li>If none found, falls back to categories with the most items</li>
-   *   <li>If still none, returns any categories up to 5</li>
+   *   <li>First tries to find categories with the most favorites
+   *   <li>If none found, falls back to categories with the most items
+   *   <li>If still none, returns any categories up to 5
    * </ol>
-   * <p>
-   * Uses Spring's PageRequest for efficient pagination limited to top 5 results.
-   * </p>
+   *
+   * <p>Uses Spring's PageRequest for efficient pagination limited to top 5 results.
    */
   @Override
   @Transactional(readOnly = true)
@@ -128,17 +125,16 @@ public class CategoryServiceImpl implements CategoryService {
 
   /**
    * {@inheritDoc}
-   * <p>
-   * Implementation ensures proper initialization of timestamp fields:
-   * </p>
+   *
+   * <p>Implementation ensures proper initialization of timestamp fields:
+   *
    * <ul>
-   *   <li>Sets creation timestamp to current time</li>
-   *   <li>Sets update timestamp to current time</li>
+   *   <li>Sets creation timestamp to current time
+   *   <li>Sets update timestamp to current time
    * </ul>
-   * <p>
-   * Delegates to the repository for persistence and returns the created
-   * category with its generated ID.
-   * </p>
+   *
+   * <p>Delegates to the repository for persistence and returns the created category with its
+   * generated ID.
    */
   @Override
   @Transactional
@@ -154,13 +150,13 @@ public class CategoryServiceImpl implements CategoryService {
 
   /**
    * {@inheritDoc}
-   * <p>
-   * Implementation uses a selective update approach:
-   * </p>
+   *
+   * <p>Implementation uses a selective update approach:
+   *
    * <ul>
-   *   <li>Only updates fields that are not null in the DTO</li>
-   *   <li>Preserves existing values for fields not specified in the update</li>
-   *   <li>Always updates the updatedAt timestamp to track the latest change</li>
+   *   <li>Only updates fields that are not null in the DTO
+   *   <li>Preserves existing values for fields not specified in the update
+   *   <li>Always updates the updatedAt timestamp to track the latest change
    * </ul>
    *
    * @throws CategoryNotFoundException if the category to update cannot be found
@@ -169,11 +165,14 @@ public class CategoryServiceImpl implements CategoryService {
   @Transactional
   public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
     logger.info("Updating category with id: {}", id);
-    Category existingCategory = categoryRepository.findById(id)
-        .orElseThrow(() -> {
-          logger.warn("Category not found with id: {}", id);
-          return new CategoryNotFoundException("Category not found with id: " + id);
-        });
+    Category existingCategory =
+        categoryRepository
+            .findById(id)
+            .orElseThrow(
+                () -> {
+                  logger.warn("Category not found with id: {}", id);
+                  return new CategoryNotFoundException("Category not found with id: " + id);
+                });
 
     if (categoryDTO.getName() != null) {
       existingCategory.setName(categoryDTO.getName());
@@ -190,18 +189,17 @@ public class CategoryServiceImpl implements CategoryService {
 
   /**
    * {@inheritDoc}
-   * <p>
-   * Implementation performs a pre-deletion check to:
-   * </p>
+   *
+   * <p>Implementation performs a pre-deletion check to:
+   *
    * <ul>
-   *   <li>Verify the category exists before attempting deletion</li>
-   *   <li>Provide a clear error message if the category doesn't exist</li>
+   *   <li>Verify the category exists before attempting deletion
+   *   <li>Provide a clear error message if the category doesn't exist
    * </ul>
-   * <p>
-   * Note: This implementation does not check for related items, which could
-   * lead to database constraint violations if there are items associated with
-   * the category. In production, additional checks should be added.
-   * </p>
+   *
+   * <p>Note: This implementation does not check for related items, which could lead to database
+   * constraint violations if there are items associated with the category. In production,
+   * additional checks should be added.
    *
    * @throws CategoryNotFoundException if the category to delete cannot be found
    */

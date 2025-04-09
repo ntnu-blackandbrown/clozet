@@ -9,11 +9,10 @@ import stud.ntnu.no.backend.user.entity.User;
 
 /**
  * Custom implementation of UserDetails for Spring Security.
- * <p>
- * This class wraps a User entity and provides user details for authentication.
- * </p>
- * <p>
- * .0
+ *
+ * <p>This class wraps a User entity and provides user details for authentication.
+ *
+ * <p>.0
  */
 public class CustomUserDetails implements UserDetails {
 
@@ -105,4 +104,4 @@ public class CustomUserDetails implements UserDetails {
   public User getUser() {
     return user;
   }
-} 
+}

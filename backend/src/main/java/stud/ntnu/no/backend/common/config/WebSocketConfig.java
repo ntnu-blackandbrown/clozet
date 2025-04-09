@@ -8,9 +8,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 /**
  * Configuration class for WebSocket messaging.
- * <p>
- * Enables WebSocket message broker and configures STOMP endpoints.
- * </p>
+ *
+ * <p>Enables WebSocket message broker and configures STOMP endpoints.
  */
 @Configuration
 @EnableWebSocketMessageBroker
@@ -34,8 +33,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
    */
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry.addEndpoint("/ws")
-        .setAllowedOriginPatterns("*")
-        .withSockJS();
+    registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
   }
 }

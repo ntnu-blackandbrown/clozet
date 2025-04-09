@@ -12,11 +12,8 @@ public class CreateFavoriteRequest {
   private Long itemId;
   private boolean active;
 
-  /**
-   * Empty constructor for CreateFavoriteRequest.
-   */
-  public CreateFavoriteRequest() {
-  }
+  /** Empty constructor for CreateFavoriteRequest. */
+  public CreateFavoriteRequest() {}
 
   /**
    * Constructor to create a new CreateFavoriteRequest object.
@@ -94,9 +91,9 @@ public class CreateFavoriteRequest {
       return false;
     }
     CreateFavoriteRequest that = (CreateFavoriteRequest) o;
-    return active == that.active &&
-        Objects.equals(userId, that.userId) &&
-        Objects.equals(itemId, that.itemId);
+    return active == that.active
+        && Objects.equals(userId, that.userId)
+        && Objects.equals(itemId, that.itemId);
   }
 
   @Override
@@ -106,10 +103,14 @@ public class CreateFavoriteRequest {
 
   @Override
   public String toString() {
-    return "CreateFavoriteRequest{" +
-        "userId='" + userId + '\'' +
-        ", itemId=" + itemId +
-        ", active=" + active +
-        '}';
+    return "CreateFavoriteRequest{"
+        + "userId='"
+        + userId
+        + '\''
+        + ", itemId="
+        + itemId
+        + ", active="
+        + active
+        + '}';
   }
 }

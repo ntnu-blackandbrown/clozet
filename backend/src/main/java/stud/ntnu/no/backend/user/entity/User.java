@@ -10,30 +10,25 @@ import java.time.LocalDateTime;
 
 /**
  * Represents a user entity in the system.
- * <p>
- * This entity is mapped to the "users" table in the database and stores comprehensive user
+ *
+ * <p>This entity is mapped to the "users" table in the database and stores comprehensive user
  * information including authentication credentials, personal profile details, account status, and
  * verification data.
- * </p>
- * <p>
- * Users can have various roles that determine their access rights within the application. Each user
- * has a unique username and email address which are used for identification and authentication.
- * </p>
+ *
+ * <p>Users can have various roles that determine their access rights within the application. Each
+ * user has a unique username and email address which are used for identification and
+ * authentication.
  */
 @Entity
 @Table(name = "users")
 public class User {
 
-  /**
-   * The unique identifier for the user.
-   */
+  /** The unique identifier for the user. */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  /**
-   * The unique username chosen by the user. Used for authentication and identification.
-   */
+  /** The unique username chosen by the user. Used for authentication and identification. */
   @Column(unique = true, nullable = false)
   private String username;
 
@@ -44,9 +39,7 @@ public class User {
   @Column(unique = true, nullable = false)
   private String email;
 
-  /**
-   * The hashed password of the user. Raw passwords should never be stored in the database.
-   */
+  /** The hashed password of the user. Raw passwords should never be stored in the database. */
   @Column(name = "password_hash", nullable = false)
   private String passwordHash;
 
@@ -56,24 +49,16 @@ public class User {
    */
   private String role;
 
-  /**
-   * The first name of the user.
-   */
+  /** The first name of the user. */
   private String firstName;
 
-  /**
-   * The last name of the user.
-   */
+  /** The last name of the user. */
   private String lastName;
 
-  /**
-   * The timestamp when the user account was created.
-   */
+  /** The timestamp when the user account was created. */
   private LocalDateTime createdAt;
 
-  /**
-   * The timestamp when the user account was last updated.
-   */
+  /** The timestamp when the user account was last updated. */
   private LocalDateTime updatedAt;
 
   /**
@@ -83,19 +68,13 @@ public class User {
   @Column(nullable = false)
   private boolean isActive;
 
-  /**
-   * Token used for email verification when registering.
-   */
+  /** Token used for email verification when registering. */
   private String verificationToken;
 
-  /**
-   * The expiration time of the verification token.
-   */
+  /** The expiration time of the verification token. */
   private LocalDateTime verificationTokenExpiry;
 
-  /**
-   * URL to the user's profile picture.
-   */
+  /** URL to the user's profile picture. */
   private String profilePictureUrl;
 
   // Getters and setters

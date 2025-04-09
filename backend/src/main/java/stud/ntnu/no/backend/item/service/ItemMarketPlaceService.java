@@ -23,7 +23,8 @@ public class ItemMarketPlaceService {
   private final UserService userService;
 
   @Autowired
-  public ItemMarketPlaceService(ItemRepository itemRepository,
+  public ItemMarketPlaceService(
+      ItemRepository itemRepository,
       ItemMarketPlaceMapper itemMarketPlaceMapper,
       UserService userService) {
     this.itemRepository = itemRepository;

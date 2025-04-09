@@ -20,8 +20,8 @@ import stud.ntnu.no.backend.transaction.repository.TransactionRepository;
 
 /**
  * Implementation of the TransactionService interface.
- * <p>
- * This class provides methods for managing transactions, including CRUD operations.
+ *
+ * <p>This class provides methods for managing transactions, including CRUD operations.
  */
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -36,10 +36,11 @@ public class TransactionServiceImpl implements TransactionService {
    * Constructs a new TransactionServiceImpl with the specified dependencies.
    *
    * @param transactionRepository the TransactionRepository
-   * @param transactionMapper     the TransactionMapper
-   * @param itemRepository        the ItemRepository
+   * @param transactionMapper the TransactionMapper
+   * @param itemRepository the ItemRepository
    */
-  public TransactionServiceImpl(TransactionRepository transactionRepository,
+  public TransactionServiceImpl(
+      TransactionRepository transactionRepository,
       TransactionMapper transactionMapper,
       ItemRepository itemRepository) {
     this.transactionRepository = transactionRepository;
@@ -50,8 +51,7 @@ public class TransactionServiceImpl implements TransactionService {
   @Override
   public List<TransactionDTO> getAllTransactions() {
     logger.info("Retrieving all transactions");
-    return transactionRepository.findAll()
-        .stream()
+    return transactionRepository.findAll().stream()
         .map(transactionMapper::toDTO)
         .collect(Collectors.toList());
   }
@@ -59,8 +59,8 @@ public class TransactionServiceImpl implements TransactionService {
   @Override
   public TransactionDTO getTransactionById(Long id) {
     logger.info("Retrieving transaction with ID: {}", id);
-    Transaction transaction = transactionRepository.findById(id)
-        .orElseThrow(() -> new TransactionNotFoundException(id));
+    Transaction transaction =
+        transactionRepository.findById(id).orElseThrow(() -> new TransactionNotFoundException(id));
     return transactionMapper.toDTO(transaction);
   }
 
@@ -88,8 +88,8 @@ public class TransactionServiceImpl implements TransactionService {
   @Transactional
   public TransactionDTO updateTransaction(Long id, UpdateTransactionRequest dto) {
     logger.info("Updating transaction with ID: {}", id);
-    Transaction transaction = transactionRepository.findById(id)
-        .orElseThrow(() -> new TransactionNotFoundException(id));
+    Transaction transaction =
+        transactionRepository.findById(id).orElseThrow(() -> new TransactionNotFoundException(id));
 
     Transaction updatedTransaction = transactionRepository.save(transaction);
     return transactionMapper.toDTO(updatedTransaction);
@@ -109,8 +109,7 @@ public class TransactionServiceImpl implements TransactionService {
   @Override
   public List<TransactionDTO> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end) {
     logger.info("Finding transactions between {} and {}", start, end);
-    return transactionRepository.findByCreatedAtBetween(start, end)
-        .stream()
+    return transactionRepository.findByCreatedAtBetween(start, end).stream()
         .map(transactionMapper::toDTO)
         .collect(Collectors.toList());
   }
@@ -118,8 +117,7 @@ public class TransactionServiceImpl implements TransactionService {
   @Override
   public List<TransactionDTO> getTransactionsByBuyerId(String buyerId) {
     logger.info("Retrieving transactions for buyerId: {}", buyerId);
-    return transactionRepository.findByBuyerId(buyerId)
-        .stream()
+    return transactionRepository.findByBuyerId(buyerId).stream()
         .map(transactionMapper::toDTO)
         .collect(Collectors.toList());
   }

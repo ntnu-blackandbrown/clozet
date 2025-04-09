@@ -10,11 +10,11 @@ import stud.ntnu.no.backend.user.entity.User;
 
 /**
  * Abstract service class for managing user-related operations.
- * <p>
- * This service provides methods for user management including creation, retrieval, authentication,
- * verification, and profile management. Implementations of this class should handle business logic
- * related to users while communicating with the appropriate repositories and external services.
- * </p>
+ *
+ * <p>This service provides methods for user management including creation, retrieval,
+ * authentication, verification, and profile management. Implementations of this class should handle
+ * business logic related to users while communicating with the appropriate repositories and
+ * external services.
  */
 public abstract class UserService {
 
@@ -31,7 +31,7 @@ public abstract class UserService {
    * @param id the unique identifier of the user
    * @return the UserDTO representing the requested user
    * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException if no user with the given ID
-   *                                                                   exists
+   *     exists
    */
   public abstract UserDTO getUserById(Long id);
 
@@ -41,7 +41,7 @@ public abstract class UserService {
    * @param username the username of the user to retrieve
    * @return the UserDTO representing the requested user
    * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException if no user with the given
-   *                                                                   username exists
+   *     username exists
    */
   public abstract UserDTO getUserByUsername(String username);
 
@@ -51,11 +51,10 @@ public abstract class UserService {
    * @param registerUserDTO the data transfer object containing user registration information
    * @return the UserDTO representing the newly created user
    * @throws stud.ntnu.no.backend.user.exception.UsernameAlreadyExistsException if the username is
-   *                                                                            already taken
-   * @throws stud.ntnu.no.backend.user.exception.EmailAlreadyInUseException     if the email is
-   *                                                                            already in use
-   * @throws stud.ntnu.no.backend.user.exception.UserValidationException        if the user data is
-   *                                                                            invalid
+   *     already taken
+   * @throws stud.ntnu.no.backend.user.exception.EmailAlreadyInUseException if the email is already
+   *     in use
+   * @throws stud.ntnu.no.backend.user.exception.UserValidationException if the user data is invalid
    */
   public abstract UserDTO createUser(RegisterUserDTO registerUserDTO);
 
@@ -65,26 +64,25 @@ public abstract class UserService {
    *
    * @param registerUserDTO the data transfer object containing user registration information
    * @throws stud.ntnu.no.backend.user.exception.UsernameAlreadyExistsException if the username is
-   *                                                                            already taken
-   * @throws stud.ntnu.no.backend.user.exception.EmailAlreadyInUseException     if the email is
-   *                                                                            already in use
-   * @throws stud.ntnu.no.backend.user.exception.UserValidationException        if the user data is
-   *                                                                            invalid
+   *     already taken
+   * @throws stud.ntnu.no.backend.user.exception.EmailAlreadyInUseException if the email is already
+   *     in use
+   * @throws stud.ntnu.no.backend.user.exception.UserValidationException if the user data is invalid
    */
   public abstract void createUserAndSendVerificationEmail(RegisterUserDTO registerUserDTO);
 
   /**
    * Updates an existing user with the given information.
    *
-   * @param id            the unique identifier of the user to update
+   * @param id the unique identifier of the user to update
    * @param updateUserDTO the data transfer object containing updated user information
    * @return the UserDTO representing the updated user
-   * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException          if no user with the
-   *                                                                            given ID exists
+   * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException if no user with the given ID
+   *     exists
    * @throws stud.ntnu.no.backend.user.exception.UsernameAlreadyExistsException if the new username
-   *                                                                            is already taken
-   * @throws stud.ntnu.no.backend.user.exception.EmailAlreadyInUseException     if the new email is
-   *                                                                            already in use
+   *     is already taken
+   * @throws stud.ntnu.no.backend.user.exception.EmailAlreadyInUseException if the new email is
+   *     already in use
    */
   public abstract UserDTO updateUser(Long id, UpdateUserDTO updateUserDTO);
 
@@ -93,7 +91,7 @@ public abstract class UserService {
    *
    * @param id the unique identifier of the user to delete
    * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException if no user with the given ID
-   *                                                                   exists
+   *     exists
    */
   public abstract void deleteUser(Long id);
 
@@ -103,20 +101,19 @@ public abstract class UserService {
    * @param loginDTO the data transfer object containing login credentials
    * @return the UserDTO representing the authenticated user
    * @throws org.springframework.security.authentication.BadCredentialsException if the credentials
-   *                                                                             are invalid
+   *     are invalid
    */
   public abstract UserDTO login(LoginDTO loginDTO);
 
   /**
    * Changes the password of a user.
    *
-   * @param username          the username of the user whose password should be changed
+   * @param username the username of the user whose password should be changed
    * @param changePasswordDTO the data transfer object containing old and new password information
-   * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException           if no user with the
-   *                                                                             given username
-   *                                                                             exists
+   * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException if no user with the given
+   *     username exists
    * @throws org.springframework.security.authentication.BadCredentialsException if the old password
-   *                                                                             is incorrect
+   *     is incorrect
    */
   public abstract void changePassword(String username, ChangePasswordDTO changePasswordDTO);
 
@@ -124,9 +121,9 @@ public abstract class UserService {
    * Retrieves the currently authenticated user.
    *
    * @return the User entity of the currently authenticated user
-   * @throws java.lang.RuntimeException                                if no user is authenticated
+   * @throws java.lang.RuntimeException if no user is authenticated
    * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException if the authenticated user
-   *                                                                   cannot be found
+   *     cannot be found
    */
   public abstract User getCurrentUser();
 }

@@ -12,8 +12,7 @@ public class CreateItemImageDTO {
   private int displayOrder;
 
   // Constructor
-  public CreateItemImageDTO() {
-  }
+  public CreateItemImageDTO() {}
 
   /**
    * Retrieves the item ID.

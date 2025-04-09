@@ -18,15 +18,13 @@ import stud.ntnu.no.backend.user.service.UserService;
 
 /**
  * REST controller for managing user-related operations.
- * <p>
- * This controller provides API endpoints for managing user accounts, including retrieving user
+ *
+ * <p>This controller provides API endpoints for managing user accounts, including retrieving user
  * information, updating user profiles, and deleting user accounts. It handles administrative
  * operations on users and is separate from the authentication and registration processes.
- * </p>
- * <p>
- * All endpoints return appropriate HTTP status codes and structured response data. Many operations
- * may require administrative privileges or ownership of the resource.
- * </p>
+ *
+ * <p>All endpoints return appropriate HTTP status codes and structured response data. Many
+ * operations may require administrative privileges or ownership of the resource.
  */
 @RestController
 @RequestMapping("/api/users")
@@ -34,15 +32,13 @@ public class UserController {
 
   private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-  @Autowired
-  private UserService userService;
+  @Autowired private UserService userService;
 
   /**
    * Retrieves all users in the system.
-   * <p>
-   * This endpoint returns a collection of all user profiles with sensitive information removed. It
-   * is typically restricted to administrators.
-   * </p>
+   *
+   * <p>This endpoint returns a collection of all user profiles with sensitive information removed.
+   * It is typically restricted to administrators.
    *
    * @return a list of UserDTOs with HTTP status 200 (OK)
    */
@@ -54,14 +50,13 @@ public class UserController {
 
   /**
    * Retrieves a specific user by their unique identifier.
-   * <p>
-   * This endpoint attempts to find and return a user that matches the provided ID.
-   * </p>
+   *
+   * <p>This endpoint attempts to find and return a user that matches the provided ID.
    *
    * @param id the unique identifier of the user to retrieve
    * @return the UserDTO with HTTP status 200 (OK)
    * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException if no user with the given ID
-   *                                                                   exists
+   *     exists
    */
   @GetMapping("/{id}")
   public UserDTO getUserById(@PathVariable Long id) {
@@ -71,20 +66,19 @@ public class UserController {
 
   /**
    * Updates an existing user's information.
-   * <p>
-   * This endpoint updates a user record with the provided data. Only specific fields can be
-   * updated, and some fields (like email or username) may require validation to ensure uniqueness.
-   * </p>
    *
-   * @param id            the unique identifier of the user to update
+   * <p>This endpoint updates a user record with the provided data. Only specific fields can be
+   * updated, and some fields (like email or username) may require validation to ensure uniqueness.
+   *
+   * @param id the unique identifier of the user to update
    * @param updateUserDTO the data transfer object containing updated user information
    * @return the updated UserDTO with HTTP status 200 (OK)
-   * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException          if no user with the
-   *                                                                            given ID exists
+   * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException if no user with the given ID
+   *     exists
    * @throws stud.ntnu.no.backend.user.exception.UsernameAlreadyExistsException if the new username
-   *                                                                            is already taken
-   * @throws stud.ntnu.no.backend.user.exception.EmailAlreadyInUseException     if the new email is
-   *                                                                            already in use
+   *     is already taken
+   * @throws stud.ntnu.no.backend.user.exception.EmailAlreadyInUseException if the new email is
+   *     already in use
    */
   @PutMapping("/{id}")
   public UserDTO updateUser(@PathVariable Long id, @RequestBody UpdateUserDTO updateUserDTO) {
@@ -94,15 +88,14 @@ public class UserController {
 
   /**
    * Deletes a user from the system.
-   * <p>
-   * This endpoint removes a user account and potentially all associated data. This operation is
+   *
+   * <p>This endpoint removes a user account and potentially all associated data. This operation is
    * typically irreversible and should be used with caution.
-   * </p>
    *
    * @param id the unique identifier of the user to delete
    * @return a ResponseEntity with HTTP status 204 (No Content) indicating successful deletion
    * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException if no user with the given ID
-   *                                                                   exists
+   *     exists
    */
   @DeleteMapping("/{id}")
   public ResponseEntity<?> deleteUser(@PathVariable Long id) {

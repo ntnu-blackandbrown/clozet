@@ -16,8 +16,8 @@ import stud.ntnu.no.backend.message.repository.MessageRepository;
 
 /**
  * Service for managing conversations.
- * <p>
- * This service provides methods for retrieving and archiving user conversations.
+ *
+ * <p>This service provides methods for retrieving and archiving user conversations.
  */
 @Service
 public class ConversationService {
@@ -32,11 +32,12 @@ public class ConversationService {
    * Constructs a new ConversationService with the specified dependencies.
    *
    * @param messageRepository the MessageRepository
-   * @param messageMapper     the MessageMapper
-   * @param webSocketService  the WebSocketService
+   * @param messageMapper the MessageMapper
+   * @param webSocketService the WebSocketService
    */
   @Autowired
-  public ConversationService(MessageRepository messageRepository,
+  public ConversationService(
+      MessageRepository messageRepository,
       MessageMapper messageMapper,
       WebSocketService webSocketService) {
     this.messageRepository = messageRepository;
@@ -57,10 +58,15 @@ public class ConversationService {
     List<Message> allMessages = messageRepository.findBySenderIdOrReceiverId(userId, userId);
 
     // Group by conversation (senderId + receiverId + itemId)
-    Map<String, List<Message>> conversationGroups = allMessages.stream()
-        .collect(Collectors.groupingBy(message ->
-            generateConversationId(message.getSenderId(), message.getReceiverId(),
-                message.getItem() != null ? message.getItem().getId() : null)));
+    Map<String, List<Message>> conversationGroups =
+        allMessages.stream()
+            .collect(
+                Collectors.groupingBy(
+                    message ->
+                        generateConversationId(
+                            message.getSenderId(),
+                            message.getReceiverId(),
+                            message.getItem() != null ? message.getItem().getId() : null)));
 
     // Convert to ConversationDTOs
     List<ConversationDTO> conversations = new ArrayList<>();
@@ -73,16 +79,16 @@ public class ConversationService {
       Message latestMessage = messages.get(messages.size() - 1);
 
       // Create ConversationDTO
-      ConversationDTO conversation = new ConversationDTO(
-          entry.getKey(),
-          messages.get(0).getSenderId(),
-          messages.get(0).getReceiverId(),
-          messages.get(0).getItem() != null ? messages.get(0).getItem().getId() : null,
-          latestMessage.getContent(),
-          latestMessage.getCreatedAt(),
-          false, // Default to not archived
-          messages.stream().map(messageMapper::toDTO).collect(Collectors.toList())
-      );
+      ConversationDTO conversation =
+          new ConversationDTO(
+              entry.getKey(),
+              messages.get(0).getSenderId(),
+              messages.get(0).getReceiverId(),
+              messages.get(0).getItem() != null ? messages.get(0).getItem().getId() : null,
+              latestMessage.getContent(),
+              latestMessage.getCreatedAt(),
+              false, // Default to not archived
+              messages.stream().map(messageMapper::toDTO).collect(Collectors.toList()));
 
       conversations.add(conversation);
     }
@@ -96,9 +102,9 @@ public class ConversationService {
   /**
    * Generates a conversation ID based on sender, receiver, and item ID.
    *
-   * @param senderId   the sender ID
+   * @param senderId the sender ID
    * @param receiverId the receiver ID
-   * @param itemId     the item ID
+   * @param itemId the item ID
    * @return the conversation ID
    */
   private String generateConversationId(String senderId, String receiverId, Long itemId) {
@@ -112,7 +118,7 @@ public class ConversationService {
    * Archives a conversation for a user.
    *
    * @param conversationId the ID of the conversation
-   * @param userId         the ID of the user
+   * @param userId the ID of the user
    */
   public void archiveConversation(String conversationId, String userId) {
     logger.info("Archiving conversation: {} for user: {}", conversationId, userId);

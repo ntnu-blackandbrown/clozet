@@ -12,8 +12,8 @@ import stud.ntnu.no.backend.item.entity.Item;
 
 /**
  * Entity representing a transaction.
- * <p>
- * This class is mapped to the "transactions" table in the database and holds information about a
+ *
+ * <p>This class is mapped to the "transactions" table in the database and holds information about a
  * transaction, including its ID, item, buyer ID, seller ID, amount, status, payment method, and
  * timestamps.
  */
@@ -38,11 +38,10 @@ public class Transaction {
   private LocalDateTime updatedAt;
 
   // Constructors
-  public Transaction() {
-  }
+  public Transaction() {}
 
-  public Transaction(String buyerId, String sellerId, double amount, String status,
-      String paymentMethod) {
+  public Transaction(
+      String buyerId, String sellerId, double amount, String status, String paymentMethod) {
     this.buyerId = buyerId;
     this.sellerId = sellerId;
     this.amount = amount;

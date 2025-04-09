@@ -2,8 +2,8 @@ package stud.ntnu.no.backend.shippingoption.dto;
 
 /**
  * Data Transfer Object for creating a shipping option.
- * <p>
- * This class holds information required to create a new shipping option, including its name,
+ *
+ * <p>This class holds information required to create a new shipping option, including its name,
  * description, estimated delivery days, price, and tracking status.
  */
 public class CreateShippingOptionDTO {

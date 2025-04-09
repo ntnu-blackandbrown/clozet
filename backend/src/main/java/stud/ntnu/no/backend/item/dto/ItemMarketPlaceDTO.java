@@ -1,8 +1,6 @@
 package stud.ntnu.no.backend.item.dto;
 
-/**
- * DTO for displaying marketplace item information.
- */
+/** DTO for displaying marketplace item information. */
 public class ItemMarketPlaceDTO {
 
   private Long id;
@@ -15,12 +13,17 @@ public class ItemMarketPlaceDTO {
   private boolean isWishlisted;
 
   // Default constructor
-  public ItemMarketPlaceDTO() {
-  }
+  public ItemMarketPlaceDTO() {}
 
   // Full constructor
-  public ItemMarketPlaceDTO(Long id, String title, double price, String category,
-      String image, String location, boolean isVippsPaymentEnabled,
+  public ItemMarketPlaceDTO(
+      Long id,
+      String title,
+      double price,
+      String category,
+      String image,
+      String location,
+      boolean isVippsPaymentEnabled,
       boolean isWishlisted) {
     this.id = id;
     this.title = title;

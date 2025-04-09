@@ -12,19 +12,16 @@ public class ItemImageDTO {
   private boolean isPrimary;
   private int displayOrder;
 
-  /**
-   * Default constructor
-   */
-  public ItemImageDTO() {
-  }
+  /** Default constructor */
+  public ItemImageDTO() {}
 
   /**
    * Constructor with fields
    *
-   * @param id           The ID of the image
-   * @param itemId       The ID of the item
-   * @param imageUrl     The URL of the image
-   * @param isPrimary    The primary status of the image
+   * @param id The ID of the image
+   * @param itemId The ID of the item
+   * @param imageUrl The URL of the image
+   * @param isPrimary The primary status of the image
    * @param displayOrder The display order of the image
    */
   public ItemImageDTO(Long id, Long itemId, String imageUrl, boolean isPrimary, int displayOrder) {

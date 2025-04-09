@@ -2,8 +2,8 @@ package stud.ntnu.no.backend.location.dto;
 
 /**
  * Represents a Data Transfer Object for creating a location.
- * <p>
- * This class holds the necessary information to create a new location, including city, region,
+ *
+ * <p>This class holds the necessary information to create a new location, including city, region,
  * latitude, and longitude.
  */
 public class CreateLocationDTO {

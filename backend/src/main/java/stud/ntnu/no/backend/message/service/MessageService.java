@@ -7,8 +7,8 @@ import stud.ntnu.no.backend.message.dto.UpdateMessageRequest;
 
 /**
  * Service interface for managing messages.
- * <p>
- * This interface defines methods for CRUD operations on messages.
+ *
+ * <p>This interface defines methods for CRUD operations on messages.
  */
 public interface MessageService {
 
@@ -38,7 +38,7 @@ public interface MessageService {
   /**
    * Updates an existing message.
    *
-   * @param id      the ID of the message to update
+   * @param id the ID of the message to update
    * @param request the UpdateMessageRequest with updated information
    * @return the updated MessageDTO
    */

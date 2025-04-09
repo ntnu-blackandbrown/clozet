@@ -12,8 +12,8 @@ import stud.ntnu.no.backend.location.entity.Location;
 
 /**
  * Mapper for converting between Location entities and DTOs.
- * <p>
- * This interface uses MapStruct to generate the implementation.
+ *
+ * <p>This interface uses MapStruct to generate the implementation.
  */
 @Mapper(componentModel = "spring")
 public interface LocationMapper {
@@ -47,7 +47,7 @@ public interface LocationMapper {
   /**
    * Updates a Location entity from a CreateLocationDTO.
    *
-   * @param dto      the CreateLocationDTO
+   * @param dto the CreateLocationDTO
    * @param location the Location entity to update
    */
   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

@@ -9,9 +9,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * Configuration class for email settings.
- * <p>
- * Configures the JavaMailSender bean and provides email-related properties.
- * </p>
+ *
+ * <p>Configures the JavaMailSender bean and provides email-related properties.
  */
 @Configuration
 public class EmailConfig {
@@ -103,4 +102,4 @@ public class EmailConfig {
   public String getBaseUrl() {
     return baseUrl;
   }
-} 
+}

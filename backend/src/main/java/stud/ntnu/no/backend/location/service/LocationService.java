@@ -6,8 +6,8 @@ import stud.ntnu.no.backend.location.dto.LocationDTO;
 
 /**
  * Service interface for managing locations.
- * <p>
- * This interface defines methods for CRUD operations on locations.
+ *
+ * <p>This interface defines methods for CRUD operations on locations.
  */
 public interface LocationService {
 
@@ -37,7 +37,7 @@ public interface LocationService {
   /**
    * Updates an existing location.
    *
-   * @param id          the ID of the location to update
+   * @param id the ID of the location to update
    * @param locationDTO the CreateLocationDTO with updated information
    * @return the updated LocationDTO
    */

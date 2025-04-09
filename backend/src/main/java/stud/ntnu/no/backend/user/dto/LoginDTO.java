@@ -2,8 +2,8 @@ package stud.ntnu.no.backend.user.dto;
 
 /**
  * Data Transfer Object for user login.
- * <p>
- * This class holds the username or email and password required for user login.
+ *
+ * <p>This class holds the username or email and password required for user login.
  */
 public class LoginDTO {
 

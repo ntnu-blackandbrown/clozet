@@ -20,7 +20,7 @@ public interface HistoryRepository extends JpaRepository<History, Long> {
   /**
    * Finds the active history entries for a user, ordered by the viewed date in descending order.
    *
-   * @param user   the user
+   * @param user the user
    * @param active the active status
    * @return the list of active history entries
    */

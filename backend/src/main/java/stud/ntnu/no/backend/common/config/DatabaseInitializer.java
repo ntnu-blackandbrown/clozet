@@ -45,44 +45,31 @@ public class DatabaseInitializer {
 
   private static final Logger logger = LoggerFactory.getLogger(DatabaseInitializer.class);
 
-  @Autowired
-  private PasswordResetTokenRepository passwordResetTokenRepository;
+  @Autowired private PasswordResetTokenRepository passwordResetTokenRepository;
 
-  @Autowired
-  private VerificationTokenRepository verificationTokenRepository;
+  @Autowired private VerificationTokenRepository verificationTokenRepository;
 
-  @Autowired
-  private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-  @Autowired
-  private ItemRepository itemRepository;
+  @Autowired private ItemRepository itemRepository;
 
-  @Autowired
-  private ItemImageRepository itemImageRepository;
+  @Autowired private ItemImageRepository itemImageRepository;
 
-  @Autowired
-  private CategoryRepository categoryRepository;
+  @Autowired private CategoryRepository categoryRepository;
 
-  @Autowired
-  private LocationRepository locationRepository;
+  @Autowired private LocationRepository locationRepository;
 
-  @Autowired
-  private ShippingOptionRepository shippingOptionRepository;
+  @Autowired private ShippingOptionRepository shippingOptionRepository;
 
-  @Autowired
-  private FavoriteRepository favoriteRepository;
+  @Autowired private FavoriteRepository favoriteRepository;
 
-  @Autowired
-  private MessageRepository messageRepository;
+  @Autowired private MessageRepository messageRepository;
 
-  @Autowired
-  private TransactionRepository transactionRepository;
+  @Autowired private TransactionRepository transactionRepository;
 
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+  @Autowired private PasswordEncoder passwordEncoder;
 
-  @Autowired
-  private MessageService messageService;
+  @Autowired private MessageService messageService;
 
   @Bean
   @Transactional
@@ -116,8 +103,8 @@ public class DatabaseInitializer {
         // Create items for each seller (with different categories)
         Map<User, List<Item>> userItems = new HashMap<>();
         for (User seller : allSellers) {
-          List<Item> sellerItems = createItemsForUser(seller, 10, categories, locations,
-              shippingOptions);
+          List<Item> sellerItems =
+              createItemsForUser(seller, 10, categories, locations, shippingOptions);
           userItems.put(seller, sellerItems);
         }
 
@@ -241,10 +228,21 @@ public class DatabaseInitializer {
     logger.info("Creating {} additional users", count);
     List<User> additionalUsers = new ArrayList<>();
 
-    String[] firstNames = {"Emma", "Noah", "Olivia", "Liam", "Ava", "William", "Sophia", "James",
-        "Isabella", "Oliver"};
-    String[] lastNames = {"Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller",
-        "Wilson", "Moore", "Taylor"};
+    String[] firstNames = {
+      "Emma", "Noah", "Olivia", "Liam", "Ava", "William", "Sophia", "James", "Isabella", "Oliver"
+    };
+    String[] lastNames = {
+      "Smith",
+      "Johnson",
+      "Williams",
+      "Jones",
+      "Brown",
+      "Davis",
+      "Miller",
+      "Wilson",
+      "Moore",
+      "Taylor"
+    };
 
     for (int i = 0; i < count; i++) {
       String firstName = firstNames[i % firstNames.length];
@@ -315,50 +313,56 @@ public class DatabaseInitializer {
     categories.put("accessories", accessoriesCategory);
 
     // Create men's subcategories
-    createSubcategory("Men's Tops", "T-shirts, shirts and other tops for men", mensCategory,
-        categories);
-    createSubcategory("Men's Pants", "Jeans, trousers and other bottoms for men", mensCategory,
-        categories);
-    createSubcategory("Men's Jackets", "Jackets, coats and outerwear for men", mensCategory,
-        categories);
+    createSubcategory(
+        "Men's Tops", "T-shirts, shirts and other tops for men", mensCategory, categories);
+    createSubcategory(
+        "Men's Pants", "Jeans, trousers and other bottoms for men", mensCategory, categories);
+    createSubcategory(
+        "Men's Jackets", "Jackets, coats and outerwear for men", mensCategory, categories);
     createSubcategory("Men's Shoes", "Footwear for men", mensCategory, categories);
-    createSubcategory("Men's Formal Wear", "Suits and formal attire for men", mensCategory,
-        categories);
+    createSubcategory(
+        "Men's Formal Wear", "Suits and formal attire for men", mensCategory, categories);
 
     // Create women's subcategories
-    createSubcategory("Women's Tops", "T-shirts, blouses and other tops for women", womensCategory,
-        categories);
-    createSubcategory("Women's Pants", "Jeans, trousers and other bottoms for women",
-        womensCategory, categories);
-    createSubcategory("Women's Dresses", "Dresses and skirts for women", womensCategory,
-        categories);
-    createSubcategory("Women's Jackets", "Jackets, coats and outerwear for women", womensCategory,
-        categories);
+    createSubcategory(
+        "Women's Tops", "T-shirts, blouses and other tops for women", womensCategory, categories);
+    createSubcategory(
+        "Women's Pants", "Jeans, trousers and other bottoms for women", womensCategory, categories);
+    createSubcategory(
+        "Women's Dresses", "Dresses and skirts for women", womensCategory, categories);
+    createSubcategory(
+        "Women's Jackets", "Jackets, coats and outerwear for women", womensCategory, categories);
     createSubcategory("Women's Shoes", "Footwear for women", womensCategory, categories);
 
     // Create kids subcategories
     createSubcategory("Boys' Clothing", "Clothing for boys", kidsCategory, categories);
     createSubcategory("Girls' Clothing", "Clothing for girls", kidsCategory, categories);
-    createSubcategory("Infant & Toddler", "Clothing for infants and toddlers", kidsCategory,
-        categories);
+    createSubcategory(
+        "Infant & Toddler", "Clothing for infants and toddlers", kidsCategory, categories);
 
     // Create accessories subcategories
-    createSubcategory("Bags & Purses", "Bags, purses and backpacks", accessoriesCategory,
+    createSubcategory(
+        "Bags & Purses", "Bags, purses and backpacks", accessoriesCategory, categories);
+    createSubcategory(
+        "Jewelry",
+        "Necklaces, bracelets, rings and other jewelry",
+        accessoriesCategory,
         categories);
-    createSubcategory("Jewelry", "Necklaces, bracelets, rings and other jewelry",
-        accessoriesCategory, categories);
-    createSubcategory("Hats & Caps", "Headwear including hats, caps and beanies",
-        accessoriesCategory, categories);
-    createSubcategory("Scarves & Gloves", "Scarves, gloves and mittens", accessoriesCategory,
+    createSubcategory(
+        "Hats & Caps",
+        "Headwear including hats, caps and beanies",
+        accessoriesCategory,
         categories);
+    createSubcategory(
+        "Scarves & Gloves", "Scarves, gloves and mittens", accessoriesCategory, categories);
     createSubcategory("Belts", "Fashion belts for all", accessoriesCategory, categories);
 
     logger.info("Created {} categories", categories.size());
     return categories;
   }
 
-  private void createSubcategory(String name, String description, Category parent,
-      Map<String, Category> categories) {
+  private void createSubcategory(
+      String name, String description, Category parent, Map<String, Category> categories) {
     Category subcategory = new Category();
     subcategory.setName(name);
     subcategory.setDescription(description);
@@ -390,8 +394,8 @@ public class DatabaseInitializer {
     return locations;
   }
 
-  private void createAndAddLocation(List<Location> locations, String city, String region,
-      double latitude, double longitude) {
+  private void createAndAddLocation(
+      List<Location> locations, String city, String region, double latitude, double longitude) {
     Location location = new Location();
     location.setCity(city);
     location.setRegion(region);
@@ -443,107 +447,219 @@ public class DatabaseInitializer {
   }
 
   @Transactional
-  protected List<Item> createItemsForUser(User seller, int count, Map<String, Category> categories,
-      List<Location> locations, List<ShippingOption> shippingOptions) {
+  protected List<Item> createItemsForUser(
+      User seller,
+      int count,
+      Map<String, Category> categories,
+      List<Location> locations,
+      List<ShippingOption> shippingOptions) {
     logger.info("Creating {} items for user {}", count, seller.getUsername());
     List<Item> createdItems = new ArrayList<>();
     Random random = new Random();
 
     // Define clothing item properties
     String[] conditions = {"New", "Used - like new", "Used - good", "Used - fair"};
-    String[] brands = {"H&M", "Zara", "Nike", "Adidas", "Levi's", "Gucci", "Prada",
-        "The North Face",
-        "Patagonia", "Ralph Lauren", "Tommy Hilfiger", "Mango", "Uniqlo", "Louis Vuitton"};
-    String[] colors = {"Black", "White", "Red", "Blue", "Green", "Yellow", "Purple", "Gray",
-        "Brown", "Pink", "Orange", "Navy", "Maroon", "Teal", "Lavender", "Beige"};
-    String[] sizes = {"XS", "S", "M", "L", "XL", "XXL", "36", "38", "40", "42", "44", "6", "8",
-        "10", "12"};
+    String[] brands = {
+      "H&M",
+      "Zara",
+      "Nike",
+      "Adidas",
+      "Levi's",
+      "Gucci",
+      "Prada",
+      "The North Face",
+      "Patagonia",
+      "Ralph Lauren",
+      "Tommy Hilfiger",
+      "Mango",
+      "Uniqlo",
+      "Louis Vuitton"
+    };
+    String[] colors = {
+      "Black",
+      "White",
+      "Red",
+      "Blue",
+      "Green",
+      "Yellow",
+      "Purple",
+      "Gray",
+      "Brown",
+      "Pink",
+      "Orange",
+      "Navy",
+      "Maroon",
+      "Teal",
+      "Lavender",
+      "Beige"
+    };
+    String[] sizes = {
+      "XS", "S", "M", "L", "XL", "XXL", "36", "38", "40", "42", "44", "6", "8", "10", "12"
+    };
 
     // Realistic clothing titles and descriptions
     String[][] clothingItems = {
-        // Men's clothing items
-        {"Men's Classic T-Shirt", "Comfortable everyday t-shirt",
-            "This classic t-shirt is made of 100% cotton, perfect for any casual outfit. Breathable and durable fabric."},
-        {"Men's Slim Fit Jeans", "Stylish slim fit denim",
-            "These slim fit jeans offer the perfect balance of style and comfort. Made with premium denim with a touch of stretch."},
-        {"Men's Wool Sweater", "Warm winter sweater",
-            "This luxury wool sweater will keep you warm during the coldest days. Features a classic design that never goes out of style."},
-        {"Men's Leather Jacket", "Genuine leather biker jacket",
-            "Timeless leather jacket made from genuine leather. Features multiple pockets and adjustable belt at the waist."},
-        {"Men's Formal Suit", "Classic business suit",
-            "Professional suit perfect for business meetings and formal events. Tailored fit with premium fabric."},
-        {"Men's Winter Parka", "Waterproof winter coat",
-            "Stay warm and dry with this insulated parka. Features waterproof exterior and soft inner lining."},
-        {"Men's Running Shoes", "Lightweight athletic shoes",
-            "Designed for maximum performance, these lightweight running shoes feature enhanced cushioning and breathable mesh."},
-        {"Men's Button-Up Shirt", "Casual oxford shirt",
-            "Versatile button-up shirt that can be dressed up or down. Made from soft, breathable cotton."},
+      // Men's clothing items
+      {
+        "Men's Classic T-Shirt",
+        "Comfortable everyday t-shirt",
+        "This classic t-shirt is made of 100% cotton, perfect for any casual outfit. Breathable and durable fabric."
+      },
+      {
+        "Men's Slim Fit Jeans",
+        "Stylish slim fit denim",
+        "These slim fit jeans offer the perfect balance of style and comfort. Made with premium denim with a touch of stretch."
+      },
+      {
+        "Men's Wool Sweater",
+        "Warm winter sweater",
+        "This luxury wool sweater will keep you warm during the coldest days. Features a classic design that never goes out of style."
+      },
+      {
+        "Men's Leather Jacket",
+        "Genuine leather biker jacket",
+        "Timeless leather jacket made from genuine leather. Features multiple pockets and adjustable belt at the waist."
+      },
+      {
+        "Men's Formal Suit",
+        "Classic business suit",
+        "Professional suit perfect for business meetings and formal events. Tailored fit with premium fabric."
+      },
+      {
+        "Men's Winter Parka",
+        "Waterproof winter coat",
+        "Stay warm and dry with this insulated parka. Features waterproof exterior and soft inner lining."
+      },
+      {
+        "Men's Running Shoes",
+        "Lightweight athletic shoes",
+        "Designed for maximum performance, these lightweight running shoes feature enhanced cushioning and breathable mesh."
+      },
+      {
+        "Men's Button-Up Shirt",
+        "Casual oxford shirt",
+        "Versatile button-up shirt that can be dressed up or down. Made from soft, breathable cotton."
+      },
 
-        // Women's clothing items
-        {"Women's Blouse", "Elegant silk blouse",
-            "Elegant silk blouse with a flattering cut. Perfect for office wear or evening outings."},
-        {"Women's Skinny Jeans", "High-waisted skinny jeans",
-            "These versatile skinny jeans feature a high waist and flattering fit. Stretchy denim ensures all-day comfort."},
-        {"Women's Summer Dress", "Floral midi dress",
-            "Beautiful floral print dress with adjustable straps. Light and airy fabric, perfect for warm summer days."},
-        {"Women's Wool Coat", "Classic winter coat",
-            "Elegant wool coat with a timeless design. Features a belted waist and collar that can be worn up or down."},
-        {"Women's Cardigan", "Soft knit cardigan",
-            "Cozy and versatile cardigan that pairs well with any outfit. Features soft knit fabric and button closure."},
-        {"Women's High Heels", "Classic stiletto heels",
-            "Elegant stiletto heels that add a touch of sophistication to any outfit. Features cushioned insole for comfort."},
-        {"Women's Leather Boots", "Knee-high leather boots",
-            "These stylish knee-high boots are made of genuine leather with a comfortable block heel. Perfect for fall and winter."},
-        {"Women's Activewear Set", "Matching yoga set",
-            "Comfortable and stylish activewear set including leggings and sports bra. Moisture-wicking fabric for maximum comfort."},
+      // Women's clothing items
+      {
+        "Women's Blouse",
+        "Elegant silk blouse",
+        "Elegant silk blouse with a flattering cut. Perfect for office wear or evening outings."
+      },
+      {
+        "Women's Skinny Jeans",
+        "High-waisted skinny jeans",
+        "These versatile skinny jeans feature a high waist and flattering fit. Stretchy denim ensures all-day comfort."
+      },
+      {
+        "Women's Summer Dress",
+        "Floral midi dress",
+        "Beautiful floral print dress with adjustable straps. Light and airy fabric, perfect for warm summer days."
+      },
+      {
+        "Women's Wool Coat",
+        "Classic winter coat",
+        "Elegant wool coat with a timeless design. Features a belted waist and collar that can be worn up or down."
+      },
+      {
+        "Women's Cardigan",
+        "Soft knit cardigan",
+        "Cozy and versatile cardigan that pairs well with any outfit. Features soft knit fabric and button closure."
+      },
+      {
+        "Women's High Heels",
+        "Classic stiletto heels",
+        "Elegant stiletto heels that add a touch of sophistication to any outfit. Features cushioned insole for comfort."
+      },
+      {
+        "Women's Leather Boots",
+        "Knee-high leather boots",
+        "These stylish knee-high boots are made of genuine leather with a comfortable block heel. Perfect for fall and winter."
+      },
+      {
+        "Women's Activewear Set",
+        "Matching yoga set",
+        "Comfortable and stylish activewear set including leggings and sports bra. Moisture-wicking fabric for maximum comfort."
+      },
 
-        // Accessories
-        {"Designer Handbag", "Luxury leather handbag",
-            "This designer handbag combines elegance with functionality. Features multiple compartments and adjustable shoulder strap."},
-        {"Silver Necklace", "Handcrafted pendant",
-            "Beautiful handcrafted silver necklace with unique pendant design. Adjustable chain length."},
-        {"Leather Belt", "Classic leather belt",
-            "Timeless leather belt with classic buckle. Made from genuine leather that will last for years."},
-        {"Winter Scarf", "Soft wool blend scarf",
-            "Stay warm with this soft wool blend scarf. Features a classic pattern that complements any winter outfit."},
-        {"Baseball Cap", "Adjustable cotton cap",
-            "Casual baseball cap perfect for sunny days. Features adjustable strap for perfect fit."},
-        {"Leather Wallet", "Compact bifold wallet",
-            "Sleek leather wallet with multiple card slots and bill compartment. Compact design fits comfortably in any pocket."},
+      // Accessories
+      {
+        "Designer Handbag",
+        "Luxury leather handbag",
+        "This designer handbag combines elegance with functionality. Features multiple compartments and adjustable shoulder strap."
+      },
+      {
+        "Silver Necklace",
+        "Handcrafted pendant",
+        "Beautiful handcrafted silver necklace with unique pendant design. Adjustable chain length."
+      },
+      {
+        "Leather Belt",
+        "Classic leather belt",
+        "Timeless leather belt with classic buckle. Made from genuine leather that will last for years."
+      },
+      {
+        "Winter Scarf",
+        "Soft wool blend scarf",
+        "Stay warm with this soft wool blend scarf. Features a classic pattern that complements any winter outfit."
+      },
+      {
+        "Baseball Cap",
+        "Adjustable cotton cap",
+        "Casual baseball cap perfect for sunny days. Features adjustable strap for perfect fit."
+      },
+      {
+        "Leather Wallet",
+        "Compact bifold wallet",
+        "Sleek leather wallet with multiple card slots and bill compartment. Compact design fits comfortably in any pocket."
+      },
 
-        // Kids' clothing
-        {"Boys' T-Shirt Set", "3-pack of graphic tees",
-            "Colorful set of three t-shirts with fun graphic prints. Made from soft cotton for all-day comfort."},
-        {"Girls' Summer Dress", "Colorful cotton dress",
-            "Adorable summer dress with playful pattern. Lightweight and comfortable for active kids."},
-        {"Kid's Winter Jacket", "Warm padded jacket",
-            "Keep your little one warm with this insulated winter jacket. Features hood and easy zip closure."},
-        {"Toddler Shoes", "First walking shoes",
-            "Supportive shoes designed for new walkers. Features flexible sole and secure closure."},
+      // Kids' clothing
+      {
+        "Boys' T-Shirt Set",
+        "3-pack of graphic tees",
+        "Colorful set of three t-shirts with fun graphic prints. Made from soft cotton for all-day comfort."
+      },
+      {
+        "Girls' Summer Dress",
+        "Colorful cotton dress",
+        "Adorable summer dress with playful pattern. Lightweight and comfortable for active kids."
+      },
+      {
+        "Kid's Winter Jacket",
+        "Warm padded jacket",
+        "Keep your little one warm with this insulated winter jacket. Features hood and easy zip closure."
+      },
+      {
+        "Toddler Shoes",
+        "First walking shoes",
+        "Supportive shoes designed for new walkers. Features flexible sole and secure closure."
+      },
     };
 
     // Unsplash image URLs for clothing items (fashion/apparel categories)
     String[] imageUrls = {
-        "https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=1000",
-        "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=1000",
-        "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?q=80&w=1000",
-        "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=1000",
-        "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=1000",
-        "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?q=80&w=1000",
-        "https://images.unsplash.com/photo-1556306535-0f09a537f0a3?q=80&w=1000",
-        "https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=1000",
-        "https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?q=80&w=1000",
-        "https://images.unsplash.com/photo-1505022610485-0249ba5b3675?q=80&w=1000",
-        "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1000",
-        "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1000",
-        "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?q=80&w=1000",
-        "https://images.unsplash.com/photo-1591369822096-ffd140ec948f?q=80&w=1000",
-        "https://images.unsplash.com/photo-1544441893-675973e31985?q=80&w=1000",
-        "https://images.unsplash.com/photo-1588117260148-b47818741c74?q=80&w=1000",
-        "https://images.unsplash.com/photo-1613461920867-9ea115fee900?q=80&w=1000",
-        "https://images.unsplash.com/photo-1613461920867-9ea115fee900?q=80&w=1000",
-        "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?q=80&w=1000",
-        "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?q=80&w=1000",
+      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=1000",
+      "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=1000",
+      "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?q=80&w=1000",
+      "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=1000",
+      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=1000",
+      "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?q=80&w=1000",
+      "https://images.unsplash.com/photo-1556306535-0f09a537f0a3?q=80&w=1000",
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=1000",
+      "https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?q=80&w=1000",
+      "https://images.unsplash.com/photo-1505022610485-0249ba5b3675?q=80&w=1000",
+      "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1000",
+      "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1000",
+      "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?q=80&w=1000",
+      "https://images.unsplash.com/photo-1591369822096-ffd140ec948f?q=80&w=1000",
+      "https://images.unsplash.com/photo-1544441893-675973e31985?q=80&w=1000",
+      "https://images.unsplash.com/photo-1588117260148-b47818741c74?q=80&w=1000",
+      "https://images.unsplash.com/photo-1613461920867-9ea115fee900?q=80&w=1000",
+      "https://images.unsplash.com/photo-1613461920867-9ea115fee900?q=80&w=1000",
+      "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?q=80&w=1000",
+      "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?q=80&w=1000",
     };
 
     // Associate category keys with appropriate items for more realistic data
@@ -581,8 +697,8 @@ public class DatabaseInitializer {
 
       // Try to match appropriate items to categories
       int itemIndex;
-      if (categoryItemIndices.containsKey(categoryKey) && !categoryItemIndices.get(categoryKey)
-          .isEmpty()) {
+      if (categoryItemIndices.containsKey(categoryKey)
+          && !categoryItemIndices.get(categoryKey).isEmpty()) {
         List<Integer> indices = categoryItemIndices.get(categoryKey);
         itemIndex = indices.get(random.nextInt(indices.size()));
       } else {
@@ -598,9 +714,13 @@ public class DatabaseInitializer {
       item.setTitle(clothingItems[itemIndex][0] + " - " + colors[random.nextInt(colors.length)]);
       item.setShortDescription(clothingItems[itemIndex][1]);
       item.setLongDescription(
-          clothingItems[itemIndex][2] + " Size: " + sizes[random.nextInt(sizes.length)] +
-              ". Color: " + colors[random.nextInt(colors.length)] +
-              ". Brand: " + brands[random.nextInt(brands.length)]);
+          clothingItems[itemIndex][2]
+              + " Size: "
+              + sizes[random.nextInt(sizes.length)]
+              + ". Color: "
+              + colors[random.nextInt(colors.length)]
+              + ". Brand: "
+              + brands[random.nextInt(brands.length)]);
       item.setPrice(50.0 + random.nextInt(4500) / 10.0); // Price between 50 and 500 with decimal
       item.setCategory(category);
       item.setSeller(seller);
@@ -620,8 +740,8 @@ public class DatabaseInitializer {
       item.setAvailable(true);
       item.setVippsPaymentEnabled(random.nextBoolean());
 
-      LocalDateTime createdTime = LocalDateTime.now()
-          .minusDays(random.nextInt(60)); // Items created within last 60 days
+      LocalDateTime createdTime =
+          LocalDateTime.now().minusDays(random.nextInt(60)); // Items created within last 60 days
       item.setCreatedAt(createdTime);
       item.setUpdatedAt(createdTime);
 
@@ -678,49 +798,49 @@ public class DatabaseInitializer {
   }
 
   @Transactional
-  protected void createConversations(Map<User, List<Item>> userItems, List<User> sellers,
-      User buyer) {
+  protected void createConversations(
+      Map<User, List<Item>> userItems, List<User> sellers, User buyer) {
     logger.info("Creating conversations between sellers and buyer");
     Random random = new Random();
 
     // Create conversation starters and responses
     String[] inquiries = {
-        "Hi! I'm interested in this item. Is it still available?",
-        "Hello, do you offer any discount if I buy this item?",
-        "Hi there! Could you provide more details about the size and fit?",
-        "Is the color in the photos accurate? It looks a bit different on my screen.",
-        "Hi, I'm wondering if you'd consider a trade for a similar item?",
-        "Hello! Can I pick this up locally to avoid shipping costs?",
-        "I really like this! Would you accept payment through Vipps?",
-        "Hi, do you know how long shipping would take to Bergen?",
-        "Hello! Is this item new or has it been worn before?",
-        "I'm interested in buying this as a gift. Do you offer gift wrapping?"
+      "Hi! I'm interested in this item. Is it still available?",
+      "Hello, do you offer any discount if I buy this item?",
+      "Hi there! Could you provide more details about the size and fit?",
+      "Is the color in the photos accurate? It looks a bit different on my screen.",
+      "Hi, I'm wondering if you'd consider a trade for a similar item?",
+      "Hello! Can I pick this up locally to avoid shipping costs?",
+      "I really like this! Would you accept payment through Vipps?",
+      "Hi, do you know how long shipping would take to Bergen?",
+      "Hello! Is this item new or has it been worn before?",
+      "I'm interested in buying this as a gift. Do you offer gift wrapping?"
     };
 
     String[] responses = {
-        "Hi! Yes, it's still available. Let me know if you're interested in purchasing.",
-        "Hello! Thanks for your interest. I might consider a small discount depending on the item.",
-        "The item fits true to size. I'm normally a %s and it fits me perfectly.",
-        "The color is actually very close to what's shown in the photos. It's a nice %s shade.",
-        "I'm not really looking for trades at the moment, but thank you for the offer!",
-        "Yes, local pickup is definitely an option! I'm located in %s area.",
-        "Yes, I accept Vipps payments! It's actually my preferred payment method.",
-        "Shipping to Bergen usually takes about 2-3 business days with the current provider.",
-        "As mentioned in the description, the condition is %s. Please let me know if you have other questions!",
-        "I don't offer gift wrapping, but the item will be carefully packaged for shipping."
+      "Hi! Yes, it's still available. Let me know if you're interested in purchasing.",
+      "Hello! Thanks for your interest. I might consider a small discount depending on the item.",
+      "The item fits true to size. I'm normally a %s and it fits me perfectly.",
+      "The color is actually very close to what's shown in the photos. It's a nice %s shade.",
+      "I'm not really looking for trades at the moment, but thank you for the offer!",
+      "Yes, local pickup is definitely an option! I'm located in %s area.",
+      "Yes, I accept Vipps payments! It's actually my preferred payment method.",
+      "Shipping to Bergen usually takes about 2-3 business days with the current provider.",
+      "As mentioned in the description, the condition is %s. Please let me know if you have other questions!",
+      "I don't offer gift wrapping, but the item will be carefully packaged for shipping."
     };
 
     String[] followups = {
-        "Great! I'd like to buy it. How do we proceed?",
-        "Perfect! Could we agree on %s kr? That would work great for my budget.",
-        "Thanks for the info! I think it will fit well then. I'll take it!",
-        "That sounds good. Could you hold it for me until tomorrow?",
-        "I appreciate your quick response! I'll place the order now.",
-        "Excellent! I can pick it up this weekend if that works for you?",
-        "Great! I'll send payment right away via Vipps.",
-        "That shipping time works for me. I'll proceed with the purchase.",
-        "Thanks for confirming. I'm ready to move forward with buying it.",
-        "Sounds good. Just sent you a payment request!"
+      "Great! I'd like to buy it. How do we proceed?",
+      "Perfect! Could we agree on %s kr? That would work great for my budget.",
+      "Thanks for the info! I think it will fit well then. I'll take it!",
+      "That sounds good. Could you hold it for me until tomorrow?",
+      "I appreciate your quick response! I'll place the order now.",
+      "Excellent! I can pick it up this weekend if that works for you?",
+      "Great! I'll send payment right away via Vipps.",
+      "That shipping time works for me. I'll proceed with the purchase.",
+      "Thanks for confirming. I'm ready to move forward with buying it.",
+      "Sounds good. Just sent you a payment request!"
     };
 
     // Create 5-10 conversations with different sellers about random items
@@ -751,11 +871,12 @@ public class DatabaseInitializer {
 
         // Seller's response (1-6 hours later)
         LocalDateTime responseTime = startTime.plusHours(random.nextInt(5) + 1);
-        String response = responses[random.nextInt(responses.length)]
-            .replace("%s", item.getSize())
-            .replace("%s", item.getColor())
-            .replace("%s", item.getLocation().getCity())
-            .replace("%s", item.getCondition());
+        String response =
+            responses[random.nextInt(responses.length)]
+                .replace("%s", item.getSize())
+                .replace("%s", item.getColor())
+                .replace("%s", item.getLocation().getCity())
+                .replace("%s", item.getCondition());
 
         Message sellerMessage = new Message();
         sellerMessage.setSenderId(seller.getId().toString());
@@ -769,8 +890,9 @@ public class DatabaseInitializer {
         // Potential buyer followup (50% chance, 1-8 hours later)
         if (random.nextBoolean()) {
           LocalDateTime followupTime = responseTime.plusHours(random.nextInt(7) + 1);
-          String followup = followups[random.nextInt(followups.length)]
-              .replace("%s", String.valueOf((int) (item.getPrice() * 0.9))); // Suggest 10% discount
+          String followup =
+              followups[random.nextInt(followups.length)].replace(
+                  "%s", String.valueOf((int) (item.getPrice() * 0.9))); // Suggest 10% discount
 
           Message buyerFollowup = new Message();
           buyerFollowup.setSenderId(buyer.getId().toString());

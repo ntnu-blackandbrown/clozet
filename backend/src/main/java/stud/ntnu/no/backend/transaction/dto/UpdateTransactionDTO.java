@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 
 /**
  * Data Transfer Object for updating a transaction.
- * <p>
- * This class holds information required to update a transaction, including amount, status, and
+ *
+ * <p>This class holds information required to update a transaction, including amount, status, and
  * payment method.
  */
 public class UpdateTransactionDTO {
@@ -15,8 +15,7 @@ public class UpdateTransactionDTO {
   private String paymentMethod;
 
   // Default constructor
-  public UpdateTransactionDTO() {
-  }
+  public UpdateTransactionDTO() {}
 
   /**
    * Returns the amount of the transaction.

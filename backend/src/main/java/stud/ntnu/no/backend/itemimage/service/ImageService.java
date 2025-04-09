@@ -13,7 +13,7 @@ public interface ImageService {
   /**
    * Uploads an image and associates it with a specific item.
    *
-   * @param file   The image file to upload
+   * @param file The image file to upload
    * @param itemId The ID of the item the image is associated with
    * @return The URL of the uploaded image
    */

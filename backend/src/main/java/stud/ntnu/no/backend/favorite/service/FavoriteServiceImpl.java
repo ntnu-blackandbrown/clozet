@@ -42,9 +42,10 @@ public class FavoriteServiceImpl implements FavoriteService {
   @Transactional(readOnly = true)
   public List<FavoriteDTO> getAllFavorites() {
     logger.info("Retrieving all favorites.");
-    List<FavoriteDTO> favorites = favoriteRepository.findAll().stream()
-        .map(favoriteMapper::toDTO)
-        .collect(Collectors.toList());
+    List<FavoriteDTO> favorites =
+        favoriteRepository.findAll().stream()
+            .map(favoriteMapper::toDTO)
+            .collect(Collectors.toList());
     logger.info("Retrieved {} favorites.", favorites.size());
     return favorites;
   }
@@ -73,9 +74,10 @@ public class FavoriteServiceImpl implements FavoriteService {
       throw new FavoriteValidationException("Invalid user ID format");
     }
 
-    List<FavoriteDTO> favorites = favoriteRepository.findByUserId(userId).stream()
-        .map(favoriteMapper::toDTO)
-        .collect(Collectors.toList());
+    List<FavoriteDTO> favorites =
+        favoriteRepository.findByUserId(userId).stream()
+            .map(favoriteMapper::toDTO)
+            .collect(Collectors.toList());
     logger.info("Retrieved {} favorites for user ID: {}", favorites.size(), userId);
     return favorites;
   }
@@ -86,7 +88,7 @@ public class FavoriteServiceImpl implements FavoriteService {
    * @param id The ID of the favorite
    * @return FavoriteDTO object for the specific favorite
    * @throws FavoriteValidationException if the ID is null
-   * @throws FavoriteNotFoundException   if the favorite is not found
+   * @throws FavoriteNotFoundException if the favorite is not found
    */
   @Override
   @Transactional(readOnly = true)
@@ -97,11 +99,14 @@ public class FavoriteServiceImpl implements FavoriteService {
       throw new FavoriteValidationException("Favorite ID cannot be null");
     }
 
-    Favorite favorite = favoriteRepository.findById(id)
-        .orElseThrow(() -> {
-          logger.warn("Favorite not found with ID: {}", id);
-          return new FavoriteNotFoundException(id);
-        });
+    Favorite favorite =
+        favoriteRepository
+            .findById(id)
+            .orElseThrow(
+                () -> {
+                  logger.warn("Favorite not found with ID: {}", id);
+                  return new FavoriteNotFoundException(id);
+                });
     FavoriteDTO favoriteDTO = favoriteMapper.toDTO(favorite);
     logger.info("Retrieved favorite: {}", favoriteDTO);
     return favoriteDTO;
@@ -122,7 +127,9 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     // Sjekk om favoritt for denne brukeren og dette elementet allerede eksisterer
     if (favoriteRepository.existsByUserIdAndItemId(request.getUserId(), request.getItemId())) {
-      logger.warn("Favorite already exists for user ID {} and item ID {}", request.getUserId(),
+      logger.warn(
+          "Favorite already exists for user ID {} and item ID {}",
+          request.getUserId(),
           request.getItemId());
       throw new FavoriteValidationException("Favorite already exists for this user and item");
     }
@@ -137,11 +144,11 @@ public class FavoriteServiceImpl implements FavoriteService {
   /**
    * Updates an existing favorite.
    *
-   * @param id      The ID of the favorite
+   * @param id The ID of the favorite
    * @param request Request with updated data
    * @return FavoriteDTO object for the updated favorite
    * @throws FavoriteValidationException if the ID or request is invalid
-   * @throws FavoriteNotFoundException   if the favorite is not found
+   * @throws FavoriteNotFoundException if the favorite is not found
    */
   @Override
   @Transactional
@@ -154,11 +161,14 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     validateCreateRequest(request);
 
-    Favorite favorite = favoriteRepository.findById(id)
-        .orElseThrow(() -> {
-          logger.warn("Favorite not found with ID: {}", id);
-          return new FavoriteNotFoundException(id);
-        });
+    Favorite favorite =
+        favoriteRepository
+            .findById(id)
+            .orElseThrow(
+                () -> {
+                  logger.warn("Favorite not found with ID: {}", id);
+                  return new FavoriteNotFoundException(id);
+                });
     favoriteMapper.updateEntity(favorite, request);
     Favorite updatedFavorite = favoriteRepository.save(favorite);
     FavoriteDTO favoriteDTO = favoriteMapper.toDTO(updatedFavorite);
@@ -172,9 +182,9 @@ public class FavoriteServiceImpl implements FavoriteService {
    * @param id The ID of the favorite
    * @param id Favorittens ID
    * @throws FavoriteValidationException if the ID is null
-   * @throws FavoriteNotFoundException   if the favorite is not found Sletter en favoritt.
+   * @throws FavoriteNotFoundException if the favorite is not found Sletter en favoritt.
    * @throws FavoriteValidationException hvis ID er null
-   * @throws FavoriteNotFoundException   hvis favoritten ikke finnes
+   * @throws FavoriteNotFoundException hvis favoritten ikke finnes
    */
   @Override
   @Transactional

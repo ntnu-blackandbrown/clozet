@@ -29,17 +29,14 @@ public class ItemImage {
   private boolean isPrimary;
   private int displayOrder;
 
-  /**
-   * Default constructor for ItemImage.
-   */
-  public ItemImage() {
-  }
+  /** Default constructor for ItemImage. */
+  public ItemImage() {}
 
   /**
    * Constructor to create an ItemImage with specified attributes.
    *
-   * @param imageUrl     The URL of the image
-   * @param isPrimary    Whether the image is primary
+   * @param imageUrl The URL of the image
+   * @param isPrimary Whether the image is primary
    * @param displayOrder The display order of the image
    */
   public ItemImage(String imageUrl, boolean isPrimary, int displayOrder) {

@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for testing authentication.
- * <p>
- * Provides an endpoint to check the current authenticated user's details.
- * </p>
+ *
+ * <p>Provides an endpoint to check the current authenticated user's details.
  */
 @RestController
 @RequestMapping("/api/test")

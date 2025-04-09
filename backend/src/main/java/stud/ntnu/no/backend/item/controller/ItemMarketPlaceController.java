@@ -14,15 +14,14 @@ import stud.ntnu.no.backend.item.service.ItemMarketPlaceService;
 
 /**
  * REST Controller for marketplace item operations.
- * <p>
- * This controller provides specialized endpoints for viewing items in the marketplace context.
+ *
+ * <p>This controller provides specialized endpoints for viewing items in the marketplace context.
  * Unlike the ItemController which offers complete item management functionality, this controller
  * focuses on public-facing marketplace views that do not require authentication.
- * </p>
- * <p>
- * The marketplace endpoints are optimized for browsing and discovery, returning data specifically
- * formatted for the marketplace user interface with relevant information for potential buyers.
- * </p>
+ *
+ * <p>The marketplace endpoints are optimized for browsing and discovery, returning data
+ * specifically formatted for the marketplace user interface with relevant information for potential
+ * buyers.
  */
 @RestController
 @RequestMapping("/api/marketplace")
@@ -44,15 +43,13 @@ public class ItemMarketPlaceController {
 
   /**
    * Retrieves all active items available in the marketplace.
-   * <p>
-   * This endpoint returns a list of all active items formatted specifically for marketplace
+   *
+   * <p>This endpoint returns a list of all active items formatted specifically for marketplace
    * display. The returned items include essential information for browsing and discovery, such as
    * title, price, location, and primary image.
-   * </p>
-   * <p>
-   * This endpoint is intended for public access and does not require authentication. Only active
+   *
+   * <p>This endpoint is intended for public access and does not require authentication. Only active
    * items are included in the results.
-   * </p>
    *
    * @return ResponseEntity with HTTP status 200 (OK) and a list of ItemMarketPlaceDTO objects
    */
@@ -65,26 +62,23 @@ public class ItemMarketPlaceController {
 
   /**
    * Retrieves all active marketplace items within a specific category.
-   * <p>
-   * This endpoint returns items belonging to the specified category, formatted for marketplace
-   * display. The results are filtered to include only active items that are available for
-   * purchase.
-   * </p>
-   * <p>
-   * This categorized view facilitates browsing by product type and helps users discover relevant
+   *
+   * <p>This endpoint returns items belonging to the specified category, formatted for marketplace
+   * display. The results are filtered to include only active items that are available for purchase.
+   *
+   * <p>This categorized view facilitates browsing by product type and helps users discover relevant
    * items. The endpoint is publicly accessible without authentication.
-   * </p>
    *
    * @param categoryId the unique identifier of the category to filter by
    * @return ResponseEntity with HTTP status 200 (OK) and a list of ItemMarketPlaceDTO objects
-   * filtered by the specified category
+   *     filtered by the specified category
    */
   @GetMapping("/items/category/{categoryId}")
   public ResponseEntity<List<ItemMarketPlaceDTO>> getMarketPlaceItemsByCategory(
       @PathVariable Long categoryId) {
     logger.info("Fetching marketplace items for category with id: {}", categoryId);
-    List<ItemMarketPlaceDTO> items = itemMarketPlaceService.getMarketPlaceItemsByCategory(
-        categoryId);
+    List<ItemMarketPlaceDTO> items =
+        itemMarketPlaceService.getMarketPlaceItemsByCategory(categoryId);
     return ResponseEntity.ok(items);
   }
 }

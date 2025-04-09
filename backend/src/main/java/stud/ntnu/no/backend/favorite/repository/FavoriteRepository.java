@@ -37,6 +37,7 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
    * @param itemId The ID of the item
    * @return true if the favorite exists, otherwise false
    */
-  @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Favorite f WHERE f.user.id = :userId AND f.item.id = :itemId")
+  @Query(
+      "SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Favorite f WHERE f.user.id = :userId AND f.item.id = :itemId")
   boolean existsByUserIdAndItemId(@Param("userId") String userId, @Param("itemId") Long itemId);
 }

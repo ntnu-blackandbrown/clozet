@@ -22,8 +22,8 @@ import stud.ntnu.no.backend.itemimage.repository.ItemImageRepository;
 public class ImageServiceImpl implements ImageService {
 
   private static final Logger logger = LoggerFactory.getLogger(ImageServiceImpl.class);
-  private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
-      "image/jpeg", "image/png", "image/jpg", "image/gif");
+  private static final Set<String> ALLOWED_CONTENT_TYPES =
+      Set.of("image/jpeg", "image/png", "image/jpg", "image/gif");
 
   private final ItemImageRepository itemImageRepository;
   private final ItemRepository itemRepository;
@@ -33,11 +33,12 @@ public class ImageServiceImpl implements ImageService {
    * Constructs an ImageServiceImpl with the specified repositories and storage service.
    *
    * @param itemImageRepository Repository for item images
-   * @param itemRepository      Repository for items
-   * @param fileStorageService  Service for storing files
+   * @param itemRepository Repository for items
+   * @param fileStorageService Service for storing files
    */
   @Autowired
-  public ImageServiceImpl(ItemImageRepository itemImageRepository,
+  public ImageServiceImpl(
+      ItemImageRepository itemImageRepository,
       ItemRepository itemRepository,
       FileStorageService fileStorageService) {
     this.itemImageRepository = itemImageRepository;
@@ -48,7 +49,7 @@ public class ImageServiceImpl implements ImageService {
   /**
    * Uploads an image and associates it with a specific item.
    *
-   * @param file   The image file to upload
+   * @param file The image file to upload
    * @param itemId The ID of the item the image is associated with
    * @return The URL of the uploaded image
    * @throws RuntimeException if the item is not found or file storage fails
@@ -63,8 +64,8 @@ public class ImageServiceImpl implements ImageService {
       logger.info("Image stored successfully at: {}", url);
 
       // Get the item object
-      Item item = itemRepository.findById(itemId)
-          .orElseThrow(() -> new RuntimeException("Item not found"));
+      Item item =
+          itemRepository.findById(itemId).orElseThrow(() -> new RuntimeException("Item not found"));
 
       // Get the item's current images
       List<ItemImage> existingImages = itemImageRepository.findByItemId(itemId);
@@ -114,7 +115,7 @@ public class ImageServiceImpl implements ImageService {
    * Validates the uploaded file.
    *
    * @param file The file to validate
-   * @throws EmptyFileException       if the file is empty
+   * @throws EmptyFileException if the file is empty
    * @throws InvalidFileTypeException if the file type is not supported
    */
   private void validateFile(MultipartFile file) {

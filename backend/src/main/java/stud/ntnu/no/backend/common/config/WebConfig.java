@@ -7,9 +7,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Configuration class for web settings.
- * <p>
- * Configures resource handlers for serving static content.
- * </p>
+ *
+ * <p>Configures resource handlers for serving static content.
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -24,7 +23,6 @@ public class WebConfig implements WebMvcConfigurer {
    */
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("/images/**")
-        .addResourceLocations("file:" + uploadDir + "/");
+    registry.addResourceHandler("/images/**").addResourceLocations("file:" + uploadDir + "/");
   }
 }

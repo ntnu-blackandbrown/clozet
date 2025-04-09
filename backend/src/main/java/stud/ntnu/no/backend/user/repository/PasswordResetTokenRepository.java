@@ -6,9 +6,7 @@ import org.springframework.stereotype.Repository;
 import stud.ntnu.no.backend.user.entity.PasswordResetToken;
 import stud.ntnu.no.backend.user.entity.User;
 
-/**
- * Repository interface for managing PasswordResetToken entities.
- */
+/** Repository interface for managing PasswordResetToken entities. */
 @Repository
 public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken, Long> {
 

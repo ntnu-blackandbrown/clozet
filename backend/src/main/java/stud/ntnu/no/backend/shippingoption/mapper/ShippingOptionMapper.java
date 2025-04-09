@@ -12,8 +12,8 @@ import stud.ntnu.no.backend.shippingoption.entity.ShippingOption;
 
 /**
  * Mapper for converting between ShippingOption entities and DTOs.
- * <p>
- * This interface uses MapStruct to generate the implementation.
+ *
+ * <p>This interface uses MapStruct to generate the implementation.
  */
 @Mapper(componentModel = "spring")
 public interface ShippingOptionMapper {
@@ -41,6 +41,6 @@ public interface ShippingOptionMapper {
   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "items", ignore = true)
-  void updateShippingOptionFromDto(CreateShippingOptionDTO dto,
-      @MappingTarget ShippingOption shippingOption);
+  void updateShippingOptionFromDto(
+      CreateShippingOptionDTO dto, @MappingTarget ShippingOption shippingOption);
 }

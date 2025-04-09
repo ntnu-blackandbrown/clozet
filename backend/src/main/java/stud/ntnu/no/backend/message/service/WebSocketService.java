@@ -10,8 +10,8 @@ import stud.ntnu.no.backend.message.dto.MessageDTO;
 
 /**
  * Service for WebSocket communication.
- * <p>
- * This service provides methods for broadcasting message and conversation events via WebSocket.
+ *
+ * <p>This service provides methods for broadcasting message and conversation events via WebSocket.
  */
 @Service
 public class WebSocketService {
@@ -90,12 +90,13 @@ public class WebSocketService {
    * Notifies clients that a conversation has been archived.
    *
    * @param conversationId the ID of the conversation
-   * @param userId         the ID of the user
+   * @param userId the ID of the user
    */
   public void notifyConversationArchived(String conversationId, String userId) {
     try {
       logger.info("Broadcasting conversation archive: {}", conversationId);
-      messagingTemplate.convertAndSend("/topic/conversations.archive",
+      messagingTemplate.convertAndSend(
+          "/topic/conversations.archive",
           Map.of("conversationId", conversationId, "userId", userId));
     } catch (Exception e) {
       logger.error("Error broadcasting conversation archive: {}", e.getMessage(), e);

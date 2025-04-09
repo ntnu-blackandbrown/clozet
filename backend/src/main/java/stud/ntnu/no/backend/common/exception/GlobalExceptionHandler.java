@@ -43,9 +43,8 @@ import stud.ntnu.no.backend.user.exception.UsernameAlreadyExistsException;
 
 /**
  * Global exception handler for the application.
- * <p>
- * Handles various exceptions and returns appropriate HTTP responses.
- * </p>
+ *
+ * <p>Handles various exceptions and returns appropriate HTTP responses.
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -61,7 +60,8 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(DataIntegrityViolationException.class)
   public ResponseEntity<Object> handleDataIntegrityViolationException(
       DataIntegrityViolationException ex) {
-    String message = "Database integrity constraint violated. Make sure to delete dependent records first.";
+    String message =
+        "Database integrity constraint violated. Make sure to delete dependent records first.";
     return buildErrorResponse(message, HttpStatus.CONFLICT);
   }
 
@@ -135,11 +135,14 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
     Map<String, String> errors = new HashMap<>();
-    ex.getBindingResult().getAllErrors().forEach((error) -> {
-      String fieldName = ((FieldError) error).getField();
-      String errorMessage = error.getDefaultMessage();
-      errors.put(fieldName, errorMessage);
-    });
+    ex.getBindingResult()
+        .getAllErrors()
+        .forEach(
+            (error) -> {
+              String fieldName = ((FieldError) error).getField();
+              String errorMessage = error.getDefaultMessage();
+              errors.put(fieldName, errorMessage);
+            });
 
     Map<String, Object> body = new HashMap<>();
     body.put("timestamp", LocalDateTime.now());
@@ -153,15 +156,14 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Object> handleAllUncaughtException(Exception ex) {
     logger.error("Unexpected error occurred", ex);
-    return buildErrorResponse("An unexpected error occurred.",
-        HttpStatus.INTERNAL_SERVER_ERROR);
+    return buildErrorResponse("An unexpected error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   /**
    * Builds an error response.
    *
    * @param message the error message
-   * @param status  the HTTP status
+   * @param status the HTTP status
    * @return a response entity with error details
    */
   private ResponseEntity<Object> buildErrorResponse(String message, HttpStatus status) {

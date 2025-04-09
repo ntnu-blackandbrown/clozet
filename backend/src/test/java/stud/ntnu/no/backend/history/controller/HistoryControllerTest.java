@@ -1,6 +1,20 @@
 package stud.ntnu.no.backend.history.controller;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,192 +40,188 @@ import stud.ntnu.no.backend.history.dto.HistoryDTO;
 import stud.ntnu.no.backend.history.service.HistoryService;
 import stud.ntnu.no.backend.user.entity.User;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @ExtendWith({RestDocumentationExtension.class, MockitoExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
 class HistoryControllerTest {
 
-    private MockMvc mockMvc;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+  private MockMvc mockMvc;
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Mock
-    private HistoryService historyService;
+  @Mock private HistoryService historyService;
 
-    @Mock
-    private User mockUser;
+  @Mock private User mockUser;
 
-    @Mock
-    private Authentication authentication;
+  @Mock private Authentication authentication;
 
-    @InjectMocks
-    private HistoryController historyController;
+  @InjectMocks private HistoryController historyController;
 
-    @BeforeEach
-    void setUp(RestDocumentationContextProvider restDocumentation) {
-        // Setup authentication with mock user
-        when(mockUser.getId()).thenReturn(123L);
-        when(authentication.getPrincipal()).thenReturn(mockUser);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        
-        mockMvc = MockMvcBuilders.standaloneSetup(historyController)
-                .setCustomArgumentResolvers(new HandlerMethodArgumentResolver() {
-                    @Override
-                    public boolean supportsParameter(MethodParameter parameter) {
-                        return parameter.getParameterAnnotation(AuthenticationPrincipal.class) != null;
-                    }
+  @BeforeEach
+  void setUp(RestDocumentationContextProvider restDocumentation) {
+    // Setup authentication with mock user
+    when(mockUser.getId()).thenReturn(123L);
+    when(authentication.getPrincipal()).thenReturn(mockUser);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                    @Override
-                    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-                        return mockUser;
-                    }
+    mockMvc =
+        MockMvcBuilders.standaloneSetup(historyController)
+            .setCustomArgumentResolvers(
+                new HandlerMethodArgumentResolver() {
+                  @Override
+                  public boolean supportsParameter(MethodParameter parameter) {
+                    return parameter.getParameterAnnotation(AuthenticationPrincipal.class) != null;
+                  }
+
+                  @Override
+                  public Object resolveArgument(
+                      MethodParameter parameter,
+                      ModelAndViewContainer mavContainer,
+                      NativeWebRequest webRequest,
+                      WebDataBinderFactory binderFactory) {
+                    return mockUser;
+                  }
                 })
-                .apply(documentationConfiguration(restDocumentation)
-                        .operationPreprocessors()
-                        .withRequestDefaults(prettyPrint())
-                        .withResponseDefaults(prettyPrint()))
-                .build();
-    }
+            .apply(
+                documentationConfiguration(restDocumentation)
+                    .operationPreprocessors()
+                    .withRequestDefaults(prettyPrint())
+                    .withResponseDefaults(prettyPrint()))
+            .build();
+  }
 
-    @Test
-    void addToHistory_ShouldReturnAddedHistory() throws Exception {
-        // Given
-        Long itemId = 101L;
-        
-        HistoryDTO historyDTO = new HistoryDTO();
-        historyDTO.setId(1L);
-        historyDTO.setUserId(123L);
-        historyDTO.setItemId(itemId);
-        historyDTO.setViewedAt(LocalDateTime.now());
-        
-        when(historyService.addToHistory(eq(123L), eq(itemId))).thenReturn(historyDTO);
+  @Test
+  void addToHistory_ShouldReturnAddedHistory() throws Exception {
+    // Given
+    Long itemId = 101L;
 
-        // When/Then
-        mockMvc.perform(post("/api/history/add/" + itemId))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.userId").value(123))
-                .andExpect(jsonPath("$.itemId").value(101))
-                .andDo(document("history-add",
-                        Preprocessors.preprocessRequest(prettyPrint()),
-                        Preprocessors.preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("id").description("History entry ID"),
-                                fieldWithPath("userId").description("User ID"),
-                                fieldWithPath("itemId").description("Item ID"),
-                                fieldWithPath("viewedAt").description("Timestamp when the item was viewed"),
-                                fieldWithPath("itemTitle").description("Title of the viewed item"),
-                                fieldWithPath("active").description("Whether the history entry is active")
-                        )
-                ));
-                
-        verify(historyService).addToHistory(eq(123L), eq(itemId));
-    }
+    HistoryDTO historyDTO = new HistoryDTO();
+    historyDTO.setId(1L);
+    historyDTO.setUserId(123L);
+    historyDTO.setItemId(itemId);
+    historyDTO.setViewedAt(LocalDateTime.now());
 
-    @Test
-    void removeFromHistory_ShouldReturnNoContent() throws Exception {
-        // Given
-        Long itemId = 101L;
-        doNothing().when(historyService).removeFromHistory(eq(123L), eq(itemId));
+    when(historyService.addToHistory(eq(123L), eq(itemId))).thenReturn(historyDTO);
 
-        // When/Then
-        mockMvc.perform(delete("/api/history/remove/" + itemId))
-                .andExpect(status().isNoContent())
-                .andDo(document("history-remove",
-                        Preprocessors.preprocessRequest(prettyPrint()),
-                        Preprocessors.preprocessResponse(prettyPrint())
-                ));
-                
-        verify(historyService).removeFromHistory(eq(123L), eq(itemId));
-    }
+    // When/Then
+    mockMvc
+        .perform(post("/api/history/add/" + itemId))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.userId").value(123))
+        .andExpect(jsonPath("$.itemId").value(101))
+        .andDo(
+            document(
+                "history-add",
+                Preprocessors.preprocessRequest(prettyPrint()),
+                Preprocessors.preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("id").description("History entry ID"),
+                    fieldWithPath("userId").description("User ID"),
+                    fieldWithPath("itemId").description("Item ID"),
+                    fieldWithPath("viewedAt").description("Timestamp when the item was viewed"),
+                    fieldWithPath("itemTitle").description("Title of the viewed item"),
+                    fieldWithPath("active").description("Whether the history entry is active"))));
 
-    @Test
-    void deleteHistory_ShouldReturnNoContent() throws Exception {
-        // Given
-        doNothing().when(historyService).deleteHistory(eq(123L));
+    verify(historyService).addToHistory(eq(123L), eq(itemId));
+  }
 
-        // When/Then
-        mockMvc.perform(delete("/api/history/clear"))
-                .andExpect(status().isNoContent())
-                .andDo(document("history-clear",
-                        Preprocessors.preprocessRequest(prettyPrint()),
-                        Preprocessors.preprocessResponse(prettyPrint())
-                ));
-                
-        verify(historyService).deleteHistory(eq(123L));
-    }
+  @Test
+  void removeFromHistory_ShouldReturnNoContent() throws Exception {
+    // Given
+    Long itemId = 101L;
+    doNothing().when(historyService).removeFromHistory(eq(123L), eq(itemId));
 
-    @Test
-    void pauseHistory_ShouldReturnOk() throws Exception {
-        // Given
-        boolean pause = true;
-        doNothing().when(historyService).pauseHistory(eq(123L), eq(pause));
+    // When/Then
+    mockMvc
+        .perform(delete("/api/history/remove/" + itemId))
+        .andExpect(status().isNoContent())
+        .andDo(
+            document(
+                "history-remove",
+                Preprocessors.preprocessRequest(prettyPrint()),
+                Preprocessors.preprocessResponse(prettyPrint())));
 
-        // When/Then
-        mockMvc.perform(post("/api/history/pause/" + pause))
-                .andExpect(status().isOk())
-                .andDo(document("history-pause",
-                        Preprocessors.preprocessRequest(prettyPrint()),
-                        Preprocessors.preprocessResponse(prettyPrint())
-                ));
-                
-        verify(historyService).pauseHistory(eq(123L), eq(pause));
-    }
+    verify(historyService).removeFromHistory(eq(123L), eq(itemId));
+  }
 
-    @Test
-    void getUserHistory_ShouldReturnHistoryList() throws Exception {
-        // Given
-        HistoryDTO historyDTO1 = new HistoryDTO();
-        historyDTO1.setId(1L);
-        historyDTO1.setUserId(123L);
-        historyDTO1.setItemId(101L);
-        historyDTO1.setViewedAt(LocalDateTime.now().minusDays(1));
-        
-        HistoryDTO historyDTO2 = new HistoryDTO();
-        historyDTO2.setId(2L);
-        historyDTO2.setUserId(123L);
-        historyDTO2.setItemId(102L);
-        historyDTO2.setViewedAt(LocalDateTime.now());
-        
-        List<HistoryDTO> historyList = Arrays.asList(historyDTO1, historyDTO2);
-        
-        when(historyService.getUserHistory(eq(123L))).thenReturn(historyList);
+  @Test
+  void deleteHistory_ShouldReturnNoContent() throws Exception {
+    // Given
+    doNothing().when(historyService).deleteHistory(eq(123L));
 
-        // When/Then
-        mockMvc.perform(get("/api/history"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].userId").value(123))
-                .andExpect(jsonPath("$[0].itemId").value(101))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].itemId").value(102))
-                .andDo(document("history-get",
-                        Preprocessors.preprocessRequest(prettyPrint()),
-                        Preprocessors.preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("[].id").description("History entry ID"),
-                                fieldWithPath("[].userId").description("User ID"),
-                                fieldWithPath("[].itemId").description("Item ID"),
-                                fieldWithPath("[].viewedAt").description("Timestamp when the item was viewed"),
-                                fieldWithPath("[].itemTitle").description("Title of the viewed item"),
-                                fieldWithPath("[].active").description("Whether the history entry is active")
-                        )
-                ));
-                
-        verify(historyService).getUserHistory(eq(123L));
-    }
-} 
+    // When/Then
+    mockMvc
+        .perform(delete("/api/history/clear"))
+        .andExpect(status().isNoContent())
+        .andDo(
+            document(
+                "history-clear",
+                Preprocessors.preprocessRequest(prettyPrint()),
+                Preprocessors.preprocessResponse(prettyPrint())));
+
+    verify(historyService).deleteHistory(eq(123L));
+  }
+
+  @Test
+  void pauseHistory_ShouldReturnOk() throws Exception {
+    // Given
+    boolean pause = true;
+    doNothing().when(historyService).pauseHistory(eq(123L), eq(pause));
+
+    // When/Then
+    mockMvc
+        .perform(post("/api/history/pause/" + pause))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "history-pause",
+                Preprocessors.preprocessRequest(prettyPrint()),
+                Preprocessors.preprocessResponse(prettyPrint())));
+
+    verify(historyService).pauseHistory(eq(123L), eq(pause));
+  }
+
+  @Test
+  void getUserHistory_ShouldReturnHistoryList() throws Exception {
+    // Given
+    HistoryDTO historyDTO1 = new HistoryDTO();
+    historyDTO1.setId(1L);
+    historyDTO1.setUserId(123L);
+    historyDTO1.setItemId(101L);
+    historyDTO1.setViewedAt(LocalDateTime.now().minusDays(1));
+
+    HistoryDTO historyDTO2 = new HistoryDTO();
+    historyDTO2.setId(2L);
+    historyDTO2.setUserId(123L);
+    historyDTO2.setItemId(102L);
+    historyDTO2.setViewedAt(LocalDateTime.now());
+
+    List<HistoryDTO> historyList = Arrays.asList(historyDTO1, historyDTO2);
+
+    when(historyService.getUserHistory(eq(123L))).thenReturn(historyList);
+
+    // When/Then
+    mockMvc
+        .perform(get("/api/history"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id").value(1))
+        .andExpect(jsonPath("$[0].userId").value(123))
+        .andExpect(jsonPath("$[0].itemId").value(101))
+        .andExpect(jsonPath("$[1].id").value(2))
+        .andExpect(jsonPath("$[1].itemId").value(102))
+        .andDo(
+            document(
+                "history-get",
+                Preprocessors.preprocessRequest(prettyPrint()),
+                Preprocessors.preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("[].id").description("History entry ID"),
+                    fieldWithPath("[].userId").description("User ID"),
+                    fieldWithPath("[].itemId").description("Item ID"),
+                    fieldWithPath("[].viewedAt").description("Timestamp when the item was viewed"),
+                    fieldWithPath("[].itemTitle").description("Title of the viewed item"),
+                    fieldWithPath("[].active")
+                        .description("Whether the history entry is active"))));
+
+    verify(historyService).getUserHistory(eq(123L));
+  }
+}

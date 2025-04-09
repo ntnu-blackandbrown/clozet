@@ -43,10 +43,9 @@ import stud.ntnu.no.backend.user.service.UserService;
 
 /**
  * REST controller for handling authentication-related requests.
- * <p>
- * This controller provides endpoints for user registration, login, email verification, password
+ *
+ * <p>This controller provides endpoints for user registration, login, email verification, password
  * reset, and logout.
- * </p>
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -107,20 +106,21 @@ public class AuthController {
   public ResponseEntity<?> registerUser(@RequestBody RegisterUserDTO registerUserDTO) {
     logger.info("Registering new user: {}", registerUserDTO.getUsername());
     userService.createUserAndSendVerificationEmail(registerUserDTO);
-    return ResponseEntity.ok(new MessageResponse(
-        "User registered successfully. Please check your email for verification."));
+    return ResponseEntity.ok(
+        new MessageResponse(
+            "User registered successfully. Please check your email for verification."));
   }
 
   /**
    * Authenticates a user and sets JWT cookies.
    *
    * @param loginRequest the login request data
-   * @param response     the HTTP response
+   * @param response the HTTP response
    * @return a response entity with user details or an error message
    */
   @PostMapping("/login")
-  public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginRequest,
-      HttpServletResponse response) {
+  public ResponseEntity<?> authenticateUser(
+      @RequestBody LoginDTO loginRequest, HttpServletResponse response) {
     logger.info("Login attempt with: {}", loginRequest.getUsernameOrEmail());
 
     // Bestem om input er e-post eller brukernavn
@@ -141,12 +141,9 @@ public class AuthController {
 
     try {
       // Autentiser med brukernavn
-      Authentication authentication = authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(
-              username,
-              loginRequest.getPassword()
-          )
-      );
+      Authentication authentication =
+          authenticationManager.authenticate(
+              new UsernamePasswordAuthenticationToken(username, loginRequest.getPassword()));
 
       SecurityContextHolder.getContext().setAuthentication(authentication);
       UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -199,14 +196,14 @@ public class AuthController {
   /**
    * Verifies a user's email using a token.
    *
-   * @param token    the verification token
+   * @param token the verification token
    * @param response the HTTP response
    * @return a response entity with a success or error message
    */
   @GetMapping("/verify")
   public ResponseEntity<?> verifyUser(@RequestParam String token, HttpServletResponse response) {
-    Optional<VerificationToken> verificationTokenOpt = verificationTokenRepository.findByToken(
-        token);
+    Optional<VerificationToken> verificationTokenOpt =
+        verificationTokenRepository.findByToken(token);
 
     if (verificationTokenOpt.isEmpty()) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -296,8 +293,7 @@ public class AuthController {
     }
     refreshCookieBuilder.append(" SameSite=Lax");
     response.addHeader("Set-Cookie", refreshCookieBuilder.toString());
-    logger.info("Set-Cookie header for logout (refresh token): {}",
-        refreshCookieBuilder);
+    logger.info("Set-Cookie header for logout (refresh token): {}", refreshCookieBuilder);
 
     return ResponseEntity.ok(new MessageResponse("Utlogging vellykket"));
   }
@@ -315,8 +311,9 @@ public class AuthController {
     Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
     if (userOpt.isEmpty()) {
       // Ikke avslør om e-posten finnes for sikkerhet
-      return ResponseEntity.ok(new MessageResponse(
-          "If an account exists with that email, a password reset link has been sent."));
+      return ResponseEntity.ok(
+          new MessageResponse(
+              "If an account exists with that email, a password reset link has been sent."));
     }
 
     User user = userOpt.get();
@@ -327,18 +324,17 @@ public class AuthController {
     // Generer en ny token
     String token = UUID.randomUUID().toString();
     int expiryHours = emailConfig.getPasswordResetExpiryHours();
-    PasswordResetToken passwordResetToken = new PasswordResetToken(
-        token,
-        LocalDateTime.now().plusHours(expiryHours),
-        user);
+    PasswordResetToken passwordResetToken =
+        new PasswordResetToken(token, LocalDateTime.now().plusHours(expiryHours), user);
 
     passwordResetTokenRepository.save(passwordResetToken);
 
     // Send e-post med reset-link
     emailService.sendPasswordResetEmail(user.getEmail(), token);
 
-    return ResponseEntity.ok(new MessageResponse(
-        "If an account exists with that email, a password reset link has been sent."));
+    return ResponseEntity.ok(
+        new MessageResponse(
+            "If an account exists with that email, a password reset link has been sent."));
   }
 
   /**
@@ -367,8 +363,8 @@ public class AuthController {
    */
   @PostMapping("/reset-password")
   public ResponseEntity<?> resetPassword(@RequestBody PasswordResetDTO resetRequest) {
-    Optional<PasswordResetToken> tokenOpt = passwordResetTokenRepository.findByToken(
-        resetRequest.getToken());
+    Optional<PasswordResetToken> tokenOpt =
+        passwordResetTokenRepository.findByToken(resetRequest.getToken());
 
     if (tokenOpt.isEmpty()) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -399,7 +395,7 @@ public class AuthController {
   /**
    * Extracts the value of a cookie by name.
    *
-   * @param request    the HTTP request
+   * @param request the HTTP request
    * @param cookieName the name of the cookie
    * @return the cookie value or null if not found
    */

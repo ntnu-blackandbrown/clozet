@@ -12,8 +12,8 @@ import stud.ntnu.no.backend.item.entity.Item;
 
 /**
  * Entity representing a message.
- * <p>
- * This class is mapped to the "messages" table in the database and holds information about a
+ *
+ * <p>This class is mapped to the "messages" table in the database and holds information about a
  * message, including its ID, sender, receiver, content, creation time, read status, and associated
  * item.
  */
@@ -38,8 +38,7 @@ public class Message {
   private boolean isRead;
 
   // Constructors
-  public Message() {
-  }
+  public Message() {}
 
   // Getters and setters
 

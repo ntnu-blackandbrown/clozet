@@ -33,9 +33,9 @@ public class HistoryServiceImpl implements HistoryService {
    * Constructs a new HistoryServiceImpl with the specified repositories and mapper.
    *
    * @param historyRepository the history repository
-   * @param userRepository    the user repository
-   * @param itemRepository    the item repository
-   * @param historyMapper     the history mapper
+   * @param userRepository the user repository
+   * @param itemRepository the item repository
+   * @param historyMapper the history mapper
    */
   public HistoryServiceImpl(
       HistoryRepository historyRepository,
@@ -54,25 +54,31 @@ public class HistoryServiceImpl implements HistoryService {
    * @param userId the user ID
    * @param itemId the item ID
    * @return the history DTO
-   * @throws UserNotFoundException      if the user is not found
-   * @throws ItemNotFoundException      if the item is not found
+   * @throws UserNotFoundException if the user is not found
+   * @throws ItemNotFoundException if the item is not found
    * @throws HistoryValidationException if the user ID or item ID is null
    */
   @Override
   @Transactional
   public HistoryDTO addToHistory(Long userId, Long itemId) {
     logger.info("Adding item {} to history for user {}", itemId, userId);
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> {
-          logger.error("User not found with id: {}", userId);
-          return new UserNotFoundException("User not found with id: " + userId);
-        });
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found with id: {}", userId);
+                  return new UserNotFoundException("User not found with id: " + userId);
+                });
 
-    Item item = itemRepository.findById(itemId)
-        .orElseThrow(() -> {
-          logger.error("Item not found with id: {}", itemId);
-          return new ItemNotFoundException("Item not found with id: " + itemId);
-        });
+    Item item =
+        itemRepository
+            .findById(itemId)
+            .orElseThrow(
+                () -> {
+                  logger.error("Item not found with id: {}", itemId);
+                  return new ItemNotFoundException("Item not found with id: " + itemId);
+                });
 
     if (userId == null || itemId == null) {
       logger.error("User ID and Item ID cannot be null");
@@ -105,32 +111,42 @@ public class HistoryServiceImpl implements HistoryService {
    *
    * @param userId the user ID
    * @param itemId the item ID
-   * @throws UserNotFoundException    if the user is not found
-   * @throws ItemNotFoundException    if the item is not found
+   * @throws UserNotFoundException if the user is not found
+   * @throws ItemNotFoundException if the item is not found
    * @throws HistoryNotFoundException if the history entry is not found
    */
   @Override
   @Transactional
   public void removeFromHistory(Long userId, Long itemId) {
     logger.info("Removing item {} from history for user {}", itemId, userId);
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> {
-          logger.error("User not found with id: {}", userId);
-          return new UserNotFoundException("User not found with id: " + userId);
-        });
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found with id: {}", userId);
+                  return new UserNotFoundException("User not found with id: " + userId);
+                });
 
-    Item item = itemRepository.findById(itemId)
-        .orElseThrow(() -> {
-          logger.error("Item not found with id: {}", itemId);
-          return new ItemNotFoundException("Item not found with id: " + itemId);
-        });
+    Item item =
+        itemRepository
+            .findById(itemId)
+            .orElseThrow(
+                () -> {
+                  logger.error("Item not found with id: {}", itemId);
+                  return new ItemNotFoundException("Item not found with id: " + itemId);
+                });
 
-    History history = historyRepository.findByUserAndItem(user, item)
-        .orElseThrow(() -> {
-          logger.error("History entry not found for user ID: {} and item ID: {}", userId, itemId);
-          return new HistoryNotFoundException(
-              "History entry not found for user ID: " + userId + " and item ID: " + itemId);
-        });
+    History history =
+        historyRepository
+            .findByUserAndItem(user, item)
+            .orElseThrow(
+                () -> {
+                  logger.error(
+                      "History entry not found for user ID: {} and item ID: {}", userId, itemId);
+                  return new HistoryNotFoundException(
+                      "History entry not found for user ID: " + userId + " and item ID: " + itemId);
+                });
 
     historyRepository.delete(history);
     logger.info("Item {} removed from history for user {}", itemId, userId);
@@ -146,11 +162,14 @@ public class HistoryServiceImpl implements HistoryService {
   @Transactional
   public void deleteHistory(Long userId) {
     logger.info("Deleting history for user {}", userId);
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> {
-          logger.error("User not found with id: {}", userId);
-          return new RuntimeException("User not found with id: " + userId);
-        });
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found with id: {}", userId);
+                  return new RuntimeException("User not found with id: " + userId);
+                });
 
     historyRepository.deleteByUser(user);
     logger.info("History deleted for user {}", userId);
@@ -160,18 +179,21 @@ public class HistoryServiceImpl implements HistoryService {
    * Pauses or resumes the user's history.
    *
    * @param userId the user ID
-   * @param pause  true to pause, false to resume
+   * @param pause true to pause, false to resume
    * @throws RuntimeException if the user is not found
    */
   @Override
   @Transactional
   public void pauseHistory(Long userId, boolean pause) {
     logger.info("Pausing history for user {} - {}", userId, pause);
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> {
-          logger.error("User not found with id: {}", userId);
-          return new RuntimeException("User not found with id: " + userId);
-        });
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found with id: {}", userId);
+                  return new RuntimeException("User not found with id: " + userId);
+                });
 
     List<History> userHistory = historyRepository.findByUserOrderByViewedAtDesc(user);
     for (History history : userHistory) {
@@ -192,15 +214,18 @@ public class HistoryServiceImpl implements HistoryService {
   @Transactional(readOnly = true)
   public List<HistoryDTO> getUserHistory(Long userId) {
     logger.info("Getting history for user {}", userId);
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> {
-          logger.error("User not found with id: {}", userId);
-          return new RuntimeException("User not found with id: " + userId);
-        });
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found with id: {}", userId);
+                  return new RuntimeException("User not found with id: " + userId);
+                });
 
-    List<HistoryDTO> historyDTOs = historyMapper.toDtoList(
-        historyRepository.findByUserAndActiveOrderByViewedAtDesc(user, true)
-    );
+    List<HistoryDTO> historyDTOs =
+        historyMapper.toDtoList(
+            historyRepository.findByUserAndActiveOrderByViewedAtDesc(user, true));
     logger.info("History retrieved for user {}", userId);
     return historyDTOs;
   }

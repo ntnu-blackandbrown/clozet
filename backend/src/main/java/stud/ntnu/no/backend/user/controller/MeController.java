@@ -20,24 +20,22 @@ import stud.ntnu.no.backend.user.service.UserService;
 
 /**
  * REST controller for managing the authenticated user's own account.
- * <p>
- * This controller provides secure endpoints for users to manage their own account information,
+ *
+ * <p>This controller provides secure endpoints for users to manage their own account information,
  * including retrieving profile data and changing passwords. Unlike the UserController, which
  * handles administrative operations, this controller strictly enforces that users can only access
  * and modify their own information.
- * </p>
- * <p>
- * All endpoints in this controller require authentication. Requests from unauthenticated users will
- * receive a 401 Unauthorized response.
- * </p>
- * <p>
- * Security considerations:
+ *
+ * <p>All endpoints in this controller require authentication. Requests from unauthenticated users
+ * will receive a 401 Unauthorized response.
+ *
+ * <p>Security considerations:
+ *
  * <ul>
- *   <li>All endpoints validate the current user's authentication status</li>
- *   <li>Sensitive operations like password changes require verification</li>
- *   <li>Error messages are carefully crafted to avoid information leakage</li>
+ *   <li>All endpoints validate the current user's authentication status
+ *   <li>Sensitive operations like password changes require verification
+ *   <li>Error messages are carefully crafted to avoid information leakage
  * </ul>
- * </p>
  */
 @RestController
 @RequestMapping("/api")
@@ -49,9 +47,8 @@ public class MeController {
 
   /**
    * Constructs a new MeController with the specified user service.
-   * <p>
-   * Uses constructor injection to maintain immutability and thread-safety.
-   * </p>
+   *
+   * <p>Uses constructor injection to maintain immutability and thread-safety.
    *
    * @param userService the service responsible for user-related business logic
    */
@@ -61,29 +58,29 @@ public class MeController {
 
   /**
    * Retrieves the profile information for the currently authenticated user.
-   * <p>
-   * This endpoint extracts the user identity from the security context and returns comprehensive
+   *
+   * <p>This endpoint extracts the user identity from the security context and returns comprehensive
    * profile information. It checks authentication status before attempting to retrieve user data.
-   * </p>
-   * <p>
-   * The response excludes sensitive data like password hashes and verification tokens to maintain
-   * security.
-   * </p>
+   *
+   * <p>The response excludes sensitive data like password hashes and verification tokens to
+   * maintain security.
    *
    * @return ResponseEntity with:
-   * <ul>
-   *   <li>HTTP status 200 (OK) and UserDTO if successful</li>
-   *   <li>HTTP status 401 (Unauthorized) if user is not authenticated</li>
-   *   <li>HTTP status 404 (Not Found) if the authenticated user no longer exists in the database</li>
-   *   <li>HTTP status 500 (Internal Server Error) for unexpected errors</li>
-   * </ul>
+   *     <ul>
+   *       <li>HTTP status 200 (OK) and UserDTO if successful
+   *       <li>HTTP status 401 (Unauthorized) if user is not authenticated
+   *       <li>HTTP status 404 (Not Found) if the authenticated user no longer exists in the
+   *           database
+   *       <li>HTTP status 500 (Internal Server Error) for unexpected errors
+   *     </ul>
    */
   @GetMapping("/me")
   public ResponseEntity<?> getCurrentUser() {
     // Hent autentiseringen fra SecurityContextHolder
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null || !authentication.isAuthenticated() ||
-        "anonymousUser".equals(authentication.getPrincipal())) {
+    if (authentication == null
+        || !authentication.isAuthenticated()
+        || "anonymousUser".equals(authentication.getPrincipal())) {
       logger.debug("Unauthorized access attempt to /api/me");
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
           .body(new MessageResponse("Unauthorized"));
@@ -99,47 +96,45 @@ public class MeController {
       return ResponseEntity.ok(userDTO);
     } catch (UserNotFoundException e) {
       logger.error("User not found: {}", username, e);
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body(new MessageResponse(e.getMessage()));
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse(e.getMessage()));
     } catch (Exception e) {
       logger.error("Error getting user info: {}", username, e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body(new MessageResponse(
-              "An error occurred while retrieving user information: " + e.getMessage()));
+          .body(
+              new MessageResponse(
+                  "An error occurred while retrieving user information: " + e.getMessage()));
     }
   }
 
   /**
    * Changes the password for the currently authenticated user.
-   * <p>
-   * This endpoint allows users to update their password by providing their current password (for
+   *
+   * <p>This endpoint allows users to update their password by providing their current password (for
    * verification) and a new password. It implements multiple validation steps:
-   * </p>
+   *
    * <ol>
-   *   <li>Verifies that the request contains valid data</li>
-   *   <li>Confirms that the user is properly authenticated</li>
-   *   <li>Validates that the current password is correct before allowing the change</li>
+   *   <li>Verifies that the request contains valid data
+   *   <li>Confirms that the user is properly authenticated
+   *   <li>Validates that the current password is correct before allowing the change
    * </ol>
-   * <p>
-   * Data persistence: Upon successful validation, the password is securely hashed
-   * and stored in the database. The previous password hash is immediately overwritten
-   * to prevent any possibility of reverting to the old password.
-   * </p>
-   * <p>
-   * Security notes: This method requires re-authentication with the current password
-   * to prevent password changes by attackers who might have temporary access to a
-   * user's session.
-   * </p>
+   *
+   * <p>Data persistence: Upon successful validation, the password is securely hashed and stored in
+   * the database. The previous password hash is immediately overwritten to prevent any possibility
+   * of reverting to the old password.
+   *
+   * <p>Security notes: This method requires re-authentication with the current password to prevent
+   * password changes by attackers who might have temporary access to a user's session.
    *
    * @param changePasswordDTO data transfer object containing current password and new password
    * @return ResponseEntity with:
-   * <ul>
-   *   <li>HTTP status 200 (OK) with success message if password was changed</li>
-   *   <li>HTTP status 400 (Bad Request) if validation fails or current password is incorrect</li>
-   *   <li>HTTP status 401 (Unauthorized) if user is not authenticated</li>
-   *   <li>HTTP status 404 (Not Found) if the authenticated user no longer exists in the database</li>
-   *   <li>HTTP status 500 (Internal Server Error) for unexpected errors</li>
-   * </ul>
+   *     <ul>
+   *       <li>HTTP status 200 (OK) with success message if password was changed
+   *       <li>HTTP status 400 (Bad Request) if validation fails or current password is incorrect
+   *       <li>HTTP status 401 (Unauthorized) if user is not authenticated
+   *       <li>HTTP status 404 (Not Found) if the authenticated user no longer exists in the
+   *           database
+   *       <li>HTTP status 500 (Internal Server Error) for unexpected errors
+   *     </ul>
    */
   @PostMapping("/me/change-password")
   public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
@@ -154,16 +149,16 @@ public class MeController {
           .body(new MessageResponse("Password change request is invalid"));
     }
 
-    if (changePasswordDTO.getCurrentPassword() == null || changePasswordDTO.getCurrentPassword()
-        .isEmpty()) {
+    if (changePasswordDTO.getCurrentPassword() == null
+        || changePasswordDTO.getCurrentPassword().isEmpty()) {
       System.out.println("MeController.changePassword - Current password is missing");
       logger.error("Current password is missing");
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body(new MessageResponse("Current password is required"));
     }
 
-    if (changePasswordDTO.getNewPassword() == null || changePasswordDTO.getNewPassword()
-        .isEmpty()) {
+    if (changePasswordDTO.getNewPassword() == null
+        || changePasswordDTO.getNewPassword().isEmpty()) {
       System.out.println("MeController.changePassword - New password is missing");
       logger.error("New password is missing");
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -172,11 +167,13 @@ public class MeController {
 
     // Hent autentiseringen fra SecurityContextHolder
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    System.out.println("MeController.changePassword - Authentication: " + (authentication != null
-        ? authentication.getName() : "null"));
+    System.out.println(
+        "MeController.changePassword - Authentication: "
+            + (authentication != null ? authentication.getName() : "null"));
 
-    if (authentication == null || !authentication.isAuthenticated() ||
-        "anonymousUser".equals(authentication.getPrincipal())) {
+    if (authentication == null
+        || !authentication.isAuthenticated()
+        || "anonymousUser".equals(authentication.getPrincipal())) {
       System.out.println("MeController.changePassword - User not authenticated");
       logger.error("User not authenticated");
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -197,21 +194,24 @@ public class MeController {
     } catch (UserNotFoundException e) {
       System.out.println("MeController.changePassword - User not found: " + e.getMessage());
       logger.error("User not found: {}", username, e);
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body(new MessageResponse(e.getMessage()));
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse(e.getMessage()));
     } catch (BadCredentialsException e) {
       System.out.println("MeController.changePassword - Bad credentials: " + e.getMessage());
       logger.error("Invalid current password for user: {}", username, e);
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body(new MessageResponse(e.getMessage()));
     } catch (Exception e) {
-      System.out.println("MeController.changePassword - Exception: " + e.getClass().getName() + ": "
-          + e.getMessage());
+      System.out.println(
+          "MeController.changePassword - Exception: "
+              + e.getClass().getName()
+              + ": "
+              + e.getMessage());
       e.printStackTrace();
       logger.error("Error changing password for user: {}", username, e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body(new MessageResponse(
-              "An error occurred while changing the password: " + e.getMessage()));
+          .body(
+              new MessageResponse(
+                  "An error occurred while changing the password: " + e.getMessage()));
     }
   }
 }

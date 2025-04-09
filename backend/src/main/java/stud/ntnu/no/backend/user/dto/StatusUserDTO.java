@@ -2,9 +2,9 @@ package stud.ntnu.no.backend.user.dto;
 
 /**
  * Data Transfer Object for representing a user's status.
- * <p>
- * This class holds information about a user's status, including ID, username, email, active status,
- * and role.
+ *
+ * <p>This class holds information about a user's status, including ID, username, email, active
+ * status, and role.
  */
 public class StatusUserDTO {
 
