@@ -342,7 +342,6 @@ body {
 .header-left {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xl);
 }
 
 .logo-container {
@@ -351,6 +350,7 @@ body {
   gap: var(--spacing-sm);
   text-decoration: none;
   transition: var(--transition-bounce);
+  margin-right: var(--spacing-xl);
 }
 
 .logo-container:hover {
@@ -401,6 +401,7 @@ body {
 .main-nav {
   display: flex;
   gap: var(--spacing-xl);
+  margin-right: auto;
 }
 
 .main-nav a {
