@@ -96,7 +96,7 @@ const fetchItemDetails = async (itemId) => {
  * - fetch receiver details if needed
  */
 const handleChatSelect = async (chatId) => {
-  console.log('Selecting chat:', chatId)
+   ('Selecting chat:', chatId)
   try {
     // Validate chatId is defined and not 'undefined'
     if (!chatId || chatId === 'undefined') {
@@ -116,12 +116,12 @@ const handleChatSelect = async (chatId) => {
       return
     }
 
-    console.log('Selected conversation:', selectedConversation)
-    console.log('Receiver ID:', selectedConversation.receiverId)
+     ('Selected conversation:', selectedConversation)
+     ('Receiver ID:', selectedConversation.receiverId)
 
     // Set the receiver ID in the WebSocket store
     if (selectedConversation.receiverId) {
-      console.log('Setting receiver ID:', selectedConversation.receiverId.toString())
+       ('Setting receiver ID:', selectedConversation.receiverId.toString())
 
       // Clear WebSocket messages first to avoid duplicates
       websocket.clearMessages()
@@ -264,7 +264,7 @@ onMounted(async () => {
     websocket.updateSender()
 
     // Connect to WebSocket immediately on mount
-    console.log('Connecting to WebSocket on mount')
+     ('Connecting to WebSocket on mount')
     websocket.connect()
 
     // Step 1: Load all conversations for the logged-in user
@@ -279,7 +279,7 @@ onMounted(async () => {
     response.data.forEach((convo) => {
       // Skip conversations where sender and receiver are the same
       if (convo.senderId === convo.receiverId) {
-        console.log('Skipping self-conversation:', convo)
+         ('Skipping self-conversation:', convo)
         return
       }
 
@@ -303,7 +303,7 @@ onMounted(async () => {
     })
 
     chats.value = uniqueConversations
-    console.log('Loaded unique conversations:', chats.value)
+     ('Loaded unique conversations:', chats.value)
 
     // Step 2: Fetch receiver details for each conversation
     for (const convo of chats.value) {
@@ -340,7 +340,7 @@ onMounted(async () => {
         }
       }
     } else {
-      console.log('No conversations available')
+       ('No conversations available')
     }
   } catch (error) {
     console.error('Failed to fetch conversations:', error)
@@ -349,7 +349,7 @@ onMounted(async () => {
 
 // Log conversations for debugging
 const logConversations = () => {
-  console.log('Current conversations:', JSON.stringify(chats.value, null, 2))
+   ('Current conversations:', JSON.stringify(chats.value, null, 2))
 }
 
 // Filter WebSocket messages to only show those relevant to current chat

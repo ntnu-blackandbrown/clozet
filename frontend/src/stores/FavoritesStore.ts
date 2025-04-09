@@ -24,14 +24,14 @@ export const useFavoritesStore = defineStore('favorites', () => {
 
   async function fetchUserFavorites() {
     if (!authStore.user?.id) {
-      console.log('User not logged in, cannot fetch favorites.')
+       ('User not logged in, cannot fetch favorites.')
       favoritesMap.value.clear() // Clear favorites if user logs out
       return
     }
 
     isLoading.value = true
     error.value = null
-    console.log(`Fetching favorites for user ${authStore.user.id}`)
+     (`Fetching favorites for user ${authStore.user.id}`)
     try {
       const response = await FavoritesService.getUserFavorites(authStore.user.id)
       const favorites: Favorite[] = response.data || []
@@ -40,7 +40,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
         newFavoritesMap.set(fav.itemId, fav.id)
       })
       favoritesMap.value = newFavoritesMap
-      console.log('Favorites fetched:', favoritesMap.value)
+       ('Favorites fetched:', favoritesMap.value)
     } catch (err: any) {
       console.error('Failed to fetch user favorites:', err)
       error.value = 'Failed to load favorites.'
@@ -56,13 +56,13 @@ export const useFavoritesStore = defineStore('favorites', () => {
 
     isLoading.value = true
     error.value = null
-    console.log(`Adding favorite for item ${itemId} by user ${authStore.user.id}`)
+     (`Adding favorite for item ${itemId} by user ${authStore.user.id}`)
     try {
       const response = await FavoritesService.addFavorite(authStore.user.id, itemId)
       const newFavorite: Favorite = response.data
       if (newFavorite && newFavorite.id) {
         favoritesMap.value.set(itemId, newFavorite.id)
-        console.log(`Favorite added: Item ${itemId}, Favorite ID ${newFavorite.id}`)
+         (`Favorite added: Item ${itemId}, Favorite ID ${newFavorite.id}`)
       } else {
         throw new Error('Invalid response data received from addFavorite API.')
       }
@@ -86,11 +86,11 @@ export const useFavoritesStore = defineStore('favorites', () => {
 
     isLoading.value = true
     error.value = null
-    console.log(`Removing favorite ${favoriteId} for item ${itemId}`)
+     (`Removing favorite ${favoriteId} for item ${itemId}`)
     try {
       await FavoritesService.removeFavorite(favoriteId)
       favoritesMap.value.delete(itemId)
-      console.log(`Favorite removed: Item ${itemId}`)
+       (`Favorite removed: Item ${itemId}`)
     } catch (err: any) {
       console.error('Failed to remove favorite:', err)
       error.value = 'Failed to remove favorite.'
@@ -109,7 +109,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
       } else {
         // Clear favorites when user logs out
         favoritesMap.value.clear()
-        console.log('User logged out, favorites cleared.')
+         ('User logged out, favorites cleared.')
       }
     },
     { immediate: true },

@@ -71,8 +71,8 @@ onMounted(async () => {
     // Fetch user's transactions
     const response = await TransactionService.getBuyerTransactions(authStore.user?.id as number)
     const purchasedTransactions = response.data
-    console.log('Purchased Transactions:', purchasedTransactions)
-    console.log('Transactions count:', purchasedTransactions.length)
+     ('Purchased Transactions:', purchasedTransactions)
+     ('Transactions count:', purchasedTransactions.length)
 
     if (!purchasedTransactions || purchasedTransactions.length === 0) {
       items.value = []
@@ -84,7 +84,7 @@ onMounted(async () => {
     const uniqueItemIds = [
       ...new Set(purchasedTransactions.map((transaction: any) => transaction.itemId)),
     ]
-    console.log('Unique Item IDs:', uniqueItemIds)
+     ('Unique Item IDs:', uniqueItemIds)
 
     // Fetch each item individually
     const fetchPromises = uniqueItemIds.map((itemId) => fetchItemById(Number(itemId)))
@@ -92,14 +92,14 @@ onMounted(async () => {
 
     // Filter out any null items (failed fetches) and ensure we have valid items
     const validItems = fetchedItems.filter(Boolean) as Product[]
-    console.log('Valid items found:', validItems.length)
+     ('Valid items found:', validItems.length)
 
     // Fetch images for all valid items
     const itemsWithImages = await Promise.all(
       validItems.map((item: Product) => fetchImageForItem(item)),
     )
 
-    console.log('Final items with images:', itemsWithImages.length)
+     ('Final items with images:', itemsWithImages.length)
     items.value = itemsWithImages
   } catch (error) {
     console.error('Failed to fetch purchases:', error)

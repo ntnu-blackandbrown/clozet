@@ -31,15 +31,15 @@ const getButtonTitle = () => {
 
 const toggleWishlist = async () => {
   if (!authStore.isLoggedIn) {
-    console.log('User not logged in, cannot toggle wishlist.')
+     ('User not logged in, cannot toggle wishlist.')
     return
   }
 
   if (isWishlisted.value) {
-    console.log(`Attempting to remove favorite for product ID: ${props.productId}`)
+     (`Attempting to remove favorite for product ID: ${props.productId}`)
     await favoritesStore.removeFavorite(props.productId)
   } else {
-    console.log(`Attempting to add favorite for product ID: ${props.productId}`)
+     (`Attempting to add favorite for product ID: ${props.productId}`)
     await favoritesStore.addFavorite(props.productId)
   }
 }

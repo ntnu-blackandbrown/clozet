@@ -97,7 +97,7 @@ const handleDeleteAccount = async () => {
 
   try {
     // TODO: Implement API call to delete account
-    console.log('Deleting account')
+     ('Deleting account')
   } catch (error) {
     console.error('Error deleting account:', error)
   }

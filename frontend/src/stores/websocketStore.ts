@@ -30,7 +30,7 @@ export const useWebsocket = defineStore('websocket', () => {
   const updateSender = () => {
     if (authStore.user && authStore.user.id) {
       sender.value = authStore.user.id.toString()
-      console.log('Sender updated:', sender.value)
+       ('Sender updated:', sender.value)
     } else {
       console.warn('User ID not available in auth store')
     }
@@ -38,9 +38,9 @@ export const useWebsocket = defineStore('websocket', () => {
 
   const receiver = ref<number>(0)
   const setReceiver = (id: number) => {
-    console.log('Setting receiver ID:', id, typeof id)
+     ('Setting receiver ID:', id, typeof id)
     receiver.value = id
-    console.log('Receiver ID after setting:', receiver.value, typeof receiver.value)
+     ('Receiver ID after setting:', receiver.value, typeof receiver.value)
   }
 
   const messageContent = ref('')
@@ -78,7 +78,7 @@ export const useWebsocket = defineStore('websocket', () => {
 
   function connect() {
     updateSender()
-    console.log('Attempting to connect to WebSocket server...')
+     ('Attempting to connect to WebSocket server...')
     updateConnectionStatus('connecting', 'Connecting...')
     log(`Attempting to connect to ${serverUrl.value}...`)
 
@@ -218,11 +218,11 @@ export const useWebsocket = defineStore('websocket', () => {
   }
 
   function sendMessage() {
-    console.log('Attempting to send message...')
-    console.log('Connection status:', connected.value)
-    console.log('Sender ID:', sender.value, typeof sender.value)
-    console.log('Receiver ID:', receiver.value, typeof receiver.value)
-    console.log('Message content:', messageContent.value, typeof messageContent.value)
+     ('Attempting to send message...')
+     ('Connection status:', connected.value)
+     ('Sender ID:', sender.value, typeof sender.value)
+     ('Receiver ID:', receiver.value, typeof receiver.value)
+     ('Message content:', messageContent.value, typeof messageContent.value)
 
     if (!sender.value || !receiver.value || !messageContent.value) {
       log('Fill all fields', 'error')

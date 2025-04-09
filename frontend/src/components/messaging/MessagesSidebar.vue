@@ -59,18 +59,13 @@ const getLatestMessage = (conversation: Conversation) => {
 }
 
 const getReceiverUsername = (conversation: Conversation) => {
-  console.log(`Getting username for conversation ${getChatId(conversation)}:`)
   const numericReceiverId = Number(conversation.receiverId)
-  console.log(`- receiverId: ${numericReceiverId}`)
-  console.log(`- receiverName: ${conversation.receiverName}`)
 
   // Try to get username from the map using numeric ID
   const usernameFromMap = props.receiverUsernames.get(numericReceiverId)
-  console.log(`- username from map: ${usernameFromMap}`)
 
   // Use fallbacks in order: map username -> conversation receiverName -> Unknown User
   const username = usernameFromMap || conversation.receiverName || 'Unknown User'
-  console.log(`- final username: ${username}`)
   return username
 }
 

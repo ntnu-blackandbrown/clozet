@@ -202,11 +202,8 @@ const handleContactSeller = async () => {
 
     // Check existing conversations
     const response = await MessagingService.getUserConversations(authStore.user.id)
-    console.log(response.data)
 
     const compositeId = computeCompositeId(authStore.user.id, sellerId.value, props.id)
-    console.log(compositeId)
-
     //check if conversation already exists with this seller for this item
     const existingConversation = response.data.find(
       (conv: any) => conv.conversationId === compositeId,
@@ -217,7 +214,6 @@ const handleContactSeller = async () => {
       return
     } else {
       //create a new conversation
-      console.log('creating new conversation')
       const messageResponse = await MessagingService.sendMessage({
         senderId: authStore.user.id.toString(),
         receiverId: sellerId.value.toString(),

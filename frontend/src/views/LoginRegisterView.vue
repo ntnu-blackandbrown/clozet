@@ -145,7 +145,6 @@ const submit = handleSubmit(async (values) => {
       }
     } else {
       // Direct registration with correct endpoint
-      console.log('Registering now')
       const userData = {
         username: values.username,
         email: values.email,
@@ -154,8 +153,6 @@ const submit = handleSubmit(async (values) => {
         lastName: values.lastName,
         role: 'USER',
       }
-      console.log('userData', userData)
-      console.log('Sending request now')
 
 
       const response = await AuthService.register(

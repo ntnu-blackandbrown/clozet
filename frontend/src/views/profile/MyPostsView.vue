@@ -36,13 +36,13 @@ onMounted(async () => {
   try {
     const response = await ProductService.getItemsBySeller(authStore.user?.id as number)
     const fetchedItems = response.data
-    console.log('Fetched items from backend:', fetchedItems)
+     ('Fetched items from backend:', fetchedItems)
 
     // Fetch images for all items
     const itemsWithImages = await Promise.all(
       fetchedItems.map((item: any) => fetchImageForItem(item)),
     )
-    console.log('Items with images and availability:', itemsWithImages)
+     ('Items with images and availability:', itemsWithImages)
 
     items.value = itemsWithImages
 

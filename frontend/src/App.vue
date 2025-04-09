@@ -21,7 +21,7 @@ const userDetails = computed(() => authStore.userDetails)
 // Load user info on app start
 onMounted(async () => {
   if (sessionStorage.getItem('user')) {
-    console.log('Fetching user info from session storage')
+     ('Fetching user info from session storage')
     await authStore.fetchUserInfo()
   }
   // Check if we should show the login/register modal based on the route

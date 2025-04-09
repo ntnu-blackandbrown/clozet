@@ -249,14 +249,12 @@ const onSubmit = handleSubmit(async (formValues) => {
       const response = await ProductService.updateItem(props.id, payload)
       itemId = response.data.id
       testResult.value = `Success! Item updated with ID: ${itemId}`
-      console.log('Product updated:', response.data)
 
       // 2. Handle image updates (if new images were added)
       // This part is tricky because we cleared imageFiles. If the user adds new images,
       // we need to upload them. If they didn't, we assume they keep the old ones.
       // The backend might need logic to handle removal of old images if new ones are uploaded.
       if (imageFiles.value.length > 0) {
-        console.log('New images detected for upload during update...')
         // Potential: Delete existing images before uploading new ones? Requires backend support.
         // await ProductService.deleteItemImages(itemId); // Example: if backend supports this
         for (const file of imageFiles.value) {
@@ -266,7 +264,6 @@ const onSubmit = handleSubmit(async (formValues) => {
           await ProductService.uploadImages(formData)
         }
         testResult.value += ' and new images uploaded successfully.'
-        console.log('New images uploaded.')
       } else {
         testResult.value += '. Kept existing images.'
       }
@@ -276,7 +273,6 @@ const onSubmit = handleSubmit(async (formValues) => {
       const response = await ProductService.createItem(payload)
       itemId = response.data.id
       testResult.value = `Success! Item created with ID: ${itemId}`
-      console.log('Product created:', response.data)
 
       // 2. Upload each image
       for (const file of imageFiles.value) {
@@ -286,7 +282,6 @@ const onSubmit = handleSubmit(async (formValues) => {
         await ProductService.uploadImages(formData)
       }
       testResult.value += ' and images uploaded successfully.'
-      console.log('All images uploaded.')
     }
 
     // Optional: redirect after success
