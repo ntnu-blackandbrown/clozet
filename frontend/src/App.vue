@@ -105,6 +105,9 @@ const toggleMobileMenu = () => {
             <RouterLink v-if="isLoggedIn" to="/messages" aria-label="Messages"
               >Messages</RouterLink
             >
+            <RouterLink v-if="isLoggedIn" to="/create-product" aria-label="Sell Items"
+              >Sell Items</RouterLink
+            >
           </template>
 
           <!-- Mobile-only auth section -->
