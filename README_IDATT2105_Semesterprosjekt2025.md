@@ -67,12 +67,39 @@ REST API with Swagger documentation
 
 - Overall requirements
 
+he project adheres to the following technical and documentation requirements:
+
+Frontend: Vue.js 3 with clean CSS (no CSS frameworks like Tailwind)
+
+Backend: Spring Boot 3 with Java 17, 21, or 24; REST-based API
+
+Database: MySQL 8 and/or H2
+
+Security: JWT-based authentication and secure access controls
+
+Testing: Minimum 50% code coverage; test data and test users must be included
+
+CI/CD: Automated build, test, and deployment workflows
+
+Documentation: Complete API documentation with Swagger, system architecture diagrams, and README for local setup
+
+Accessibility & Security: Follows OWASP and universal design principles
+
+Submission: Delivered as a zip file with runnable code, documentation, test data, and a 15–20 minute demo video
+
+The project encourages creativity in design and implementation, and groups are advised to prioritize features realistically, ensuring completed parts are fully functional and of high quality.
+
 ## Technology Choices and Justifications
 Comment and edit:
-- **Frontend:** Vue 3, justify why Vue was chosen over React or Angular.
-- **Backend:** Java and Spring Boot, justify the choice of version (v21).
-- **Database:** MySQL/H2, explain the reasons and advantages of this combination.
 
+
+- **Database:** MySQL/H2 + , explain the reasons and advantages of this combination. - ORM, JPA and SQL-injections
+// TODO: other things to justify
+-  Netlify
+-  Heroku
+
+- Websocket implementation
+- Spring security setup—main topics, the token setup, HTTP and XSS defence
 
 
 
@@ -91,8 +118,8 @@ Describe how security is handled:
 
 ## API Documentation
 Provide information on how the API is documented:
-- Link to Swagger
-- Examples on how to use the API
+
+- RestDocs - explain how it works and how to use it
 
 ## Installation and Running
 Step-by-step guide for setup:
@@ -109,6 +136,8 @@ Document how testing and CI/CD are configured:
 - Links to CI/CD pipelines in GitLab
 - Explanation of the deployment process (Azure/Netlify)
 
+- How to run tests locally - manually with EmialProdConfig
+
 ## Usage Examples
 Describe a typical user scenario:
 - Registration
@@ -119,7 +148,15 @@ Describe a typical user scenario:
 
 ## Project Members
 - Names and roles
-- Contact information
+
+Kevin Dennis Mazali
+
+- pic
+
+Kaamya Shinde
+
+- pic
+
 
 ---
 
