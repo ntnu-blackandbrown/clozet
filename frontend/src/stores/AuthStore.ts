@@ -16,7 +16,6 @@ interface User {
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
-  const token = ref<string | null>(null)
 
   const loading = ref(false)
 
@@ -67,7 +66,6 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       await AuthService.logout()
       user.value = null
-      token.value = null
       return { success: true, message: 'Logout successful' }
     } catch (error) {
       console.error('Logout error:', error)
@@ -105,4 +103,8 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     register,
   }
+}, {
+  persist: {
+    paths: ['user'],
+  },
 })
