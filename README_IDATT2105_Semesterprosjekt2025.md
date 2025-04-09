@@ -1,7 +1,15 @@
 # IDATT2105 - Semester Project 2025
 
-**Project Description:**  
-Brief introduction of the project. (E.g.: A marketplace similar to finn.no, featuring buying, selling, filtering, search, messaging, and payments through VIPPS.)
+**Project Description:**   
+
+A web-based marketplace platform inspired by finn.no, developed as part of the IDATT2105 Full-stack Application Development course in Spring 2025. 
+The platform allows users to buy and sell items through a rich user interface, equipped with features like advanced filtering, full-text search, messaging between users. 
+The system supports both standard users and administrators, where the former can list and manage items, while the latter have access to category and user management. 
+The frontend is built with Vue 3, while the backend is implemented using Java 21 and Spring Boot 3, with MySQL/H2 as the database engine during development,
+which is then migrated to PostReg SQL during deployment with Heroku.
+
+The project emphasizes clean architecture, modern security practices, accessibility, and test coverage, and is delivered with CI/CD pipelines and full documentation.
+
 
 **Link to application (optional):**  
 Insert link here (when available).
