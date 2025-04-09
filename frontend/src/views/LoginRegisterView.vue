@@ -132,9 +132,9 @@ const submit = handleSubmit(async (values) => {
     if (isLogin.value) {
       // Login using AuthStore (JWT cookie approach)
       debugInfo.value = `POST til /api/auth/login med ${JSON.stringify({ username: values.username, password: values.password })}`
-      const result = await AuthService.login(values.username, values.password)
+      const result = await authStore.login(values.username, values.password)
 
-      if (result.status === 200) {
+      if (result.success) {
         statusMessage.value = `Innlogging vellykket!`
         statusType.value = 'success'
         setTimeout(() => {
