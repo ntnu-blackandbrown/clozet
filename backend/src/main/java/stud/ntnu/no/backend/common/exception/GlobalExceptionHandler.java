@@ -27,8 +27,6 @@ import stud.ntnu.no.backend.itemimage.exception.ItemImageValidationException;
 import stud.ntnu.no.backend.location.exception.LocationNotFoundException;
 import stud.ntnu.no.backend.location.exception.LocationValidationException;
 import stud.ntnu.no.backend.message.exception.MessageNotFoundException;
-import stud.ntnu.no.backend.review.exception.ReviewNotFoundException;
-import stud.ntnu.no.backend.review.exception.ReviewValidationException;
 import stud.ntnu.no.backend.shippingoption.exception.ShippingOptionNotFoundException;
 import stud.ntnu.no.backend.shippingoption.exception.ShippingOptionValidationException;
 import stud.ntnu.no.backend.transaction.exception.TransactionNotFoundException;
@@ -72,17 +70,6 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(DataIntegrityException.class)
   public ResponseEntity<Object> handleCustomDataIntegrityException(DataIntegrityException ex) {
     return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
-  }
-
-  // Review exception handlers
-  @ExceptionHandler(ReviewNotFoundException.class)
-  public ResponseEntity<Object> handleReviewNotFoundException(ReviewNotFoundException ex) {
-    return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
-  }
-
-  @ExceptionHandler(ReviewValidationException.class)
-  public ResponseEntity<Object> handleReviewValidationException(ReviewValidationException ex) {
-    return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
   }
 
   // Category exception handlers
