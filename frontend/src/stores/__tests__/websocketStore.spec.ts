@@ -1,6 +1,6 @@
 // tests/websocket.spec.ts
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { useWebsocket } from '@/websocket/websocket'
+import { useWebsocket } from '@/stores/websocketStore'
 import { useAuthStore } from '@/stores/AuthStore'
 
 // 1. Mock sockjs-client
