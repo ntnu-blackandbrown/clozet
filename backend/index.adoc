@@ -546,147 +546,6 @@ include::target/generated-snippets/favorites-update/response-body.adoc[]
 include::target/generated-snippets/favorites-update/response-fields.adoc[]
 
 
-== History
-
-=== Add
-
-==== Curl Request
-
-include::target/generated-snippets/history-add/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/history-add/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/history-add/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/history-add/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/history-add/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/history-add/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/history-add/response-fields.adoc[]
-
-=== Clear
-
-==== Curl Request
-
-include::target/generated-snippets/history-clear/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/history-clear/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/history-clear/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/history-clear/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/history-clear/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/history-clear/response-body.adoc[]
-
-=== Get
-
-==== Curl Request
-
-include::target/generated-snippets/history-get/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/history-get/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/history-get/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/history-get/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/history-get/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/history-get/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/history-get/response-fields.adoc[]
-
-=== Pause
-
-==== Curl Request
-
-include::target/generated-snippets/history-pause/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/history-pause/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/history-pause/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/history-pause/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/history-pause/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/history-pause/response-body.adoc[]
-
-=== Remove
-
-==== Curl Request
-
-include::target/generated-snippets/history-remove/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/history-remove/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/history-remove/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/history-remove/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/history-remove/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/history-remove/response-body.adoc[]
-
-
 == Items
 
 === Activate
@@ -1147,226 +1006,6 @@ include::target/generated-snippets/me-get-unauthorized/response-body.adoc[]
 include::target/generated-snippets/me-get-unauthorized/response-fields.adoc[]
 
 
-== Review
-
-=== Create
-
-==== Curl Request
-
-include::target/generated-snippets/review-create/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/review-create/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/review-create/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/review-create/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/review-create/request-body.adoc[]
-
-==== Request Fields
-
-include::target/generated-snippets/review-create/request-fields.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/review-create/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/review-create/response-fields.adoc[]
-
-=== Delete
-
-==== Curl Request
-
-include::target/generated-snippets/review-delete/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/review-delete/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/review-delete/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/review-delete/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/review-delete/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/review-delete/response-body.adoc[]
-
-=== Get By Id
-
-==== Curl Request
-
-include::target/generated-snippets/review-get-by-id/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/review-get-by-id/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/review-get-by-id/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/review-get-by-id/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/review-get-by-id/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/review-get-by-id/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/review-get-by-id/response-fields.adoc[]
-
-=== Update
-
-==== Curl Request
-
-include::target/generated-snippets/review-update/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/review-update/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/review-update/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/review-update/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/review-update/request-body.adoc[]
-
-==== Request Fields
-
-include::target/generated-snippets/review-update/request-fields.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/review-update/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/review-update/response-fields.adoc[]
-
-
-== Reviews
-
-=== Get All
-
-==== Curl Request
-
-include::target/generated-snippets/reviews-get-all/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/reviews-get-all/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/reviews-get-all/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/reviews-get-all/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/reviews-get-all/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/reviews-get-all/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/reviews-get-all/response-fields.adoc[]
-
-=== Get By Reviewee
-
-==== Curl Request
-
-include::target/generated-snippets/reviews-get-by-reviewee/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/reviews-get-by-reviewee/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/reviews-get-by-reviewee/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/reviews-get-by-reviewee/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/reviews-get-by-reviewee/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/reviews-get-by-reviewee/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/reviews-get-by-reviewee/response-fields.adoc[]
-
-=== Get By Reviewer
-
-==== Curl Request
-
-include::target/generated-snippets/reviews-get-by-reviewer/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/reviews-get-by-reviewer/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/reviews-get-by-reviewer/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/reviews-get-by-reviewer/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/reviews-get-by-reviewer/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/reviews-get-by-reviewer/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/reviews-get-by-reviewer/response-fields.adoc[]
-
-
 == Shipping
 
 === Option Create
@@ -1616,6 +1255,40 @@ include::target/generated-snippets/transaction-get-by-id/response-body.adoc[]
 
 include::target/generated-snippets/transaction-get-by-id/response-fields.adoc[]
 
+=== Purchase
+
+==== Curl Request
+
+include::target/generated-snippets/transaction-purchase/curl-request.adoc[]
+
+==== Http Request
+
+include::target/generated-snippets/transaction-purchase/http-request.adoc[]
+
+==== Http Response
+
+include::target/generated-snippets/transaction-purchase/http-response.adoc[]
+
+==== Httpie Request
+
+include::target/generated-snippets/transaction-purchase/httpie-request.adoc[]
+
+==== Request Body
+
+include::target/generated-snippets/transaction-purchase/request-body.adoc[]
+
+==== Request Fields
+
+include::target/generated-snippets/transaction-purchase/request-fields.adoc[]
+
+==== Response Body
+
+include::target/generated-snippets/transaction-purchase/response-body.adoc[]
+
+==== Response Fields
+
+include::target/generated-snippets/transaction-purchase/response-fields.adoc[]
+
 === Update
 
 ==== Curl Request
@@ -1715,32 +1388,6 @@ include::target/generated-snippets/transactions-get-all/response-fields.adoc[]
 
 
 == User
-
-=== Delete
-
-==== Curl Request
-
-include::target/generated-snippets/user-delete/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/user-delete/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/user-delete/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/user-delete/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/user-delete/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/user-delete/response-body.adoc[]
 
 === Get By Id
 
