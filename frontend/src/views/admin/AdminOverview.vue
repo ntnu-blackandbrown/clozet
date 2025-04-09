@@ -1,12 +1,17 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+// Import API services
+import { UserService } from '@/api/services/UserService';
+import { ProductService } from '@/api/services/ProductService';
+import { CategoryService } from '@/api/services/CategoryService';
+import { TransactionService } from '@/api/services/TransactionService';
 
 // Statistics data
 const statistics = ref({
   totalUsers: 0,
   totalItems: 0,
   totalCategories: 0,
-  totalTransactions: 0,
+  totalTransactions: 0, // Initialize transaction count
   recentUsers: [],
   recentItems: [],
 })
@@ -14,80 +19,54 @@ const statistics = ref({
 const isLoading = ref(true)
 const error = ref(null)
 
-// Fetch dashboard statistics
+// Helper function to sort by date and get top N items
+const getRecentItems = (items, count = 3) => {
+  if (!items || !Array.isArray(items)) return [];
+  // Assuming items have a 'createdAt' field that can be parsed into a Date
+  return items
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, count);
+}
+
+// Fetch dashboard statistics from APIs
 const fetchStatistics = async () => {
   try {
     isLoading.value = true
     error.value = null
 
-    // TODO: Once backend endpoint is created, replace with actual API call
-    // const response = await axios.get('/api/admin/statistics')
-    // statistics.value = response.data
+    // Make concurrent API calls
+    const [usersResponse, productsResponse, categoriesResponse, transactionsResponse] = await Promise.all([
+      UserService.getAllUsers().catch(e => { console.error('Failed to fetch users:', e); return { data: [] }; }),
+      ProductService.getAllItems().catch(e => { console.error('Failed to fetch products:', e); return { data: [] }; }),
+      CategoryService.getAllCategories().catch(e => { console.error('Failed to fetch categories:', e); return { data: [] }; }),
+      TransactionService.getAllTransactions().catch(e => { console.error('Failed to fetch transactions:', e); return { data: [] }; })
+    ]);
 
-    // Mock data for now
-    // Simulate API call
-    setTimeout(() => {
-      statistics.value = {
-        totalUsers: 35,
-        totalItems: 128,
-        totalCategories: 18,
-        totalTransactions: 52,
-        recentUsers: [
-          {
-            id: 1,
-            username: 'emmasmith1',
-            firstName: 'Emma',
-            lastName: 'Smith',
-            email: 'emmasmith@example.com',
-            createdAt: '2023-05-15',
-          },
-          {
-            id: 2,
-            username: 'noahjohnson1',
-            firstName: 'Noah',
-            lastName: 'Johnson',
-            email: 'noahjohnson@example.com',
-            createdAt: '2023-05-14',
-          },
-          {
-            id: 3,
-            username: 'oliviawilliams1',
-            firstName: 'Olivia',
-            lastName: 'Williams',
-            email: 'oliviawilliams@example.com',
-            createdAt: '2023-05-13',
-          },
-        ],
-        recentItems: [
-          {
-            id: 1,
-            title: "Men's Classic T-Shirt - Black",
-            price: 199.5,
-            seller: 'demoSeller',
-            createdAt: '2023-05-16',
-          },
-          {
-            id: 2,
-            title: "Women's Summer Dress - Floral",
-            price: 450.0,
-            seller: 'emmasmith1',
-            createdAt: '2023-05-15',
-          },
-          {
-            id: 3,
-            title: 'Leather Jacket - Brown',
-            price: 1200.0,
-            seller: 'oliviawilliams1',
-            createdAt: '2023-05-14',
-          },
-        ],
-      }
-      isLoading.value = false
-    }, 800)
-  } catch (err) {
-    console.error('Error fetching admin statistics:', err)
-    error.value = 'Failed to load dashboard data'
+    const users = usersResponse.data || [];
+    const products = productsResponse.data || [];
+    const categories = categoriesResponse.data || [];
+    const transactions = transactionsResponse.data || [];
+
+    // Calculate statistics
+    statistics.value = {
+      totalUsers: users.length,
+      totalItems: products.length,
+      totalCategories: categories.length,
+      totalTransactions: transactions.length,
+      recentUsers: getRecentItems(users),
+      recentItems: getRecentItems(products),
+    };
+
+    // Remove mock data timeout
+    // setTimeout(() => { ... }, 800) // This block is removed
+
     isLoading.value = false
+  } catch (err) {
+    // This top-level catch might be less necessary if individual calls are handled
+    // But keep it as a fallback
+    console.error('Error fetching admin statistics:', err)
+    error.value = 'Failed to load some dashboard data. Check console for details.'
+    isLoading.value = false // Ensure loading stops even if Promise.all fails globally
   }
 }
 
