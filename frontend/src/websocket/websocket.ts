@@ -3,12 +3,31 @@ import SockJS from 'sockjs-client'
 import Stomp from 'stompjs'
 import { useAuthStore } from '@/stores/AuthStore'
 import { defineStore } from 'pinia'
+
+// Message interface
+interface Message {
+  id: string;
+  senderId: string | number;
+  receiverId: string | number;
+  content: string;
+  timestamp?: string;
+  createdAt?: string;
+  type?: string;
+  status?: string;
+}
+
+// Log interface
+interface LogEntry {
+  text: string;
+  type: string;
+}
+
 export const useWebsocket = defineStore('websocket', () => {
   const serverUrl = ref('http://localhost:8080/ws')
 
   const authStore = useAuthStore()
   // Initialize sender as null and update it when needed
-  const sender = ref(null)
+  const sender = ref<string | null>(null)
 
   // Update sender when auth store changes
   const updateSender = () => {
@@ -21,40 +40,40 @@ export const useWebsocket = defineStore('websocket', () => {
   }
 
   //Will be set by a function
-  const receiver = ref(0)
-  const setReceiver = (id) => {
+  const receiver = ref<number>(0)
+  const setReceiver = (id: number) => {
     console.log('Setting receiver ID:', id, typeof id)
     receiver.value = id
     console.log('Receiver ID after setting:', receiver.value, typeof receiver.value)
   }
 
   const messageContent = ref('')
-  const logs = ref([])
-  const messages = ref([])
+  const logs = ref<LogEntry[]>([])
+  const messages = ref<Message[]>([])
 
   // New state for enhanced messaging features
-  const deliveredMessages = ref(new Set())
-  const readMessages = ref(new Set())
-  const failedMessages = ref(new Set())
-  const typingUsers = ref(new Map()) // userId -> {timestamp, timeoutId}
+  const deliveredMessages = ref(new Set<string>())
+  const readMessages = ref(new Set<string>())
+  const failedMessages = ref(new Set<string>())
+  const typingUsers = ref(new Map<string | number, { timestamp: number, timeoutId: NodeJS.Timeout | null }>())
   const isTyping = ref(false)
-  const typingTimeout = ref(null)
-  const pendingMessages = ref([]) // For offline queueing
+  const typingTimeout = ref<NodeJS.Timeout | null>(null)
+  const pendingMessages = ref<Message[]>([]) // For offline queueing
 
-  let stompClient = null
+  let stompClient: Stomp.Client | null = null
   let messageCount = 0
   const connected = ref(false)
   const connectionStatus = ref('Disconnected')
   const connectionStatusClass = ref('disconnected')
 
-  function log(message, type = 'info') {
+  function log(message: string, type: string = 'info') {
     const timestamp = new Date().toLocaleTimeString()
     logs.value.push({ text: `[${timestamp}] ${message}`, type })
     const logEl = document.getElementById('log')
     if (logEl) logEl.scrollTop = logEl.scrollHeight
   }
 
-  function updateConnectionStatus(status, message) {
+  function updateConnectionStatus(status: string, message: string) {
     connectionStatus.value = message
     connectionStatusClass.value = status
   }
@@ -69,11 +88,11 @@ export const useWebsocket = defineStore('websocket', () => {
 
     const socket = new SockJS(serverUrl.value)
     stompClient = Stomp.over(socket)
-    stompClient.debug = (str) => log(`STOMP Debug: ${str}`, 'info')
+    stompClient.debug = (str: string) => log(`STOMP Debug: ${str}`, 'info')
 
     stompClient.connect(
       {},
-      (frame) => {
+      (frame: any) => {
         connected.value = true
         updateConnectionStatus('connected', 'Connected')
         log(`Connected: ${frame}`, 'message-received')
@@ -82,7 +101,7 @@ export const useWebsocket = defineStore('websocket', () => {
         // Process any pending offline messages
         processPendingMessages()
       },
-      (error) => {
+      (error: any) => {
         connected.value = false
         updateConnectionStatus('disconnected', 'Connection Failed')
         log(`Connection error: ${error}`, 'error')
@@ -99,7 +118,9 @@ export const useWebsocket = defineStore('websocket', () => {
   }
 
   function subscribeToTopics() {
-    stompClient.subscribe('/topic/messages', (msg) => {
+    if (!stompClient) return;
+
+    stompClient.subscribe('/topic/messages', (msg: any) => {
       try {
         const message = JSON.parse(msg.body)
         messageCount++
@@ -123,36 +144,39 @@ export const useWebsocket = defineStore('websocket', () => {
           // Automatically send delivery confirmation
           sendDeliveryConfirmation(message.id)
         }
-      } catch (e) {
-        log(`Error parsing message: ${e.message}`, 'error')
+      } catch (e: unknown) {
+        const error = e as Error
+        log(`Error parsing message: ${error.message}`, 'error')
       }
     })
 
-    stompClient.subscribe('/topic/messages.read', (msg) => {
+    stompClient.subscribe('/topic/messages.read', (msg: any) => {
       try {
         const message = JSON.parse(msg.body)
         log(`Message read:<br>ID: ${message.id}<br>Read: ${message.read}`, 'message-received')
 
         // Add to read messages set
         readMessages.value.add(message.id)
-      } catch (e) {
-        log(`Error parsing read status: ${e.message}`, 'error')
+      } catch (e: unknown) {
+        const error = e as Error
+        log(`Error parsing read status: ${error.message}`, 'error')
       }
     })
 
-    stompClient.subscribe('/topic/messages.delivered', (msg) => {
+    stompClient.subscribe('/topic/messages.delivered', (msg: any) => {
       try {
         const { messageId } = JSON.parse(msg.body)
         log(`Message delivered: ${messageId}`, 'message-received')
 
         // Mark message as delivered
         deliveredMessages.value.add(messageId)
-      } catch (e) {
-        log(`Error parsing delivery status: ${e.message}`, 'error')
+      } catch (e: unknown) {
+        const error = e as Error
+        log(`Error parsing delivery status: ${error.message}`, 'error')
       }
     })
 
-    stompClient.subscribe('/topic/messages.typing', (msg) => {
+    stompClient.subscribe('/topic/messages.typing', (msg: any) => {
       try {
         const { userId, isTyping: userIsTyping } = JSON.parse(msg.body)
 
@@ -163,8 +187,8 @@ export const useWebsocket = defineStore('websocket', () => {
             const now = Date.now()
 
             // Clear existing timeout if any
-            if (typingUsers.value.has(userId) && typingUsers.value.get(userId).timeoutId) {
-              clearTimeout(typingUsers.value.get(userId).timeoutId)
+            if (typingUsers.value.has(userId) && typingUsers.value.get(userId)?.timeoutId) {
+              clearTimeout(typingUsers.value.get(userId)?.timeoutId as NodeJS.Timeout)
             }
 
             // Set new timeout
@@ -179,25 +203,27 @@ export const useWebsocket = defineStore('websocket', () => {
             typingUsers.value.delete(userId)
           }
         }
-      } catch (e) {
-        log(`Error parsing typing status: ${e.message}`, 'error')
+      } catch (e: unknown) {
+        const error = e as Error
+        log(`Error parsing typing status: ${error.message}`, 'error')
       }
     })
 
-    stompClient.subscribe('/topic/messages.update', (msg) => {
+    stompClient.subscribe('/topic/messages.update', (msg: any) => {
       try {
         const message = JSON.parse(msg.body)
         log(
           `Message updated:<br>ID: ${message.id}<br>Content: ${message.content}`,
           'message-received',
         )
-      } catch (e) {
-        log(`Error parsing update: ${e.message}`, 'error')
+      } catch (e: unknown) {
+        const error = e as Error
+        log(`Error parsing update: ${error.message}`, 'error')
       }
     })
   }
 
-  function sendDeliveryConfirmation(messageId) {
+  function sendDeliveryConfirmation(messageId: string) {
     if (connected.value && stompClient) {
       const confirmation = {
         messageId,
@@ -226,7 +252,7 @@ export const useWebsocket = defineStore('websocket', () => {
     // Generate a client ID for this message
     const clientMessageId = `client-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
 
-    const msg = {
+    const msg: Message = {
       id: clientMessageId, // Include client ID
       senderId: sender.value,
       receiverId: receiver.value,
@@ -243,7 +269,10 @@ export const useWebsocket = defineStore('websocket', () => {
 
     // Clear typing indicator
     sendTypingStatus(false)
-    clearTimeout(typingTimeout.value)
+    if (typingTimeout.value) {
+      clearTimeout(typingTimeout.value)
+      typingTimeout.value = null
+    }
     isTyping.value = false
 
     // If not connected, queue the message for later
@@ -264,7 +293,7 @@ export const useWebsocket = defineStore('websocket', () => {
   }
 
   // Retry sending a failed message
-  function retryMessage(messageId) {
+  function retryMessage(messageId: string) {
     const messageIndex = messages.value.findIndex((m) => m.id === messageId)
     if (messageIndex === -1) return
 
@@ -303,7 +332,9 @@ export const useWebsocket = defineStore('websocket', () => {
     pendingMessages.value = []
 
     messagesToSend.forEach((msg) => {
-      stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(msg))
+      if (stompClient) {
+        stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(msg))
+      }
       failedMessages.value.delete(msg.id)
 
       // Update message status
@@ -319,7 +350,7 @@ export const useWebsocket = defineStore('websocket', () => {
   }
 
   // Send typing status
-  function sendTypingStatus(isTyping) {
+  function sendTypingStatus(isTyping: boolean) {
     if (connected.value && stompClient && sender.value && receiver.value) {
       const status = {
         userId: sender.value,
@@ -376,7 +407,7 @@ export const useWebsocket = defineStore('websocket', () => {
   }
 
   // Mark messages as read for a specific sender
-  function markMessagesAsRead(senderId) {
+  function markMessagesAsRead(senderId: string) {
     if (connected.value && stompClient) {
       const readStatus = {
         senderId: senderId,
@@ -410,7 +441,9 @@ export const useWebsocket = defineStore('websocket', () => {
         timestamp: new Date().toISOString(),
       }
 
-      stompClient.send('/app/chat.markRead', {}, JSON.stringify(readStatus))
+      if (stompClient) {
+        stompClient.send('/app/chat.markRead', {}, JSON.stringify(readStatus))
+      }
     })
 
     if (unreadMessages.length > 0) {
@@ -443,6 +476,6 @@ export const useWebsocket = defineStore('websocket', () => {
     typingUsers,
     retryMessage,
     handleTyping,
-    isReceiverTyping: (receiverId) => typingUsers.value.has(receiverId),
+    isReceiverTyping: (receiverId: string | number) => typingUsers.value.has(receiverId),
   }
 })
