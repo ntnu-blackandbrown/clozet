@@ -164,17 +164,99 @@ Describe the architecture and structure of your project. Include:
 
 
 ## API Documentation
-Provide information on how the API is documented:
 
-- RestDocs - explain how it works and how to use it
+Our API documentation is automatically generated using Spring REST Docs, which ensures that the documentation stays in sync with the actual code through test-driven documentation.
+
+### Implementation Overview
+
+1. **Test-Driven Documentation**
+   - Documentation is generated through integration tests
+   - Each endpoint's documentation is verified during test execution
+   - Examples are automatically generated from actual request/response pairs
+
+2. **Documentation Structure**
+   ```
+   backend/
+   ├── src/test/java/
+   │   └── .../*ControllerTest.java    # Test files that generate docs
+   ├── target/generated-snippets/      # Generated documentation snippets
+   └── index.adoc                      # Main documentation file
+   ```
+
+3. **Example Documentation Test**
+   ```java
+   @Test
+   void getTopFiveCategories_ShouldReturnListOfCategories() throws Exception {
+       mockMvc.perform(get("/api/categories/top-five"))
+           .andDo(document("categories-top-five",
+               responseFields(
+                   fieldWithPath("[].id").description("Category ID"),
+                   fieldWithPath("[].name").description("Category name"),
+                   // ... other fields
+               )
+           ));
+   }
+   ```
+
+### Documentation Generation Process
+
+1. **Test Execution**: Run tests
+   ```
+   mvn test
+   ```
+
+2. **Snippet Generation**: Tests generate documentation snippets in `target/generated-snippets/`
+
+3. **Index Generation**: Python script combines snippets into final documentation
+   ```bash
+   python generate_index.py
+   ```
+### Documentation Content
+- 📝 Request/response formats with examples
+- 🔍 Detailed field descriptions and types
+- 🎯 Sample request/response payloads
+- 📊 HTTP status codes and their meanings
+- 🔐 Authentication requirements per endpoint
+
+### Accessing Documentation
+
+The documentation can be accessed through the index.pdf file
 
 ## Installation and Running
-Step-by-step guide for setup:
-- **Prerequisites:** Java version, Node version, MySQL
-- **How to clone the repository**
-- **How to start the backend**
-- **How to start the frontend**
-- How to add test data
+
+### Prerequisites
+- Java JDK 21
+- Node.js v18+
+- MySQL 8.0
+- Maven 3.8+
+
+### Quick Start
+
+1. **Clone Repository**
+   ```bash
+   git clone [repository-url]
+   cd clozet
+   ```
+
+2. **Backend Setup**
+   ```bash
+   cd backend
+   mvn clean install
+   mvn spring-boot:run
+   ```
+   Backend will run on `http://localhost:8080`
+
+3. **Frontend Setup**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   Frontend will be available on `http://localhost:5173`
+
+The application should now be running and accessible through your browser.
+
+- How to manually test - ProdEmial -- Spin back
 
 ## Testing and CI/CD
 Document how testing and CI/CD are configured:
@@ -184,14 +266,6 @@ Document how testing and CI/CD are configured:
 - Explanation of the deployment process (Azure/Netlify)
 
 - How to run tests locally - manually with EmialProdConfig
-
-## Usage Examples
-Describe a typical user scenario:
-- Registration
-- Login
-- Publishing an advertisement
-- Contacting seller/buyer
-- Transactions using VIPPS
 
 ## Project Members
 - Names and roles
