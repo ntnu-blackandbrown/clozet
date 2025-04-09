@@ -48,4 +48,15 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
            "(m.senderId = :userId AND m.archivedBySender = false) OR " +
            "(m.receiverId = :userId AND m.archivedByReceiver = false)")
     List<Message> findNonArchivedMessagesByUserId(@Param("userId") String userId);
+
+    /**
+     * Finds all messages archived by a specific user.
+     *
+     * @param userId the user ID
+     * @return a list of archived messages
+     */
+    @Query("SELECT m FROM Message m WHERE " +
+           "(m.senderId = :userId AND m.archivedBySender = true) OR " +
+           "(m.receiverId = :userId AND m.archivedByReceiver = true)")
+    List<Message> findArchivedMessagesByUserId(@Param("userId") String userId);
 }

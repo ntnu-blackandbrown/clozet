@@ -10,6 +10,7 @@ import stud.ntnu.no.backend.message.entity.Message;
 import stud.ntnu.no.backend.message.mapper.MessageMapper;
 import stud.ntnu.no.backend.message.repository.MessageRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -140,5 +141,62 @@ public class ConversationService {
 
         // Notify via WebSocket
         webSocketService.notifyConversationArchived(conversationId, userId);
+    }
+
+    /**
+     * Marks user as deleted in the conversations they participated in.
+     * This adds a note to indicate that the user has been deleted.
+     *
+     * @param userId the ID of the deleted user
+     */
+    public void markUserAsDeleted(String userId) {
+        logger.info("Marking user as deleted in conversations: {}", userId);
+        
+        // Find all conversations where this user was a participant
+        List<Message> messages = messageRepository.findBySenderIdOrReceiverId(userId, userId);
+        
+        if (messages.isEmpty()) {
+            logger.info("No messages found for user {}", userId);
+            return;
+        }
+        
+        // Group by conversation for efficiency
+        Map<String, List<Message>> conversationGroups = messages.stream()
+            .collect(Collectors.groupingBy(message ->
+                generateConversationId(message.getSenderId(), message.getReceiverId(),
+                                      message.getItem() != null ? message.getItem().getId() : null)));
+        
+        // Add a system message to each conversation
+        for (Map.Entry<String, List<Message>> entry : conversationGroups.entrySet()) {
+            String conversationId = entry.getKey();
+            List<Message> conversationMessages = entry.getValue();
+            
+            if (conversationMessages.isEmpty()) {
+                continue;
+            }
+            
+            // Find the other participant in the conversation
+            Message firstMessage = conversationMessages.get(0);
+            String otherParticipantId = firstMessage.getSenderId().equals(userId) ? 
+                firstMessage.getReceiverId() : firstMessage.getSenderId();
+            
+            // Create a system message
+            Message systemMessage = new Message();
+            systemMessage.setSenderId("system");
+            systemMessage.setReceiverId(otherParticipantId);
+            systemMessage.setItem(firstMessage.getItem());
+            systemMessage.setContent("This user has deleted their account.");
+            systemMessage.setCreatedAt(LocalDateTime.now());
+            systemMessage.setRead(false);
+            systemMessage.setArchivedBySender(true); // System messages are archived by sender by default
+            
+            // Save the system message
+            messageRepository.save(systemMessage);
+            
+            // Notify via WebSocket about the new system message
+            webSocketService.notifyMessageCreated(messageMapper.toDTO(systemMessage));
+        }
+        
+        logger.info("Successfully marked user as deleted in conversations: {}", userId);
     }
 }

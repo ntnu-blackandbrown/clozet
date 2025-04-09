@@ -18,6 +18,8 @@ import stud.ntnu.no.backend.user.entity.PasswordResetToken;
 import stud.ntnu.no.backend.item.entity.Item;
 import stud.ntnu.no.backend.transaction.entity.Transaction;
 import stud.ntnu.no.backend.message.entity.Message;
+import stud.ntnu.no.backend.message.service.WebSocketService;
+import stud.ntnu.no.backend.message.service.ConversationService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -44,11 +46,21 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
+    private final UserService userService;
+    
     @Autowired
-    private UserService userService;
+    private WebSocketService webSocketService;
+    
+    @Autowired
+    private ConversationService conversationService;
     
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * Retrieves all users in the system.
@@ -117,8 +129,16 @@ public class UserController {
     @Transactional
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         logger.debug("Deleting user with ID: {}", id);
+        
+        // Mark user as deleted in conversations
+        conversationService.markUserAsDeleted(id.toString());
+        
+        // Delete related records
         deleteUserRelatedRecords(id);
+        
+        // Delete the user itself
         userService.deleteUser(id);
+        
         return ResponseEntity.noContent().build();
     }
     
@@ -155,11 +175,34 @@ public class UserController {
         deleteHistory.setParameter("userId", userId);
         deleteHistory.executeUpdate();
         
-        // Delete messages related to items owned by the user
-        Query deleteMessages = entityManager.createQuery(
-            "DELETE FROM Message m WHERE m.item.seller.id = :userId OR m.sender.id = :userId OR m.recipient.id = :userId");
-        deleteMessages.setParameter("userId", userId);
-        deleteMessages.executeUpdate();
+        // Find all unique conversation IDs involving this user
+        Query findConversationIDsQuery = entityManager.createQuery(
+            "SELECT DISTINCT CASE " +
+            "WHEN CAST(m.senderId AS long) < CAST(m.receiverId AS long) THEN CONCAT(m.senderId, '_', m.receiverId, '_', COALESCE(m.item.id, 'null')) " +
+            "ELSE CONCAT(m.receiverId, '_', m.senderId, '_', COALESCE(m.item.id, 'null')) " +
+            "END AS conversationId " +
+            "FROM Message m WHERE m.senderId = :userIdString OR m.receiverId = :userIdString");
+        findConversationIDsQuery.setParameter("userIdString", userId.toString());
+        List<String> conversationIds = findConversationIDsQuery.getResultList();
+        
+        // Instead of deleting messages, archive them for both sides of the conversation
+        Query archiveMessagesAsSender = entityManager.createQuery(
+            "UPDATE Message m SET m.archivedBySender = true WHERE m.senderId = :userIdString");
+        archiveMessagesAsSender.setParameter("userIdString", userId.toString());
+        int archivedSenderMessages = archiveMessagesAsSender.executeUpdate();
+        
+        Query archiveMessagesAsReceiver = entityManager.createQuery(
+            "UPDATE Message m SET m.archivedByReceiver = true WHERE m.receiverId = :userIdString");
+        archiveMessagesAsReceiver.setParameter("userIdString", userId.toString());
+        int archivedReceiverMessages = archiveMessagesAsReceiver.executeUpdate();
+        
+        logger.debug("Archived {} messages as sender and {} messages as receiver for user with ID: {}", 
+            archivedSenderMessages, archivedReceiverMessages, userId);
+        
+        // Notify via WebSocket that these conversations have been archived due to user deletion
+        for (String conversationId : conversationIds) {
+            webSocketService.notifyConversationArchived(conversationId, userId.toString());
+        }
         
         // Delete transactions related to items owned by the user
         Query deleteTransactions = entityManager.createQuery(

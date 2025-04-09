@@ -15,7 +15,9 @@ interface User {
 }
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref<User | null>(null)
+  // Initialize state from sessionStorage if available
+  const storedUser = sessionStorage.getItem('user')
+  const user = ref<User | null>(storedUser ? JSON.parse(storedUser) : null)
   const token = ref<string | null>(null)
 
   const loading = ref(false)
@@ -48,14 +50,20 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await AuthService.getCurrentUser()
 
       user.value = response.data
+      // Store user data in sessionStorage
+      if (user.value) {
+        sessionStorage.setItem('user', JSON.stringify(user.value))
+      }
       return response.data
     } catch (error) {
       const axiosError = error as AxiosError
       if (axiosError.response && axiosError.response.status === 401) {
         user.value = null
+        sessionStorage.removeItem('user')
       } else {
         console.error('Error fetching user info:', error)
         user.value = null
+        sessionStorage.removeItem('user')
       }
       return null
     } finally {
@@ -68,6 +76,8 @@ export const useAuthStore = defineStore('auth', () => {
       await AuthService.logout()
       user.value = null
       token.value = null
+      // Clear user data from sessionStorage
+      sessionStorage.removeItem('user')
       return { success: true, message: 'Logout successful' }
     } catch (error) {
       console.error('Logout error:', error)
