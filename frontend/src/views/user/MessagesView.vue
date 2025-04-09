@@ -248,9 +248,8 @@ onMounted(async () => {
       authStore.user?.id?.toString() || '',
     )
 
-    // Filter out duplicate conversations and conversations with self
-    const uniqueConversations = []
-    const conversationKeys = new Set()
+    // Filter out self-conversations only
+    const filteredConversations = []
 
     response.data.forEach((convo) => {
       // Skip conversations where sender and receiver are the same
@@ -259,27 +258,19 @@ onMounted(async () => {
         return
       }
 
-      // Create a unique key for each conversation (sorted IDs to handle both directions)
-      const ids = [convo.senderId, convo.receiverId].sort().join('-')
-
-      // Only add if we haven't seen this conversation before
-      if (!conversationKeys.has(ids)) {
-        conversationKeys.add(ids)
-
-        // Ensure receiverId is always the other person, not the current user
-        if (Number(convo.receiverId) === authStore.user?.id) {
-          // Swap sender and receiver if needed
-          const temp = convo.senderId
-          convo.senderId = convo.receiverId
-          convo.receiverId = temp
-        }
-
-        uniqueConversations.push(convo)
+      // Ensure receiverId is always the other person, not the current user
+      if (Number(convo.receiverId) === authStore.user?.id) {
+        // Swap sender and receiver if needed
+        const temp = convo.senderId
+        convo.senderId = convo.receiverId
+        convo.receiverId = temp
       }
+
+      filteredConversations.push(convo)
     })
 
-    chats.value = uniqueConversations
-    console.log('Loaded unique conversations:', chats.value)
+    chats.value = filteredConversations
+    console.log('Loaded conversations:', chats.value)
 
     // Step 2: Fetch receiver details for each conversation
     for (const convo of chats.value) {

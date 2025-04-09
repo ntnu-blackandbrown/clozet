@@ -41,6 +41,10 @@ const filteredConversations = computed(() => {
   })
 })
 
+// Each conversation is now uniquely identified by a composite of user IDs and item ID
+// This happens on the backend with generateConversationId()
+// We don't need to do any additional filtering here
+
 const activeConversation = computed(() => {
   return filteredConversations.value.find(
     (conversation) => getChatId(conversation) === props.activeConversationId,
