@@ -492,11 +492,6 @@ const handleShowProduct = (productId) => {
 <template>
   <div class="messaging-container">
     <!-- Left sidebar with conversations list -->
-    <button v-if="isMobile" class="sidebar-toggle" @click="toggleSidebar" aria-label="Toggle conversation sidebar">
-      <span v-if="showSidebarOnMobile">Hide Conversations</span>
-      <span v-else>Show Conversations</span>
-    </button>
-
     <MessagesSidebar
       :conversations="chats"
       :activeConversationId="activeChat"
@@ -510,6 +505,11 @@ const handleShowProduct = (productId) => {
     <main class="chat-content" role="main" :class="{ 'full-width': isMobile && !showSidebarOnMobile }">
       <!-- Chat header with active user info -->
       <div v-if="activeChat" class="chat-header">
+        <!-- Mobile Toggle Button -->
+        <button v-if="isMobile" class="sidebar-toggle" @click="toggleSidebar" aria-label="Toggle conversation sidebar">
+          <span v-if="showSidebarOnMobile">✕</span> <!-- Close icon -->
+          <span v-else>☰</span> <!-- Menu icon -->
+        </button>
         <div class="user-info">
           <h2 id="conversation-header">
             {{ getReceiverUsername(findConversationByChatId(activeChat)) }}
@@ -965,11 +965,6 @@ const handleShowProduct = (productId) => {
 
 /* Mobile Toggle Button */
 .sidebar-toggle {
-  display: none;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 100;
   background: #1976d2;
   color: white;
   border: none;
@@ -978,6 +973,9 @@ const handleShowProduct = (productId) => {
   font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  order: -1;
+  margin-right: 10px;
+  line-height: 1;
 }
 
 /* Mobile Styles */
@@ -985,10 +983,6 @@ const handleShowProduct = (productId) => {
   .messaging-container {
     flex-direction: column;
     height: calc(100vh - 60px);
-  }
-
-  .sidebar-toggle {
-    display: block;
   }
 
   .mobile-hidden {
