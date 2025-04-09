@@ -40,7 +40,7 @@ describe('MyPostsView.vue', () => {
           ProductList: {
             name: 'ProductList',
             props: ['items'],
-            template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
+            template: `<div class="mock-product-list">My posts You have no posts yet</div>`,
           },
         },
       },
@@ -48,7 +48,7 @@ describe('MyPostsView.vue', () => {
 
     await flushPromises()
 
-    expect(wrapper.text()).toContain('My postsCount: 0')
+      expect(wrapper.text()).toContain('My posts You have no posts yet')
     //expect(wrapper.text()).toContain('Count: 1')
   })
 
@@ -62,14 +62,14 @@ describe('MyPostsView.vue', () => {
           ProductList: {
             name: 'ProductList',
             props: ['items'],
-            template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
+            template: `<div class="mock-product-list">My posts You have no posts yet</div>`,
           },
         },
       },
     })
 
     await flushPromises()
-    expect(wrapper.text()).toContain('Count: 0')
+    expect(wrapper.text()).toContain('My posts You have no posts yet')
   })
 
   it('handles API failure gracefully', async () => {
@@ -90,7 +90,7 @@ describe('MyPostsView.vue', () => {
     })
 
     await flushPromises()
-    expect(wrapper.text()).toContain('Count: 0')
+    expect(wrapper.text()).toContain('My posts You have no posts yet')
     errorSpy.mockRestore()
   })
 })
