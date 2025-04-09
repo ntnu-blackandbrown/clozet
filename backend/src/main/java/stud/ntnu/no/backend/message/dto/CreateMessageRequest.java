@@ -25,6 +25,21 @@ public class CreateMessageRequest {
      * @param receiverId the ID of the receiver
      * @param content the content of the message
      * @param timestamp the timestamp of the message
+     */
+    public CreateMessageRequest(String senderId, String receiverId, String content, LocalDateTime timestamp) {
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.content = content;
+        this.timestamp = timestamp;
+    }
+
+    /**
+     * Constructs a new CreateMessageRequest with the specified details.
+     *
+     * @param senderId the ID of the sender
+     * @param receiverId the ID of the receiver
+     * @param content the content of the message
+     * @param timestamp the timestamp of the message
      * @param itemId the ID of the related item
      */
     // Constructor with arguments
