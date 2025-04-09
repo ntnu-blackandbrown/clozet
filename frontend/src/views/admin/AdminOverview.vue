@@ -156,7 +156,6 @@ onMounted(() => {
                   <th scope="col">Username</th>
                   <th scope="col">Name</th>
                   <th scope="col">Email</th>
-                  <th scope="col">Date Joined</th>
                 </tr>
               </thead>
               <tbody>
@@ -164,7 +163,6 @@ onMounted(() => {
                   <td>{{ user.username }}</td>
                   <td>{{ user.firstName }} {{ user.lastName }}</td>
                   <td>{{ user.email }}</td>
-                  <td>{{ user.createdAt }}</td>
                 </tr>
               </tbody>
             </table>
@@ -182,16 +180,12 @@ onMounted(() => {
                 <tr>
                   <th scope="col">Title</th>
                   <th scope="col">Price</th>
-                  <th scope="col">Seller</th>
-                  <th scope="col">Date Listed</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="item in statistics.recentItems" :key="item.id">
                   <td>{{ item.title }}</td>
                   <td>{{ item.price.toFixed(2) }} kr</td>
-                  <td>{{ item.seller }}</td>
-                  <td>{{ item.createdAt }}</td>
                 </tr>
               </tbody>
             </table>
@@ -304,23 +298,29 @@ onMounted(() => {
 }
 
 .activity-card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
+  background-color: #ffffff;
+  border: 1px solid var(--color-gallery);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
 }
 
 .activity-title {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  padding: 1rem 1.5rem;
-  margin: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   color: var(--color-limed-spruce);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-gallery);
 }
 
 .activity-content {
-  padding: 1rem 0;
+  flex-grow: 1;
+  position: relative;
+  max-height: 300px; /* Set a max height */
+  overflow-y: auto;   /* Enable vertical scrollbar when content overflows */
 }
 
 .data-table {
