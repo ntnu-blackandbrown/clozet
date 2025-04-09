@@ -153,10 +153,10 @@ const loadMessages = async (chatId, reset = false) => {
     const selectedConversation = findConversationByChatId(chatId)
     if (!selectedConversation) return
 
-    // Fetch chat messages with pagination
+    // Fetch chat messages with pagination using the conversation ID
+    // which includes the item ID as part of the composite key
     const mssgResponse = await MessagingService.getConversationMessages(
-      authStore.user?.id?.toString(),
-      selectedConversation.receiverId?.toString(),
+      chatId,
       messagePage.value,
       messagePageSize.value,
     )
@@ -330,13 +330,19 @@ const filteredWebSocketMessages = computed(() => {
 
   if (!currentChat) return []
 
-  // Get the current receiver ID
+  // Get the current conversation details
   const currentReceiverId = currentChat.receiverId?.toString()
+  const currentItemId = currentChat.itemId?.toString()
 
-  // Filter WebSocket messages to only include those from/to current receiver
+  // Filter WebSocket messages to only include those related to the current conversation
   return websocket.messages.filter((msg) => {
-    // Only messages from the current receiver or to the current receiver
-    return msg.receiverId === currentReceiverId || msg.senderId === currentReceiverId
+    // Check if the message is between the current users
+    const isRelevantUsers = msg.receiverId === currentReceiverId || msg.senderId === currentReceiverId
+
+    // Check if the message is for the current item (if item ID is available in websocket messages)
+    const isRelevantItem = !currentItemId || !msg.itemId || msg.itemId?.toString() === currentItemId
+
+    return isRelevantUsers && isRelevantItem
   })
 })
 
@@ -353,15 +359,24 @@ const combinedMessages = computed(() => {
 
   const currentReceiverId = currentConversation.receiverId?.toString()
   const currentSenderId = authStore.user?.id?.toString()
+  const currentItemId = currentConversation.itemId?.toString()
 
   // Get API messages for the active chat
   const apiMessages = chatMessages.value[activeChat.value] || []
 
   // Filter API messages to ensure they belong to the current conversation
   const filteredApiMessages = apiMessages.filter(
-    (msg) =>
-      (msg.senderId === currentSenderId && msg.receiverId === currentReceiverId) ||
-      (msg.senderId === currentReceiverId && msg.receiverId === currentSenderId),
+    (msg) => {
+      // Check if the message is between the current users
+      const isRelevantUsers =
+        (msg.senderId === currentSenderId && msg.receiverId === currentReceiverId) ||
+        (msg.senderId === currentReceiverId && msg.receiverId === currentSenderId);
+
+      // Check if the message is for the current item (if item ID is available)
+      const isRelevantItem = !currentItemId || !msg.itemId || msg.itemId?.toString() === currentItemId;
+
+      return isRelevantUsers && isRelevantItem;
+    }
   )
 
   // Create a unique key for each API message for duplicate detection
@@ -453,6 +468,17 @@ const handleShowProduct = (productId) => {
   // Set the product ID and show the modal
   selectedProductId.value = productId
   showProductModal.value = true
+}
+
+// Function to send a message with the current item ID
+const sendMessageWithItem = () => {
+  if (!activeChat.value || !websocket.messageContent.trim()) return
+
+  // Set the current item ID in the WebSocket store
+  websocket.setItemId(findConversationByChatId(activeChat.value)?.itemId)
+
+  // Send the message
+  websocket.sendMessage()
 }
 </script>
 
@@ -573,12 +599,12 @@ const handleShowProduct = (productId) => {
         <div class="form-group">
           <textarea
             v-model="websocket.messageContent"
-            @keypress.enter.prevent="websocket.sendMessage"
+            @keypress.enter.prevent="sendMessageWithItem"
             @input="websocket.handleTyping"
             placeholder="Type a message..."
           ></textarea>
         </div>
-        <button @click="websocket.sendMessage" :disabled="!websocket.messageContent.trim()">
+        <button @click="sendMessageWithItem" :disabled="!websocket.messageContent.trim()">
           Send Message
         </button>
       </div>

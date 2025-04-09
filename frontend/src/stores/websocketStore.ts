@@ -14,6 +14,7 @@ interface Message {
   createdAt?: string
   type?: string
   status?: string
+  itemId?: number | string
 }
 
 interface LogEntry {
@@ -41,6 +42,12 @@ export const useWebsocket = defineStore('websocket', () => {
     console.log('Setting receiver ID:', id, typeof id)
     receiver.value = id
     console.log('Receiver ID after setting:', receiver.value, typeof receiver.value)
+  }
+
+  const itemId = ref<number | null>(null)
+  const setItemId = (id: number | null) => {
+    console.log('Setting item ID:', id)
+    itemId.value = id
   }
 
   const messageContent = ref('')
@@ -219,6 +226,7 @@ export const useWebsocket = defineStore('websocket', () => {
     console.log('Connection status:', connected.value)
     console.log('Sender ID:', sender.value, typeof sender.value)
     console.log('Receiver ID:', receiver.value, typeof receiver.value)
+    console.log('Item ID:', itemId.value, typeof itemId.value)
     console.log('Message content:', messageContent.value, typeof messageContent.value)
 
     if (!sender.value || !receiver.value || !messageContent.value) {
@@ -229,12 +237,14 @@ export const useWebsocket = defineStore('websocket', () => {
     const timestamp = new Date().toISOString()
     const clientMessageId = `client-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
 
+    // Create message object
     const msg: Message = {
       id: clientMessageId,
       senderId: sender.value,
       receiverId: receiver.value,
       content: messageContent.value,
       createdAt: timestamp,
+      itemId: itemId.value || undefined
     }
 
     messages.value.push({
@@ -417,6 +427,8 @@ export const useWebsocket = defineStore('websocket', () => {
     sender,
     receiver,
     setReceiver,
+    itemId,
+    setItemId,
     messageContent,
     connect,
     disconnect,
