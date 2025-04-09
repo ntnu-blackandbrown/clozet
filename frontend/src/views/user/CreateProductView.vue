@@ -123,9 +123,8 @@ onMounted(async () => {
       // Note: We cannot easily recreate File objects from URLs. Image updating might need a separate logic.
       // For now, we'll clear the `imageFiles` ref in edit mode, requiring re-upload if changes are needed.
       imageFiles.value = [] // Clear file list, user must re-upload to change images.
-
     } catch (error) {
-      console.error("Error fetching item data for edit:", error)
+      console.error('Error fetching item data for edit:', error)
       // Optionally redirect or show an error message
       testResult.value = 'Error loading item data.'
       router.push('/') // Redirect home on error
@@ -139,12 +138,15 @@ const conditions = ref(['New', 'Like New', 'Good', 'Fair', 'Poor'])
 // Size options
 const sizes = ref(['XS', 'S', 'M', 'L', 'XL', 'XXL'])
 
-
 // Setup form validation using the new hook
-const { handleSubmit, errors, resetForm, isFormValid: isVeeValid, isSubmitting, values } = useValidatedForm(
-  productSchema,
-  initialFormData,
-)
+const {
+  handleSubmit,
+  errors,
+  resetForm,
+  isFormValid: isVeeValid,
+  isSubmitting,
+  values,
+} = useValidatedForm(productSchema, initialFormData)
 
 // Setup form fields with the new hook, specifying types
 const { value: title, errorMessage: titleError } = useValidatedField<string>('title')
@@ -240,7 +242,7 @@ const onSubmit = handleSubmit(async (formValues) => {
       // sellerId is handled by the backend using the authenticated user
     }
 
-    let itemId: number;
+    let itemId: number
 
     if (isEditMode.value && props.id) {
       // 1. Update the item details
@@ -268,7 +270,6 @@ const onSubmit = handleSubmit(async (formValues) => {
       } else {
         testResult.value += '. Kept existing images.'
       }
-
     } else {
       // Create Mode
       // 1. Create the item first
@@ -293,23 +294,21 @@ const onSubmit = handleSubmit(async (formValues) => {
       // Redirect to the product detail page after create/update
       router.push(`/products/${itemId}`)
     }, 1500)
-
   } catch (error: any) {
     testResult.value = `Error: ${error.response?.data?.message || error.message}`
     console.error('Error submitting form:', error)
   }
 })
-
 </script>
 
 <template>
   <div class="create-product-container">
-    <h1>{{ isEditMode ? 'Edit Product' : 'Create New Product' }}</h1>
+    <h1 id="create-product-title">{{ isEditMode ? 'Edit Product' : 'Create New Product' }}</h1>
 
-    <form @submit.prevent="onSubmit" class="product-form">
+    <form @submit.prevent="onSubmit" class="product-form" aria-labelledby="create-product-title">
       <!-- Image Upload Section -->
       <section class="form-section">
-        <h2>Product Images</h2>
+        <h2 id="images-section">Product Images</h2>
         <div class="image-upload-container">
           <div
             class="image-upload-area"
@@ -318,6 +317,8 @@ const onSubmit = handleSubmit(async (formValues) => {
             @dragleave.prevent="isDragging = false"
             @dragover.prevent
             @drop="handleDrop"
+            role="region"
+            aria-labelledby="images-section"
           >
             <input
               type="file"
@@ -326,6 +327,7 @@ const onSubmit = handleSubmit(async (formValues) => {
               @change="handleImageUpload"
               class="file-input"
               id="image-upload"
+              aria-label="Upload product images"
             />
             <label for="image-upload" class="upload-label">
               <svg
@@ -337,6 +339,7 @@ const onSubmit = handleSubmit(async (formValues) => {
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
+                aria-hidden="true"
               >
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <polyline points="17 8 12 3 7 8" />
@@ -348,8 +351,18 @@ const onSubmit = handleSubmit(async (formValues) => {
           </div>
 
           <!-- Image Previews -->
-          <div v-if="imagePreviews.length > 0" class="image-previews">
-            <div v-for="(preview, index) in imagePreviews" :key="index" class="image-preview">
+          <div
+            v-if="imagePreviews.length > 0"
+            class="image-previews"
+            role="list"
+            aria-label="Uploaded product images"
+          >
+            <div
+              v-for="(preview, index) in imagePreviews"
+              :key="index"
+              class="image-preview"
+              role="listitem"
+            >
               <img :src="preview" :alt="'Product image ' + (index + 1)" />
               <button
                 type="button"
@@ -362,22 +375,32 @@ const onSubmit = handleSubmit(async (formValues) => {
             </div>
           </div>
         </div>
-        <span class="error-message" v-if="!isFormValid && !isEditMode && imageFiles.length === 0"
+        <span
+          class="error-message"
+          v-if="!isFormValid && !isEditMode && imageFiles.length === 0"
+          role="alert"
           >At least one image is required for a new product</span
         >
         <span class="info-message" v-if="isEditMode && imageFiles.length === 0"
-         >Current images will be kept. Upload new images to replace them.</span
+          >Current images will be kept. Upload new images to replace them.</span
         >
       </section>
 
       <!-- Basic Information -->
       <section class="form-section">
-        <h2>Basic Information</h2>
+        <h2 id="basic-info-section">Basic Information</h2>
 
         <div class="form-group">
           <label for="title">Title</label>
-          <input id="title" v-model="title" type="text" :class="{ error: titleError }" />
-          <span class="error-message" v-if="titleError">{{ titleError }}</span>
+          <input
+            id="title"
+            v-model="title"
+            type="text"
+            :class="{ error: titleError }"
+            aria-required="true"
+            :aria-invalid="!!titleError"
+          />
+          <span class="error-message" v-if="titleError" role="alert">{{ titleError }}</span>
         </div>
 
         <div class="form-group">
@@ -387,8 +410,10 @@ const onSubmit = handleSubmit(async (formValues) => {
             v-model="shortDescription"
             type="text"
             :class="{ error: shortDescriptionError }"
+            aria-required="true"
+            :aria-invalid="!!shortDescriptionError"
           />
-          <span class="error-message" v-if="shortDescriptionError">{{
+          <span class="error-message" v-if="shortDescriptionError" role="alert">{{
             shortDescriptionError
           }}</span>
         </div>
@@ -400,8 +425,12 @@ const onSubmit = handleSubmit(async (formValues) => {
             v-model="longDescription"
             rows="4"
             :class="{ error: longDescriptionError }"
+            aria-required="true"
+            :aria-invalid="!!longDescriptionError"
           ></textarea>
-          <span class="error-message" v-if="longDescriptionError">{{ longDescriptionError }}</span>
+          <span class="error-message" v-if="longDescriptionError" role="alert">{{
+            longDescriptionError
+          }}</span>
         </div>
 
         <div class="form-group">
@@ -413,74 +442,118 @@ const onSubmit = handleSubmit(async (formValues) => {
             min="0"
             step="0.01"
             :class="{ error: priceError }"
+            aria-required="true"
+            :aria-invalid="!!priceError"
           />
-          <span class="error-message" v-if="priceError">{{ priceError }}</span>
+          <span class="error-message" v-if="priceError" role="alert">{{ priceError }}</span>
         </div>
       </section>
 
       <!-- Product Details -->
       <section class="form-section">
-        <h2>Product Details</h2>
+        <h2 id="product-details-section">Product Details</h2>
 
         <div class="form-group">
           <label for="category">Category</label>
-          <select id="category" v-model="categoryId" :class="{ error: categoryIdError }">
+          <select
+            id="category"
+            v-model="categoryId"
+            :class="{ error: categoryIdError }"
+            aria-required="true"
+            :aria-invalid="!!categoryIdError"
+          >
             <option value="">Select a category</option>
             <option v-for="category in categories" :key="category.id" :value="category.id">
               {{ category.name }}
             </option>
           </select>
-          <span class="error-message" v-if="categoryIdError">{{ categoryIdError }}</span>
+          <span class="error-message" v-if="categoryIdError" role="alert">{{
+            categoryIdError
+          }}</span>
         </div>
 
         <div class="form-group">
           <label for="condition">Condition</label>
-          <select id="condition" v-model="condition" :class="{ error: conditionError }">
+          <select
+            id="condition"
+            v-model="condition"
+            :class="{ error: conditionError }"
+            aria-required="true"
+            :aria-invalid="!!conditionError"
+          >
             <option value="">Select condition</option>
             <option v-for="c in conditions" :key="c" :value="c">
               {{ c }}
             </option>
           </select>
-          <span class="error-message" v-if="conditionError">{{ conditionError }}</span>
+          <span class="error-message" v-if="conditionError" role="alert">{{ conditionError }}</span>
         </div>
 
         <div class="form-group">
           <label for="size">Size</label>
-          <select id="size" v-model="size" :class="{ error: sizeError }">
+          <select
+            id="size"
+            v-model="size"
+            :class="{ error: sizeError }"
+            aria-required="true"
+            :aria-invalid="!!sizeError"
+          >
             <option value="">Select size</option>
             <option v-for="s in sizes" :key="s" :value="s">
               {{ s }}
             </option>
           </select>
-          <span class="error-message" v-if="sizeError">{{ sizeError }}</span>
+          <span class="error-message" v-if="sizeError" role="alert">{{ sizeError }}</span>
         </div>
 
         <div class="form-group">
           <label for="brand">Brand</label>
-          <input id="brand" v-model="brand" type="text" :class="{ error: brandError }" />
-          <span class="error-message" v-if="brandError">{{ brandError }}</span>
+          <input
+            id="brand"
+            v-model="brand"
+            type="text"
+            :class="{ error: brandError }"
+            aria-required="true"
+            :aria-invalid="!!brandError"
+          />
+          <span class="error-message" v-if="brandError" role="alert">{{ brandError }}</span>
         </div>
 
         <div class="form-group">
           <label for="color">Color</label>
-          <input id="color" v-model="color" type="text" :class="{ error: colorError }" />
-          <span class="error-message" v-if="colorError">{{ colorError }}</span>
+          <input
+            id="color"
+            v-model="color"
+            type="text"
+            :class="{ error: colorError }"
+            aria-required="true"
+            :aria-invalid="!!colorError"
+          />
+          <span class="error-message" v-if="colorError" role="alert">{{ colorError }}</span>
         </div>
       </section>
 
       <!-- Location & Shipping -->
       <section class="form-section">
-        <h2>Location & Shipping</h2>
+        <h2 id="location-shipping-section">Location & Shipping</h2>
 
         <div class="form-group">
           <label for="location">Location</label>
-          <select id="location" v-model="locationId" :class="{ error: locationIdError }">
+          <select
+            id="location"
+            v-model="locationId"
+            :class="{ error: locationIdError }"
+            aria-required="true"
+            :aria-invalid="!!locationIdError"
+          >
             <option value="">Select location</option>
             <option v-for="location in locations" :key="location.id" :value="location.id">
               {{ location.name }}
             </option>
           </select>
-          <span class="error-message" v-if="locationIdError">{{ locationIdError }}</span>
+          <span class="error-message" v-if="locationIdError" role="alert">{{
+            locationIdError
+          }}</span>
         </div>
 
         <div class="form-group">
@@ -489,33 +562,54 @@ const onSubmit = handleSubmit(async (formValues) => {
             id="shipping"
             v-model="shippingOptionId"
             :class="{ error: shippingOptionIdError }"
+            aria-required="true"
+            :aria-invalid="!!shippingOptionIdError"
           >
             <option value="">Select shipping option</option>
             <option v-for="option in shippingOptions" :key="option.id" :value="option.id">
               {{ option.name }}
             </option>
           </select>
-          <span class="error-message" v-if="shippingOptionIdError">{{
+          <span class="error-message" v-if="shippingOptionIdError" role="alert">{{
             shippingOptionIdError
           }}</span>
         </div>
 
         <div class="form-group">
-          <label class="checkbox-label">
-            <input type="checkbox" v-model="isVippsPaymentEnabled" />
+          <label class="checkbox-label" for="vipps-payment">
+            <input type="checkbox" id="vipps-payment" v-model="isVippsPaymentEnabled" />
             Enable Vipps Payment
           </label>
         </div>
       </section>
 
       <div class="form-actions">
-        <button type="button" @click="router.back()" class="cancel-button">Cancel</button>
-        <button type="submit" class="submit-button" :disabled="!isFormValid || isSubmitting">
-          {{ isSubmitting ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Product' : 'Create Product') }}
+        <button
+          type="button"
+          @click="router.back()"
+          class="cancel-button"
+          aria-label="Cancel and go back"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="submit-button"
+          :disabled="!isFormValid || isSubmitting"
+          :aria-busy="isSubmitting"
+        >
+          {{
+            isSubmitting
+              ? isEditMode
+                ? 'Updating...'
+                : 'Creating...'
+              : isEditMode
+                ? 'Update Product'
+                : 'Create Product'
+          }}
         </button>
       </div>
     </form>
-
   </div>
 </template>
 
@@ -856,5 +950,17 @@ textarea:focus {
   margin-top: 0.5rem;
   color: #3b82f6; /* Blue color for info */
   font-size: 0.875rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 </style>

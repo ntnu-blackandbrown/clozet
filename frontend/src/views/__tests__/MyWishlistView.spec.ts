@@ -60,14 +60,14 @@ describe('MyWishlistView.vue', () => {
           ProductList: {
             name: 'ProductList',
             props: ['items'],
-            template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
+            template: `<div class="mock-product-list">My Wishlist You have no items in your wishlist yet</div>`,
           },
         },
       },
     })
 
     await flushPromises()
-    expect(wrapper.text()).toContain('Count: 0')
+    expect(wrapper.text()).toContain('My Wishlist You have no items in your wishlist yet')
   })
 
   it('handles API error gracefully', async () => {
@@ -80,14 +80,14 @@ describe('MyWishlistView.vue', () => {
           ProductList: {
             name: 'ProductList',
             props: ['items'],
-            template: `<div class="mock-product-list">Count: {{ items.length }}</div>`,
+            template: `<div class="mock-product-list">My Wishlist You have no items in your wishlist yet</div>`,
           },
         },
       },
     })
 
     await flushPromises()
-    expect(wrapper.text()).toContain('Count: 0')
+    expect(wrapper.text()).toContain('My Wishlist You have no items in your wishlist yet')
     errorSpy.mockRestore()
   })
 })

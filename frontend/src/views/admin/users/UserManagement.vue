@@ -111,51 +111,61 @@ onMounted(() => {
 <template>
   <div class="user-management">
     <div class="page-header">
-      <h1>User Management</h1>
+      <h1 id="user-management-title">User Management</h1>
     </div>
 
-    <div v-if="error" class="error-message">
+    <div v-if="error" class="error-message" role="alert">
       {{ error }}
-      <button @click="fetchUsers" class="btn-secondary">Retry</button>
+      <button @click="fetchUsers" class="btn-secondary" aria-label="Retry loading users">
+        Retry
+      </button>
     </div>
 
     <!-- Filters -->
-    <div class="filters">
+    <div class="filters" role="search" aria-labelledby="user-management-title">
       <div class="search-container">
         <input
           type="text"
           v-model="searchQuery"
           placeholder="Search users by name, username or email..."
           class="search-input"
+          aria-label="Search users"
         />
       </div>
 
       <div class="filter-container">
         <label for="role-filter">Filter by Role:</label>
-        <select id="role-filter" v-model="selectedRole" class="role-filter">
+        <select
+          id="role-filter"
+          v-model="selectedRole"
+          class="role-filter"
+          aria-label="Filter users by role"
+        >
           <option value="all">All Roles</option>
           <option value="ADMIN">Admin</option>
           <option value="ROLE_USER">Regular User</option>
         </select>
 
-        <button @click="resetFilters" class="btn-secondary">Reset Filters</button>
+        <button @click="resetFilters" class="btn-secondary" aria-label="Reset all filters">
+          Reset Filters
+        </button>
       </div>
     </div>
 
     <!-- User Table -->
     <div class="table-container">
-      <div style="overflow-x: auto;" v-if="!isLoading && filteredUsers.length > 0">
-        <table class="admin-table">
+      <div style="overflow-x: auto" v-if="!isLoading && filteredUsers.length > 0">
+        <table class="admin-table" aria-labelledby="user-management-title">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Username</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Date Joined</th>
-              <th>Actions</th>
+              <th scope="col">ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Username</th>
+              <th scope="col">Email</th>
+              <th scope="col">Role</th>
+              <th scope="col">Status</th>
+              <th scope="col">Date Joined</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -169,6 +179,7 @@ onMounted(() => {
                   v-model="user.role"
                   @change="changeUserRole(user, $event.target.value)"
                   class="role-select"
+                  :aria-label="`Change role for ${user.username}`"
                 >
                   <option value="ADMIN">Admin</option>
                   <option value="ROLE_USER">Regular User</option>
@@ -181,7 +192,11 @@ onMounted(() => {
               </td>
               <td>{{ formatDate(user.createdAt) }}</td>
               <td class="actions">
-                <button @click="toggleUserStatus(user)" class="btn-secondary btn-small">
+                <button
+                  @click="toggleUserStatus(user)"
+                  class="btn-secondary btn-small"
+                  :aria-label="`${user.active ? 'Deactivate' : 'Activate'} user ${user.username}`"
+                >
                   {{ user.active ? 'Deactivate' : 'Activate' }}
                 </button>
               </td>
@@ -190,22 +205,28 @@ onMounted(() => {
         </table>
       </div>
 
-      <div v-else-if="isLoading" class="loading-container">
-        <div class="loading-spinner"></div>
+      <div v-else-if="isLoading" class="loading-container" role="status" aria-live="polite">
+        <div class="loading-spinner" aria-hidden="true"></div>
         <p>Loading users...</p>
       </div>
 
-      <div v-else-if="filteredUsers.length === 0 && users.length > 0" class="empty-state">
+      <div
+        v-else-if="filteredUsers.length === 0 && users.length > 0"
+        class="empty-state"
+        aria-live="polite"
+      >
         <p>No users found matching your filters</p>
-        <button @click="resetFilters" class="btn-primary">Reset Filters</button>
+        <button @click="resetFilters" class="btn-primary" aria-label="Reset all filters">
+          Reset Filters
+        </button>
       </div>
 
-      <div v-else class="empty-state">
+      <div v-else class="empty-state" aria-live="polite">
         <p>No users found</p>
       </div>
     </div>
 
-    <div class="pagination-info" v-if="filteredUsers.length > 0">
+    <div class="pagination-info" v-if="filteredUsers.length > 0" aria-live="polite">
       Showing {{ filteredUsers.length }} of {{ users.length }} users
     </div>
   </div>

@@ -45,31 +45,31 @@ vi.mock('@/stores/AuthStore', () => ({
 // ----- SAMPLE DATA -----
 const sampleItem = {
   id: 10,
-  title: "Test Product",
-  longDescription: "This is a detailed description of the test product.",
+  title: 'Test Product',
+  longDescription: 'This is a detailed description of the test product.',
   available: true,
   isAvailable: true,
   sellerId: 99,
   vippsPaymentEnabled: true,
-  shippingOptionName: "Standard Shipping", // try non local pickup by default
+  shippingOptionName: 'Standard Shipping', // try non local pickup by default
   shippingPrice: 10,
-  categoryName: "Electronics",
-  locationName: "Oslo",
+  categoryName: 'Electronics',
+  locationName: 'Oslo',
   price: 100,
-  currency: "NOK",
-  sellerName: "Test Seller",
-  brand: "BrandX",
-  color: "Red",
-  condition: "New",
-  size: "M",
-  createdAt: "2020-01-01T12:00:00Z",
-  updatedAt: "2020-02-01T12:00:00Z",
+  currency: 'NOK',
+  sellerName: 'Test Seller',
+  brand: 'BrandX',
+  color: 'Red',
+  condition: 'New',
+  size: 'M',
+  createdAt: '2020-01-01T12:00:00Z',
+  updatedAt: '2020-02-01T12:00:00Z',
   latitude: 59.91,
   longitude: 10.75,
 }
 const sampleImages = [
-  { imageUrl: "http://example.com/img1.jpg" },
-  { imageUrl: "http://example.com/img2.jpg" },
+  { imageUrl: 'http://example.com/img1.jpg' },
+  { imageUrl: 'http://example.com/img2.jpg' },
 ]
 
 // Default mocks for ProductService
@@ -253,9 +253,5 @@ describe('ProductDisplay.vue', () => {
       // Restore login state for later tests
       mockAuthStore.isLoggedIn = true
     })
-
-    
-
-
   })
 })

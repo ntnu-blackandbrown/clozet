@@ -130,28 +130,40 @@ onMounted(() => {
 <template>
   <div class="transaction-management">
     <div class="page-header">
-      <h1>Transaction Management</h1>
+      <h1 id="transaction-management-title">Transaction Management</h1>
     </div>
 
-    <div v-if="error" class="error-message">
+    <div v-if="error" class="error-message" role="alert">
       {{ error }}
-      <button @click="fetchTransactions" class="btn-secondary">Retry</button>
+      <button
+        @click="fetchTransactions"
+        class="btn-secondary"
+        aria-label="Retry loading transactions"
+      >
+        Retry
+      </button>
     </div>
 
     <!-- Filters -->
-    <div class="filters">
+    <div class="filters" role="search" aria-labelledby="transaction-management-title">
       <div class="search-container">
         <input
           type="text"
           v-model="searchQuery"
           placeholder="Search by buyer, seller, item..."
           class="search-input"
+          aria-label="Search transactions"
         />
       </div>
 
       <div class="filter-container">
         <label for="status-filter">Status:</label>
-        <select id="status-filter" v-model="statusFilter" class="status-filter">
+        <select
+          id="status-filter"
+          v-model="statusFilter"
+          class="status-filter"
+          aria-label="Filter by status"
+        >
           <option value="all">All Statuses</option>
           <option value="COMPLETED">Completed</option>
           <option value="PENDING">Pending</option>
@@ -159,36 +171,56 @@ onMounted(() => {
           <option value="CANCELLED">Cancelled</option>
         </select>
 
-        <button @click="resetFilters" class="btn-secondary">Reset Filters</button>
+        <button @click="resetFilters" class="btn-secondary" aria-label="Reset all filters">
+          Reset Filters
+        </button>
       </div>
     </div>
 
     <!-- Transaction Table -->
     <div class="table-container">
-      <div style="overflow-x: auto;" v-if="!isLoading && filteredTransactions.length > 0">
-        <table class="admin-table">
+      <div style="overflow-x: auto" v-if="!isLoading && filteredTransactions.length > 0">
+        <table class="admin-table" aria-labelledby="transaction-management-title">
           <thead>
             <tr>
-              <th @click="toggleSort('id')" class="sortable">
+              <th
+                @click="toggleSort('id')"
+                class="sortable"
+                scope="col"
+                aria-sort="sortKey === 'id' ? sortDirection : 'none'"
+                tabindex="0"
+              >
                 ID
-                <span v-if="sortKey === 'id'" class="sort-indicator">
+                <span v-if="sortKey === 'id'" class="sort-indicator" aria-hidden="true">
                   {{ sortDirection === 'asc' ? '↑' : '↓' }}
                 </span>
               </th>
-              <th>Item</th>
-              <th>Buyer</th>
-              <th>Seller</th>
-              <th @click="toggleSort('amount')" class="sortable">
+              <th scope="col">Item</th>
+              <th scope="col">Buyer</th>
+              <th scope="col">Seller</th>
+              <th
+                @click="toggleSort('amount')"
+                class="sortable"
+                scope="col"
+                aria-sort="sortKey === 'amount' ? sortDirection : 'none'"
+                tabindex="0"
+              >
                 Amount
-                <span v-if="sortKey === 'amount'" class="sort-indicator">
+                <span v-if="sortKey === 'amount'" class="sort-indicator" aria-hidden="true">
                   {{ sortDirection === 'asc' ? '↑' : '↓' }}
                 </span>
               </th>
-              <th>Payment Method</th>
-              <th>Status</th>
-              <th @click="toggleSort('createdAt')" class="sortable">
+              <th scope="col">Payment Method</th>
+              <th scope="col">Status</th>
+              <th
+                @click="toggleSort('createdAt')"
+                class="sortable"
+                scope="col"
+                aria-sort="sortKey === 'createdAt' ? sortDirection : 'none'"
+                tabindex="0"
+              >
                 Date
-                <span v-if="sortKey === 'createdAt'" class="sort-indicator">
+                <span v-if="sortKey === 'createdAt'" class="sort-indicator" aria-hidden="true">
                   {{ sortDirection === 'asc' ? '↑' : '↓' }}
                 </span>
               </th>
@@ -213,25 +245,28 @@ onMounted(() => {
         </table>
       </div>
 
-      <div v-else-if="isLoading" class="loading-container">
-        <div class="loading-spinner"></div>
+      <div v-else-if="isLoading" class="loading-container" role="status" aria-live="polite">
+        <div class="loading-spinner" aria-hidden="true"></div>
         <p>Loading transactions...</p>
       </div>
 
       <div
         v-else-if="filteredTransactions.length === 0 && transactions.length > 0"
         class="empty-state"
+        aria-live="polite"
       >
         <p>No transactions found matching your filters</p>
-        <button @click="resetFilters" class="btn-primary">Reset Filters</button>
+        <button @click="resetFilters" class="btn-primary" aria-label="Reset all filters">
+          Reset Filters
+        </button>
       </div>
 
-      <div v-else class="empty-state">
+      <div v-else class="empty-state" aria-live="polite">
         <p>No transactions found</p>
       </div>
     </div>
 
-    <div class="pagination-info" v-if="filteredTransactions.length > 0">
+    <div class="pagination-info" v-if="filteredTransactions.length > 0" aria-live="polite">
       Showing {{ filteredTransactions.length }} of {{ transactions.length }} transactions
     </div>
   </div>

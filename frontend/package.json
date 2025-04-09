@@ -21,6 +21,7 @@
     "@stomp/stompjs": "^7.1.1",
     "axios": "^1.8.4",
     "pinia": "^3.0.1",
+    "pinia-plugin-persistedstate": "^4.2.0",
     "sockjs-client": "^1.6.1",
     "vee-validate": "^4.15.0",
     "vue": "^3.5.13",

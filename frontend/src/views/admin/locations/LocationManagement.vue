@@ -160,26 +160,30 @@ onMounted(() => {
 <template>
   <div class="location-management">
     <div class="page-header">
-      <h1>Location Management</h1>
-      <button @click="addLocation" class="btn-primary">Add New Location</button>
+      <h1 id="location-management-title">Location Management</h1>
+      <button @click="addLocation" class="btn-primary" aria-label="Add new location">
+        Add New Location
+      </button>
     </div>
 
-    <div v-if="error" class="error-message">
+    <div v-if="error" class="error-message" role="alert">
       {{ error }}
-      <button @click="fetchLocations" class="btn-secondary">Retry</button>
+      <button @click="fetchLocations" class="btn-secondary" aria-label="Retry loading locations">
+        Retry
+      </button>
     </div>
 
     <!-- Location Table -->
     <div class="table-container">
-      <div style="overflow-x: auto;" v-if="!isLoading && locations.length > 0">
-        <table class="admin-table">
+      <div style="overflow-x: auto" v-if="!isLoading && locations.length > 0">
+        <table class="admin-table" aria-labelledby="location-management-title">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>City</th>
-              <th>Region</th>
-              <th>Coordinates</th>
-              <th>Actions</th>
+              <th scope="col">ID</th>
+              <th scope="col">City</th>
+              <th scope="col">Region</th>
+              <th scope="col">Coordinates</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -189,31 +193,54 @@ onMounted(() => {
               <td>{{ location.region }}</td>
               <td>{{ location.latitude.toFixed(4) }}, {{ location.longitude.toFixed(4) }}</td>
               <td class="actions">
-                <button @click="editLocation(location)" class="btn-icon edit">✎</button>
-                <button @click="deleteLocation(location.id)" class="btn-icon delete">🗑</button>
+                <button
+                  @click="editLocation(location)"
+                  class="btn-icon edit"
+                  aria-label="Edit location: {{ location.city }}"
+                >
+                  ✎
+                </button>
+                <button
+                  @click="deleteLocation(location.id)"
+                  class="btn-icon delete"
+                  aria-label="Delete location: {{ location.city }}"
+                >
+                  🗑
+                </button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div v-else-if="isLoading" class="loading-container">
-        <div class="loading-spinner"></div>
+      <div v-else-if="isLoading" class="loading-container" role="status" aria-live="polite">
+        <div class="loading-spinner" aria-hidden="true"></div>
         <p>Loading locations...</p>
       </div>
 
       <div v-else class="empty-state">
         <p>No locations found</p>
-        <button @click="addLocation" class="btn-primary">Add Your First Location</button>
+        <button @click="addLocation" class="btn-primary" aria-label="Add first location">
+          Add Your First Location
+        </button>
       </div>
     </div>
 
     <!-- Location Form Modal -->
-    <div v-if="showForm" class="modal-backdrop" @click="showForm = false">
+    <div
+      v-if="showForm"
+      class="modal-backdrop"
+      @click="showForm = false"
+      aria-modal="true"
+      role="dialog"
+      aria-labelledby="location-form-title"
+    >
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h3>{{ formMode === 'add' ? 'Add New Location' : 'Edit Location' }}</h3>
-          <button @click="showForm = false" class="btn-close">×</button>
+          <h3 id="location-form-title">
+            {{ formMode === 'add' ? 'Add New Location' : 'Edit Location' }}
+          </h3>
+          <button @click="showForm = false" class="btn-close" aria-label="Close form">×</button>
         </div>
 
         <form @submit.prevent="handleSubmit" class="location-form">
@@ -224,8 +251,13 @@ onMounted(() => {
               id="city"
               v-model="locationForm.city"
               :class="{ 'input-error': formErrors.city }"
+              aria-required="true"
+              :aria-invalid="formErrors.city ? 'true' : 'false'"
+              :aria-describedby="formErrors.city ? 'city-error' : undefined"
             />
-            <span v-if="formErrors.city" class="error-text">{{ formErrors.city }}</span>
+            <span v-if="formErrors.city" class="error-text" id="city-error" role="alert">{{
+              formErrors.city
+            }}</span>
           </div>
 
           <div class="form-group">
@@ -235,8 +267,13 @@ onMounted(() => {
               id="region"
               v-model="locationForm.region"
               :class="{ 'input-error': formErrors.region }"
+              aria-required="true"
+              :aria-invalid="formErrors.region ? 'true' : 'false'"
+              :aria-describedby="formErrors.region ? 'region-error' : undefined"
             />
-            <span v-if="formErrors.region" class="error-text">{{ formErrors.region }}</span>
+            <span v-if="formErrors.region" class="error-text" id="region-error" role="alert">{{
+              formErrors.region
+            }}</span>
           </div>
 
           <div class="form-row">
@@ -248,8 +285,17 @@ onMounted(() => {
                 v-model.number="locationForm.latitude"
                 step="0.0001"
                 :class="{ 'input-error': formErrors.latitude }"
+                aria-required="true"
+                :aria-invalid="formErrors.latitude ? 'true' : 'false'"
+                :aria-describedby="formErrors.latitude ? 'latitude-error' : undefined"
               />
-              <span v-if="formErrors.latitude" class="error-text">{{ formErrors.latitude }}</span>
+              <span
+                v-if="formErrors.latitude"
+                class="error-text"
+                id="latitude-error"
+                role="alert"
+                >{{ formErrors.latitude }}</span
+              >
             </div>
 
             <div class="form-group half">
@@ -260,14 +306,30 @@ onMounted(() => {
                 v-model.number="locationForm.longitude"
                 step="0.0001"
                 :class="{ 'input-error': formErrors.longitude }"
+                aria-required="true"
+                :aria-invalid="formErrors.longitude ? 'true' : 'false'"
+                :aria-describedby="formErrors.longitude ? 'longitude-error' : undefined"
               />
-              <span v-if="formErrors.longitude" class="error-text">{{ formErrors.longitude }}</span>
+              <span
+                v-if="formErrors.longitude"
+                class="error-text"
+                id="longitude-error"
+                role="alert"
+                >{{ formErrors.longitude }}</span
+              >
             </div>
           </div>
 
           <div class="form-actions">
-            <button type="button" @click="showForm = false" class="btn-secondary">Cancel</button>
-            <button type="submit" class="btn-primary">
+            <button
+              type="button"
+              @click="showForm = false"
+              class="btn-secondary"
+              aria-label="Cancel"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary" aria-label="Submit location form">
               {{ formMode === 'add' ? 'Add Location' : 'Update Location' }}
             </button>
           </div>

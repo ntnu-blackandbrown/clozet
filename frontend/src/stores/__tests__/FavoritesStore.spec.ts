@@ -22,7 +22,8 @@ const fakeAuthStore = reactive({
 })
 
 // Mock the AuthStore module to return our reactive fakeAuthStore.
-vi.mock('@/stores/AuthStore', () => ({  // adjust path as needed
+vi.mock('@/stores/AuthStore', () => ({
+  // adjust path as needed
   useAuthStore: () => fakeAuthStore,
 }))
 
@@ -57,7 +58,7 @@ describe('FavoritesStore', () => {
     it('clears favorites if no user is logged in', async () => {
       // Prepopulate favoritesMap
       store.favoritesMap.set(10, 999)
-      fakeAuthStore.user = null  // logged out
+      fakeAuthStore.user = null // logged out
       await store.fetchUserFavorites()
       expect(store.favoritesMap.size).toBe(0)
     })

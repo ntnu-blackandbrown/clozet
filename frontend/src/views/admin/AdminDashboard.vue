@@ -27,14 +27,24 @@ const toggleMobileMenu = () => {
 <template>
   <div class="admin-container">
     <!-- Hamburger button for mobile -->
-    <button class="admin-hamburger-btn" @click="toggleMobileMenu">
+    <button
+      class="admin-hamburger-btn"
+      @click="toggleMobileMenu"
+      aria-label="Toggle admin navigation menu"
+      :aria-expanded="isMobileMenuOpen ? 'true' : 'false'"
+    >
       <span v-if="!isMobileMenuOpen">☰</span>
       <span v-else>✕</span>
     </button>
 
     <!-- Admin sidebar navigation -->
-    <nav class="admin-sidebar" :class="{ 'is-open': isMobileMenuOpen }">
-      <h2 class="admin-title">Admin Dashboard</h2>
+    <nav
+      class="admin-sidebar"
+      :class="{ 'is-open': isMobileMenuOpen }"
+      role="navigation"
+      aria-label="Admin dashboard navigation"
+    >
+      <h2 class="admin-title" id="admin-nav-title">Admin Dashboard</h2>
 
       <div class="admin-nav-links">
         <RouterLink
@@ -42,8 +52,9 @@ const toggleMobileMenu = () => {
           class="admin-nav-link"
           :class="{ active: route.path === '/admin/overview' }"
           @click="isMobileMenuOpen = false"
+          aria-current="route.path === '/admin/overview' ? 'page' : undefined"
         >
-          <span class="admin-nav-icon">📊</span>
+          <span class="admin-nav-icon" aria-hidden="true">📊</span>
           Overview
         </RouterLink>
 
@@ -51,9 +62,10 @@ const toggleMobileMenu = () => {
           to="/admin/categories"
           class="admin-nav-link"
           :class="{ active: route.path === '/admin/categories' }"
-           @click="isMobileMenuOpen = false"
-       >
-          <span class="admin-nav-icon">🏷️</span>
+          @click="isMobileMenuOpen = false"
+          aria-current="route.path === '/admin/categories' ? 'page' : undefined"
+        >
+          <span class="admin-nav-icon" aria-hidden="true">🏷️</span>
           Categories
         </RouterLink>
 
@@ -61,9 +73,10 @@ const toggleMobileMenu = () => {
           to="/admin/locations"
           class="admin-nav-link"
           :class="{ active: route.path === '/admin/locations' }"
-           @click="isMobileMenuOpen = false"
-       >
-          <span class="admin-nav-icon">📍</span>
+          @click="isMobileMenuOpen = false"
+          aria-current="route.path === '/admin/locations' ? 'page' : undefined"
+        >
+          <span class="admin-nav-icon" aria-hidden="true">📍</span>
           Locations
         </RouterLink>
 
@@ -71,9 +84,10 @@ const toggleMobileMenu = () => {
           to="/admin/shipping"
           class="admin-nav-link"
           :class="{ active: route.path === '/admin/shipping' }"
-           @click="isMobileMenuOpen = false"
-       >
-          <span class="admin-nav-icon">🚚</span>
+          @click="isMobileMenuOpen = false"
+          aria-current="route.path === '/admin/shipping' ? 'page' : undefined"
+        >
+          <span class="admin-nav-icon" aria-hidden="true">🚚</span>
           Shipping Options
         </RouterLink>
 
@@ -81,9 +95,10 @@ const toggleMobileMenu = () => {
           to="/admin/users"
           class="admin-nav-link"
           :class="{ active: route.path === '/admin/users' }"
-           @click="isMobileMenuOpen = false"
-       >
-          <span class="admin-nav-icon">👥</span>
+          @click="isMobileMenuOpen = false"
+          aria-current="route.path === '/admin/users' ? 'page' : undefined"
+        >
+          <span class="admin-nav-icon" aria-hidden="true">👥</span>
           User Management
         </RouterLink>
 
@@ -91,20 +106,28 @@ const toggleMobileMenu = () => {
           to="/admin/transactions"
           class="admin-nav-link"
           :class="{ active: route.path === '/admin/transactions' }"
-           @click="isMobileMenuOpen = false"
-       >
-          <span class="admin-nav-icon">💰</span>
+          @click="isMobileMenuOpen = false"
+          aria-current="route.path === '/admin/transactions' ? 'page' : undefined"
+        >
+          <span class="admin-nav-icon" aria-hidden="true">💰</span>
           Transactions
         </RouterLink>
       </div>
 
       <div class="admin-sidebar-footer">
-        <RouterLink to="/" class="admin-back-link" @click="isMobileMenuOpen = false"> Return to Site </RouterLink>
+        <RouterLink
+          to="/"
+          class="admin-back-link"
+          @click="isMobileMenuOpen = false"
+          aria-label="Return to main site"
+        >
+          Return to Site
+        </RouterLink>
       </div>
     </nav>
 
     <!-- Admin content area -->
-    <main class="admin-content">
+    <main class="admin-content" role="main" aria-labelledby="admin-nav-title">
       <RouterView />
     </main>
   </div>

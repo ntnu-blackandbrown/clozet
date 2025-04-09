@@ -144,9 +144,19 @@ const displayCategories = computed(() => {
               aria-label="Search for products"
             />
 
-            <button v-if="searchQuery" @click="clearSearch" class="clear-search-btn">Clear</button>
-            <!-- Inline SVG icon -->
+            <!-- Clear button (now positioned inside) -->
+            <button
+              v-if="searchQuery"
+              @click="clearSearch"
+              class="clear-search-btn"
+              aria-label="Clear search"
+            >
+              &#x2715; <!-- Use an 'X' symbol -->
+            </button>
+
+            <!-- Search icon (only shown when input is empty) -->
             <svg
+              v-if="!searchQuery"
               class="search-icon"
               viewBox="0 0 24 24"
               fill="none"
@@ -154,13 +164,14 @@ const displayCategories = computed(() => {
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
+              aria-hidden="true"
             >
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
           </div>
           <div class="create-post-btn">
-            <button @click="handleCreatePost">Create a post!</button>
+            <button @click="handleCreatePost" aria-label="Create a new post">Create a post!</button>
           </div>
         </div>
       </div>
@@ -178,6 +189,7 @@ const displayCategories = computed(() => {
             type="category"
             :name="category.name"
             @click="handleCategoryClick(category.name)"
+            :aria-label="`Browse ${category.name} category`"
           />
         </div>
       </div>
@@ -224,9 +236,10 @@ const displayCategories = computed(() => {
   top: var(--spacing-xl);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   max-width: 500px;
   padding-top: var(--spacing-xl);
+  margin: 0 auto;
 }
 
 .homepage-image {
@@ -235,6 +248,8 @@ const displayCategories = computed(() => {
   max-height: 600px;
   object-fit: contain;
   border-radius: var(--border-radius-lg);
+  display: block;
+  margin: 0 auto;
 }
 
 .hero-section {
@@ -254,6 +269,7 @@ const displayCategories = computed(() => {
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--box-shadow-light);
+  text-align: center;
 }
 
 .categories-section h4 {
@@ -261,6 +277,7 @@ const displayCategories = computed(() => {
   font-size: 1.1rem;
   font-weight: 500;
   margin-bottom: var(--spacing-md);
+  text-align: center;
 }
 
 .featured-section {
@@ -301,6 +318,7 @@ h3 {
   display: flex;
   gap: var(--spacing-sm);
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .search-wrapper {
@@ -330,16 +348,36 @@ h3 {
   color: #9ca3af;
 }
 
-.search-icon {
+.search-icon,
+.clear-search-btn { /* Apply positioning to both */
   position: absolute;
   right: var(--spacing-md);
   top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer; /* Make clear button clickable */
+}
+
+.search-icon {
   width: 20px;
   height: 20px;
-  transform: translateY(-50%);
   pointer-events: none;
   stroke: #2d353f;
   transition: var(--transition-smooth);
+}
+
+.clear-search-btn {
+  background: none;
+  border: none;
+  color: #6b7280; /* Adjust color for visibility */
+  font-size: 1.2rem; /* Make the 'X' bigger */
+  line-height: 1; /* Ensure proper vertical alignment */
+  padding: 0; /* Remove default padding */
+}
+
+.clear-search-btn:hover,
+.clear-search-btn:focus {
+  color: #2d353f; /* Darken on hover/focus */
+  outline: none;
 }
 
 .create-post-btn {
@@ -373,15 +411,6 @@ h3 {
   box-shadow: var(--box-shadow-light);
 }
 
-.clear-search-btn {
-  background: none;
-  border: none;
-  color: #2d353f;
-  cursor: pointer;
-  font-size: 0.9rem;
-  margin-left: 8px;
-}
-
 .loading-indicator {
   font-size: 0.8rem;
   color: #666;
@@ -399,6 +428,7 @@ h3 {
   .home-container {
     flex-direction: column;
     padding: var(--spacing-md);
+    align-items: center;
   }
 
   .content-section {
@@ -429,10 +459,15 @@ h3 {
     order: -1;
     padding-top: 0;
     margin-bottom: var(--spacing-lg);
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
   }
 
   .homepage-image {
     max-height: 50vh;
+    margin: 0 auto;
+    max-width: 90%;
   }
 }
 

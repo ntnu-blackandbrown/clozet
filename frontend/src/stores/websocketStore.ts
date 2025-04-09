@@ -102,7 +102,7 @@ export const useWebsocket = defineStore('websocket', () => {
         connected.value = false
         updateConnectionStatus('disconnected', 'Connection Failed')
         log(`Connection error: ${error.headers?.message || JSON.stringify(error)}`, 'error')
-      }
+      },
     })
 
     stompClient.activate()
@@ -192,7 +192,10 @@ export const useWebsocket = defineStore('websocket', () => {
     stompClient.subscribe('/topic/messages.update', (msg: any) => {
       try {
         const message = JSON.parse(msg.body)
-        log(`Message updated:<br>ID: ${message.id}<br>Content: ${message.content}`, 'message-received')
+        log(
+          `Message updated:<br>ID: ${message.id}<br>Content: ${message.content}`,
+          'message-received',
+        )
       } catch (e) {
         log(`Error parsing update: ${(e as Error).message}`, 'error')
       }
@@ -208,7 +211,7 @@ export const useWebsocket = defineStore('websocket', () => {
       }
       stompClient.publish({
         destination: '/app/chat.confirmDelivery',
-        body: JSON.stringify(confirmation)
+        body: JSON.stringify(confirmation),
       })
       log(`Sent delivery confirmation for message ${messageId}`, 'info')
     }
@@ -259,7 +262,7 @@ export const useWebsocket = defineStore('websocket', () => {
 
     stompClient.publish({
       destination: '/app/chat.sendMessage',
-      body: JSON.stringify(msg)
+      body: JSON.stringify(msg),
     })
     log(
       `Sent:<br>From: ${msg.senderId}<br>To: ${msg.receiverId}<br>Content: ${msg.content}`,
@@ -285,7 +288,7 @@ export const useWebsocket = defineStore('websocket', () => {
           receiverId: message.receiverId,
           content: message.content,
           createdAt: message.timestamp || message.createdAt,
-        })
+        }),
       })
       failedMessages.value.delete(messageId)
     } else {
@@ -301,7 +304,7 @@ export const useWebsocket = defineStore('websocket', () => {
     messagesToSend.forEach((msg) => {
       stompClient?.publish({
         destination: '/app/chat.sendMessage',
-        body: JSON.stringify(msg)
+        body: JSON.stringify(msg),
       })
       failedMessages.value.delete(msg.id)
       // Mark as sent in local store
@@ -325,7 +328,7 @@ export const useWebsocket = defineStore('websocket', () => {
       }
       stompClient.publish({
         destination: '/app/chat.typing',
-        body: JSON.stringify(status)
+        body: JSON.stringify(status),
       })
     }
   }
@@ -349,7 +352,7 @@ export const useWebsocket = defineStore('websocket', () => {
     if (connected.value && stompClient) {
       stompClient.publish({
         destination: '/app/chat.ping',
-        body: ''
+        body: '',
       })
     }
   }
@@ -361,7 +364,7 @@ export const useWebsocket = defineStore('websocket', () => {
     } else if (connected.value && stompClient) {
       stompClient.publish({
         destination: '/app/chat.ping',
-        body: ''
+        body: '',
       })
     }
   }
@@ -388,7 +391,7 @@ export const useWebsocket = defineStore('websocket', () => {
 
     stompClient.publish({
       destination: '/app/chat.markRead',
-      body: JSON.stringify(readStatus)
+      body: JSON.stringify(readStatus),
     })
 
     // Optimistically mark as read locally
@@ -406,7 +409,7 @@ export const useWebsocket = defineStore('websocket', () => {
 
     stompClient.publish({
       destination: '/app/chat.markRead',
-      body: JSON.stringify(readStatus)
+      body: JSON.stringify(readStatus),
     })
 
     // Mark all as read locally

@@ -16,11 +16,12 @@ const openProductModal = (productId) => {
 <template>
   <div class="profile-container">
     <!-- Vertical Navigation Menu -->
-    <nav class="profile-nav">
+    <nav class="profile-nav" aria-label="Profile navigation">
       <RouterLink
         to="/profile/settings"
         class="nav-link"
         :class="{ active: route.path === '/profile/settings' }"
+        aria-current="route.path === '/profile/settings' ? 'page' : undefined"
       >
         Profile Settings
       </RouterLink>
@@ -28,6 +29,7 @@ const openProductModal = (productId) => {
         to="/profile/posts"
         class="nav-link"
         :class="{ active: route.path === '/profile/posts' }"
+        aria-current="route.path === '/profile/posts' ? 'page' : undefined"
       >
         My Posts
       </RouterLink>
@@ -35,6 +37,7 @@ const openProductModal = (productId) => {
         to="/profile/wishlist"
         class="nav-link"
         :class="{ active: route.path === '/profile/wishlist' }"
+        aria-current="route.path === '/profile/wishlist' ? 'page' : undefined"
       >
         My Wishlist
       </RouterLink>
@@ -42,6 +45,7 @@ const openProductModal = (productId) => {
         to="/profile/purchases"
         class="nav-link"
         :class="{ active: route.path === '/profile/purchases' }"
+        aria-current="route.path === '/profile/purchases' ? 'page' : undefined"
       >
         My Purchases
       </RouterLink>
@@ -49,15 +53,16 @@ const openProductModal = (productId) => {
         to="/profile/change-password"
         class="nav-link"
         :class="{ active: route.path === '/profile/change-password' }"
+        aria-current="route.path === '/profile/change-password' ? 'page' : undefined"
       >
         Change Password
       </RouterLink>
     </nav>
 
     <!-- Content Area -->
-    <div class="profile-content">
+    <main class="profile-content" role="main">
       <RouterView />
-    </div>
+    </main>
 
     <!-- Product Display Modal -->
     <ProductDisplayModal

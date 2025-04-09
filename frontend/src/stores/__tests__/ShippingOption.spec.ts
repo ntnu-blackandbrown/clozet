@@ -27,7 +27,9 @@ describe('useShippingOptionStore', () => {
         { id: 1, name: 'Location A' },
         { id: 2, name: 'Location B' },
       ]
-      ;(ShippingService.getAllShippingOptions as any).mockResolvedValue({ data: mockShippingOptions })
+      ;(ShippingService.getAllShippingOptions as any).mockResolvedValue({
+        data: mockShippingOptions,
+      })
 
       // Act: call the store action.
       await store.fetchShippingOptions()

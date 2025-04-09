@@ -154,26 +154,30 @@ onMounted(() => {
 <template>
   <div class="category-management">
     <div class="page-header">
-      <h1>Category Management</h1>
-      <button @click="addCategory" class="btn-primary">Add New Category</button>
+      <h1 id="category-management-title">Category Management</h1>
+      <button @click="addCategory" class="btn-primary" aria-label="Add new category">
+        Add New Category
+      </button>
     </div>
 
-    <div v-if="error" class="error-message">
+    <div v-if="error" class="error-message" role="alert">
       {{ error }}
-      <button @click="fetchCategories" class="btn-secondary">Retry</button>
+      <button @click="fetchCategories" class="btn-secondary" aria-label="Retry loading categories">
+        Retry
+      </button>
     </div>
 
     <!-- Category Table -->
     <div class="table-container">
-      <div style="overflow-x: auto;" v-if="!isLoading && categories.length > 0">
-        <table class="admin-table">
+      <div style="overflow-x: auto" v-if="!isLoading && categories.length > 0">
+        <table class="admin-table" aria-labelledby="category-management-title">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Parent Category</th>
-              <th>Actions</th>
+              <th scope="col">ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Parent Category</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -183,31 +187,54 @@ onMounted(() => {
               <td>{{ category.description }}</td>
               <td>{{ getParentName(category) }}</td>
               <td class="actions">
-                <button @click="editCategory(category)" class="btn-icon edit">✎</button>
-                <button @click="deleteCategory(category.id)" class="btn-icon delete">🗑</button>
+                <button
+                  @click="editCategory(category)"
+                  class="btn-icon edit"
+                  aria-label="Edit category: {{ category.name }}"
+                >
+                  ✎
+                </button>
+                <button
+                  @click="deleteCategory(category.id)"
+                  class="btn-icon delete"
+                  aria-label="Delete category: {{ category.name }}"
+                >
+                  🗑
+                </button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div v-else-if="isLoading" class="loading-container">
-        <div class="loading-spinner"></div>
+      <div v-else-if="isLoading" class="loading-container" role="status" aria-live="polite">
+        <div class="loading-spinner" aria-hidden="true"></div>
         <p>Loading categories...</p>
       </div>
 
       <div v-else class="empty-state">
         <p>No categories found</p>
-        <button @click="addCategory" class="btn-primary">Add Your First Category</button>
+        <button @click="addCategory" class="btn-primary" aria-label="Add first category">
+          Add Your First Category
+        </button>
       </div>
     </div>
 
     <!-- Category Form Modal -->
-    <div v-if="showForm" class="modal-backdrop" @click="showForm = false">
+    <div
+      v-if="showForm"
+      class="modal-backdrop"
+      @click="showForm = false"
+      aria-modal="true"
+      role="dialog"
+      aria-labelledby="category-form-title"
+    >
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h3>{{ formMode === 'add' ? 'Add New Category' : 'Edit Category' }}</h3>
-          <button @click="showForm = false" class="btn-close">×</button>
+          <h3 id="category-form-title">
+            {{ formMode === 'add' ? 'Add New Category' : 'Edit Category' }}
+          </h3>
+          <button @click="showForm = false" class="btn-close" aria-label="Close form">×</button>
         </div>
 
         <form @submit.prevent="handleSubmit" class="category-form">
@@ -218,8 +245,13 @@ onMounted(() => {
               id="name"
               v-model="categoryForm.name"
               :class="{ 'input-error': formErrors.name }"
+              aria-required="true"
+              :aria-invalid="formErrors.name ? 'true' : 'false'"
+              :aria-describedby="formErrors.name ? 'name-error' : undefined"
             />
-            <span v-if="formErrors.name" class="error-text">{{ formErrors.name }}</span>
+            <span v-if="formErrors.name" class="error-text" id="name-error" role="alert">{{
+              formErrors.name
+            }}</span>
           </div>
 
           <div class="form-group">
@@ -229,15 +261,22 @@ onMounted(() => {
               v-model="categoryForm.description"
               rows="3"
               :class="{ 'input-error': formErrors.description }"
+              aria-required="true"
+              :aria-invalid="formErrors.description ? 'true' : 'false'"
+              :aria-describedby="formErrors.description ? 'description-error' : undefined"
             ></textarea>
-            <span v-if="formErrors.description" class="error-text">{{
-              formErrors.description
-            }}</span>
+            <span
+              v-if="formErrors.description"
+              class="error-text"
+              id="description-error"
+              role="alert"
+              >{{ formErrors.description }}</span
+            >
           </div>
 
           <div class="form-group">
             <label for="parentId">Parent Category (Optional)</label>
-            <select id="parentId" v-model="categoryForm.parentId">
+            <select id="parentId" v-model="categoryForm.parentId" aria-required="false">
               <option :value="null">None (Top-Level Category)</option>
               <option
                 v-for="cat in categories"
@@ -251,8 +290,15 @@ onMounted(() => {
           </div>
 
           <div class="form-actions">
-            <button type="button" @click="showForm = false" class="btn-secondary">Cancel</button>
-            <button type="submit" class="btn-primary">
+            <button
+              type="button"
+              @click="showForm = false"
+              class="btn-secondary"
+              aria-label="Cancel"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary" aria-label="Submit category form">
               {{ formMode === 'add' ? 'Add Category' : 'Update Category' }}
             </button>
           </div>

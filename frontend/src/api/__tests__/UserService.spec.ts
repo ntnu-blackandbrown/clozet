@@ -18,7 +18,12 @@ describe('UserService', () => {
 
   describe('getAllUsers', () => {
     it('should call axios.get with the correct URL and return the expected response', async () => {
-      const expectedResponse = { data: [{ id: 1, name: 'User1' }, { id: 2, name: 'User2' }] }
+      const expectedResponse = {
+        data: [
+          { id: 1, name: 'User1' },
+          { id: 2, name: 'User2' },
+        ],
+      }
       ;(axios.get as any).mockResolvedValue(expectedResponse)
 
       const result = await UserService.getAllUsers()
@@ -125,7 +130,9 @@ describe('UserService', () => {
       const error = new Error('Status update failed')
       ;(axios.put as any).mockRejectedValue(error)
 
-      await expect(UserService.toggleUserStatus(userId, isActive)).rejects.toThrow('Status update failed')
+      await expect(UserService.toggleUserStatus(userId, isActive)).rejects.toThrow(
+        'Status update failed',
+      )
       expect(axios.put).toHaveBeenCalledWith(`/api/users/${userId}`, { active: isActive })
     })
   })

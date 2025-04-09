@@ -12,6 +12,4 @@ describe('RegistrationVerifier.vue', () => {
     expect(tokenVerifierStub.props('redirectPath')).toBe('/')
     expect(tokenVerifierStub.props('includeTokenInRedirect')).toBe(true)
   })
-
-
 })

@@ -26,7 +26,13 @@ const handleClick = () => {
 </script>
 
 <template>
-  <div class="product-card" :class="{ sold: isAvailable === false }" @click="handleClick">
+  <div
+    class="product-card"
+    :class="{ sold: isAvailable === false }"
+    @click="handleClick"
+    role="article"
+    :aria-label="`${title} for ${props.price} NOK`"
+  >
     <div class="product-image">
       <img :src="props.image" :alt="props.title" />
       <div class="wishlist-container">
@@ -35,9 +41,10 @@ const handleClick = () => {
           :is-wishlisted="props.isWishlisted"
           :is-available="props.isAvailable"
           @click.stop
+          aria-label="Add to wishlist"
         />
       </div>
-      <div v-if="isAvailable === false" class="sold-overlay">
+      <div v-if="isAvailable === false" class="sold-overlay" aria-live="polite">
         <span>SOLD</span>
       </div>
     </div>
@@ -45,7 +52,11 @@ const handleClick = () => {
       <h3>{{ title }}</h3>
       <Badge :name="props.price.toString()" type="price" :currency="'NOK'" />
       <Badge :name="props.category" type="category" />
-      <button class="view-details" :disabled="isAvailable === false">
+      <button
+        class="view-details"
+        :disabled="isAvailable === false"
+        :aria-label="`${isAvailable === false ? 'Sold' : 'View details for'} ${title}`"
+      >
         {{ isAvailable === false ? 'Sold' : 'View Details' }}
       </button>
     </div>

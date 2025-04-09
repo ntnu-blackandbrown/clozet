@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onBeforeMount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import MessagesSidebar from '@/components/messaging/MessagesSidebar.vue'
 import { useAuthStore } from '@/stores/AuthStore'
@@ -31,6 +31,25 @@ const hasMoreMessages = ref(true)
 // Modal state
 const showProductModal = ref(false)
 const selectedProductId = ref(null)
+
+// Mobile state
+const isMobile = ref(false)
+const showSidebarOnMobile = ref(false)
+
+// Check if screen is mobile on mount and window resize
+const checkMobile = () => {
+  isMobile.value = window.innerWidth < 768
+}
+
+onBeforeMount(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+// Toggle sidebar on mobile
+const toggleSidebar = () => {
+  showSidebarOnMobile.value = !showSidebarOnMobile.value
+}
 
 // Format timestamp for display
 const formatTime = (timestamp) => {
@@ -133,6 +152,11 @@ const handleChatSelect = async (chatId) => {
       setTimeout(() => {
         websocket.markAllAsRead()
       }, 1000) // Small delay to ensure WebSocket connection is ready
+    }
+
+    // For mobile, hide the sidebar after selecting a chat
+    if (isMobile.value) {
+      showSidebarOnMobile.value = false
     }
   } catch (error) {
     console.error('Failed to fetch messages for conversation:', error)
@@ -474,14 +498,20 @@ const handleShowProduct = (productId) => {
       :receiver-usernames="receiverUsernames"
       @select-chat="handleChatSelect"
       @show-product="handleShowProduct"
+      :class="{ 'mobile-hidden': isMobile && !showSidebarOnMobile }"
     />
 
     <!-- Right area with WebSocket chat functionality -->
-    <div class="chat-content">
+    <main class="chat-content" role="main" :class="{ 'full-width': isMobile && !showSidebarOnMobile }">
       <!-- Chat header with active user info -->
       <div v-if="activeChat" class="chat-header">
+        <!-- Mobile Toggle Button -->
+        <button v-if="isMobile" class="sidebar-toggle" @click="toggleSidebar" aria-label="Toggle conversation sidebar">
+          <span v-if="showSidebarOnMobile">✕</span> <!-- Close icon -->
+          <span v-else>☰</span> <!-- Menu icon -->
+        </button>
         <div class="user-info">
-          <h2>
+          <h2 id="conversation-header">
             {{ getReceiverUsername(findConversationByChatId(activeChat)) }}
           </h2>
           <div v-if="activeItemDetails" class="item-info">
@@ -490,22 +520,37 @@ const handleShowProduct = (productId) => {
               class="item-name"
               @click="handleShowProduct(activeItemDetails.id)"
               role="button"
+              tabindex="0"
+              aria-label="View details for item: {{ activeItemDetails.title }}"
               >{{ activeItemDetails.title }}</span
             >
           </div>
         </div>
         <div v-if="activeItemDetails" class="header-actions">
-          <button class="buy-button" @click="handleBuyItem" :disabled="shouldDisableButtons">
+          <button
+            class="buy-button"
+            @click="handleBuyItem"
+            :disabled="shouldDisableButtons"
+            aria-label="Buy item: {{ activeItemDetails.title }}"
+          >
             Buy Item
           </button>
         </div>
       </div>
 
       <!-- Message history area -->
-      <div class="message-history" v-if="activeChat" @scroll="handleScrollToTop">
+      <div
+        class="message-history"
+        v-if="activeChat"
+        @scroll="handleScrollToTop"
+        role="log"
+        aria-live="polite"
+        aria-label="Message conversation with {{ getReceiverUsername(findConversationByChatId(activeChat)) }}"
+        aria-labelledby="conversation-header"
+      >
         <!-- Loading indicator -->
-        <div v-if="isLoadingMore" class="loading-indicator">
-          <div class="loading-spinner"></div>
+        <div v-if="isLoadingMore" class="loading-indicator" role="status">
+          <div class="loading-spinner" aria-hidden="true"></div>
           <div>Loading older messages...</div>
         </div>
 
@@ -525,6 +570,14 @@ const handleShowProduct = (productId) => {
                 ? 'message-sent'
                 : 'message-received',
             ]"
+            :aria-label="
+              (Number(msg.senderId) === authStore.user?.id
+                ? 'You sent: '
+                : getReceiverUsername(findConversationByChatId(activeChat)) + ' sent: ') +
+              msg.content +
+              ' at ' +
+              formatTime(msg.timestamp || msg.createdAt)
+            "
           >
             <div class="message-content">{{ msg.content }}</div>
             <div class="message-footer">
@@ -534,12 +587,16 @@ const handleShowProduct = (productId) => {
               <span
                 v-if="Number(msg.senderId) === authStore.user?.id || msg.type === 'sent'"
                 class="message-status"
+                aria-hidden="true"
               >
                 <!-- Failed message with retry option -->
                 <span
                   v-if="websocket.failedMessages.has(msg.id)"
                   class="message-failed"
                   @click="websocket.retryMessage(msg.id)"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Message failed to send. Click to retry."
                 >
                   <i class="fas fa-exclamation-circle"></i>
                   <span class="retry-text">Tap to retry</span>
@@ -571,32 +628,40 @@ const handleShowProduct = (productId) => {
       </div>
 
       <!-- Message input area -->
-      <div class="message-input" v-if="activeChat">
+      <div class="message-input" v-if="activeChat" role="form" aria-label="Message input">
         <!-- Typing indicator -->
         <div
           v-if="websocket.isReceiverTyping(findConversationByChatId(activeChat)?.receiverId)"
           class="typing-indicator"
+          aria-live="polite"
         >
           {{ getReceiverUsername(findConversationByChatId(activeChat)) }} is typing...
         </div>
         <div class="form-group">
+          <label for="message-textarea" class="sr-only">Type your message</label>
           <textarea
+            id="message-textarea"
             v-model="websocket.messageContent"
             @keypress.enter.prevent="websocket.sendMessage"
             @input="websocket.handleTyping"
             placeholder="Type a message..."
+            aria-label="Type your message"
           ></textarea>
         </div>
-        <button @click="websocket.sendMessage" :disabled="!websocket.messageContent.trim()">
+        <button
+          @click="websocket.sendMessage"
+          :disabled="!websocket.messageContent.trim()"
+          aria-label="Send message"
+        >
           Send Message
         </button>
       </div>
 
       <!-- No chat selected state -->
-      <div v-if="!activeChat" class="no-chat-selected">
+      <div v-if="!activeChat" class="no-chat-selected" role="status">
         <h3>Select a conversation to start chatting</h3>
       </div>
-    </div>
+    </main>
   </div>
 
   <!-- Product Display Modal -->
@@ -612,6 +677,9 @@ const handleShowProduct = (productId) => {
   display: flex;
   height: calc(100vh - 80px);
   background: #ffffff;
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
 }
 
 .chat-content {
@@ -619,6 +687,11 @@ const handleShowProduct = (productId) => {
   display: flex;
   flex-direction: column;
   padding: 20px;
+  overflow: hidden;
+}
+
+.chat-content.full-width {
+  width: 100%;
 }
 
 .chat-header {
@@ -668,16 +741,17 @@ const handleShowProduct = (productId) => {
   background-color: #4caf50;
   color: white;
   border: none;
-  border-radius: 0.375rem;
+  border-radius: 12px;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .buy-button:hover:not(:disabled) {
   background-color: #45a049;
+  transform: translateY(-1px);
 }
 
 .buy-button:disabled {
@@ -712,7 +786,7 @@ const handleShowProduct = (productId) => {
   overflow-y: auto;
   margin-bottom: 20px;
   border: 1px solid #eee;
-  border-radius: 4px;
+  border-radius: 12px;
   padding: 15px;
 }
 
@@ -762,19 +836,21 @@ const handleShowProduct = (productId) => {
   max-width: 80%;
   margin-bottom: 10px;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: 18px;
 }
 
 .message-sent {
   align-self: flex-end;
   background-color: #e3f2fd;
   border-left: 4px solid #2196f3;
+  border-radius: 18px 4px 18px 18px;
 }
 
 .message-received {
   align-self: flex-start;
   background-color: #f1f8e9;
   border-left: 4px solid #8bc34a;
+  border-radius: 4px 18px 18px 18px;
 }
 
 .message-header {
@@ -839,21 +915,27 @@ const handleShowProduct = (productId) => {
 .message-input textarea {
   width: 100%;
   min-height: 80px;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 12px;
   margin-bottom: 10px;
   resize: vertical;
 }
 
 .message-input button {
   align-self: flex-end;
-  padding: 8px 20px;
+  padding: 10px 22px;
   background-color: #1976d2;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 12px;
   cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.message-input button:hover:not(:disabled) {
+  background-color: #1565c0;
+  transform: translateY(-1px);
 }
 
 .message-input button:disabled {
@@ -867,5 +949,77 @@ const handleShowProduct = (productId) => {
   align-items: center;
   height: 100%;
   color: #666;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Mobile Toggle Button */
+.sidebar-toggle {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  order: -1;
+  margin-right: 10px;
+  line-height: 1;
+}
+
+/* Mobile Styles */
+@media (max-width: 767px) {
+  .messaging-container {
+    flex-direction: column;
+    height: calc(100vh - 60px);
+  }
+
+  .mobile-hidden {
+    display: none;
+  }
+
+  .chat-content {
+    padding: 12px;
+    width: 100%;
+    height: calc(100% - 50px);
+  }
+
+  .message-history {
+    margin-bottom: 10px;
+    padding: 10px;
+  }
+
+  .message {
+    max-width: 90%;
+    padding: 8px;
+  }
+
+  .message-input textarea {
+    min-height: 60px;
+  }
+
+  .chat-header {
+    margin-bottom: 10px;
+  }
+
+  .buy-button {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
 }
 </style>

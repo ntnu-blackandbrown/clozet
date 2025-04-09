@@ -11,7 +11,7 @@ vi.mock('@/api/services/ShippingService', () => ({
     createShippingOption: vi.fn(),
     updateShippingOption: vi.fn(),
     deleteShippingOption: vi.fn(),
-  }
+  },
 }))
 
 describe('ShippingManagement', () => {
@@ -75,7 +75,9 @@ describe('ShippingManagement', () => {
 
   it('retries fetching shipping options when retry button is clicked', async () => {
     // First fetch fails
-    ;(ShippingService.getAllShippingOptions as any).mockRejectedValueOnce(new Error('Network error'))
+    ;(ShippingService.getAllShippingOptions as any).mockRejectedValueOnce(
+      new Error('Network error'),
+    )
 
     const wrapper = mount(ShippingManagement)
     await flushPromises()
@@ -84,7 +86,16 @@ describe('ShippingManagement', () => {
     expect(ShippingService.getAllShippingOptions).toHaveBeenCalledTimes(1)
 
     // Setup successful retry
-    const sampleOptions = [{ id: 1, name: 'Standard Shipping', description: 'Test', estimatedDays: 3, price: 49.99, isTracked: false }]
+    const sampleOptions = [
+      {
+        id: 1,
+        name: 'Standard Shipping',
+        description: 'Test',
+        estimatedDays: 3,
+        price: 49.99,
+        isTracked: false,
+      },
+    ]
     ;(ShippingService.getAllShippingOptions as any).mockResolvedValueOnce({ data: sampleOptions })
 
     // Click retry
@@ -235,7 +246,9 @@ describe('ShippingManagement', () => {
     // Verify form is pre-filled with option data
     const form = wrapper.find('form')
     expect((form.find('input#name').element as HTMLInputElement).value).toBe('Standard Shipping')
-    expect((form.find('textarea#description').element as HTMLTextAreaElement).value).toBe('Delivers in 3-5 days')
+    expect((form.find('textarea#description').element as HTMLTextAreaElement).value).toBe(
+      'Delivers in 3-5 days',
+    )
     expect((form.find('input#estimatedDays').element as HTMLInputElement).value).toBe('4')
     expect((form.find('input#price').element as HTMLInputElement).value).toBe('49.99')
     expect((form.find('input[type="checkbox"]').element as HTMLInputElement).checked).toBe(true)
@@ -262,7 +275,16 @@ describe('ShippingManagement', () => {
   })
 
   it('displays error when updating shipping option fails', async () => {
-    const sampleOptions = [{ id: 1, name: 'Standard Shipping', description: 'Test', estimatedDays: 3, price: 49.99, isTracked: true }]
+    const sampleOptions = [
+      {
+        id: 1,
+        name: 'Standard Shipping',
+        description: 'Test',
+        estimatedDays: 3,
+        price: 49.99,
+        isTracked: true,
+      },
+    ]
     ;(ShippingService.getAllShippingOptions as any).mockResolvedValue({ data: sampleOptions })
     ;(ShippingService.updateShippingOption as any).mockRejectedValue(new Error('Update failed'))
 
@@ -312,7 +334,16 @@ describe('ShippingManagement', () => {
   })
 
   it('does not delete shipping option if confirmation is cancelled', async () => {
-    const sampleOptions = [{ id: 1, name: 'Standard Shipping', description: 'Test', estimatedDays: 3, price: 49.99, isTracked: true }]
+    const sampleOptions = [
+      {
+        id: 1,
+        name: 'Standard Shipping',
+        description: 'Test',
+        estimatedDays: 3,
+        price: 49.99,
+        isTracked: true,
+      },
+    ]
     ;(ShippingService.getAllShippingOptions as any).mockResolvedValue({ data: sampleOptions })
 
     // Mock confirm to return false (user cancels)
@@ -329,7 +360,16 @@ describe('ShippingManagement', () => {
   })
 
   it('displays error when deleting shipping option fails', async () => {
-    const sampleOptions = [{ id: 1, name: 'Standard Shipping', description: 'Test', estimatedDays: 3, price: 49.99, isTracked: true }]
+    const sampleOptions = [
+      {
+        id: 1,
+        name: 'Standard Shipping',
+        description: 'Test',
+        estimatedDays: 3,
+        price: 49.99,
+        isTracked: true,
+      },
+    ]
     ;(ShippingService.getAllShippingOptions as any).mockResolvedValue({ data: sampleOptions })
     ;(ShippingService.deleteShippingOption as any).mockRejectedValue(new Error('Delete failed'))
 
@@ -406,14 +446,21 @@ describe('ShippingManagement', () => {
   it('formats price correctly', async () => {
     const sampleOptions = [
       { id: 1, name: 'Test', description: 'Test', estimatedDays: 3, price: 49.9, isTracked: true },
-      { id: 2, name: 'Test 2', description: 'Test 2', estimatedDays: 2, price: 99, isTracked: false }
+      {
+        id: 2,
+        name: 'Test 2',
+        description: 'Test 2',
+        estimatedDays: 2,
+        price: 99,
+        isTracked: false,
+      },
     ]
     ;(ShippingService.getAllShippingOptions as any).mockResolvedValue({ data: sampleOptions })
 
     const wrapper = mount(ShippingManagement)
     await flushPromises()
 
-    const prices = wrapper.findAll('td').filter(td => td.text().includes('kr'))
+    const prices = wrapper.findAll('td').filter((td) => td.text().includes('kr'))
     expect(prices[0].text()).toBe('49.90 kr')
     expect(prices[1].text()).toBe('99.00 kr')
   })
