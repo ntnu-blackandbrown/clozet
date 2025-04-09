@@ -1,10 +1,9 @@
 package stud.ntnu.no.backend.message.service;
 
+import java.util.List;
 import stud.ntnu.no.backend.message.dto.CreateMessageRequest;
 import stud.ntnu.no.backend.message.dto.MessageDTO;
 import stud.ntnu.no.backend.message.dto.UpdateMessageRequest;
-
-import java.util.List;
 
 /**
  * Service interface for managing messages.
@@ -12,50 +11,51 @@ import java.util.List;
  * This interface defines methods for CRUD operations on messages.
  */
 public interface MessageService {
-    /**
-     * Retrieves all messages.
-     *
-     * @return a list of MessageDTOs
-     */
-    List<MessageDTO> getAllMessages();
 
-    /**
-     * Retrieves a message by its ID.
-     *
-     * @param id the ID of the message
-     * @return the MessageDTO
-     */
-    MessageDTO getMessageById(Long id);
+  /**
+   * Retrieves all messages.
+   *
+   * @return a list of MessageDTOs
+   */
+  List<MessageDTO> getAllMessages();
 
-    /**
-     * Creates a new message.
-     *
-     * @param request the CreateMessageRequest
-     * @return the created MessageDTO
-     */
-    MessageDTO createMessage(CreateMessageRequest request);
+  /**
+   * Retrieves a message by its ID.
+   *
+   * @param id the ID of the message
+   * @return the MessageDTO
+   */
+  MessageDTO getMessageById(Long id);
 
-    /**
-     * Updates an existing message.
-     *
-     * @param id the ID of the message to update
-     * @param request the UpdateMessageRequest with updated information
-     * @return the updated MessageDTO
-     */
-    MessageDTO updateMessage(Long id, UpdateMessageRequest request);
+  /**
+   * Creates a new message.
+   *
+   * @param request the CreateMessageRequest
+   * @return the created MessageDTO
+   */
+  MessageDTO createMessage(CreateMessageRequest request);
 
-    /**
-     * Deletes a message by its ID.
-     *
-     * @param id the ID of the message to delete
-     */
-    void deleteMessage(Long id);
+  /**
+   * Updates an existing message.
+   *
+   * @param id      the ID of the message to update
+   * @param request the UpdateMessageRequest with updated information
+   * @return the updated MessageDTO
+   */
+  MessageDTO updateMessage(Long id, UpdateMessageRequest request);
 
-    /**
-     * Marks a message as read.
-     *
-     * @param messageId the ID of the message to mark as read
-     * @return the updated MessageDTO
-     */
-    MessageDTO markAsRead(Long messageId);
+  /**
+   * Deletes a message by its ID.
+   *
+   * @param id the ID of the message to delete
+   */
+  void deleteMessage(Long id);
+
+  /**
+   * Marks a message as read.
+   *
+   * @param messageId the ID of the message to mark as read
+   * @return the updated MessageDTO
+   */
+  MessageDTO markAsRead(Long messageId);
 }

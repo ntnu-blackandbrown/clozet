@@ -16,34 +16,32 @@ import stud.ntnu.no.backend.user.repository.UserRepository;
  * <p>
  * This service implements UserDetailsService and provides user details for authentication.
  * </p>
- * 
- *
- * 
  */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
-    @Autowired
-    private UserRepository userRepository;
+  private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
-    /**
-     * Loads user details by username.
-     * 
-     * @param username the username
-     * @return the user details
-     * @throws UsernameNotFoundException if the user is not found
-     */
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.debug("Loading user details for: {}", username);
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> {
-                    logger.warn("User not found: {}", username);
-                    return new UsernameNotFoundException("User not found: " + username);
-                });
-        logger.debug("User found: {}, active: {}", username, user.isActive());
+  @Autowired
+  private UserRepository userRepository;
 
-        return new CustomUserDetails(user);
-    }
+  /**
+   * Loads user details by username.
+   *
+   * @param username the username
+   * @return the user details
+   * @throws UsernameNotFoundException if the user is not found
+   */
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    logger.debug("Loading user details for: {}", username);
+    User user = userRepository.findByUsername(username)
+        .orElseThrow(() -> {
+          logger.warn("User not found: {}", username);
+          return new UsernameNotFoundException("User not found: " + username);
+        });
+    logger.debug("User found: {}, active: {}", username, user.isActive());
+
+    return new CustomUserDetails(user);
+  }
 }

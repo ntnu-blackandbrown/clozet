@@ -16,16 +16,16 @@ import stud.ntnu.no.backend.common.service.EmailServiceImpl;
 @Configuration
 public class EmailServiceConfig {
 
-    /**
-     * Configures and returns the primary {@code EmailService} bean.
-     *
-     * @param javaMailSender the JavaMailSender to use
-     * @param emailConfig    the email configuration
-     * @return the configured EmailService
-     */
-    @Bean
-    @Primary
-    public EmailService emailService(JavaMailSender javaMailSender, EmailConfig emailConfig) {
-        return new EmailServiceImpl(javaMailSender, emailConfig);
-    }
+  /**
+   * Configures and returns the primary {@code EmailService} bean.
+   *
+   * @param javaMailSender the JavaMailSender to use
+   * @param emailConfig    the email configuration
+   * @return the configured EmailService
+   */
+  @Bean
+  @Primary
+  public EmailService emailService(JavaMailSender javaMailSender, EmailConfig emailConfig) {
+    return new EmailServiceImpl(javaMailSender, emailConfig);
+  }
 } 

@@ -9,12 +9,12 @@ import stud.ntnu.no.backend.common.exception.BaseException;
  */
 public class ReviewNotFoundException extends BaseException {
 
-    /**
-     * Constructs a new ReviewNotFoundException with the specified detail message.
-     *
-     * @param message the detail message
-     */
-    public ReviewNotFoundException(String message) {
-        super(message);
-    }
+  /**
+   * Constructs a new ReviewNotFoundException with the specified detail message.
+   *
+   * @param message the detail message
+   */
+  public ReviewNotFoundException(String message) {
+    super(message);
+  }
 }

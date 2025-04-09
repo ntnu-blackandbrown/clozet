@@ -11,12 +11,13 @@ import stud.ntnu.no.backend.common.exception.BaseException;
  */
 //@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class TransactionValidationException extends BaseException {
-    /**
-     * Constructs a new TransactionValidationException with the specified detail message.
-     *
-     * @param message the detail message
-     */
-    public TransactionValidationException(String message) {
-        super(message);
-    }
+
+  /**
+   * Constructs a new TransactionValidationException with the specified detail message.
+   *
+   * @param message the detail message
+   */
+  public TransactionValidationException(String message) {
+    super(message);
+  }
 }

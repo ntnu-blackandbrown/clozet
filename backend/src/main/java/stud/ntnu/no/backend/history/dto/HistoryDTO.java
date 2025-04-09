@@ -6,96 +6,97 @@ import java.time.LocalDateTime;
  * Data Transfer Object for History.
  */
 public class HistoryDTO {
-    private Long id;
-    private Long userId;
-    private Long itemId;
-    private String itemTitle;
-    private LocalDateTime viewedAt;
-    private boolean active;
 
-    // Getters and setters
+  private Long id;
+  private Long userId;
+  private Long itemId;
+  private String itemTitle;
+  private LocalDateTime viewedAt;
+  private boolean active;
 
-    /**
-     * Gets the ID of the history record.
-     */
-    public Long getId() {
-        return id;
-    }
+  // Getters and setters
 
-    /**
-     * Sets the ID of the history record.
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
+  /**
+   * Gets the ID of the history record.
+   */
+  public Long getId() {
+    return id;
+  }
 
-    /**
-     * Gets the user ID associated with the history record.
-     */
-    public Long getUserId() {
-        return userId;
-    }
+  /**
+   * Sets the ID of the history record.
+   */
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    /**
-     * Sets the user ID associated with the history record.
-     */
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
+  /**
+   * Gets the user ID associated with the history record.
+   */
+  public Long getUserId() {
+    return userId;
+  }
 
-    /**
-     * Gets the item ID associated with the history record.
-     */
-    public Long getItemId() {
-        return itemId;
-    }
+  /**
+   * Sets the user ID associated with the history record.
+   */
+  public void setUserId(Long userId) {
+    this.userId = userId;
+  }
 
-    /**
-     * Sets the item ID associated with the history record.
-     */
-    public void setItemId(Long itemId) {
-        this.itemId = itemId;
-    }
+  /**
+   * Gets the item ID associated with the history record.
+   */
+  public Long getItemId() {
+    return itemId;
+  }
 
-    /**
-     * Gets the title of the item associated with the history record.
-     */
-    public String getItemTitle() {
-        return itemTitle;
-    }
+  /**
+   * Sets the item ID associated with the history record.
+   */
+  public void setItemId(Long itemId) {
+    this.itemId = itemId;
+  }
 
-    /**
-     * Sets the title of the item associated with the history record.
-     */
-    public void setItemTitle(String itemTitle) {
-        this.itemTitle = itemTitle;
-    }
+  /**
+   * Gets the title of the item associated with the history record.
+   */
+  public String getItemTitle() {
+    return itemTitle;
+  }
 
-    /**
-     * Gets the timestamp when the item was viewed.
-     */
-    public LocalDateTime getViewedAt() {
-        return viewedAt;
-    }
+  /**
+   * Sets the title of the item associated with the history record.
+   */
+  public void setItemTitle(String itemTitle) {
+    this.itemTitle = itemTitle;
+  }
 
-    /**
-     * Sets the timestamp when the item was viewed.
-     */
-    public void setViewedAt(LocalDateTime viewedAt) {
-        this.viewedAt = viewedAt;
-    }
+  /**
+   * Gets the timestamp when the item was viewed.
+   */
+  public LocalDateTime getViewedAt() {
+    return viewedAt;
+  }
 
-    /**
-     * Checks if the history record is active.
-     */
-    public boolean isActive() {
-        return active;
-    }
+  /**
+   * Sets the timestamp when the item was viewed.
+   */
+  public void setViewedAt(LocalDateTime viewedAt) {
+    this.viewedAt = viewedAt;
+  }
 
-    /**
-     * Sets the active status of the history record.
-     */
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+  /**
+   * Checks if the history record is active.
+   */
+  public boolean isActive() {
+    return active;
+  }
+
+  /**
+   * Sets the active status of the history record.
+   */
+  public void setActive(boolean active) {
+    this.active = active;
+  }
 }

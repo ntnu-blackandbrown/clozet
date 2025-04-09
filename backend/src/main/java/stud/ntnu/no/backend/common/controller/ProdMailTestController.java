@@ -19,19 +19,19 @@ import stud.ntnu.no.backend.common.service.EmailService;
 @Profile("prod") // Ensures this controller is active only in the production environment
 public class ProdMailTestController {
 
-    @Autowired
-    private EmailService emailService;
+  @Autowired
+  private EmailService emailService;
 
-    /**
-     * Sends a verification email to a predefined address.
-     *
-     * @return a response entity indicating the email was sent
-     */
-    @GetMapping("/verification")
-    public ResponseEntity<String> sendVerification() {
-        String to = "kevindmazali@gmail.com";
-        String token = "prod-token-" + System.currentTimeMillis();
-        emailService.sendVerificationEmail(to, token);
-        return ResponseEntity.ok("Verifikasjonsmail sendt til " + to);
-    }
+  /**
+   * Sends a verification email to a predefined address.
+   *
+   * @return a response entity indicating the email was sent
+   */
+  @GetMapping("/verification")
+  public ResponseEntity<String> sendVerification() {
+    String to = "kevindmazali@gmail.com";
+    String token = "prod-token-" + System.currentTimeMillis();
+    emailService.sendVerificationEmail(to, token);
+    return ResponseEntity.ok("Verifikasjonsmail sendt til " + to);
+  }
 }

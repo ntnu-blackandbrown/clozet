@@ -4,95 +4,96 @@ package stud.ntnu.no.backend.item.dto;
  * DTO for displaying marketplace item information.
  */
 public class ItemMarketPlaceDTO {
-    private Long id;
-    private String title;
-    private double price;
-    private String category;
-    private String image;
-    private String location;
-    private boolean isVippsPaymentEnabled;
-    private boolean isWishlisted;
 
-    // Default constructor
-    public ItemMarketPlaceDTO() {
-    }
+  private Long id;
+  private String title;
+  private double price;
+  private String category;
+  private String image;
+  private String location;
+  private boolean isVippsPaymentEnabled;
+  private boolean isWishlisted;
 
-    // Full constructor
-    public ItemMarketPlaceDTO(Long id, String title, double price, String category, 
-                             String image, String location, boolean isVippsPaymentEnabled, 
-                             boolean isWishlisted) {
-        this.id = id;
-        this.title = title;
-        this.price = price;
-        this.category = category;
-        this.image = image;
-        this.location = location;
-        this.isVippsPaymentEnabled = isVippsPaymentEnabled;
-        this.isWishlisted = isWishlisted;
-    }
+  // Default constructor
+  public ItemMarketPlaceDTO() {
+  }
 
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
+  // Full constructor
+  public ItemMarketPlaceDTO(Long id, String title, double price, String category,
+      String image, String location, boolean isVippsPaymentEnabled,
+      boolean isWishlisted) {
+    this.id = id;
+    this.title = title;
+    this.price = price;
+    this.category = category;
+    this.image = image;
+    this.location = location;
+    this.isVippsPaymentEnabled = isVippsPaymentEnabled;
+    this.isWishlisted = isWishlisted;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  // Getters and setters
+  public Long getId() {
+    return id;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public double getPrice() {
-        return price;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+  public double getPrice() {
+    return price;
+  }
 
-    public String getCategory() {
-        return category;
-    }
+  public void setPrice(double price) {
+    this.price = price;
+  }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
+  public String getCategory() {
+    return category;
+  }
 
-    public String getImage() {
-        return image;
-    }
+  public void setCategory(String category) {
+    this.category = category;
+  }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
+  public String getImage() {
+    return image;
+  }
 
-    public String getLocation() {
-        return location;
-    }
+  public void setImage(String image) {
+    this.image = image;
+  }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
+  public String getLocation() {
+    return location;
+  }
 
-    public boolean isVippsPaymentEnabled() {
-        return isVippsPaymentEnabled;
-    }
+  public void setLocation(String location) {
+    this.location = location;
+  }
 
-    public void setVippsPaymentEnabled(boolean vippsPaymentEnabled) {
-        this.isVippsPaymentEnabled = vippsPaymentEnabled;
-    }
+  public boolean isVippsPaymentEnabled() {
+    return isVippsPaymentEnabled;
+  }
 
-    public boolean isWishlisted() {
-        return isWishlisted;
-    }
+  public void setVippsPaymentEnabled(boolean vippsPaymentEnabled) {
+    this.isVippsPaymentEnabled = vippsPaymentEnabled;
+  }
 
-    public void setWishlisted(boolean wishlisted) {
-        isWishlisted = wishlisted;
-    }
+  public boolean isWishlisted() {
+    return isWishlisted;
+  }
+
+  public void setWishlisted(boolean wishlisted) {
+    isWishlisted = wishlisted;
+  }
 }
