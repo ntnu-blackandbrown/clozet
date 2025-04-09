@@ -8,22 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import stud.ntnu.no.backend.user.dto.UpdateUserDTO;
 import stud.ntnu.no.backend.user.dto.UserDTO;
 import stud.ntnu.no.backend.user.service.UserService;
-import stud.ntnu.no.backend.user.entity.User;
-// Entity imports for JPQL queries
-import stud.ntnu.no.backend.favorite.entity.Favorite;
-import stud.ntnu.no.backend.history.entity.History;
-import stud.ntnu.no.backend.review.entity.Review;
-import stud.ntnu.no.backend.user.entity.VerificationToken;
-import stud.ntnu.no.backend.user.entity.PasswordResetToken;
-import stud.ntnu.no.backend.item.entity.Item;
-import stud.ntnu.no.backend.transaction.entity.Transaction;
-import stud.ntnu.no.backend.message.entity.Message;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * REST controller for managing user-related operations.
@@ -46,9 +32,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    
-    @PersistenceContext
-    private EntityManager entityManager;
 
     /**
      * Retrieves all users in the system.
@@ -114,80 +97,9 @@ public class UserController {
      * @throws stud.ntnu.no.backend.user.exception.UserNotFoundException if no user with the given ID exists
      */
     @DeleteMapping("/{id}")
-    @Transactional
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         logger.debug("Deleting user with ID: {}", id);
-        deleteUserRelatedRecords(id);
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
-    }
-    
-    /**
-     * Deletes all related records of a user before deleting the user itself.
-     * This is necessary to avoid constraint violations in the database.
-     * 
-     * @param userId the ID of the user whose related records are to be deleted
-     */
-    private void deleteUserRelatedRecords(Long userId) {
-        logger.debug("Deleting related records for user with ID: {}", userId);
-        
-        // Delete verification tokens
-        Query deleteVerificationTokens = entityManager.createQuery(
-            "DELETE FROM VerificationToken vt WHERE vt.user.id = :userId");
-        deleteVerificationTokens.setParameter("userId", userId);
-        deleteVerificationTokens.executeUpdate();
-        
-        // Delete password reset tokens
-        Query deletePasswordResetTokens = entityManager.createQuery(
-            "DELETE FROM PasswordResetToken prt WHERE prt.user.id = :userId");
-        deletePasswordResetTokens.setParameter("userId", userId);
-        deletePasswordResetTokens.executeUpdate();
-        
-        // Delete favorites - this includes favorites created by this user and favorites of items owned by this user
-        Query deleteFavorites = entityManager.createQuery(
-            "DELETE FROM Favorite f WHERE f.user.id = :userId OR f.item.seller.id = :userId");
-        deleteFavorites.setParameter("userId", userId);
-        deleteFavorites.executeUpdate();
-        
-        // Delete browsing history
-        Query deleteHistory = entityManager.createQuery(
-            "DELETE FROM History h WHERE h.user.id = :userId");
-        deleteHistory.setParameter("userId", userId);
-        deleteHistory.executeUpdate();
-        
-        // Delete messages related to items owned by the user
-        Query deleteMessages = entityManager.createQuery(
-            "DELETE FROM Message m WHERE m.item.seller.id = :userId OR m.sender.id = :userId OR m.recipient.id = :userId");
-        deleteMessages.setParameter("userId", userId);
-        deleteMessages.executeUpdate();
-        
-        // Delete transactions related to items owned by the user
-        Query deleteTransactions = entityManager.createQuery(
-            "DELETE FROM Transaction t WHERE t.item.seller.id = :userId OR t.buyer.id = :userId");
-        deleteTransactions.setParameter("userId", userId);
-        deleteTransactions.executeUpdate();
-        
-        // Delete reviews where the user is either the reviewer or reviewee
-        Query deleteReviewsAsReviewer = entityManager.createQuery(
-            "DELETE FROM Review r WHERE r.reviewer.id = :userId");
-        deleteReviewsAsReviewer.setParameter("userId", userId);
-        deleteReviewsAsReviewer.executeUpdate();
-        
-        Query deleteReviewsAsReviewee = entityManager.createQuery(
-            "DELETE FROM Review r WHERE r.reviewee.id = :userId");
-        deleteReviewsAsReviewee.setParameter("userId", userId);
-        deleteReviewsAsReviewee.executeUpdate();
-        
-        // Delete all items owned by the user
-        // The cascade types on Item entity will handle deleting:
-        // - ItemImages (cascade = CascadeType.ALL, orphanRemoval = true)
-        // - History records for the item (cascade = CascadeType.ALL, orphanRemoval = true)
-        Query deleteItems = entityManager.createQuery(
-            "DELETE FROM Item i WHERE i.seller.id = :userId");
-        deleteItems.setParameter("userId", userId);
-        int deletedItems = deleteItems.executeUpdate();
-        logger.debug("Deleted {} items owned by user with ID: {}", deletedItems, userId);
-        
-        logger.debug("Successfully deleted all related records for user with ID: {}", userId);
     }
 }
