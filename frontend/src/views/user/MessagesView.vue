@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onBeforeMount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import MessagesSidebar from '@/components/messaging/MessagesSidebar.vue'
 import { useAuthStore } from '@/stores/AuthStore'
@@ -31,6 +31,25 @@ const hasMoreMessages = ref(true)
 // Modal state
 const showProductModal = ref(false)
 const selectedProductId = ref(null)
+
+// Mobile state
+const isMobile = ref(false)
+const showSidebarOnMobile = ref(false)
+
+// Check if screen is mobile on mount and window resize
+const checkMobile = () => {
+  isMobile.value = window.innerWidth < 768
+}
+
+onBeforeMount(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+// Toggle sidebar on mobile
+const toggleSidebar = () => {
+  showSidebarOnMobile.value = !showSidebarOnMobile.value
+}
 
 // Format timestamp for display
 const formatTime = (timestamp) => {
@@ -133,6 +152,11 @@ const handleChatSelect = async (chatId) => {
       setTimeout(() => {
         websocket.markAllAsRead()
       }, 1000) // Small delay to ensure WebSocket connection is ready
+    }
+
+    // For mobile, hide the sidebar after selecting a chat
+    if (isMobile.value) {
+      showSidebarOnMobile.value = false
     }
   } catch (error) {
     console.error('Failed to fetch messages for conversation:', error)
@@ -468,16 +492,22 @@ const handleShowProduct = (productId) => {
 <template>
   <div class="messaging-container">
     <!-- Left sidebar with conversations list -->
+    <button v-if="isMobile" class="sidebar-toggle" @click="toggleSidebar" aria-label="Toggle conversation sidebar">
+      <span v-if="showSidebarOnMobile">Hide Conversations</span>
+      <span v-else>Show Conversations</span>
+    </button>
+
     <MessagesSidebar
       :conversations="chats"
       :activeConversationId="activeChat"
       :receiver-usernames="receiverUsernames"
       @select-chat="handleChatSelect"
       @show-product="handleShowProduct"
+      :class="{ 'mobile-hidden': isMobile && !showSidebarOnMobile }"
     />
 
     <!-- Right area with WebSocket chat functionality -->
-    <main class="chat-content" role="main">
+    <main class="chat-content" role="main" :class="{ 'full-width': isMobile && !showSidebarOnMobile }">
       <!-- Chat header with active user info -->
       <div v-if="activeChat" class="chat-header">
         <div class="user-info">
@@ -647,6 +677,8 @@ const handleShowProduct = (productId) => {
   display: flex;
   height: calc(100vh - 80px);
   background: #ffffff;
+  position: relative;
+  overflow: hidden;
 }
 
 .chat-content {
@@ -654,6 +686,11 @@ const handleShowProduct = (productId) => {
   display: flex;
   flex-direction: column;
   padding: 20px;
+  overflow: hidden;
+}
+
+.chat-content.full-width {
+  width: 100%;
 }
 
 .chat-header {
@@ -914,5 +951,70 @@ const handleShowProduct = (productId) => {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* Mobile Toggle Button */
+.sidebar-toggle {
+  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 100;
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* Mobile Styles */
+@media (max-width: 767px) {
+  .messaging-container {
+    flex-direction: column;
+    height: calc(100vh - 60px);
+  }
+
+  .sidebar-toggle {
+    display: block;
+  }
+
+  .mobile-hidden {
+    display: none;
+  }
+
+  .chat-content {
+    padding: 12px;
+    width: 100%;
+    height: calc(100% - 50px);
+  }
+
+  .message-history {
+    margin-bottom: 10px;
+    padding: 10px;
+  }
+
+  .message {
+    max-width: 90%;
+    padding: 8px;
+  }
+
+  .message-input textarea {
+    min-height: 60px;
+  }
+
+  .chat-header {
+    margin-bottom: 10px;
+  }
+
+  .buy-button {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
 }
 </style>
