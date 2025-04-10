@@ -37,14 +37,14 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { setLocale, SUPPORTED_LOCALES } from '@/i18n'
+import { setLocale, SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n'
 
 const { locale } = useI18n()
-const currentLocale = ref(locale.value)
+const currentLocale = ref(locale.value as SupportedLocale)
 const isOpen = ref(false)
 
 onMounted(() => {
-  currentLocale.value = locale.value
+  currentLocale.value = locale.value as SupportedLocale
   document.addEventListener('click', handleClickOutside)
 })
 
@@ -64,7 +64,7 @@ const handleClickOutside = (event: Event) => {
   }
 }
 
-const changeLocale = (localeValue: string) => {
+const changeLocale = (localeValue: SupportedLocale) => {
   if (SUPPORTED_LOCALES.includes(localeValue)) {
     currentLocale.value = localeValue
     setLocale(localeValue)
