@@ -29,12 +29,12 @@ const toggleMobileMenu = () => {
     <!-- Hamburger button for mobile -->
     <button
       class="admin-hamburger-btn"
+      :class="{ 'is-hidden': isMobileMenuOpen }"
       @click="toggleMobileMenu"
       aria-label="Toggle admin navigation menu"
       :aria-expanded="isMobileMenuOpen ? 'true' : 'false'"
     >
-      <span v-if="!isMobileMenuOpen">☰</span>
-      <span v-else>✕</span>
+      <span>☰</span>
     </button>
 
     <!-- Admin sidebar navigation -->
@@ -155,6 +155,10 @@ const toggleMobileMenu = () => {
   cursor: pointer;
   font-size: 1.5rem;
   line-height: 1;
+}
+
+.admin-hamburger-btn.is-hidden {
+  display: none !important;
 }
 
 .admin-sidebar {
