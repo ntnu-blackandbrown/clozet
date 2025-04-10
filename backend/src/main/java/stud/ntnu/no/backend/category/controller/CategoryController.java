@@ -1,9 +1,8 @@
 package stud.ntnu.no.backend.category.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import stud.ntnu.no.backend.category.dto.CategoryDTO;
 import stud.ntnu.no.backend.category.service.CategoryService;
 
@@ -56,5 +55,61 @@ public class CategoryController {
         List<CategoryDTO> categories = categoryService.getAllCategories();
         logger.debug("Returning {} categories", categories.size());
         return categories;
+    }
+    
+    /**
+     * Retrieves a specific category by its ID.
+     * 
+     * @param id ID of the category to retrieve
+     * @return The category DTO
+     */
+    @GetMapping("/{id}")
+    public CategoryDTO getCategory(@PathVariable Long id) {
+        logger.info("Request received to get category with id: {}", id);
+        return categoryService.getCategory(id);
+    }
+    
+    /**
+     * Creates a new category.
+     * 
+     * @param categoryDTO Data for the new category
+     * @return The created category DTO
+     */
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CategoryDTO createCategory(@RequestBody CategoryDTO categoryDTO) {
+        logger.info("Request received to create a new category");
+        CategoryDTO createdCategory = categoryService.createCategory(categoryDTO);
+        logger.info("Category created with id: {}", createdCategory.getId());
+        return createdCategory;
+    }
+    
+    /**
+     * Updates an existing category.
+     * 
+     * @param id ID of the category to update
+     * @param categoryDTO New data for the category
+     * @return The updated category DTO
+     */
+    @PutMapping("/{id}")
+    public CategoryDTO updateCategory(@PathVariable Long id, @RequestBody CategoryDTO categoryDTO) {
+        logger.info("Request received to update category with id: {}", id);
+        CategoryDTO updatedCategory = categoryService.updateCategory(id, categoryDTO);
+        logger.info("Category updated: {}", id);
+        return updatedCategory;
+    }
+    
+    /**
+     * Deletes a category by its ID.
+     * 
+     * @param id ID of the category to delete
+     * @return Empty response with status 204 No Content
+     */
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCategory(@PathVariable Long id) {
+        logger.info("Request received to delete category with id: {}", id);
+        categoryService.deleteCategory(id);
+        logger.info("Category deleted: {}", id);
     }
 }

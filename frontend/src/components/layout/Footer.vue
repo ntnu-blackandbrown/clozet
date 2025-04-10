@@ -1,8 +1,11 @@
 <script setup>
+import { useAuthStore } from '@/stores/AuthStore';
 import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+
+const authStore = useAuthStore()
 </script>
 
 <template>

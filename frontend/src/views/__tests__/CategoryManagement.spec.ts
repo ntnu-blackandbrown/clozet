@@ -1,12 +1,38 @@
-import { mount, flushPromises } from '@vue/test-utils'
-import { nextTick } from 'vue'
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+// tests/unit/components/admin/categories/CategoryManagement.spec.ts
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { mount, VueWrapper } from '@vue/test-utils'
 import CategoryManagement from '@/views/admin/categories/CategoryManagement.vue'
 import { CategoryService } from '@/api/services/CategoryService'
+
 import { createMockI18n } from '@/test/i18nMock'
 import type { I18n } from 'vue-i18n'
 
-// Mock the CategoryService methods
+import CreateCategoryModal from '@/components/admin/categories/CreateCategoryModal.vue'
+import type { AxiosResponse } from 'axios'
+
+// Define a category type for TypeScript
+interface Category {
+  id: number;
+  name: string;
+  description: string;
+  parent: { id: number; name: string } | null;
+}
+
+// Helper function to create mock Axios responses
+const createAxiosResponse = <T>(data: T, status = 200): AxiosResponse<T> => ({
+  data,
+  status,
+  statusText: status === 200 ? 'OK' : status === 201 ? 'Created' : 'Unknown',
+  headers: {},
+  config: {
+    headers: {} as any
+  } as any
+})
+
+
+// ---------------------------
+// Mocks
+// ---------------------------
 vi.mock('@/api/services/CategoryService', () => ({
   CategoryService: {
     getAllCategories: vi.fn(),
@@ -17,11 +43,11 @@ vi.mock('@/api/services/CategoryService', () => ({
 }))
 
 describe('CategoryManagement', () => {
-  let i18n: I18n;
+
 
   beforeEach(() => {
-    // Clear all mocks before each test to avoid carry-over state
     vi.clearAllMocks()
+
     // Restore mocks that might have been changed in specific tests
     vi.spyOn(window, 'confirm').mockRestore()
     // Setup i18n mock
@@ -61,390 +87,391 @@ describe('CategoryManagement', () => {
     })
     await flushPromises()
 
-    expect(wrapper.text()).toContain('Failed to load categories')
-    // Verify the retry button is rendered
-    expect(wrapper.find('button.btn-secondary').text()).toContain('Retry')
+    expect(wrapper.find('[role="status"]').exists()).toBe(true)
+    expect(wrapper.text()).toContain('Loading categories...')
   })
 
-  it('retries fetching categories when the retry button is clicked', async () => {
-    // First fetch fails
-    ;(CategoryService.getAllCategories as any).mockRejectedValueOnce(new Error('Network error'))
-
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    expect(wrapper.text()).toContain('Failed to load categories')
-    expect(CategoryService.getAllCategories).toHaveBeenCalledTimes(1)
-
-    // Mock successful fetch for the retry
-    const sampleCategories = [{ id: 1, name: 'Cat1', description: 'Desc1', parent: null }]
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: sampleCategories })
-
-    // Click the retry button
-    await wrapper.find('button.btn-secondary').trigger('click')
-    await flushPromises()
-
-    // Check that fetch was called again and data is displayed
-    expect(CategoryService.getAllCategories).toHaveBeenCalledTimes(2)
-    expect(wrapper.text()).not.toContain('Failed to load categories')
-    expect(wrapper.text()).toContain('Cat1')
-  })
-
-  it('opens the add category form when "Add New Category" is clicked', async () => {
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: [] })
-
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    // Initially, the modal should not be visible
-    expect(wrapper.find('.modal-backdrop').exists()).toBe(false)
-    // Click the "Add New Category" button
-    await wrapper.find('.btn-primary').trigger('click')
-    await nextTick()
-
-    // Verify the modal appears with the correct header
-    expect(wrapper.find('.modal-backdrop').exists()).toBe(true)
-    expect(wrapper.find('h3').text()).toContain('Add New Category')
-  })
-
-  it('validates form inputs on submit', async () => {
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: [] })
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    // Open the add form
-    await wrapper.find('.btn-primary').trigger('click')
-    await nextTick()
-
-    // Submit the form without filling required fields (name and description)
-    await wrapper.find('form').trigger('submit.prevent')
-    await nextTick()
-
-    // Expect to see validation error messages
-    expect(wrapper.text()).toContain('Category name is required')
-    expect(wrapper.text()).toContain('Description is required')
-  })
-
-  it('creates a new category when the form is submitted in "add" mode', async () => {
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: [] })
-    ;(CategoryService.createCategory as any).mockResolvedValue({})
-
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    // Open the add form
-    await wrapper.find('.btn-primary').trigger('click')
-    await nextTick()
-
-    // Fill in the form inputs
-    const nameInput = wrapper.find('input#name')
-    const descInput = wrapper.find('textarea#description')
-    const parentSelect = wrapper.find('select#parentId')
-
-    await nameInput.setValue('New Category')
-    await descInput.setValue('New Description')
-    // Leave parentId at its default (null)
-
-    // Submit the form; handleSubmit should trigger createCategory
-    await wrapper.find('form').trigger('submit.prevent')
-    await flushPromises()
-
-    expect(CategoryService.createCategory).toHaveBeenCalledWith({
-      id: null,
-      name: 'New Category',
-      description: 'New Description',
-      parentId: null,
-    })
-    // Modal should close after successful creation
-    expect(wrapper.find('.modal-backdrop').exists()).toBe(false)
-  })
-
-  it('displays an error message if creating a category fails', async () => {
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: [] })
-    ;(CategoryService.createCategory as any).mockRejectedValue(new Error('Create failed'))
-
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    await wrapper.find('.btn-primary').trigger('click') // Open add form
-    await nextTick()
-
-    await wrapper.find('input#name').setValue('Fail Cat')
-    await wrapper.find('textarea#description').setValue('Fail Desc')
-    await wrapper.find('form').trigger('submit.prevent')
-    await flushPromises()
-
-    // Check that the error message is displayed (usually near the top or form)
-    // Adjust selector based on where the error message actually appears
-    expect(wrapper.find('.error-message').exists()).toBe(true)
-    expect(wrapper.text()).toContain('Failed to create category')
-    // Modal should remain open on failure
-    expect(wrapper.find('.modal-backdrop').exists()).toBe(true)
-  })
-
-  it('updates an existing category when the form is submitted in "edit" mode', async () => {
-    const sampleCategories = [{ id: 1, name: 'Cat1', description: 'Desc1', parent: null }]
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: sampleCategories })
-    ;(CategoryService.updateCategory as any).mockResolvedValue({})
-
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    // Click the edit button for the first category
-    const editButtons = wrapper.findAll('button.btn-icon.edit')
-    expect(editButtons.length).toBeGreaterThan(0)
-    await editButtons[0].trigger('click')
-    await nextTick()
-
-    // The modal should now be in edit mode with prefilled data
-    expect(wrapper.find('h3').text()).toContain('Edit Category')
-
-    const nameInput = wrapper.find<HTMLInputElement>('input#name')
-    expect(nameInput.element.value).toBe('Cat1')
-    // Change the category name
-    await nameInput.setValue('Updated Cat1')
-
-    // Submit the form; handleSubmit should trigger updateCategory
-    await wrapper.find('form').trigger('submit.prevent')
-    await flushPromises()
-
-    expect(CategoryService.updateCategory).toHaveBeenCalledWith(1, {
-      id: 1,
-      name: 'Updated Cat1',
-      description: 'Desc1',
-      parentId: null,
-    })
-    // Modal should close after successful update
-    expect(wrapper.find('.modal-backdrop').exists()).toBe(false)
-  })
-
-  it('displays an error message if updating a category fails', async () => {
-    const sampleCategories = [{ id: 1, name: 'Cat1', description: 'Desc1', parent: null }]
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: sampleCategories })
-    ;(CategoryService.updateCategory as any).mockRejectedValue(new Error('Update failed'))
-
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    // Open edit form for the first category
-    await wrapper.findAll('button.btn-icon.edit')[0].trigger('click')
-    await nextTick()
-
-    await wrapper.find('input#name').setValue('Update Fail Cat')
-    await wrapper.find('form').trigger('submit.prevent')
-    await flushPromises()
-
-    expect(wrapper.find('.error-message').exists()).toBe(true)
-    expect(wrapper.text()).toContain('Failed to update category')
-    // Modal should remain open
-    expect(wrapper.find('.modal-backdrop').exists()).toBe(true)
-  })
-
-  it('deletes a category after confirmation', async () => {
-    const sampleCategories = [{ id: 1, name: 'Cat1', description: 'Desc1', parent: null }]
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: sampleCategories })
-    ;(CategoryService.deleteCategory as any).mockResolvedValue({})
-
-    // Mock the confirm dialog to always return true
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
-
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    // Trigger deletion by clicking the delete button
-    const deleteButton = wrapper.find('button.btn-icon.delete')
-    await deleteButton.trigger('click')
-    await flushPromises()
-
-    expect(confirmSpy).toHaveBeenCalled()
-    expect(CategoryService.deleteCategory).toHaveBeenCalledWith(1)
-
-    // Restore the original confirm function
-    confirmSpy.mockRestore() // Use mockRestore instead of restore
-  })
-
-  it('does not delete a category if confirmation is cancelled', async () => {
-    const sampleCategories = [{ id: 1, name: 'Cat1', description: 'Desc1', parent: null }]
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: sampleCategories })
-
-    // Mock confirm to return false (user cancels)
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false)
-
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    await wrapper.find('button.btn-icon.delete').trigger('click')
-    await flushPromises()
-
-    expect(confirmSpy).toHaveBeenCalled()
-    // deleteCategory should NOT have been called
-    expect(CategoryService.deleteCategory).not.toHaveBeenCalled()
-
-    confirmSpy.mockRestore()
-  })
-
-  it('displays an error message if deleting a category fails', async () => {
-    const sampleCategories = [{ id: 1, name: 'Cat1', description: 'Desc1', parent: null }]
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: sampleCategories })
-    ;(CategoryService.deleteCategory as any).mockRejectedValue(new Error('Delete failed'))
-
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
-
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    await wrapper.find('button.btn-icon.delete').trigger('click')
-    await flushPromises()
-
-    expect(confirmSpy).toHaveBeenCalled()
-    expect(CategoryService.deleteCategory).toHaveBeenCalledWith(1)
-    // Check for the error message
-    expect(wrapper.find('.error-message').exists()).toBe(true)
-    expect(wrapper.text()).toContain('Failed to delete category')
-
-    confirmSpy.mockRestore()
-  })
-
-  it('closes the modal when clicking the backdrop', async () => {
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: [] })
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    await wrapper.find('.btn-primary').trigger('click') // Open add form
-    await nextTick()
-    expect(wrapper.find('.modal-backdrop').exists()).toBe(true)
-
-    // Simulate click on the backdrop itself
-    await wrapper.find('.modal-backdrop').trigger('click')
-    await nextTick()
-
-    expect(wrapper.find('.modal-backdrop').exists()).toBe(false)
-  })
-
-  it('closes the modal when clicking the close button', async () => {
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: [] })
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    await wrapper.find('.btn-primary').trigger('click') // Open add form
-    await nextTick()
-    expect(wrapper.find('.modal-backdrop').exists()).toBe(true)
-
-    // Click the '×' button in the modal header
-    await wrapper.find('.modal-header .btn-close').trigger('click')
-    await nextTick()
-
-    expect(wrapper.find('.modal-backdrop').exists()).toBe(false)
-  })
-
-  it('closes the modal when clicking the cancel button', async () => {
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: [] })
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    await wrapper.find('.btn-primary').trigger('click') // Open add form
-    await nextTick()
-    expect(wrapper.find('.modal-backdrop').exists()).toBe(true)
-
-    // Click the 'Cancel' button in the form actions
-    await wrapper.find('.form-actions .btn-secondary').trigger('click')
-    await nextTick()
-
-    expect(wrapper.find('.modal-backdrop').exists()).toBe(false)
-  })
-
-  it('displays the empty state when no categories are fetched', async () => {
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: [] })
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
-
-    expect(wrapper.find('.empty-state').exists()).toBe(true)
-    expect(wrapper.text()).toContain('No categories found')
-    expect(wrapper.find('.admin-table').exists()).toBe(false)
-    expect(wrapper.find('.loading-container').exists()).toBe(false)
-    // Check if the "Add Your First Category" button exists in the empty state
-    expect(wrapper.find('.empty-state .btn-primary').exists()).toBe(true)
-  })
-
-  it('allows selecting a parent category when adding/editing', async () => {
-    const sampleCategories = [
-      { id: 1, name: 'Parent Cat', description: 'Parent Desc', parent: null },
-      {
-        id: 2,
-        name: 'Child Cat',
-        description: 'Child Desc',
-        parent: { id: 1, name: 'Parent Cat' },
-      },
+  it('renders categories in a table once loaded', async () => {
+    const categories = [
+      { id: 1, name: 'Category A', description: 'Desc A', parent: null },
+      { id: 2, name: 'Category B', description: 'Desc B', parent: { id: 1, name: 'Category A' } },
     ]
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: sampleCategories })
-    ;(CategoryService.createCategory as any).mockResolvedValue({})
-    ;(CategoryService.updateCategory as any).mockResolvedValue({})
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse(categories))
+    await createWrapper()
 
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
+    const rows = wrapper.findAll('tbody tr')
+    expect(rows.length).toBe(2)
+    expect(rows[0].text()).toContain('Category A')
+    expect(rows[1].text()).toContain('Category B')
+    expect(rows[1].text()).toContain('Category A') // Check parent name
+  })
 
-    // Test Adding with Parent
-    await wrapper.find('.btn-primary').trigger('click') // Open add form
-    await nextTick()
+  it('renders an empty state when no categories exist', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    await createWrapper()
+    expect(wrapper.text()).toContain('No categories found')
+  })
 
-    await wrapper.find('input#name').setValue('New Child')
-    await wrapper.find('textarea#description').setValue('New Desc')
-    const parentSelectAdd = wrapper.find<HTMLSelectElement>('select#parentId')
-    await parentSelectAdd.setValue(1) // Select 'Parent Cat' (ID 1)
+  it('shows an error message if fetching categories fails', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
+      Promise.reject(new Error('API error'))
+    )
+    await createWrapper()
+    expect(wrapper.text()).toContain('Failed to load categories')
+  })
 
-    await wrapper.find('form').trigger('submit.prevent')
-    await flushPromises()
+  it('allows retrying after load failure', async () => {
+    let callCount = 0;
+    vi.mocked(CategoryService.getAllCategories).mockImplementation(() => {
+      if (callCount === 0) {
+        callCount++;
+        return Promise.reject(new Error('API error'));
+      } else {
+        return Promise.resolve(createAxiosResponse([]));
+      }
+    })
 
-    expect(CategoryService.createCategory).toHaveBeenCalledWith(
-      expect.objectContaining({
-        name: 'New Child',
-        parentId: 1, // Expect number instead of string
-      }),
+    await createWrapper()
+    expect(wrapper.text()).toContain('Failed to load categories')
+
+    await wrapper.find('button[aria-label="Retry loading categories"]').trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(wrapper.text()).toContain('No categories found')
+  })
+
+  // ---------------------------
+  // Modal & Create Category Flow
+  // ---------------------------
+  it('opens the "Create Category" modal when the Add New Category button is clicked', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    await createWrapper()
+
+    const createModal = wrapper.findComponent({ name: 'CreateCategoryModal' })
+    expect(createModal.props('isVisible')).toBe(false)
+
+    await wrapper.find('button[aria-label="Add new category"]').trigger('click')
+    expect(wrapper.findComponent({ name: 'CreateCategoryModal' }).props('isVisible')).toBe(true)
+  })
+
+  it('creates a new category when the create event is emitted', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    vi.mocked(CategoryService.createCategory).mockResolvedValue(createAxiosResponse({}, 201))
+
+    await createWrapper()
+
+    const newCategory = { name: 'New Category', description: 'Description', parentId: null }
+    await wrapper.findComponent({ name: 'CreateCategoryModal' }).vm.$emit('create', newCategory)
+
+    expect(CategoryService.createCategory).toHaveBeenCalledWith(newCategory)
+    expect(CategoryService.getAllCategories).toHaveBeenCalledTimes(2)
+  })
+
+  it('handles error when creating a category fails', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    vi.mocked(CategoryService.createCategory).mockImplementation(() =>
+      Promise.reject(new Error('Create error'))
     )
 
-    // Test Editing to add Parent
-    await wrapper.findAll('button.btn-icon.edit')[0].trigger('click') // Edit 'Parent Cat' (ID 1) - assume it was re-fetched
-    await nextTick()
-    // Can't set parent to itself - let's edit the second one instead
-    await wrapper.find('.modal-backdrop').trigger('click') // Close modal first
-    await nextTick()
+    await createWrapper()
 
-    await wrapper.findAll('button.btn-icon.edit')[1].trigger('click') // Edit 'Child Cat' (ID 2)
-    await nextTick()
+    const newCategory = { name: 'New Category', description: 'Description', parentId: null }
+    await wrapper.findComponent({ name: 'CreateCategoryModal' }).vm.$emit('create', newCategory)
 
-    const parentSelectEdit = wrapper.find<HTMLSelectElement>('select#parentId')
-    // It should already have parent 1 selected because of the initial data
-    expect(parentSelectEdit.element.value).toBe('1')
+    expect(CategoryService.createCategory).toHaveBeenCalledWith(newCategory)
+    expect(wrapper.vm.error).toBe('Failed to create category')
   })
 
-  it('disables selecting the category itself as a parent', async () => {
-    const sampleCategories = [
-      { id: 1, name: 'Cat1', description: 'Desc1', parent: null },
-      { id: 2, name: 'Cat2', description: 'Desc2', parent: null },
-    ]
-    ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: sampleCategories })
+  it('cancels category creation when modal is closed', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    await createWrapper()
 
-    const wrapper = mount(CategoryManagement)
-    await flushPromises()
+    await wrapper.find('button[aria-label="Add new category"]').trigger('click')
+    expect(wrapper.vm.showCreateModal).toBe(true)
 
-    // Open edit form for 'Cat1'
-    await wrapper.findAll('button.btn-icon.edit')[0].trigger('click')
-    await nextTick()
+    await wrapper.findComponent({ name: 'CreateCategoryModal' }).vm.$emit('close')
+    expect(wrapper.vm.showCreateModal).toBe(false)
+  })
 
-    const parentSelect = wrapper.find('select#parentId')
-    const cat1Option = parentSelect.find('option[value="1"]')
+  // ---------------------------
+  // Edit Form Flow & Helper Functions
+  // ---------------------------
+  it('opens edit form with prefilled data when edit button is clicked', async () => {
+    const categories = [
+      { id: 1, name: 'Category A', description: 'Desc A', parent: null }
+    ] as Category[]
 
-    expect(cat1Option.exists()).toBe(true)
-    expect((cat1Option.element as HTMLOptionElement).disabled).toBe(true)
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse(categories))
+    await createWrapper()
 
-    // Ensure other options are not disabled
-    const cat2Option = parentSelect.find('option[value="2"]')
-    expect(cat2Option.exists()).toBe(true)
-    expect((cat2Option.element as HTMLOptionElement).disabled).toBe(false)
+    await wrapper.find('button.btn-icon.edit').trigger('click')
+    expect(wrapper.vm.showEditForm).toBe(true)
+    expect(wrapper.vm.editCategoryForm).toEqual({
+      id: 1,
+      name: 'Category A',
+      description: 'Desc A',
+      parentId: null
+    })
+  })
 
-    // Find the "None" option by text content
-    const noneOption = wrapper.findAll('option').find((o) => o.text().includes('None'))
-    expect(noneOption).toBeTruthy()
-    expect((noneOption?.element as HTMLOptionElement).disabled).toBe(false)
+  it('validates the edit form and prevents update when invalid', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    await createWrapper()
+    wrapper.vm.showEditForm = true
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: '', // Invalid: missing name
+      description: 'A valid description',
+      parentId: null,
+    }
+    await wrapper.vm.$nextTick()
+
+    await wrapper.find('form.category-form').trigger('submit.prevent')
+    expect(CategoryService.updateCategory).not.toHaveBeenCalled()
+    expect(wrapper.vm.editFormErrors.name).toBe('Category name is required')
+  })
+
+  it('validates name length boundaries in edit form', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    await createWrapper()
+    wrapper.vm.showEditForm = true
+
+    // Test valid: exactly 3 characters
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: 'abc',
+      description: 'Valid description',
+      parentId: null
+    }
+    expect(wrapper.vm.validateEditForm()).toBe(true)
+
+    // Test invalid: too short (2 characters)
+    wrapper.vm.editCategoryForm.name = 'ab'
+    expect(wrapper.vm.validateEditForm()).toBe(false)
+    expect(wrapper.vm.editFormErrors.name).toBe('Name must be between 3 and 100 characters')
+
+    // Test valid: exactly 100 characters
+    wrapper.vm.editCategoryForm.name = 'a'.repeat(100)
+    wrapper.vm.editFormErrors = {}  // reset errors
+    expect(wrapper.vm.validateEditForm()).toBe(true)
+  })
+
+  it('validates description length boundaries in edit form', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    await createWrapper()
+    wrapper.vm.showEditForm = true
+
+    // Valid: exactly 255 characters
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: 'Valid Name',
+      description: 'a'.repeat(255),
+      parentId: null
+    }
+    wrapper.vm.editFormErrors = {}
+    expect(wrapper.vm.validateEditForm()).toBe(true)
+
+    // Invalid: 256 characters
+    wrapper.vm.editCategoryForm.description = 'a'.repeat(256)
+    expect(wrapper.vm.validateEditForm()).toBe(false)
+    expect(wrapper.vm.editFormErrors.description).toBe('Description cannot exceed 255 characters')
+  })
+
+  it('resets the edit form correctly', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    await createWrapper()
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: 'Some Category',
+      description: 'Some description',
+      parentId: 2
+    }
+    wrapper.vm.editFormErrors = { name: 'Error' }
+    wrapper.vm.resetEditForm()
+    expect(wrapper.vm.editCategoryForm).toEqual({
+      id: null,
+      name: '',
+      description: '',
+      parentId: null
+    })
+    expect(wrapper.vm.editFormErrors).toEqual({})
+  })
+
+  it('directly calls getParentName and returns correct values', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    await createWrapper()
+    expect(wrapper.vm.getParentName({ parent: null })).toBe('-')
+    expect(wrapper.vm.getParentName({ parent: { name: 'Parent Category' } })).toBe('Parent Category')
+  })
+
+  // ---------------------------
+  // Update & Delete Category Flows
+  // ---------------------------
+  it('successfully updates a category when edit form is submitted with valid data', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    vi.mocked(CategoryService.updateCategory).mockResolvedValue(createAxiosResponse({}))
+
+    await createWrapper()
+
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: 'Updated Category',
+      description: 'Updated description',
+      parentId: null
+    }
+    wrapper.vm.showEditForm = true
+    await wrapper.vm.$nextTick()
+
+    await wrapper.find('form.category-form').trigger('submit.prevent')
+    expect(CategoryService.updateCategory).toHaveBeenCalledWith(1, {
+      id: 1,
+      name: 'Updated Category',
+      description: 'Updated description',
+      parentId: null
+    })
+    expect(wrapper.vm.showEditForm).toBe(false)
+  })
+
+  it('handles error when updating a category fails', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    vi.mocked(CategoryService.updateCategory).mockImplementation(() =>
+      Promise.reject(new Error('Update error'))
+    )
+
+    await createWrapper()
+
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: 'Updated Category',
+      description: 'Updated description',
+      parentId: null
+    }
+    wrapper.vm.showEditForm = true
+    await wrapper.vm.$nextTick()
+
+    await wrapper.find('form.category-form').trigger('submit.prevent')
+    expect(CategoryService.updateCategory).toHaveBeenCalled()
+    expect(wrapper.vm.error).toContain('Failed to update category')
+
+  })
+
+  it('prompts for confirmation before deleting a category and aborts if cancelled', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(
+      createAxiosResponse([
+        { id: 1, name: 'Category A', description: 'Desc A', parent: null }
+      ])
+    )
+    await createWrapper()
+    vi.spyOn(window, 'confirm').mockImplementationOnce(() => false)
+    await wrapper.vm.deleteCategory(1)
+    expect(window.confirm).toHaveBeenCalled()
+    expect(CategoryService.deleteCategory).not.toHaveBeenCalled()
+  })
+
+  it('successfully deletes a category when confirmed', async () => {
+    const categories = [
+      { id: 1, name: 'Category A', description: 'Desc A', parent: null }
+    ] as Category[]
+
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse(categories))
+    vi.mocked(CategoryService.deleteCategory).mockResolvedValue(createAxiosResponse({}))
+
+    await createWrapper()
+
+    // Ensure confirm returns true
+    vi.spyOn(window, 'confirm').mockReturnValueOnce(true)
+    await wrapper.vm.deleteCategory(1)
+    expect(window.confirm).toHaveBeenCalled()
+    expect(CategoryService.deleteCategory).toHaveBeenCalledWith(1)
+    expect(CategoryService.getAllCategories).toHaveBeenCalledTimes(2)
+  })
+
+  it('handles error when deleting a category fails', async () => {
+    const categories = [
+      { id: 1, name: 'Category A', description: 'Desc A', parent: null }
+    ] as Category[]
+
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse(categories))
+    vi.mocked(CategoryService.deleteCategory).mockImplementation(() =>
+      Promise.reject(new Error('Delete error'))
+    )
+
+    await createWrapper()
+    vi.spyOn(window, 'confirm').mockReturnValueOnce(true)
+    await wrapper.vm.deleteCategory(1)
+    expect(CategoryService.deleteCategory).toHaveBeenCalledWith(1)
+    expect(wrapper.vm.error).toBe('Failed to delete category')
+  })
+
+  it('closes edit form when cancel button is clicked', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    await createWrapper()
+
+    wrapper.vm.showEditForm = true
+    await wrapper.vm.$nextTick()
+
+    await wrapper.find('button[aria-label="Cancel"]').trigger('click')
+    expect(wrapper.vm.showEditForm).toBe(false)
+  })
+
+  // ---------------------------
+  // Asynchronous Loading States in Create/Update Operations
+  // ---------------------------
+  it('sets and resets loading state during createCategory', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+
+    let loadingDuringCreate = false;
+    vi.mocked(CategoryService.createCategory).mockImplementation(async () => {
+      loadingDuringCreate = wrapper.vm.isLoading;
+      return createAxiosResponse({}, 201);
+    })
+
+    await createWrapper()
+
+    await wrapper.vm.createCategory({ name: 'Test', description: 'Test description', parentId: null })
+    expect(loadingDuringCreate).toBe(true)
+    expect(wrapper.vm.isLoading).toBe(false)
+  })
+
+  it('sets and resets loading state during updateCategory', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+
+    let isLoadingDuringUpdate = false;
+    vi.mocked(CategoryService.updateCategory).mockImplementation(async () => {
+      isLoadingDuringUpdate = wrapper.vm.isLoading;
+      return createAxiosResponse({});
+    })
+
+    await createWrapper()
+
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: 'Updated Category',
+      description: 'Updated description',
+      parentId: null
+    }
+    wrapper.vm.showEditForm = true
+    await wrapper.vm.$nextTick()
+    await wrapper.find('form.category-form').trigger('submit.prevent')
+    expect(isLoadingDuringUpdate).toBe(true)
+    expect(wrapper.vm.isLoading).toBe(false)
+  })
+
+  // ---------------------------
+  // Directly calling handleEditSubmit and resetEditForm
+  // ---------------------------
+  it('directly calls handleEditSubmit when form is submitted', async () => {
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    await createWrapper()
+    const handleEditSubmitSpy = vi.spyOn(wrapper.vm, 'handleEditSubmit')
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: 'Valid Category',
+      description: 'Valid description',
+      parentId: null
+    }
+    wrapper.vm.showEditForm = true
+    await wrapper.vm.$nextTick()
+    await wrapper.find('form.category-form').trigger('submit.prevent')
+    expect(handleEditSubmitSpy).toHaveBeenCalled()
   })
 })

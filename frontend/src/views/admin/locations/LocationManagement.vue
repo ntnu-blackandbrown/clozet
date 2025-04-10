@@ -6,6 +6,7 @@ import { LocationService } from '@/api/services/LocationService'
 const locations = ref([])
 const isLoading = ref(true)
 const error = ref(null)
+const successMessage = ref(null)
 
 // Form for adding/editing locations
 const locationForm = ref({
@@ -41,14 +42,21 @@ const createLocation = async () => {
 
   try {
     isLoading.value = true
+    error.value = null
     await LocationService.createLocation(locationForm.value)
     await fetchLocations()
     isLoading.value = false
+    successMessage.value = `Location "${locationForm.value.city}" created successfully`
     resetForm()
     showForm.value = false
+
+    // Clear success message after 5 seconds
+    setTimeout(() => {
+      successMessage.value = null
+    }, 5000)
   } catch (err) {
     console.error('Error creating location:', err)
-    error.value = 'Failed to create location'
+    error.value = `Failed to create location: ${err.response?.data?.message || 'Unknown error'}`
     isLoading.value = false
   }
 }
@@ -59,30 +67,21 @@ const updateLocation = async () => {
 
   try {
     isLoading.value = true
+    error.value = null
     await LocationService.updateLocation(locationForm.value.id, locationForm.value)
     await fetchLocations()
     isLoading.value = false
+    successMessage.value = `Location "${locationForm.value.city}" updated successfully`
     resetForm()
     showForm.value = false
+
+    // Clear success message after 5 seconds
+    setTimeout(() => {
+      successMessage.value = null
+    }, 5000)
   } catch (err) {
     console.error('Error updating location:', err)
-    error.value = 'Failed to update location'
-    isLoading.value = false
-  }
-}
-
-// Delete a location
-const deleteLocation = async (id) => {
-  if (!confirm('Are you sure you want to delete this location?')) return
-
-  try {
-    isLoading.value = true
-    await LocationService.deleteLocation(id)
-    await fetchLocations()
-    isLoading.value = false
-  } catch (err) {
-    console.error('Error deleting location:', err)
-    error.value = 'Failed to delete location'
+    error.value = `Failed to update location: ${err.response?.data?.message || 'Unknown error'}`
     isLoading.value = false
   }
 }
@@ -166,6 +165,11 @@ onMounted(() => {
       </button>
     </div>
 
+    <!-- Success Message -->
+    <div v-if="successMessage" class="success-message" role="status">
+      {{ successMessage }}
+    </div>
+
     <div v-if="error" class="error-message" role="alert">
       {{ error }}
       <button @click="fetchLocations" class="btn-secondary" aria-label="Retry loading locations">
@@ -199,13 +203,6 @@ onMounted(() => {
                   aria-label="Edit location: {{ location.city }}"
                 >
                   ✎
-                </button>
-                <button
-                  @click="deleteLocation(location.id)"
-                  class="btn-icon delete"
-                  aria-label="Delete location: {{ location.city }}"
-                >
-                  🗑
                 </button>
               </td>
             </tr>
@@ -370,6 +367,14 @@ onMounted(() => {
   align-items: center;
 }
 
+.success-message {
+  background-color: #f0fdf4;
+  color: #16a34a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
 .table-container {
   background-color: white;
   border-radius: 0.5rem;
@@ -489,7 +494,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 1500;
 }
 
 .modal-content {
