@@ -18,6 +18,12 @@ export default defineConfig({
     },
   },
   define: {
-    global: 'globalThis' // ✅ Fix for SockJS "global is not defined" error
+    global: 'globalThis', // ✅ Fix for SockJS "global is not defined" error
+    __VUE_I18N_FULL_INSTALL__: true,
+    __VUE_I18N_LEGACY_API__: false,
+    __INTLIFY_PROD_DEVTOOLS__: false,
+  },
+  json: {
+    stringify: true, // This ensures JSON files are properly stringified during build
   }
 })

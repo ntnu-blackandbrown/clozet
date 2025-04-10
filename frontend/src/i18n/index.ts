@@ -37,19 +37,24 @@ const getInitialLocale = (): SupportedLocale => {
 const initialLocale = getInitialLocale()
 console.log('Initial locale set to:', initialLocale)
 
+// Ensure messages are properly loaded
+const messages = {
+  en: JSON.parse(JSON.stringify(en)),
+  nb: JSON.parse(JSON.stringify(nb)),
+  es: JSON.parse(JSON.stringify(es))
+}
+
 // Create i18n instance
 const i18n = createI18n({
   legacy: false, // you must set `false`, to use Composition API
   locale: initialLocale,
   fallbackLocale: DEFAULT_LOCALE,
-  messages: {
-    en,
-    nb,
-    es
-  },
+  messages,
   globalInjection: true, // Adds $t, $tc, etc to all components
   missingWarn: false, // Disable warnings for missing translations in production
-  fallbackWarn: false // Disable warnings for fallback translations in production
+  fallbackWarn: false, // Disable warnings for fallback translations in production
+  runtimeOnly: false, // Ensure translations are compiled in the build
+  warnHtmlMessage: false
 })
 
 // Helper function to change locale
