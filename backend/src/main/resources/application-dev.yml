@@ -1,22 +1,4 @@
 spring:
-  mail:
-    host: sandbox.smtp.mailtrap.io
-    port: 2525
-    username: 5cb908f76b3044
-    password: d8ea28cdded2c1
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls.enable: true
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
-
-app:
-  email:
-    base-url: ${FRONTEND_BASE_URL:http://localhost:5173}
   storage:
     use-cloudinary: true
   cloudinary:
