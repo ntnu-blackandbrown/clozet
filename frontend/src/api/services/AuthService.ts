@@ -1,25 +1,27 @@
-import axios from '../axios'
+import axiosInstance from '../axios'
 
 export const AuthService = {
   /**
    * Login a user
    */
   login: (usernameOrEmail: string, password: string) => {
-    return axios.post('/api/auth/login', { usernameOrEmail, password })
+    console.log('📡 API: Attempting login')
+    return axiosInstance.post('/api/auth/login', { usernameOrEmail, password })
   },
 
   /**
    * Register a new user
    */
   register: (
-    usernameOrEmail: string,
+    username: string,
     password: string,
     email: string,
     firstName: string,
     lastName: string,
   ) => {
-    return axios.post('/api/auth/register', {
-      usernameOrEmail,
+    console.log('📡 API: Registering user')
+    return axiosInstance.post('/api/auth/register', {
+      username,
       password,
       email,
       firstName,
@@ -31,33 +33,68 @@ export const AuthService = {
    * Logout the current user
    */
   logout: () => {
-    return axios.post('/api/auth/logout', {})
+    console.log('📡 API: Logging out')
+    return axiosInstance.post('/api/auth/logout')
   },
 
   /**
    * Get the current user profile
    */
   getCurrentUser: () => {
-    return axios.get('/api/me')
+    console.log('📡 API: Fetching current user')
+    return axiosInstance.get('/api/me')
   },
 
   /**
    * Change user password
    */
-  changePassword: (currentPassword: string, newPassword: string, confirmPassword: string) => {
-    return axios.post('/api/me/change-password', {
+  changePassword: (currentPassword: string, newPassword: string) => {
+    console.log('📡 API: Changing password')
+    return axiosInstance.post('/api/me/change-password', {
       currentPassword,
       newPassword,
-      confirmPassword,
     })
+  },
+
+  /**
+   * Request password reset
+   */
+  requestPasswordReset: (email: string) => {
+    console.log('📡 API: Requesting password reset')
+    return axiosInstance.post('/api/auth/forgot-password', { email })
+  },
+
+  /**
+   * Reset password with token
+   */
+  resetPassword: (token: string, password: string) => {
+    console.log('📡 API: Resetting password')
+    return axiosInstance.post('/api/auth/reset-password', { token, password })
   },
 
   /**
    * Verify a token (email verification, password reset, etc.)
    */
-  verifyToken: (endpoint: string, token: string) => {
-    return axios.get(`${import.meta.env.VITE_API_BASE_URL}${endpoint}?token=${token}`)
+  verifyToken: (token: string) => {
+    console.log('📡 API: Verifying token')
+    return axiosInstance.get(`/api/auth/verify?token=${token}`)
   },
+
+  /**
+   * Validate password reset token
+   */
+  validateResetToken: (token: string) => {
+    console.log('📡 API: Validating reset token')
+    return axiosInstance.get(`/api/auth/reset-password/validate?token=${token}`)
+  },
+
+  /**
+   * Refresh the access token
+   */
+  refreshToken: () => {
+    console.log('📡 API: Refreshing token')
+    return axiosInstance.post('/api/auth/refresh-token')
+  }
 }
 
 export default AuthService

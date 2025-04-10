@@ -15,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Value("${app.upload.dir}")
     private String uploadDir;
-
+    
     /**
      * Configures resource handlers for serving images.
      *
@@ -26,4 +26,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:" + uploadDir + "/");
     }
+    
+    // CORS configuration is now handled by SecurityConfig to avoid conflicts
 }

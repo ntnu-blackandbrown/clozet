@@ -3,12 +3,14 @@ import { ref, computed, onMounted, watch } from 'vue'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
 import { RouterView, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from './stores/AuthStore'
+import { useFavoritesStore } from './stores/FavoritesStore'
 import Footer from '@/components/layout/Footer.vue'
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const favoritesStore = useFavoritesStore()
 const showLoginModal = ref(false)
 const statusMessage = ref('')
 const isLoading = ref(false)
@@ -21,10 +23,25 @@ const userDetails = computed(() => authStore.userDetails)
 
 // Load user info on app start
 onMounted(async () => {
-  if (sessionStorage.getItem('user')) {
-    console.log('Fetching user info from session storage')
-    await authStore.fetchUserInfo()
+  console.log('🚀 App mounted, checking authentication status')
+
+  // Check if user is already authenticated via cookies (silently)
+  try {
+    const isAuthenticated = await authStore.silentRefresh()
+    console.log(`📝 Authentication check result: ${isAuthenticated ? 'Authenticated' : 'Not authenticated'}`)
+
+    // Initialize favorites if user is authenticated
+    if (isAuthenticated) {
+      console.log('🔄 User is authenticated, initializing favorites')
+      // Add small delay to ensure token is ready
+      setTimeout(() => {
+        favoritesStore.initializeFavorites()
+      }, 500)
+    }
+  } catch (error) {
+    console.error('❌ Error during authentication check:', error)
   }
+
   // Check if we should show the login/register modal based on the route
   if (route.path === '/login' || route.path === '/register') {
     showLoginModal.value = true
