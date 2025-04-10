@@ -136,7 +136,7 @@ const submit = handleSubmit(async (values) => {
       const result = await authStore.login(values.username, values.password)
 
       if (result.success) {
-        statusMessage.value = `${t('common.login')} ${t('auth.registrationSuccess')}`
+        statusMessage.value = t('common.login') + ' ' + t('common.success')
         statusType.value = 'success'
         setTimeout(() => {
           emit('close')

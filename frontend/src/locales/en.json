@@ -19,7 +19,8 @@
     "confirmPassword": "Confirm Password",
     "show": "Show",
     "hide": "Hide",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "success": "successful"
   },
   "navigation": {
     "home": "Home",
