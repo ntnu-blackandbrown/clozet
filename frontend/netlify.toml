@@ -1,6 +1,10 @@
 [build]
-  command = "npm run build"
+  command = "./netlify.sh"
   publish = "dist"
+  
+# Use our custom plugin to copy locale files
+[[plugins]]
+  package = "./netlify/copy-locales.js"
 
 # Handle SPA routing
 [[redirects]]
@@ -17,4 +21,9 @@
 [[headers]]
   for = "/*.json"
   [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate" 
+    Cache-Control = "public, no-cache"
+
+[[headers]]
+  for = "/locales/*"
+  [headers.values]
+    Cache-Control = "public, no-cache, must-revalidate" 

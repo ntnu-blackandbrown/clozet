@@ -35,8 +35,13 @@ jobs:
       - name: Format code
         run: npm run format
       
-      - name: Build frontend
-        run: npm run build
+      - name: Make build script executable
+        run: chmod +x netlify.sh
+      
+      - name: Build frontend with custom script
+        run: ./netlify.sh
+        env:
+          VITE_DEBUG: "true" # Enable verbose logging for build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -94,11 +99,15 @@ jobs:
       - name: Install deps
         run: npm install
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-dist
-          path: frontend/dist
+      # We will build directly before deploying instead of using artifacts
+      # to ensure all files including i18n are properly processed
+      - name: Make build script executable
+        run: chmod +x netlify.sh
+
+      - name: Build for production
+        run: ./netlify.sh
+        env:
+          VITE_DEBUG: "true" # Enable verbose logging for build
 
       - name: Deploy to Netlify
         env:
