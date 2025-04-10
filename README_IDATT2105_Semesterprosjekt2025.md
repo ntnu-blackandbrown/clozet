@@ -130,11 +130,8 @@ Students participating are graded on their implementation of:
   - STOMP protocol over WebSocket
   - SockJS fallback for legacy browsers
   - Message broker for scalable communication
-  - Real-time updates for: --- dobbelsjekk
+  - Real-time updates for:
     - Chat messages
-    - Listing status changes
-    - Price updates
-    - Notification delivery
 
 ## Application Structure
 
@@ -357,7 +354,7 @@ The application should now be running and accessible through your browser.
    - Database migration handling
 
 
-   link: 
+   link:  https://github.com/ntnu-blackandbrown/clozet/actions/workflows/backend.yml
 
 #### Frontend CI/CD Pipeline (.github/workflows/frontend.yml)
 1. **Build & Quality**
@@ -372,7 +369,7 @@ The application should now be running and accessible through your browser.
    - Netlify deployment
    - Production build optimization
 
-   link: 
+   link: https://github.com/ntnu-blackandbrown/clozet/actions/workflows/frontend.yml
 
 ### Local Testing
 
