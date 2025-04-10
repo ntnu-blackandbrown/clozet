@@ -3,6 +3,8 @@ import { nextTick } from 'vue'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import CategoryManagement from '@/views/admin/categories/CategoryManagement.vue'
 import { CategoryService } from '@/api/services/CategoryService'
+import { createMockI18n } from '@/test/i18nMock'
+import type { I18n } from 'vue-i18n'
 
 // Mock the CategoryService methods
 vi.mock('@/api/services/CategoryService', () => ({
@@ -15,11 +17,15 @@ vi.mock('@/api/services/CategoryService', () => ({
 }))
 
 describe('CategoryManagement', () => {
+  let i18n: I18n;
+
   beforeEach(() => {
     // Clear all mocks before each test to avoid carry-over state
     vi.clearAllMocks()
     // Restore mocks that might have been changed in specific tests
     vi.spyOn(window, 'confirm').mockRestore()
+    // Setup i18n mock
+    i18n = createMockI18n()
   })
 
   it('fetches categories on mount and displays them', async () => {
@@ -29,7 +35,11 @@ describe('CategoryManagement', () => {
     ]
     ;(CategoryService.getAllCategories as any).mockResolvedValue({ data: sampleCategories })
 
-    const wrapper = mount(CategoryManagement)
+    const wrapper = mount(CategoryManagement, {
+      global: {
+        plugins: [i18n]
+      }
+    })
     await flushPromises()
 
     // Check that sample category data appears in the rendered table
@@ -44,7 +54,11 @@ describe('CategoryManagement', () => {
   it('displays an error message if fetching categories fails', async () => {
     ;(CategoryService.getAllCategories as any).mockRejectedValue(new Error('Network error'))
 
-    const wrapper = mount(CategoryManagement)
+    const wrapper = mount(CategoryManagement, {
+      global: {
+        plugins: [i18n]
+      }
+    })
     await flushPromises()
 
     expect(wrapper.text()).toContain('Failed to load categories')

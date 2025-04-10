@@ -2,11 +2,11 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { createRouter, createWebHistory } from 'vue-router'
-import { createI18n } from 'vue-i18n'
 import App from '@/App.vue' // Adjust path to your App component
 import { useAuthStore } from '@/stores/AuthStore'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
 import Footer from '@/components/layout/Footer.vue'
+import { createMockI18n } from '@/test/i18nMock'
 
 // Mock the child components if desired:
 vi.mock('@/views/LoginRegisterView.vue', () => ({
@@ -27,27 +27,7 @@ vi.mock('@/components/layout/Footer.vue', () => ({
 describe('App.vue', () => {
   let pinia: ReturnType<typeof createPinia>
   let router: ReturnType<typeof createRouter>
-
-  const i18n = createI18n({
-    locale: 'en',
-    messages: {
-      en: {
-        navigation: {
-          home: 'Home',
-          profile: 'Profile',
-          messages: 'Messages',
-          sellItems: 'Sell Items',
-          adminDashboard: 'Admin Dashboard',
-        },
-        common: {
-          skipToContent: 'Skip to main content',
-          toggleMenu: 'Toggle menu',
-          logout: 'Log out',
-          login: 'Log in',
-        },
-      },
-    },
-  })
+  let i18n;
 
   beforeEach(async () => {
     // Clear mocks and session storage
@@ -59,6 +39,9 @@ describe('App.vue', () => {
     // Create fresh Pinia & set active
     pinia = createPinia()
     setActivePinia(pinia)
+
+    // Setup i18n mock
+    i18n = createMockI18n()
 
     // Create a router with minimal routes
     router = createRouter({
