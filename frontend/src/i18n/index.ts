@@ -1,14 +1,4 @@
 import { createI18n } from 'vue-i18n'
-import en from '@/locales/en.json'
-import nb from '@/locales/nb.json'
-import es from '@/locales/es.json'
-
-// Ensure locale files are properly imported
-const messages = {
-  en,
-  nb,
-  es
-}
 
 // Supported locales
 export const SUPPORTED_LOCALES = ['en', 'nb', 'es'] as const
@@ -44,12 +34,13 @@ const getInitialLocale = (): SupportedLocale => {
 const initialLocale = getInitialLocale()
 console.log('Initial locale set to:', initialLocale)
 
-// Create i18n instance
+// Create i18n instance with automatic locale imports
 const i18n = createI18n({
   legacy: false, // you must set `false`, to use Composition API
   locale: initialLocale,
   fallbackLocale: DEFAULT_LOCALE,
-  messages, // Use the imported messages directly
+  // The plugin will automatically load all locale files
+  messages: {},
   globalInjection: true, // Adds $t, $tc, etc to all components
   missingWarn: false, // Disable warnings for missing translations in production
   fallbackWarn: false // Disable warnings for fallback translations in production
