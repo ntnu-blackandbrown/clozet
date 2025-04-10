@@ -53,6 +53,13 @@ export const AuthService = {
   },
 
   /**
+   * Delete the current user
+   */
+  deleteUser: (id: string) => {
+    return axios.delete(`/api/users/${id}`)
+  },
+
+  /**
    * Verify a token (email verification, password reset, etc.)
    */
   verifyToken: (endpoint: string, token: string) => {

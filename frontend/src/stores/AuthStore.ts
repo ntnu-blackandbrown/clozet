@@ -94,6 +94,15 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const deleteUser = async () => {
+    try {
+      console.log('Deleting user:', user.value?.id)
+      await AuthService.deleteUser(user.value?.id?.toString() ?? '')
+    } catch (error) {
+      console.error('Delete user error:', error)
+    }
+  }
+
   return {
     user,
     isLoggedIn,
@@ -102,6 +111,7 @@ export const useAuthStore = defineStore('auth', () => {
     fetchUserInfo,
     logout,
     register,
+    deleteUser,
   }
 }, {
   persist: {

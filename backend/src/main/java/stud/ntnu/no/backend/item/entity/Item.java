@@ -171,7 +171,7 @@ public class Item {
   /**
    * Collection of users who have favorited this item.
    */
-  @OneToMany(mappedBy = "item")
+  @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE, orphanRemoval = true)
   private Set<Favorite> favorites = new HashSet<>();
 
   /**
@@ -185,13 +185,13 @@ public class Item {
   /**
    * Collection of transactions involving this item.
    */
-  @OneToMany(mappedBy = "item")
+  @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE, orphanRemoval = true)
   private List<Transaction> transactions;
 
   /**
    * Collection of messages related to this item.
    */
-  @OneToMany(mappedBy = "item")
+  @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE, orphanRemoval = true)
   private List<Message> messages;
 
   /**

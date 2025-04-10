@@ -100,6 +100,9 @@ const handleDeleteAccount = async () => {
   try {
     // TODO: Implement API call to delete account
     console.log('Deleting account')
+    await authStore.deleteUser()
+    authStore.logout()
+    router.push('/')
   } catch (error) {
     console.error('Error deleting account:', error)
   }
