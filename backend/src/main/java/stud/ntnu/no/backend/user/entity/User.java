@@ -2,6 +2,12 @@ package stud.ntnu.no.backend.user.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import stud.ntnu.no.backend.item.entity.Item;
+import stud.ntnu.no.backend.favorite.entity.Favorite;
 
 /**
  * Represents a user entity in the system.
@@ -92,6 +98,20 @@ public class User {
    * URL to the user's profile picture.
    */
   private String profilePictureUrl;
+  
+  /**
+   * Items listed by this user.
+   * When the user is deleted, this will trigger cascade deletion of all items.
+   */
+  @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Item> items = new ArrayList<>();
+  
+  /**
+   * Favorites created by this user.
+   * When the user is deleted, this will trigger cascade deletion of all favorites.
+   */
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<Favorite> favorites = new HashSet<>();
 
   // Getters and setters
   /**
@@ -345,5 +365,41 @@ public class User {
         this.lastName = parts[1];
       }
     }
+  }
+  
+  /**
+   * Returns the items listed by this user.
+   *
+   * @return the list of items
+   */
+  public List<Item> getItems() {
+    return items;
+  }
+
+  /**
+   * Sets the items listed by this user.
+   *
+   * @param items the list of items to set
+   */
+  public void setItems(List<Item> items) {
+    this.items = items;
+  }
+
+  /**
+   * Returns the favorites created by this user.
+   *
+   * @return the set of favorites
+   */
+  public Set<Favorite> getFavorites() {
+    return favorites;
+  }
+
+  /**
+   * Sets the favorites created by this user.
+   *
+   * @param favorites the set of favorites to set
+   */
+  public void setFavorites(Set<Favorite> favorites) {
+    this.favorites = favorites;
   }
 }
