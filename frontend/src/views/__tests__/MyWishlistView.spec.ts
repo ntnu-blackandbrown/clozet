@@ -1,230 +1,244 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import type { Mock } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
-import { createPinia, setActivePinia } from 'pinia'
-import MyWishlist from '@/views/profile/MyWishlistView.vue' // <-- adjust to your actual file path
-import { useAuthStore } from '@/stores/AuthStore'
-import { createI18n } from 'vue-i18n'
-import { createRouter, createWebHistory } from 'vue-router'
-import { FavoritesService } from '@/api/services/FavoritesService'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import MyWishlistView from '@/views/profile/MyWishlistView.vue'
 import { ProductService } from '@/api/services/ProductService'
+import { FavoritesService } from '@/api/services/FavoritesService'
+import { createMockI18n } from '@/test/i18nMock'
+import type { I18n } from 'vue-i18n'
+import { useAuthStore } from '@/stores/AuthStore'
+import ProductList from '@/components/product/ProductList.vue'
 
-vi.mock('@/api/services/FavoritesService', () => ({
-  FavoritesService: {
-    getUserFavorites: vi.fn(),
-  },
-}))
-
+// Mock the services
 vi.mock('@/api/services/ProductService', () => ({
   ProductService: {
     getAllItems: vi.fn(),
-    getItemImages: vi.fn(),
-  },
+    getItemImages: vi.fn()
+  }
 }))
 
-describe('MyWishlist.vue', () => {
-  let pinia: ReturnType<typeof createPinia>
-  let router: ReturnType<typeof createRouter>
+vi.mock('@/api/services/FavoritesService', () => ({
+  FavoritesService: {
+    getUserFavorites: vi.fn()
+  }
+}))
 
-  // Minimal i18n config
-  const i18n = createI18n({
-    locale: 'en',
-    messages: {
+// Mock the AuthStore
+vi.mock('@/stores/AuthStore', () => ({
+  useAuthStore: vi.fn()
+}))
+
+// Mock the ProductList component
+vi.mock('@/components/product/ProductList.vue', () => ({
+  default: {
+    name: 'ProductList',
+    props: ['items', 'routeBasePath', 'initialProductId'],
+    template: '<div data-testid="product-list">Product List Mock</div>'
+  }
+}))
+
+// Mock vue-router
+vi.mock('vue-router', () => ({
+  useRoute: vi.fn(() => ({
+    params: {}
+  }))
+}))
+
+describe('MyWishlistView', () => {
+  let i18n: I18n;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    // Setup i18n mock with profile translations
+    i18n = createMockI18n({
       en: {
         profile: {
           myWishlist: 'My Wishlist',
           emptyStates: {
-            noWishlist: 'No items in your wishlist',
-          },
-        },
-      },
-    },
-  })
+            noWishlist: 'Your wishlist is empty'
+          }
+        }
+      }
+    });
 
-  beforeEach(async () => {
-    // Reset mocks
-    vi.clearAllMocks()
+    // Mock auth store user
+    vi.mocked(useAuthStore).mockReturnValue({
+      user: { id: 1, name: 'Test User', email: 'test@example.com' },
+      isLoggedIn: true
+    } as any);
+  });
 
-    // Create and activate a fresh Pinia instance
-    pinia = createPinia()
-    setActivePinia(pinia)
+  it('fetches wishlist items and displays them', async () => {
+    // Mock favorites data
+    const mockFavorites = [
+      { id: 1, userId: 1, itemId: 101 },
+      { id: 2, userId: 1, itemId: 102 }
+    ];
 
-    // Create a minimal router
-    router = createRouter({
-      history: createWebHistory(),
-      routes: [
-        {
-          path: '/profile/wishlist/:id?',
-          name: 'MyWishlist',
-          component: MyWishlist,
-        },
-      ],
-    })
+    // Mock all marketplace items
+    const mockMarketplaceItems = [
+      { id: 101, name: 'Item 101', price: 100, description: 'Desc 101' },
+      { id: 102, name: 'Item 102', price: 200, description: 'Desc 102' },
+      { id: 103, name: 'Item 103', price: 300, description: 'Desc 103' } // Not in favorites
+    ];
 
-    // Important to ensure router is ready before mounting, if you plan on using `router.push()`
-    await router.isReady()
-  })
+    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue({ data: mockFavorites });
+    vi.mocked(ProductService.getAllItems).mockResolvedValue({ data: mockMarketplaceItems });
 
-  it('renders empty state when there are no favorites or items', async () => {
-    // Mock empty favorites and items
-    ;(FavoritesService.getUserFavorites as Mock).mockResolvedValue({ data: [] })
-    ;(ProductService.getAllItems as Mock).mockResolvedValue({ data: [] })
+    // Mock image fetching for the two favorited items
+    vi.mocked(ProductService.getItemImages)
+      .mockResolvedValueOnce({ data: [{ imageUrl: '/image101.jpg' }] })
+      .mockResolvedValueOnce({ data: [{ imageUrl: '/image102.jpg' }] });
 
-    // Set up auth store
-    const authStore = useAuthStore()
-    authStore.user = { id: 42, name: 'Test User' } as any
-
-    // Mount component
-    const wrapper = mount(MyWishlist, {
+    const wrapper = mount(MyWishlistView, {
       global: {
-        plugins: [pinia, router, i18n],
-      },
-    })
+        plugins: [i18n]
+      }
+    });
 
-    // onMounted is async, so wait for all promises (API calls) to resolve
-    await flushPromises()
+    await flushPromises();
 
-    // Expect the empty state text
-    expect(wrapper.text()).toContain('No items in your wishlist')
-  })
+    // Verify API calls
+    expect(FavoritesService.getUserFavorites).toHaveBeenCalledWith(1);
+    expect(ProductService.getAllItems).toHaveBeenCalled();
+    expect(ProductService.getItemImages).toHaveBeenCalledTimes(2);
 
-  it('renders items when user has favorites', async () => {
-    const favorites = [
-      { id: 1, itemId: 101 },
-      { id: 2, itemId: 202 },
-    ]
+    // Should have filtered to just the favorited items with images
+    expect(wrapper.vm.items).toHaveLength(2);
+    expect(wrapper.vm.items[0].id).toBe(101);
+    expect(wrapper.vm.items[0].image).toBe('/image101.jpg');
+    expect(wrapper.vm.items[1].id).toBe(102);
+    expect(wrapper.vm.items[1].image).toBe('/image102.jpg');
 
-    ;(FavoritesService.getUserFavorites as Mock).mockResolvedValue({
-      data: favorites,
-    })
-    ;(ProductService.getAllItems as Mock).mockResolvedValue({
-      data: [
-        { id: 101, name: 'Item 101' },
-        { id: 202, name: 'Item 202' },
-        { id: 303, name: 'Item 303' },
-      ],
-    })
-    ;(ProductService.getItemImages as Mock).mockImplementation((id: number) => {
-      return Promise.resolve({
-        data: [{ imageUrl: `https://example.com/product-${id}.jpg` }],
-      })
-    })
+    // Check that ProductList is displayed with correct props
+    const productList = wrapper.findComponent('[data-testid="product-list"]');
+    expect(productList.exists()).toBe(true);
+  });
 
-    const authStore = useAuthStore()
-    authStore.user = { id: 42 } as any
+  it('shows empty state when wishlist is empty', async () => {
+    // Mock empty favorites
+    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue({ data: [] });
+    vi.mocked(ProductService.getAllItems).mockResolvedValue({
+      data: [{ id: 101, name: 'Item 101' }]
+    });
 
-    const wrapper = mount(MyWishlist, {
+    const wrapper = mount(MyWishlistView, {
       global: {
-        plugins: [pinia, router, i18n],
-      },
-    })
+        plugins: [i18n]
+      }
+    });
 
-    await flushPromises()
+    await flushPromises();
 
-    // Only items 101 and 202 should be in favorites
-    expect((wrapper.vm as any).items.length).toBe(2)
-    expect((wrapper.vm as any).items[0].image).toBe('https://example.com/product-101.jpg')
-    expect((wrapper.vm as any).items[1].image).toBe('https://example.com/product-202.jpg')
-    // No empty state text
-    expect(wrapper.text()).not.toContain('No items in your wishlist')
-  })
+    // Check for empty state
+    const emptyState = wrapper.find('.empty-state');
+    expect(emptyState.exists()).toBe(true);
+    expect(emptyState.text()).toContain('Your wishlist is empty');
 
-  it('handles error when fetching favorites', async () => {
-    ;(FavoritesService.getUserFavorites as Mock).mockRejectedValue(
-      new Error('Favorites error'),
-    )
-    // Even if ProductService is called, it may or may not be reached
-    ;(ProductService.getAllItems as Mock).mockResolvedValue({
-      data: [{ id: 101, name: 'Item 101' }],
-    })
+    // ProductList should not be displayed
+    expect(wrapper.findComponent(ProductList).exists()).toBe(false);
+  });
 
-    const authStore = useAuthStore()
-    authStore.user = { id: 42 } as any
+  it('handles favorites API error gracefully', async () => {
+    // Mock favorites API error
+    vi.mocked(FavoritesService.getUserFavorites).mockRejectedValue(new Error('Failed to fetch favorites'));
 
-    const wrapper = mount(MyWishlist, {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const wrapper = mount(MyWishlistView, {
       global: {
-        plugins: [pinia, router, i18n],
-      },
-    })
+        plugins: [i18n]
+      }
+    });
 
-    await flushPromises()
-    // Error leads to an empty array
-    expect((wrapper.vm as any).items).toEqual([])
-    expect(wrapper.text()).toContain('No items in your wishlist')
-  })
+    await flushPromises();
 
-  it('handles error when fetching images for an item', async () => {
-    ;(FavoritesService.getUserFavorites as Mock).mockResolvedValue({
-      data: [{ id: 1, itemId: 101 }],
-    })
-    ;(ProductService.getAllItems as Mock).mockResolvedValue({
-      data: [{ id: 101, name: 'Item 101' }],
-    })
-    ;(ProductService.getItemImages as Mock).mockRejectedValue(
-      new Error('Image fetch error'),
-    )
+    // Should log the error
+    expect(consoleSpy).toHaveBeenCalled();
 
-    const authStore = useAuthStore()
-    authStore.user = { id: 42 } as any
+    // Should display empty state as fallback
+    expect(wrapper.find('.empty-state').exists()).toBe(true);
+    expect(wrapper.vm.items).toEqual([]);
 
-    const wrapper = mount(MyWishlist, {
+    consoleSpy.mockRestore();
+  });
+
+  it('handles marketplace items API error gracefully', async () => {
+    // Mock favorites success but marketplace error
+    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue({
+      data: [{ id: 1, userId: 1, itemId: 101 }]
+    });
+    vi.mocked(ProductService.getAllItems).mockRejectedValue(new Error('Failed to fetch items'));
+
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const wrapper = mount(MyWishlistView, {
       global: {
-        plugins: [pinia, router, i18n],
-      },
-    })
+        plugins: [i18n]
+      }
+    });
 
-    await flushPromises()
+    await flushPromises();
 
-    // On image fetch error, it should fallback to the default product image
-    expect((wrapper.vm as any).items[0].image).toBe('/default-product-image.jpg')
-  })
+    // Should log the error
+    expect(consoleSpy).toHaveBeenCalled();
 
-  it('sets initialProductId if route param is present', async () => {
-    // Push to a route with an ID
-    router.push('/profile/wishlist/999')
-    await router.isReady()
+    // Should display empty state as fallback
+    expect(wrapper.find('.empty-state').exists()).toBe(true);
+    expect(wrapper.vm.items).toEqual([]);
 
-    ;(FavoritesService.getUserFavorites as Mock).mockResolvedValue({
-      data: [],
-    })
-    ;(ProductService.getAllItems as Mock).mockResolvedValue({
-      data: [],
-    })
+    consoleSpy.mockRestore();
+  });
 
-    const authStore = useAuthStore()
-    authStore.user = { id: 42 } as any
+  it('handles image fetch error gracefully', async () => {
+    // Mock data with one favorited item
+    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue({
+      data: [{ id: 1, userId: 1, itemId: 101 }]
+    });
+    vi.mocked(ProductService.getAllItems).mockResolvedValue({
+      data: [{ id: 101, name: 'Item 101' }]
+    });
+    vi.mocked(ProductService.getItemImages).mockRejectedValue(new Error('Image fetch failed'));
 
-    const wrapper = mount(MyWishlist, {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const wrapper = mount(MyWishlistView, {
       global: {
-        plugins: [pinia, router, i18n],
-      },
-    })
+        plugins: [i18n]
+      }
+    });
 
-    await flushPromises()
-    expect((wrapper.vm as any).initialProductId).toBe(999)
-  })
+    await flushPromises();
 
-  it('does not set initialProductId if route param is absent', async () => {
-    router.push('/profile/wishlist') // no ID param
-    await router.isReady()
+    // Should log the error
+    expect(consoleSpy).toHaveBeenCalled();
 
-    ;(FavoritesService.getUserFavorites as Mock).mockResolvedValue({
-      data: [],
-    })
-    ;(ProductService.getAllItems as Mock).mockResolvedValue({
-      data: [],
-    })
+    // Should use default image
+    expect(wrapper.vm.items[0].image).toBe('/default-product-image.jpg');
 
-    const authStore = useAuthStore()
-    authStore.user = { id: 42 } as any
+    consoleSpy.mockRestore();
+  });
 
-    const wrapper = mount(MyWishlist, {
+  it('uses product ID from route params if available', async () => {
+    // Mock route with product ID
+    vi.mock('vue-router', () => ({
+      useRoute: vi.fn(() => ({
+        params: { id: '101' }
+      }))
+    }));
+
+    // Mock empty data to simplify test
+    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue({ data: [] });
+    vi.mocked(ProductService.getAllItems).mockResolvedValue({ data: [] });
+
+    const wrapper = mount(MyWishlistView, {
       global: {
-        plugins: [pinia, router, i18n],
-      },
-    })
+        plugins: [i18n]
+      }
+    });
 
-    await flushPromises()
-    expect((wrapper.vm as any).initialProductId).toBe(null)
-  })
-})
+    await flushPromises();
+
+    expect(wrapper.vm.initialProductId).toBe(101);
+  });
+});

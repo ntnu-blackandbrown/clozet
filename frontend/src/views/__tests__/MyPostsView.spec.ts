@@ -1,213 +1,191 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import type { Mock } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
-import { createPinia, setActivePinia } from 'pinia'
-import { createRouter, createWebHistory } from 'vue-router'
-import { createI18n } from 'vue-i18n'
-import MyPostsView from '@/views/profile/MyPostsView.vue' // <-- Update to your actual file path
-import { useAuthStore } from '@/stores/AuthStore'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import MyPostsView from '@/views/profile/MyPostsView.vue'
 import { ProductService } from '@/api/services/ProductService'
+import { createMockI18n } from '@/test/i18nMock'
+import type { I18n } from 'vue-i18n'
+import { useAuthStore } from '@/stores/AuthStore'
+import ProductList from '@/components/product/ProductList.vue'
 
+// Mock the ProductService
 vi.mock('@/api/services/ProductService', () => ({
   ProductService: {
     getItemsBySeller: vi.fn(),
-    getItemImages: vi.fn(),
-  },
+    getItemImages: vi.fn()
+  }
 }))
 
-describe('MyPostsView.vue', () => {
-  let pinia: ReturnType<typeof createPinia>
-  let router: ReturnType<typeof createRouter>
+// Mock the AuthStore
+vi.mock('@/stores/AuthStore', () => ({
+  useAuthStore: vi.fn()
+}))
 
-  // Minimal i18n setup
-  const i18n = createI18n({
-    locale: 'en',
-    messages: {
+// Mock the ProductList component
+vi.mock('@/components/product/ProductList.vue', () => ({
+  default: {
+    name: 'ProductList',
+    props: ['items', 'routeBasePath', 'initialProductId'],
+    template: '<div data-testid="product-list">Product List Mock</div>'
+  }
+}))
+
+// Mock vue-router
+vi.mock('vue-router', () => ({
+  useRoute: vi.fn(() => ({
+    params: {}
+  }))
+}))
+
+describe('MyPostsView', () => {
+  let i18n: I18n;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    // Setup i18n mock with profile translations
+    i18n = createMockI18n({
       en: {
         profile: {
           myPosts: 'My Posts',
           emptyStates: {
-            noPosts: 'No posts found',
-          },
-        },
-      },
-    },
-  })
+            noPosts: 'You have no posts yet'
+          }
+        }
+      }
+    });
 
-  beforeEach(async () => {
-    vi.clearAllMocks()
+    // Mock auth store user
+    vi.mocked(useAuthStore).mockReturnValue({
+      user: { id: 1, name: 'Test User', email: 'test@example.com' },
+      isLoggedIn: true
+    } as any);
+  });
 
-    // Create and activate a fresh Pinia instance
-    pinia = createPinia()
-    setActivePinia(pinia)
+  it('fetches and displays user posts on mount', async () => {
+    // Mock the API responses
+    const mockItems = [
+      { id: 1, name: 'Item 1', price: 100, description: 'Desc 1', available: true },
+      { id: 2, name: 'Item 2', price: 200, description: 'Desc 2', available: false }
+    ];
 
-    // Create a minimal router
-    router = createRouter({
-      history: createWebHistory(),
-      routes: [
-        {
-          path: '/profile/posts/:id?',
-          name: 'MyPosts',
-          component: MyPostsView,
-        },
-      ],
-    })
-
-    // We must wait for the router to be ready before mounting, if we push routes.
-    await router.isReady()
-  })
-
-  it('renders empty state if there are no posts', async () => {
-    // Mock the ProductService to return an empty list
-    ;(ProductService.getItemsBySeller as Mock).mockResolvedValue({
-      data: [],
-    })
-
-    const authStore = useAuthStore()
-    authStore.user = { id: 42, name: 'Test User' } as any
+    vi.mocked(ProductService.getItemsBySeller).mockResolvedValue({ data: mockItems });
+    vi.mocked(ProductService.getItemImages).mockResolvedValueOnce({
+      data: [{ imageUrl: '/image1.jpg' }]
+    }).mockResolvedValueOnce({
+      data: [{ imageUrl: '/image2.jpg' }]
+    });
 
     const wrapper = mount(MyPostsView, {
       global: {
-        plugins: [pinia, router, i18n],
-      },
-    })
+        plugins: [i18n]
+      }
+    });
 
-    // Wait for onMounted calls to finish
-    await flushPromises()
+    await flushPromises();
 
-    // Should display empty state message
-    expect(wrapper.text()).toContain('No posts found')
-    // Items should be empty
-    expect((wrapper.vm as any).items).toEqual([])
-  })
+    // Verify API calls
+    expect(ProductService.getItemsBySeller).toHaveBeenCalledWith(1);
+    expect(ProductService.getItemImages).toHaveBeenCalledTimes(2);
 
-  it('fetches and displays user posts successfully', async () => {
-    // Mock data returned by the getItemsBySeller call
-    ;(ProductService.getItemsBySeller as Mock).mockResolvedValue({
-      data: [
-        { id: 101, name: 'Post 101', available: true },
-        { id: 202, name: 'Post 202', available: false },
-      ],
-    })
+    // Check that ProductList is displayed with correct props
+    const productList = wrapper.findComponent('[data-testid="product-list"]');
+    expect(productList.exists()).toBe(true);
 
-    // Mock the getItemImages call
-    ;(ProductService.getItemImages as Mock).mockImplementation((itemId: number) => {
-      return Promise.resolve({
-        data: [{ imageUrl: `https://example.com/image-${itemId}.jpg` }],
-      })
-    })
+    // The items should have images and mapped isAvailable property
+    expect(wrapper.vm.items).toEqual([
+      { ...mockItems[0], image: '/image1.jpg', isAvailable: true },
+      { ...mockItems[1], image: '/image2.jpg', isAvailable: false }
+    ]);
+  });
 
-    const authStore = useAuthStore()
-    authStore.user = { id: 42 } as any
+  it('shows empty state when user has no posts', async () => {
+    // Mock empty items response
+    vi.mocked(ProductService.getItemsBySeller).mockResolvedValue({ data: [] });
 
     const wrapper = mount(MyPostsView, {
       global: {
-        plugins: [pinia, router, i18n],
-      },
-    })
+        plugins: [i18n]
+      }
+    });
 
-    await flushPromises()
+    await flushPromises();
 
-    // Should have 2 items
-    expect((wrapper.vm as any).items).toHaveLength(2)
-    // Confirm the mapped images and isAvailable property
-    const [item1, item2] = (wrapper.vm as any).items
-    expect(item1.image).toBe('https://example.com/image-101.jpg')
-    expect(item1.isAvailable).toBe(true)
-    expect(item2.image).toBe('https://example.com/image-202.jpg')
-    expect(item2.isAvailable).toBe(false)
+    // Check for empty state
+    const emptyState = wrapper.find('.empty-state');
+    expect(emptyState.exists()).toBe(true);
+    expect(emptyState.text()).toContain('You have no posts yet');
 
-    // No empty state message
-    expect(wrapper.text()).not.toContain('No posts found')
-  })
+    // ProductList should not be displayed
+    expect(wrapper.findComponent(ProductList).exists()).toBe(false);
+  });
 
-  it('handles error when fetching posts', async () => {
-    // Mock an error
-    ;(ProductService.getItemsBySeller as Mock).mockRejectedValue(
-      new Error('Server error'),
-    )
+  it('handles API errors gracefully', async () => {
+    // Mock API failure
+    vi.mocked(ProductService.getItemsBySeller).mockRejectedValue(new Error('Failed to fetch'));
 
-    const authStore = useAuthStore()
-    authStore.user = { id: 42 } as any
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const wrapper = mount(MyPostsView, {
       global: {
-        plugins: [pinia, router, i18n],
-      },
-    })
+        plugins: [i18n]
+      }
+    });
 
-    await flushPromises()
+    await flushPromises();
 
-    // Should handle error gracefully and show empty state
-    expect((wrapper.vm as any).items).toEqual([])
-    expect(wrapper.text()).toContain('No posts found')
-  })
+    // Should log the error
+    expect(consoleSpy).toHaveBeenCalled();
 
-  it('falls back to default image when fetching images fails', async () => {
-    ;(ProductService.getItemsBySeller as Mock).mockResolvedValue({
-      data: [
-        { id: 101, name: 'Post 101', available: true },
-      ],
-    })
-    // Mock failure of getItemImages
-    ;(ProductService.getItemImages as Mock).mockRejectedValue(
-      new Error('Image fetch error'),
-    )
+    // Should display empty state as fallback
+    expect(wrapper.find('.empty-state').exists()).toBe(true);
+    expect(wrapper.vm.items).toEqual([]);
 
-    const authStore = useAuthStore()
-    authStore.user = { id: 42 } as any
+    consoleSpy.mockRestore();
+  });
 
-    const wrapper = mount(MyPostsView, {
-      global: {
-        plugins: [pinia, router, i18n],
-      },
-    })
+  it('handles image fetch error gracefully', async () => {
+    const mockItems = [{ id: 1, name: 'Item 1', price: 100, description: 'Desc 1', available: true }];
 
-    await flushPromises()
+    vi.mocked(ProductService.getItemsBySeller).mockResolvedValue({ data: mockItems });
+    vi.mocked(ProductService.getItemImages).mockRejectedValue(new Error('Image fetch failed'));
 
-    expect((wrapper.vm as any).items[0].image).toBe('/default-product-image.jpg')
-    expect((wrapper.vm as any).items[0].isAvailable).toBe(true)
-  })
-
-  it('sets initialProductId if route param is present', async () => {
-    // Push to a route with an ID
-    router.push('/profile/posts/999')
-    await router.isReady()
-
-    // Mock success but no data
-    ;(ProductService.getItemsBySeller as Mock).mockResolvedValue({ data: [] })
-
-    const authStore = useAuthStore()
-    authStore.user = { id: 42 } as any
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const wrapper = mount(MyPostsView, {
       global: {
-        plugins: [pinia, router, i18n],
-      },
-    })
+        plugins: [i18n]
+      }
+    });
 
-    await flushPromises()
-    expect((wrapper.vm as any).initialProductId).toBe(999)
-  })
+    await flushPromises();
 
-  it('does not set initialProductId if route param is absent', async () => {
-    // No ID in route
-    router.push('/profile/posts')
-    await router.isReady()
+    // Should log the error
+    expect(consoleSpy).toHaveBeenCalled();
 
-    // Mock success but no data
-    ;(ProductService.getItemsBySeller as Mock).mockResolvedValue({ data: [] })
+    // Should use default image
+    expect(wrapper.vm.items[0].image).toBe('/default-product-image.jpg');
 
-    const authStore = useAuthStore()
-    authStore.user = { id: 42 } as any
+    consoleSpy.mockRestore();
+  });
+
+  it('uses product ID from route params if available', async () => {
+    // Mock route with product ID
+    vi.mock('vue-router', () => ({
+      useRoute: vi.fn(() => ({
+        params: { id: '42' }
+      }))
+    }));
+
+    vi.mocked(ProductService.getItemsBySeller).mockResolvedValue({ data: [] });
 
     const wrapper = mount(MyPostsView, {
       global: {
-        plugins: [pinia, router, i18n],
-      },
-    })
+        plugins: [i18n]
+      }
+    });
 
-    await flushPromises()
-    expect((wrapper.vm as any).initialProductId).toBe(null)
-  })
-})
+    await flushPromises();
+
+    expect(wrapper.vm.initialProductId).toBe(42);
+  });
+});

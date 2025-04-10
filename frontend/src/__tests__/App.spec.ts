@@ -27,7 +27,7 @@ vi.mock('@/components/layout/Footer.vue', () => ({
 describe('App.vue', () => {
   let pinia: ReturnType<typeof createPinia>
   let router: ReturnType<typeof createRouter>
-  let i18n;
+  let i18n: any
 
   beforeEach(async () => {
     // Clear mocks and session storage
