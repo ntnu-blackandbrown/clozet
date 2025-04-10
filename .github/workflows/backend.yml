@@ -6,7 +6,7 @@ on:
       - develop
       - main
       - 'feature/**'
-      - task/check-deployment
+      - task/ready-for-prod
   pull_request:
     branches:
       - develop
