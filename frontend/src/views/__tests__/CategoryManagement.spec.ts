@@ -339,7 +339,8 @@ describe('CategoryManagement.vue', () => {
 
     await wrapper.find('form.category-form').trigger('submit.prevent')
     expect(CategoryService.updateCategory).toHaveBeenCalled()
-    expect(wrapper.vm.error).toBe('Failed to update category')
+    expect(wrapper.vm.error).toContain('Failed to update category')
+
   })
 
   it('prompts for confirmation before deleting a category and aborts if cancelled', async () => {

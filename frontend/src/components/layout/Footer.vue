@@ -1,5 +1,7 @@
 <script setup>
+import { useAuthStore } from '@/stores/AuthStore';
 import { RouterLink } from 'vue-router'
+const authStore = useAuthStore()
 </script>
 
 <template>
@@ -34,7 +36,7 @@ import { RouterLink } from 'vue-router'
         </nav>
       </div>
 
-      <div class="footer-section">
+      <div class="footer-section" v-if="!authStore.isLoggedIn">
         <h3 id="account-section">Account</h3>
         <nav aria-labelledby="account-section">
           <RouterLink to="/login" class="footer-link">Login</RouterLink>
