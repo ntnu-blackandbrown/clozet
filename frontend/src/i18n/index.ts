@@ -54,8 +54,12 @@ const i18n = createI18n({
 
 // Helper function to change locale
 export const setLocale = (locale: SupportedLocale): void => {
+
   if (SUPPORTED_LOCALES.includes(locale)) {
     console.log('Changing locale to:', locale)
+    console.log('Resolved locale:', initialLocale)
+  console.log('Available locales:', SUPPORTED_LOCALES)
+  console.log('Loaded messages:', { en, nb, es })
     i18n.global.locale.value = locale
     localStorage.setItem('locale', locale)
     document.querySelector('html')?.setAttribute('lang', locale)

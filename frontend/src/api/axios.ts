@@ -5,7 +5,6 @@ const axiosInstance = axios.create({
   baseURL: 'http://localhost:8080', // adjust to your backend URL
   withCredentials: true, // Enable cookies with all requests
 })
-
 // Flag to prevent multiple refresh requests
 let isRefreshing = false
 // Queue of failed requests to retry after token refresh
