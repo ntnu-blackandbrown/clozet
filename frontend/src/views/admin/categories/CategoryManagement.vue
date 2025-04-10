@@ -198,13 +198,7 @@ onMounted(() => {
                 >
                   ✎
                 </button>
-                <button
-                  @click="deleteCategory(category.id)"
-                  class="btn-icon delete"
-                  aria-label="Delete category: {{ category.name }}"
-                >
-                  🗑
-                </button>
+                
               </td>
             </tr>
           </tbody>
