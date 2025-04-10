@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { UserService } from '@/api/services/UserService'
+import { useAuthStore } from '@/stores/AuthStore'
 
 // State
 const users = ref([])
@@ -8,6 +9,8 @@ const isLoading = ref(true)
 const error = ref(null)
 const searchQuery = ref('')
 const selectedRole = ref('all')
+const authStore = useAuthStore()
+const currentUser = computed(() => authStore.userDetails)
 
 // Fetch all users
 const fetchUsers = async () => {
@@ -39,6 +42,7 @@ const filteredUsers = computed(() => {
     return matchesSearch && matchesRole
   })
 })
+
 
 // Toggle user active status
 const toggleUserStatus = async (user) => {
@@ -100,6 +104,11 @@ const getStatusClass = (isActive) => {
 const resetFilters = () => {
   searchQuery.value = ''
   selectedRole.value = 'all'
+}
+
+// Check if user is the currently logged in user
+const isCurrentUser = (user) => {
+  return currentUser.value && user.id === currentUser.value.id
 }
 
 // Load users on component mount
@@ -169,7 +178,7 @@ onMounted(() => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in filteredUsers" :key="user.id">
+            <tr v-for="user in filteredUsers" :key="user.id" :class="{ 'current-user-row': isCurrentUser(user) }">
               <td>{{ user.id }}</td>
               <td>{{ user.firstName }} {{ user.lastName }}</td>
               <td>{{ user.username }}</td>
@@ -180,6 +189,8 @@ onMounted(() => {
                   @change="changeUserRole(user, $event.target.value)"
                   class="role-select"
                   :aria-label="`Change role for ${user.username}`"
+                  :disabled="isCurrentUser(user)"
+                  :title="isCurrentUser(user) ? 'You cannot edit your own role' : ''"
                 >
                   <option value="ADMIN">Admin</option>
                   <option value="ROLE_USER">Regular User</option>
@@ -196,6 +207,8 @@ onMounted(() => {
                   @click="toggleUserStatus(user)"
                   class="btn-secondary btn-small"
                   :aria-label="`${user.active ? 'Deactivate' : 'Activate'} user ${user.username}`"
+                  :disabled="isCurrentUser(user)"
+                  :title="isCurrentUser(user) ? 'You cannot deactivate your own account' : ''"
                 >
                   {{ user.active ? 'Deactivate' : 'Activate' }}
                 </button>
@@ -335,6 +348,20 @@ onMounted(() => {
 
 .admin-table tr:last-child td {
   border-bottom: none;
+}
+
+.current-user-row {
+  background-color: #f3f9ff;
+  position: relative;
+}
+
+.current-user-row::after {
+  content: '(This is you)';
+  position: absolute;
+  right: 10px;
+  font-size: 0.75rem;
+  color: var(--color-slate-gray);
+  font-style: italic;
 }
 
 .role-select {

@@ -400,7 +400,7 @@ const handleDeleteClick = async () => {
           <button
             class="buy-button"
             @click="handleBuyClick"
-            :disabled="!isItemAvailable || isAdmin"
+            :disabled="!isItemAvailable || isAdmin || !authStore.isLoggedIn"
             :title="
               isAdmin ? 'Admin cannot buy items' : !isItemAvailable ? 'Item is not available' : ''
             "
@@ -412,6 +412,9 @@ const handleDeleteClick = async () => {
             :product-id="item.id"
             :is-available="isItemAvailable"
             aria-label="Add to wishlist"
+            :disabled="!isItemAvailable || isAdmin || !authStore.isLoggedIn"
+
+
           />
         </template>
       </div>

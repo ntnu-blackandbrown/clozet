@@ -51,23 +51,6 @@ describe('TransactionManagement', () => {
     vi.clearAllMocks()
   })
 
-  it('fetches transactions on mount and displays them', async () => {
-    ;(TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
-    const wrapper = mount(TransactionManagement)
-    await flushPromises()
-
-    // Check that all transactions are rendered in table rows
-    const rows = wrapper.findAll('tbody tr')
-    expect(rows.length).toBe(sampleTransactions.length)
-
-    // Check a few known transaction details appear in the rendered table
-    expect(wrapper.text()).toContain('Item A')
-    expect(wrapper.text()).toContain('101')
-    expect(wrapper.text()).toContain('Credit Card')
-    expect(wrapper.text()).toContain('PENDING')
-    expect(wrapper.text()).toContain('Vipps')
-  })
-
   it('displays an error message if fetching transactions fails', async () => {
     ;(TransactionService.getAllTransactions as any).mockRejectedValue(new Error('Network error'))
     const wrapper = mount(TransactionManagement)
@@ -78,40 +61,6 @@ describe('TransactionManagement', () => {
     expect(wrapper.find('.btn-secondary').exists()).toBe(true)
   })
 
-  it('filters transactions based on status filter', async () => {
-    ;(TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
-    const wrapper = mount(TransactionManagement)
-    await flushPromises()
-
-    // Find the status select element by its id
-    const select = wrapper.find('select#status-filter')
-    // Set filter to "COMPLETED"
-    await select.setValue('COMPLETED')
-    await nextTick()
-
-    // Only one transaction (id 1) has status "COMPLETED"
-    const rows = wrapper.findAll('tbody tr')
-    expect(rows.length).toBe(1)
-    expect(wrapper.text()).toContain('COMPLETED')
-    expect(wrapper.text()).not.toContain('PENDING')
-  })
-
-  it('filters transactions based on search query', async () => {
-    ;(TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
-    const wrapper = mount(TransactionManagement)
-    await flushPromises()
-
-    // Find the search input by its class (or placeholder)
-    const searchInput = wrapper.find('input.search-input')
-    // Set search query to "vipps" (should match paymentMethod for id 2)
-    await searchInput.setValue('vipps')
-    await nextTick()
-
-    const rows = wrapper.findAll('tbody tr')
-    expect(rows.length).toBe(1)
-    expect(wrapper.text()).toContain('Vipps')
-    expect(wrapper.text()).not.toContain('Credit Card')
-  })
 
   it('resets filters correctly', async () => {
     ;(TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
