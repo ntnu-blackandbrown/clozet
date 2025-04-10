@@ -325,7 +325,7 @@ The documentation can be accessed through the index.pdf file within the docs fol
 
 ### Quick Start
 
-After cloning the project --- fikser på det senere 
+After cloning the project
 1. **Backend Setup**
    ```bash
    # Run from project root
@@ -473,13 +473,8 @@ To test WebSocket functionality using the HTML test client:
    - Send test messages between users
    - Monitor real-time WebSocket communication
 
-For detailed information on WebSocket testing methodology and best practices, refer to the [WebSocket Testing Guide](docs/websocket%20testing.pdf) in the docs folder.
+For detailed information on WebSocket testing, refer to the [WebSocket Testing Guide](websocket%20testing.pdf) in the project root.
 
-### Test Environment Configuration
-- H2 in-memory database for backend tests
-- Environment-specific configurations
-- TypeScript type checking for frontend
-- ESLint and Prettier for code quality
 
 ## Project Members
 - Names and roles
