@@ -149,6 +149,30 @@
       "updating": "Updating..."
     }
   },
+  "footer": {
+    "about": {
+      "title": "About Clozet",
+      "description": "Your sustainable fashion marketplace. Buy, sell, and trade clothes with ease."
+    },
+    "quickLinks": "Quick Links",
+    "helpSupport": "Help & Support",
+    "account": "Account",
+    "social": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "followInstagram": "Follow us on Instagram",
+      "followFacebook": "Follow us on Facebook",
+      "followTwitter": "Follow us on Twitter"
+    },
+    "links": {
+      "faq": "FAQ",
+      "contactUs": "Contact Us",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy"
+    },
+    "copyright": "All rights reserved."
+  },
   "errors": {
     "requiredField": "This field is required",
     "invalidEmail": "Please enter a valid email",

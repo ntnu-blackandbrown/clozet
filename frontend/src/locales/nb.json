@@ -149,6 +149,30 @@
       "updating": "Oppdaterer..."
     }
   },
+  "footer": {
+    "about": {
+      "title": "Om Clozet",
+      "description": "Din bærekraftige markedsplass for klær. Kjøp, selg og bytt klær enkelt."
+    },
+    "quickLinks": "Hurtigkoblinger",
+    "helpSupport": "Hjelp og støtte",
+    "account": "Konto",
+    "social": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "followInstagram": "Følg oss på Instagram",
+      "followFacebook": "Følg oss på Facebook",
+      "followTwitter": "Følg oss på Twitter"
+    },
+    "links": {
+      "faq": "FAQ",
+      "contactUs": "Kontakt oss",
+      "termsOfService": "Vilkår for bruk",
+      "privacyPolicy": "Personvernerklæring"
+    },
+    "copyright": "Alle rettigheter reservert."
+  },
   "errors": {
     "requiredField": "Dette feltet er påkrevd",
     "invalidEmail": "Vennligst oppgi en gyldig e-postadresse",
