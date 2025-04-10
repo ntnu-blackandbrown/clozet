@@ -3,6 +3,13 @@ import en from '@/locales/en.json'
 import nb from '@/locales/nb.json'
 import es from '@/locales/es.json'
 
+// Ensure locale files are properly imported
+const messages = {
+  en,
+  nb,
+  es
+}
+
 // Supported locales
 export const SUPPORTED_LOCALES = ['en', 'nb', 'es'] as const
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number]
@@ -42,11 +49,7 @@ const i18n = createI18n({
   legacy: false, // you must set `false`, to use Composition API
   locale: initialLocale,
   fallbackLocale: DEFAULT_LOCALE,
-  messages: {
-    en,
-    nb,
-    es
-  },
+  messages, // Use the imported messages directly
   globalInjection: true, // Adds $t, $tc, etc to all components
   missingWarn: false, // Disable warnings for missing translations in production
   fallbackWarn: false // Disable warnings for fallback translations in production

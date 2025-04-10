@@ -19,5 +19,11 @@ export default defineConfig({
   },
   define: {
     global: 'globalThis' // ✅ Fix for SockJS "global is not defined" error
+  },
+  // Ensure JSON files are properly processed and included in build
+  assetsInclude: ['**/*.json'],
+  build: {
+    // Ensure Netlify preserves the file structure
+    assetsInlineLimit: 0
   }
 })
