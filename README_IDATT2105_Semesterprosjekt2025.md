@@ -235,13 +235,25 @@ frontend/
 #### High-Level System Architecture
 ```mermaid
 graph TB
-    Client[Web Client] --> |HTTP/REST| API[API Gateway]
-    Client --> |WebSocket| WS[WebSocket Server]
-    API --> Auth[Authentication]
-    API --> Service[Service Layer]
+    Client[Web Client]
+
+    Client -->|HTTP (REST)| API[API Gateway]
+    Client -->|WebSocket| WS[WebSocket Server]
+
+    API --> Auth[Authentication Service]
+    Auth --> DB[(PostgreSQL)]
+
+    API --> Service[Business Logic Layer]
     WS --> Service
-    Service --> DB[(PostgreSQL)]
+
+    Service --> DB
     Service --> Storage[(Cloudinary)]
+    Service -->|Send Email| Email[(Mailgun)]
+
+    subgraph EmailProcessing
+        Service --> Queue[Email Job Queue]
+        Queue --> Email
+    end
 ```
 
 #### Backend Layer Architecture
@@ -253,6 +265,7 @@ graph TB
     Repository --> Entity[Entity Layer]
     Mapper --> DTO[DTO Layer]
     Controller --> DTO
+    Service --> Email[Mailgun]
 ```
 
 #### Frontend Architecture
@@ -273,14 +286,35 @@ sequenceDiagram
     participant A as API Gateway
     participant S as Service Layer
     participant D as Database
+    participant M as Mailgun
     
     C->>A: HTTP Request
     A->>S: Process Request
     S->>D: Query Database
     D-->>S: Return Data
+    S->>M: Send Emails
     S-->>A: Return Response
     A-->>C: HTTP Response
 ```
+
+#### Database Entity Relationship Diagram
+The following diagram illustrates the database model of the application, showing all entities and their relationships:
+
+![E-commerce Platform Data Model](docs/images/database_diagram.png)
+
+This entity relationship diagram shows the core entities of our application:
+- **Users**: Central entity storing user information including authentication details
+- **Items**: Products listed for sale with their detailed attributes
+- **Categories**: Hierarchical classification system for items
+- **Transactions**: Records of sales between users
+- **Reviews**: Feedback and ratings for completed transactions
+- **Messages**: Communication between users about specific items
+- **Locations**: Geographic data for items and shipping
+- **Shipping Options**: Available shipping methods and their details
+- **Item Images**: Photos associated with listings
+- **Verification/Password Tokens**: Security tokens for account management
+
+The diagram illustrates both the entity attributes and the relationships between them, including foreign key constraints and cardinality.
 
 ## API Documentation
 

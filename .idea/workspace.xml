@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c7275f5f-a06c-4ee1-aff5-c7adf7638d87" name="Changes" comment="" />
+    <list default="true" id="c7275f5f-a06c-4ee1-aff5-c7adf7638d87" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/README_IDATT2105_Semesterprosjekt2025.md" beforeDir="false" afterPath="$PROJECT_DIR$/README_IDATT2105_Semesterprosjekt2025.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
