@@ -243,7 +243,7 @@ const toggleMobileMenu = () => {
   overflow-y: auto;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .admin-container {
     flex-direction: column;
     min-height: 100vh;
