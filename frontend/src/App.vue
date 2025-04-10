@@ -27,6 +27,7 @@ onMounted(async () => {
 
   // Check if user is already authenticated via cookies (silently)
   try {
+    // This will try to use the JWT cookies if they exist, or refresh token if needed
     const isAuthenticated = await authStore.silentRefresh()
     console.log(`📝 Authentication check result: ${isAuthenticated ? 'Authenticated' : 'Not authenticated'}`)
 
