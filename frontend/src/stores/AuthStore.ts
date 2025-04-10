@@ -42,7 +42,7 @@ export const useAuthStore = defineStore('auth', () => {
       const axiosError = error as AxiosError
       return {
         success: false,
-        message: (axiosError.response?.data as ErrorResponse)?.message || 'Login failed',
+        message: (axiosError.response?.data as ErrorResponse)?.message || 'Invalid credentials',
         error: axiosError
       }
     } finally {
@@ -83,8 +83,7 @@ export const useAuthStore = defineStore('auth', () => {
       return { success: true, message: 'Logout successful' }
     } catch (error) {
       console.error('❌ Logout error:', error)
-      // Even if the server logout fails, clear the local user state
-      user.value = null
+      // Don't clear user state on logout failure
       return { success: false, message: 'Logout failed' }
     } finally {
       loading.value = false

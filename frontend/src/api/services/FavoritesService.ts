@@ -6,7 +6,7 @@ export const FavoritesService = {
    */
   getUserFavorites: (userId: number) => {
     console.log('📡 API: Fetching favorites for user', userId)
-    return axiosInstance.get(`/api/favorites/user/${userId}`)
+    return axiosInstance.get(`api/favorites/user/${userId}`)
   },
 
   /**
@@ -14,7 +14,7 @@ export const FavoritesService = {
    */
   addFavorite: (userId: number, itemId: number) => {
     console.log('📡 API: Adding item to favorites', { userId, itemId })
-    return axiosInstance.post(`/api/favorites`, { userId, itemId })
+    return axiosInstance.post(`api/favorites`, { userId, itemId })
   },
 
   /**
@@ -22,7 +22,7 @@ export const FavoritesService = {
    */
   removeFavorite: (favoriteId: number) => {
     console.log('📡 API: Removing item from favorites', favoriteId)
-    return axiosInstance.delete(`/api/favorites/${favoriteId}`)
+    return axiosInstance.delete(`api/favorites/${favoriteId}`)
   },
 }
 
