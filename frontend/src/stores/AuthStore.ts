@@ -157,7 +157,7 @@ export const useAuthStore = defineStore('auth', () => {
       return false
 
     }
-    
+  }
     const deleteUser = async () => {
     try {
       console.log('Deleting user:', user.value?.id)
@@ -165,8 +165,8 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (error) {
       console.error('Delete user error:', error)
     }
-    
-    
+
+
   }
 
   return {
@@ -179,7 +179,7 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     register,
     checkAuth,
-    silentRefresh
+    silentRefresh,
     deleteUser,
   }
 })

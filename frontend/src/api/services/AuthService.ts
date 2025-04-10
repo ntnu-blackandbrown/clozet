@@ -1,3 +1,4 @@
+import axios from 'axios'
 import axiosInstance from '../axios'
 
 export const AuthService = {
@@ -70,12 +71,14 @@ export const AuthService = {
   resetPassword: (token: string, password: string) => {
     console.log('📡 API: Resetting password')
     return axiosInstance.post('/api/auth/reset-password', { token, password })
-  
-    /**
+  },
+
+  /**
    * Delete the current user
    */
   deleteUser: (id: string) => {
-    return axios.delete(`/api/users/${id}`)
+    console.log('📡 API: Deleting user')
+    return axiosInstance.delete(`/api/users/${id}`)
   },
 
   /**
