@@ -1,7 +1,7 @@
 = API Documentation
 :toc:
 
-This documentation is automatically generated from the snippet files in 'target/generated-snippets'.
+This documentation is automatically generated from the snippet files in 'backend/target/generated-snippets'.
 
 == Auth
 
@@ -9,291 +9,291 @@ This documentation is automatically generated from the snippet files in 'target/
 
 ==== Curl Request
 
-include::target/generated-snippets/auth-forgot-password/curl-request.adoc[]
+include::backend/target/generated-snippets/auth-forgot-password/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/auth-forgot-password/http-request.adoc[]
+include::backend/target/generated-snippets/auth-forgot-password/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/auth-forgot-password/http-response.adoc[]
+include::backend/target/generated-snippets/auth-forgot-password/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/auth-forgot-password/httpie-request.adoc[]
+include::backend/target/generated-snippets/auth-forgot-password/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/auth-forgot-password/request-body.adoc[]
+include::backend/target/generated-snippets/auth-forgot-password/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/auth-forgot-password/request-fields.adoc[]
+include::backend/target/generated-snippets/auth-forgot-password/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/auth-forgot-password/response-body.adoc[]
+include::backend/target/generated-snippets/auth-forgot-password/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/auth-forgot-password/response-fields.adoc[]
+include::backend/target/generated-snippets/auth-forgot-password/response-fields.adoc[]
 
 === Login
 
 ==== Curl Request
 
-include::target/generated-snippets/auth-login/curl-request.adoc[]
+include::backend/target/generated-snippets/auth-login/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/auth-login/http-request.adoc[]
+include::backend/target/generated-snippets/auth-login/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/auth-login/http-response.adoc[]
+include::backend/target/generated-snippets/auth-login/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/auth-login/httpie-request.adoc[]
+include::backend/target/generated-snippets/auth-login/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/auth-login/request-body.adoc[]
+include::backend/target/generated-snippets/auth-login/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/auth-login/request-fields.adoc[]
+include::backend/target/generated-snippets/auth-login/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/auth-login/response-body.adoc[]
+include::backend/target/generated-snippets/auth-login/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/auth-login/response-fields.adoc[]
+include::backend/target/generated-snippets/auth-login/response-fields.adoc[]
 
 === Login Error
 
 ==== Curl Request
 
-include::target/generated-snippets/auth-login-error/curl-request.adoc[]
+include::backend/target/generated-snippets/auth-login-error/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/auth-login-error/http-request.adoc[]
+include::backend/target/generated-snippets/auth-login-error/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/auth-login-error/http-response.adoc[]
+include::backend/target/generated-snippets/auth-login-error/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/auth-login-error/httpie-request.adoc[]
+include::backend/target/generated-snippets/auth-login-error/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/auth-login-error/request-body.adoc[]
+include::backend/target/generated-snippets/auth-login-error/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/auth-login-error/request-fields.adoc[]
+include::backend/target/generated-snippets/auth-login-error/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/auth-login-error/response-body.adoc[]
+include::backend/target/generated-snippets/auth-login-error/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/auth-login-error/response-fields.adoc[]
+include::backend/target/generated-snippets/auth-login-error/response-fields.adoc[]
 
 === Logout
 
 ==== Curl Request
 
-include::target/generated-snippets/auth-logout/curl-request.adoc[]
+include::backend/target/generated-snippets/auth-logout/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/auth-logout/http-request.adoc[]
+include::backend/target/generated-snippets/auth-logout/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/auth-logout/http-response.adoc[]
+include::backend/target/generated-snippets/auth-logout/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/auth-logout/httpie-request.adoc[]
+include::backend/target/generated-snippets/auth-logout/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/auth-logout/request-body.adoc[]
+include::backend/target/generated-snippets/auth-logout/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/auth-logout/response-body.adoc[]
+include::backend/target/generated-snippets/auth-logout/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/auth-logout/response-fields.adoc[]
+include::backend/target/generated-snippets/auth-logout/response-fields.adoc[]
 
 === Reset Password
 
 ==== Curl Request
 
-include::target/generated-snippets/auth-reset-password/curl-request.adoc[]
+include::backend/target/generated-snippets/auth-reset-password/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/auth-reset-password/http-request.adoc[]
+include::backend/target/generated-snippets/auth-reset-password/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/auth-reset-password/http-response.adoc[]
+include::backend/target/generated-snippets/auth-reset-password/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/auth-reset-password/httpie-request.adoc[]
+include::backend/target/generated-snippets/auth-reset-password/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/auth-reset-password/request-body.adoc[]
+include::backend/target/generated-snippets/auth-reset-password/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/auth-reset-password/request-fields.adoc[]
+include::backend/target/generated-snippets/auth-reset-password/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/auth-reset-password/response-body.adoc[]
+include::backend/target/generated-snippets/auth-reset-password/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/auth-reset-password/response-fields.adoc[]
+include::backend/target/generated-snippets/auth-reset-password/response-fields.adoc[]
 
 === Reset Password Expired
 
 ==== Curl Request
 
-include::target/generated-snippets/auth-reset-password-expired/curl-request.adoc[]
+include::backend/target/generated-snippets/auth-reset-password-expired/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/auth-reset-password-expired/http-request.adoc[]
+include::backend/target/generated-snippets/auth-reset-password-expired/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/auth-reset-password-expired/http-response.adoc[]
+include::backend/target/generated-snippets/auth-reset-password-expired/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/auth-reset-password-expired/httpie-request.adoc[]
+include::backend/target/generated-snippets/auth-reset-password-expired/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/auth-reset-password-expired/request-body.adoc[]
+include::backend/target/generated-snippets/auth-reset-password-expired/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/auth-reset-password-expired/request-fields.adoc[]
+include::backend/target/generated-snippets/auth-reset-password-expired/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/auth-reset-password-expired/response-body.adoc[]
+include::backend/target/generated-snippets/auth-reset-password-expired/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/auth-reset-password-expired/response-fields.adoc[]
+include::backend/target/generated-snippets/auth-reset-password-expired/response-fields.adoc[]
 
 === Validate Reset Token
 
 ==== Curl Request
 
-include::target/generated-snippets/auth-validate-reset-token/curl-request.adoc[]
+include::backend/target/generated-snippets/auth-validate-reset-token/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/auth-validate-reset-token/http-request.adoc[]
+include::backend/target/generated-snippets/auth-validate-reset-token/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/auth-validate-reset-token/http-response.adoc[]
+include::backend/target/generated-snippets/auth-validate-reset-token/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/auth-validate-reset-token/httpie-request.adoc[]
+include::backend/target/generated-snippets/auth-validate-reset-token/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/auth-validate-reset-token/request-body.adoc[]
+include::backend/target/generated-snippets/auth-validate-reset-token/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/auth-validate-reset-token/response-body.adoc[]
+include::backend/target/generated-snippets/auth-validate-reset-token/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/auth-validate-reset-token/response-fields.adoc[]
+include::backend/target/generated-snippets/auth-validate-reset-token/response-fields.adoc[]
 
 === Verify
 
 ==== Curl Request
 
-include::target/generated-snippets/auth-verify/curl-request.adoc[]
+include::backend/target/generated-snippets/auth-verify/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/auth-verify/http-request.adoc[]
+include::backend/target/generated-snippets/auth-verify/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/auth-verify/http-response.adoc[]
+include::backend/target/generated-snippets/auth-verify/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/auth-verify/httpie-request.adoc[]
+include::backend/target/generated-snippets/auth-verify/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/auth-verify/request-body.adoc[]
+include::backend/target/generated-snippets/auth-verify/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/auth-verify/response-body.adoc[]
+include::backend/target/generated-snippets/auth-verify/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/auth-verify/response-fields.adoc[]
+include::backend/target/generated-snippets/auth-verify/response-fields.adoc[]
 
 === Verify Invalid Token
 
 ==== Curl Request
 
-include::target/generated-snippets/auth-verify-invalid-token/curl-request.adoc[]
+include::backend/target/generated-snippets/auth-verify-invalid-token/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/auth-verify-invalid-token/http-request.adoc[]
+include::backend/target/generated-snippets/auth-verify-invalid-token/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/auth-verify-invalid-token/http-response.adoc[]
+include::backend/target/generated-snippets/auth-verify-invalid-token/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/auth-verify-invalid-token/httpie-request.adoc[]
+include::backend/target/generated-snippets/auth-verify-invalid-token/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/auth-verify-invalid-token/request-body.adoc[]
+include::backend/target/generated-snippets/auth-verify-invalid-token/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/auth-verify-invalid-token/response-body.adoc[]
+include::backend/target/generated-snippets/auth-verify-invalid-token/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/auth-verify-invalid-token/response-fields.adoc[]
+include::backend/target/generated-snippets/auth-verify-invalid-token/response-fields.adoc[]
 
 
 == Categories
@@ -302,61 +302,61 @@ include::target/generated-snippets/auth-verify-invalid-token/response-fields.ado
 
 ==== Curl Request
 
-include::target/generated-snippets/categories-all/curl-request.adoc[]
+include::backend/target/generated-snippets/categories-all/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/categories-all/http-request.adoc[]
+include::backend/target/generated-snippets/categories-all/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/categories-all/http-response.adoc[]
+include::backend/target/generated-snippets/categories-all/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/categories-all/httpie-request.adoc[]
+include::backend/target/generated-snippets/categories-all/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/categories-all/request-body.adoc[]
+include::backend/target/generated-snippets/categories-all/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/categories-all/response-body.adoc[]
+include::backend/target/generated-snippets/categories-all/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/categories-all/response-fields.adoc[]
+include::backend/target/generated-snippets/categories-all/response-fields.adoc[]
 
 === Top Five
 
 ==== Curl Request
 
-include::target/generated-snippets/categories-top-five/curl-request.adoc[]
+include::backend/target/generated-snippets/categories-top-five/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/categories-top-five/http-request.adoc[]
+include::backend/target/generated-snippets/categories-top-five/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/categories-top-five/http-response.adoc[]
+include::backend/target/generated-snippets/categories-top-five/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/categories-top-five/httpie-request.adoc[]
+include::backend/target/generated-snippets/categories-top-five/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/categories-top-five/request-body.adoc[]
+include::backend/target/generated-snippets/categories-top-five/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/categories-top-five/response-body.adoc[]
+include::backend/target/generated-snippets/categories-top-five/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/categories-top-five/response-fields.adoc[]
+include::backend/target/generated-snippets/categories-top-five/response-fields.adoc[]
 
 
 == Favorites
@@ -365,326 +365,185 @@ include::target/generated-snippets/categories-top-five/response-fields.adoc[]
 
 ==== Curl Request
 
-include::target/generated-snippets/favorites-create/curl-request.adoc[]
+include::backend/target/generated-snippets/favorites-create/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/favorites-create/http-request.adoc[]
+include::backend/target/generated-snippets/favorites-create/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/favorites-create/http-response.adoc[]
+include::backend/target/generated-snippets/favorites-create/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/favorites-create/httpie-request.adoc[]
+include::backend/target/generated-snippets/favorites-create/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/favorites-create/request-body.adoc[]
+include::backend/target/generated-snippets/favorites-create/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/favorites-create/request-fields.adoc[]
+include::backend/target/generated-snippets/favorites-create/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/favorites-create/response-body.adoc[]
+include::backend/target/generated-snippets/favorites-create/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/favorites-create/response-fields.adoc[]
+include::backend/target/generated-snippets/favorites-create/response-fields.adoc[]
 
 === Delete
 
 ==== Curl Request
 
-include::target/generated-snippets/favorites-delete/curl-request.adoc[]
+include::backend/target/generated-snippets/favorites-delete/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/favorites-delete/http-request.adoc[]
+include::backend/target/generated-snippets/favorites-delete/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/favorites-delete/http-response.adoc[]
+include::backend/target/generated-snippets/favorites-delete/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/favorites-delete/httpie-request.adoc[]
+include::backend/target/generated-snippets/favorites-delete/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/favorites-delete/request-body.adoc[]
+include::backend/target/generated-snippets/favorites-delete/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/favorites-delete/response-body.adoc[]
+include::backend/target/generated-snippets/favorites-delete/response-body.adoc[]
 
 === Get All
 
 ==== Curl Request
 
-include::target/generated-snippets/favorites-get-all/curl-request.adoc[]
+include::backend/target/generated-snippets/favorites-get-all/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/favorites-get-all/http-request.adoc[]
+include::backend/target/generated-snippets/favorites-get-all/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/favorites-get-all/http-response.adoc[]
+include::backend/target/generated-snippets/favorites-get-all/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/favorites-get-all/httpie-request.adoc[]
+include::backend/target/generated-snippets/favorites-get-all/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/favorites-get-all/request-body.adoc[]
+include::backend/target/generated-snippets/favorites-get-all/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/favorites-get-all/response-body.adoc[]
+include::backend/target/generated-snippets/favorites-get-all/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/favorites-get-all/response-fields.adoc[]
+include::backend/target/generated-snippets/favorites-get-all/response-fields.adoc[]
 
 === Get By Id
 
 ==== Curl Request
 
-include::target/generated-snippets/favorites-get-by-id/curl-request.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-id/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/favorites-get-by-id/http-request.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-id/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/favorites-get-by-id/http-response.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-id/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/favorites-get-by-id/httpie-request.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-id/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/favorites-get-by-id/request-body.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-id/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/favorites-get-by-id/response-body.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-id/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/favorites-get-by-id/response-fields.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-id/response-fields.adoc[]
 
 === Get By User Id
 
 ==== Curl Request
 
-include::target/generated-snippets/favorites-get-by-user-id/curl-request.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-user-id/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/favorites-get-by-user-id/http-request.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-user-id/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/favorites-get-by-user-id/http-response.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-user-id/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/favorites-get-by-user-id/httpie-request.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-user-id/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/favorites-get-by-user-id/request-body.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-user-id/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/favorites-get-by-user-id/response-body.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-user-id/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/favorites-get-by-user-id/response-fields.adoc[]
+include::backend/target/generated-snippets/favorites-get-by-user-id/response-fields.adoc[]
 
 === Update
 
 ==== Curl Request
 
-include::target/generated-snippets/favorites-update/curl-request.adoc[]
+include::backend/target/generated-snippets/favorites-update/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/favorites-update/http-request.adoc[]
+include::backend/target/generated-snippets/favorites-update/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/favorites-update/http-response.adoc[]
+include::backend/target/generated-snippets/favorites-update/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/favorites-update/httpie-request.adoc[]
+include::backend/target/generated-snippets/favorites-update/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/favorites-update/request-body.adoc[]
+include::backend/target/generated-snippets/favorites-update/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/favorites-update/request-fields.adoc[]
+include::backend/target/generated-snippets/favorites-update/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/favorites-update/response-body.adoc[]
+include::backend/target/generated-snippets/favorites-update/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/favorites-update/response-fields.adoc[]
-
-
-== History
-
-=== Add
-
-==== Curl Request
-
-include::target/generated-snippets/history-add/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/history-add/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/history-add/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/history-add/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/history-add/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/history-add/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/history-add/response-fields.adoc[]
-
-=== Clear
-
-==== Curl Request
-
-include::target/generated-snippets/history-clear/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/history-clear/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/history-clear/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/history-clear/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/history-clear/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/history-clear/response-body.adoc[]
-
-=== Get
-
-==== Curl Request
-
-include::target/generated-snippets/history-get/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/history-get/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/history-get/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/history-get/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/history-get/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/history-get/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/history-get/response-fields.adoc[]
-
-=== Pause
-
-==== Curl Request
-
-include::target/generated-snippets/history-pause/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/history-pause/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/history-pause/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/history-pause/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/history-pause/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/history-pause/response-body.adoc[]
-
-=== Remove
-
-==== Curl Request
-
-include::target/generated-snippets/history-remove/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/history-remove/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/history-remove/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/history-remove/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/history-remove/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/history-remove/response-body.adoc[]
+include::backend/target/generated-snippets/favorites-update/response-fields.adoc[]
 
 
 == Items
@@ -693,267 +552,267 @@ include::target/generated-snippets/history-remove/response-body.adoc[]
 
 ==== Curl Request
 
-include::target/generated-snippets/items-activate/curl-request.adoc[]
+include::backend/target/generated-snippets/items-activate/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/items-activate/http-request.adoc[]
+include::backend/target/generated-snippets/items-activate/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/items-activate/http-response.adoc[]
+include::backend/target/generated-snippets/items-activate/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/items-activate/httpie-request.adoc[]
+include::backend/target/generated-snippets/items-activate/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/items-activate/request-body.adoc[]
+include::backend/target/generated-snippets/items-activate/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/items-activate/response-body.adoc[]
+include::backend/target/generated-snippets/items-activate/response-body.adoc[]
 
 === Create
 
 ==== Curl Request
 
-include::target/generated-snippets/items-create/curl-request.adoc[]
+include::backend/target/generated-snippets/items-create/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/items-create/http-request.adoc[]
+include::backend/target/generated-snippets/items-create/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/items-create/http-response.adoc[]
+include::backend/target/generated-snippets/items-create/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/items-create/httpie-request.adoc[]
+include::backend/target/generated-snippets/items-create/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/items-create/request-body.adoc[]
+include::backend/target/generated-snippets/items-create/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/items-create/request-fields.adoc[]
+include::backend/target/generated-snippets/items-create/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/items-create/response-body.adoc[]
+include::backend/target/generated-snippets/items-create/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/items-create/response-fields.adoc[]
+include::backend/target/generated-snippets/items-create/response-fields.adoc[]
 
 === Deactivate
 
 ==== Curl Request
 
-include::target/generated-snippets/items-deactivate/curl-request.adoc[]
+include::backend/target/generated-snippets/items-deactivate/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/items-deactivate/http-request.adoc[]
+include::backend/target/generated-snippets/items-deactivate/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/items-deactivate/http-response.adoc[]
+include::backend/target/generated-snippets/items-deactivate/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/items-deactivate/httpie-request.adoc[]
+include::backend/target/generated-snippets/items-deactivate/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/items-deactivate/request-body.adoc[]
+include::backend/target/generated-snippets/items-deactivate/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/items-deactivate/response-body.adoc[]
+include::backend/target/generated-snippets/items-deactivate/response-body.adoc[]
 
 === Delete
 
 ==== Curl Request
 
-include::target/generated-snippets/items-delete/curl-request.adoc[]
+include::backend/target/generated-snippets/items-delete/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/items-delete/http-request.adoc[]
+include::backend/target/generated-snippets/items-delete/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/items-delete/http-response.adoc[]
+include::backend/target/generated-snippets/items-delete/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/items-delete/httpie-request.adoc[]
+include::backend/target/generated-snippets/items-delete/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/items-delete/request-body.adoc[]
+include::backend/target/generated-snippets/items-delete/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/items-delete/response-body.adoc[]
+include::backend/target/generated-snippets/items-delete/response-body.adoc[]
 
 === Get All Active
 
 ==== Curl Request
 
-include::target/generated-snippets/items-get-all-active/curl-request.adoc[]
+include::backend/target/generated-snippets/items-get-all-active/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/items-get-all-active/http-request.adoc[]
+include::backend/target/generated-snippets/items-get-all-active/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/items-get-all-active/http-response.adoc[]
+include::backend/target/generated-snippets/items-get-all-active/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/items-get-all-active/httpie-request.adoc[]
+include::backend/target/generated-snippets/items-get-all-active/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/items-get-all-active/request-body.adoc[]
+include::backend/target/generated-snippets/items-get-all-active/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/items-get-all-active/response-body.adoc[]
+include::backend/target/generated-snippets/items-get-all-active/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/items-get-all-active/response-fields.adoc[]
+include::backend/target/generated-snippets/items-get-all-active/response-fields.adoc[]
 
 === Get All Including Inactive
 
 ==== Curl Request
 
-include::target/generated-snippets/items-get-all-including-inactive/curl-request.adoc[]
+include::backend/target/generated-snippets/items-get-all-including-inactive/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/items-get-all-including-inactive/http-request.adoc[]
+include::backend/target/generated-snippets/items-get-all-including-inactive/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/items-get-all-including-inactive/http-response.adoc[]
+include::backend/target/generated-snippets/items-get-all-including-inactive/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/items-get-all-including-inactive/httpie-request.adoc[]
+include::backend/target/generated-snippets/items-get-all-including-inactive/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/items-get-all-including-inactive/request-body.adoc[]
+include::backend/target/generated-snippets/items-get-all-including-inactive/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/items-get-all-including-inactive/response-body.adoc[]
+include::backend/target/generated-snippets/items-get-all-including-inactive/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/items-get-all-including-inactive/response-fields.adoc[]
+include::backend/target/generated-snippets/items-get-all-including-inactive/response-fields.adoc[]
 
 === Get By Id
 
 ==== Curl Request
 
-include::target/generated-snippets/items-get-by-id/curl-request.adoc[]
+include::backend/target/generated-snippets/items-get-by-id/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/items-get-by-id/http-request.adoc[]
+include::backend/target/generated-snippets/items-get-by-id/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/items-get-by-id/http-response.adoc[]
+include::backend/target/generated-snippets/items-get-by-id/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/items-get-by-id/httpie-request.adoc[]
+include::backend/target/generated-snippets/items-get-by-id/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/items-get-by-id/request-body.adoc[]
+include::backend/target/generated-snippets/items-get-by-id/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/items-get-by-id/response-body.adoc[]
+include::backend/target/generated-snippets/items-get-by-id/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/items-get-by-id/response-fields.adoc[]
+include::backend/target/generated-snippets/items-get-by-id/response-fields.adoc[]
 
 === Get By Seller
 
 ==== Curl Request
 
-include::target/generated-snippets/items-get-by-seller/curl-request.adoc[]
+include::backend/target/generated-snippets/items-get-by-seller/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/items-get-by-seller/http-request.adoc[]
+include::backend/target/generated-snippets/items-get-by-seller/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/items-get-by-seller/http-response.adoc[]
+include::backend/target/generated-snippets/items-get-by-seller/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/items-get-by-seller/httpie-request.adoc[]
+include::backend/target/generated-snippets/items-get-by-seller/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/items-get-by-seller/request-body.adoc[]
+include::backend/target/generated-snippets/items-get-by-seller/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/items-get-by-seller/response-body.adoc[]
+include::backend/target/generated-snippets/items-get-by-seller/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/items-get-by-seller/response-fields.adoc[]
+include::backend/target/generated-snippets/items-get-by-seller/response-fields.adoc[]
 
 === Update
 
 ==== Curl Request
 
-include::target/generated-snippets/items-update/curl-request.adoc[]
+include::backend/target/generated-snippets/items-update/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/items-update/http-request.adoc[]
+include::backend/target/generated-snippets/items-update/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/items-update/http-response.adoc[]
+include::backend/target/generated-snippets/items-update/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/items-update/httpie-request.adoc[]
+include::backend/target/generated-snippets/items-update/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/items-update/request-body.adoc[]
+include::backend/target/generated-snippets/items-update/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/items-update/request-fields.adoc[]
+include::backend/target/generated-snippets/items-update/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/items-update/response-body.adoc[]
+include::backend/target/generated-snippets/items-update/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/items-update/response-fields.adoc[]
+include::backend/target/generated-snippets/items-update/response-fields.adoc[]
 
 
 == Me
@@ -962,409 +821,189 @@ include::target/generated-snippets/items-update/response-fields.adoc[]
 
 ==== Curl Request
 
-include::target/generated-snippets/me-change-password/curl-request.adoc[]
+include::backend/target/generated-snippets/me-change-password/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/me-change-password/http-request.adoc[]
+include::backend/target/generated-snippets/me-change-password/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/me-change-password/http-response.adoc[]
+include::backend/target/generated-snippets/me-change-password/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/me-change-password/httpie-request.adoc[]
+include::backend/target/generated-snippets/me-change-password/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/me-change-password/request-body.adoc[]
+include::backend/target/generated-snippets/me-change-password/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/me-change-password/request-fields.adoc[]
+include::backend/target/generated-snippets/me-change-password/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/me-change-password/response-body.adoc[]
+include::backend/target/generated-snippets/me-change-password/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/me-change-password/response-fields.adoc[]
+include::backend/target/generated-snippets/me-change-password/response-fields.adoc[]
 
 === Change Password Invalid
 
 ==== Curl Request
 
-include::target/generated-snippets/me-change-password-invalid/curl-request.adoc[]
+include::backend/target/generated-snippets/me-change-password-invalid/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/me-change-password-invalid/http-request.adoc[]
+include::backend/target/generated-snippets/me-change-password-invalid/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/me-change-password-invalid/http-response.adoc[]
+include::backend/target/generated-snippets/me-change-password-invalid/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/me-change-password-invalid/httpie-request.adoc[]
+include::backend/target/generated-snippets/me-change-password-invalid/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/me-change-password-invalid/request-body.adoc[]
+include::backend/target/generated-snippets/me-change-password-invalid/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/me-change-password-invalid/request-fields.adoc[]
+include::backend/target/generated-snippets/me-change-password-invalid/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/me-change-password-invalid/response-body.adoc[]
+include::backend/target/generated-snippets/me-change-password-invalid/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/me-change-password-invalid/response-fields.adoc[]
+include::backend/target/generated-snippets/me-change-password-invalid/response-fields.adoc[]
 
 === Change Password Missing Fields
 
 ==== Curl Request
 
-include::target/generated-snippets/me-change-password-missing-fields/curl-request.adoc[]
+include::backend/target/generated-snippets/me-change-password-missing-fields/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/me-change-password-missing-fields/http-request.adoc[]
+include::backend/target/generated-snippets/me-change-password-missing-fields/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/me-change-password-missing-fields/http-response.adoc[]
+include::backend/target/generated-snippets/me-change-password-missing-fields/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/me-change-password-missing-fields/httpie-request.adoc[]
+include::backend/target/generated-snippets/me-change-password-missing-fields/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/me-change-password-missing-fields/request-body.adoc[]
+include::backend/target/generated-snippets/me-change-password-missing-fields/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/me-change-password-missing-fields/response-body.adoc[]
+include::backend/target/generated-snippets/me-change-password-missing-fields/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/me-change-password-missing-fields/response-fields.adoc[]
+include::backend/target/generated-snippets/me-change-password-missing-fields/response-fields.adoc[]
 
 === Get Current User
 
 ==== Curl Request
 
-include::target/generated-snippets/me-get-current-user/curl-request.adoc[]
+include::backend/target/generated-snippets/me-get-current-user/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/me-get-current-user/http-request.adoc[]
+include::backend/target/generated-snippets/me-get-current-user/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/me-get-current-user/http-response.adoc[]
+include::backend/target/generated-snippets/me-get-current-user/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/me-get-current-user/httpie-request.adoc[]
+include::backend/target/generated-snippets/me-get-current-user/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/me-get-current-user/request-body.adoc[]
+include::backend/target/generated-snippets/me-get-current-user/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/me-get-current-user/response-body.adoc[]
+include::backend/target/generated-snippets/me-get-current-user/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/me-get-current-user/response-fields.adoc[]
+include::backend/target/generated-snippets/me-get-current-user/response-fields.adoc[]
 
 === Get Not Found
 
 ==== Curl Request
 
-include::target/generated-snippets/me-get-not-found/curl-request.adoc[]
+include::backend/target/generated-snippets/me-get-not-found/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/me-get-not-found/http-request.adoc[]
+include::backend/target/generated-snippets/me-get-not-found/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/me-get-not-found/http-response.adoc[]
+include::backend/target/generated-snippets/me-get-not-found/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/me-get-not-found/httpie-request.adoc[]
+include::backend/target/generated-snippets/me-get-not-found/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/me-get-not-found/request-body.adoc[]
+include::backend/target/generated-snippets/me-get-not-found/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/me-get-not-found/response-body.adoc[]
+include::backend/target/generated-snippets/me-get-not-found/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/me-get-not-found/response-fields.adoc[]
+include::backend/target/generated-snippets/me-get-not-found/response-fields.adoc[]
 
 === Get Unauthorized
 
 ==== Curl Request
 
-include::target/generated-snippets/me-get-unauthorized/curl-request.adoc[]
+include::backend/target/generated-snippets/me-get-unauthorized/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/me-get-unauthorized/http-request.adoc[]
+include::backend/target/generated-snippets/me-get-unauthorized/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/me-get-unauthorized/http-response.adoc[]
+include::backend/target/generated-snippets/me-get-unauthorized/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/me-get-unauthorized/httpie-request.adoc[]
+include::backend/target/generated-snippets/me-get-unauthorized/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/me-get-unauthorized/request-body.adoc[]
+include::backend/target/generated-snippets/me-get-unauthorized/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/me-get-unauthorized/response-body.adoc[]
+include::backend/target/generated-snippets/me-get-unauthorized/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/me-get-unauthorized/response-fields.adoc[]
-
-
-== Review
-
-=== Create
-
-==== Curl Request
-
-include::target/generated-snippets/review-create/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/review-create/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/review-create/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/review-create/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/review-create/request-body.adoc[]
-
-==== Request Fields
-
-include::target/generated-snippets/review-create/request-fields.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/review-create/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/review-create/response-fields.adoc[]
-
-=== Delete
-
-==== Curl Request
-
-include::target/generated-snippets/review-delete/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/review-delete/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/review-delete/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/review-delete/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/review-delete/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/review-delete/response-body.adoc[]
-
-=== Get By Id
-
-==== Curl Request
-
-include::target/generated-snippets/review-get-by-id/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/review-get-by-id/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/review-get-by-id/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/review-get-by-id/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/review-get-by-id/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/review-get-by-id/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/review-get-by-id/response-fields.adoc[]
-
-=== Update
-
-==== Curl Request
-
-include::target/generated-snippets/review-update/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/review-update/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/review-update/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/review-update/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/review-update/request-body.adoc[]
-
-==== Request Fields
-
-include::target/generated-snippets/review-update/request-fields.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/review-update/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/review-update/response-fields.adoc[]
-
-
-== Reviews
-
-=== Get All
-
-==== Curl Request
-
-include::target/generated-snippets/reviews-get-all/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/reviews-get-all/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/reviews-get-all/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/reviews-get-all/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/reviews-get-all/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/reviews-get-all/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/reviews-get-all/response-fields.adoc[]
-
-=== Get By Reviewee
-
-==== Curl Request
-
-include::target/generated-snippets/reviews-get-by-reviewee/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/reviews-get-by-reviewee/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/reviews-get-by-reviewee/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/reviews-get-by-reviewee/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/reviews-get-by-reviewee/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/reviews-get-by-reviewee/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/reviews-get-by-reviewee/response-fields.adoc[]
-
-=== Get By Reviewer
-
-==== Curl Request
-
-include::target/generated-snippets/reviews-get-by-reviewer/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/reviews-get-by-reviewer/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/reviews-get-by-reviewer/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/reviews-get-by-reviewer/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/reviews-get-by-reviewer/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/reviews-get-by-reviewer/response-body.adoc[]
-
-==== Response Fields
-
-include::target/generated-snippets/reviews-get-by-reviewer/response-fields.adoc[]
+include::backend/target/generated-snippets/me-get-unauthorized/response-fields.adoc[]
 
 
 == Shipping
@@ -1373,155 +1012,155 @@ include::target/generated-snippets/reviews-get-by-reviewer/response-fields.adoc[
 
 ==== Curl Request
 
-include::target/generated-snippets/shipping-option-create/curl-request.adoc[]
+include::backend/target/generated-snippets/shipping-option-create/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/shipping-option-create/http-request.adoc[]
+include::backend/target/generated-snippets/shipping-option-create/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/shipping-option-create/http-response.adoc[]
+include::backend/target/generated-snippets/shipping-option-create/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/shipping-option-create/httpie-request.adoc[]
+include::backend/target/generated-snippets/shipping-option-create/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/shipping-option-create/request-body.adoc[]
+include::backend/target/generated-snippets/shipping-option-create/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/shipping-option-create/request-fields.adoc[]
+include::backend/target/generated-snippets/shipping-option-create/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/shipping-option-create/response-body.adoc[]
+include::backend/target/generated-snippets/shipping-option-create/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/shipping-option-create/response-fields.adoc[]
+include::backend/target/generated-snippets/shipping-option-create/response-fields.adoc[]
 
 === Option Delete
 
 ==== Curl Request
 
-include::target/generated-snippets/shipping-option-delete/curl-request.adoc[]
+include::backend/target/generated-snippets/shipping-option-delete/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/shipping-option-delete/http-request.adoc[]
+include::backend/target/generated-snippets/shipping-option-delete/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/shipping-option-delete/http-response.adoc[]
+include::backend/target/generated-snippets/shipping-option-delete/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/shipping-option-delete/httpie-request.adoc[]
+include::backend/target/generated-snippets/shipping-option-delete/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/shipping-option-delete/request-body.adoc[]
+include::backend/target/generated-snippets/shipping-option-delete/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/shipping-option-delete/response-body.adoc[]
+include::backend/target/generated-snippets/shipping-option-delete/response-body.adoc[]
 
 === Option Get By Id
 
 ==== Curl Request
 
-include::target/generated-snippets/shipping-option-get-by-id/curl-request.adoc[]
+include::backend/target/generated-snippets/shipping-option-get-by-id/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/shipping-option-get-by-id/http-request.adoc[]
+include::backend/target/generated-snippets/shipping-option-get-by-id/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/shipping-option-get-by-id/http-response.adoc[]
+include::backend/target/generated-snippets/shipping-option-get-by-id/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/shipping-option-get-by-id/httpie-request.adoc[]
+include::backend/target/generated-snippets/shipping-option-get-by-id/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/shipping-option-get-by-id/request-body.adoc[]
+include::backend/target/generated-snippets/shipping-option-get-by-id/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/shipping-option-get-by-id/response-body.adoc[]
+include::backend/target/generated-snippets/shipping-option-get-by-id/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/shipping-option-get-by-id/response-fields.adoc[]
+include::backend/target/generated-snippets/shipping-option-get-by-id/response-fields.adoc[]
 
 === Option Update
 
 ==== Curl Request
 
-include::target/generated-snippets/shipping-option-update/curl-request.adoc[]
+include::backend/target/generated-snippets/shipping-option-update/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/shipping-option-update/http-request.adoc[]
+include::backend/target/generated-snippets/shipping-option-update/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/shipping-option-update/http-response.adoc[]
+include::backend/target/generated-snippets/shipping-option-update/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/shipping-option-update/httpie-request.adoc[]
+include::backend/target/generated-snippets/shipping-option-update/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/shipping-option-update/request-body.adoc[]
+include::backend/target/generated-snippets/shipping-option-update/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/shipping-option-update/request-fields.adoc[]
+include::backend/target/generated-snippets/shipping-option-update/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/shipping-option-update/response-body.adoc[]
+include::backend/target/generated-snippets/shipping-option-update/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/shipping-option-update/response-fields.adoc[]
+include::backend/target/generated-snippets/shipping-option-update/response-fields.adoc[]
 
 === Options Get All
 
 ==== Curl Request
 
-include::target/generated-snippets/shipping-options-get-all/curl-request.adoc[]
+include::backend/target/generated-snippets/shipping-options-get-all/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/shipping-options-get-all/http-request.adoc[]
+include::backend/target/generated-snippets/shipping-options-get-all/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/shipping-options-get-all/http-response.adoc[]
+include::backend/target/generated-snippets/shipping-options-get-all/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/shipping-options-get-all/httpie-request.adoc[]
+include::backend/target/generated-snippets/shipping-options-get-all/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/shipping-options-get-all/request-body.adoc[]
+include::backend/target/generated-snippets/shipping-options-get-all/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/shipping-options-get-all/response-body.adoc[]
+include::backend/target/generated-snippets/shipping-options-get-all/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/shipping-options-get-all/response-fields.adoc[]
+include::backend/target/generated-snippets/shipping-options-get-all/response-fields.adoc[]
 
 
 == Transaction
@@ -1530,125 +1169,159 @@ include::target/generated-snippets/shipping-options-get-all/response-fields.adoc
 
 ==== Curl Request
 
-include::target/generated-snippets/transaction-create/curl-request.adoc[]
+include::backend/target/generated-snippets/transaction-create/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/transaction-create/http-request.adoc[]
+include::backend/target/generated-snippets/transaction-create/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/transaction-create/http-response.adoc[]
+include::backend/target/generated-snippets/transaction-create/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/transaction-create/httpie-request.adoc[]
+include::backend/target/generated-snippets/transaction-create/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/transaction-create/request-body.adoc[]
+include::backend/target/generated-snippets/transaction-create/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/transaction-create/request-fields.adoc[]
+include::backend/target/generated-snippets/transaction-create/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/transaction-create/response-body.adoc[]
+include::backend/target/generated-snippets/transaction-create/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/transaction-create/response-fields.adoc[]
+include::backend/target/generated-snippets/transaction-create/response-fields.adoc[]
 
 === Delete
 
 ==== Curl Request
 
-include::target/generated-snippets/transaction-delete/curl-request.adoc[]
+include::backend/target/generated-snippets/transaction-delete/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/transaction-delete/http-request.adoc[]
+include::backend/target/generated-snippets/transaction-delete/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/transaction-delete/http-response.adoc[]
+include::backend/target/generated-snippets/transaction-delete/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/transaction-delete/httpie-request.adoc[]
+include::backend/target/generated-snippets/transaction-delete/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/transaction-delete/request-body.adoc[]
+include::backend/target/generated-snippets/transaction-delete/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/transaction-delete/response-body.adoc[]
+include::backend/target/generated-snippets/transaction-delete/response-body.adoc[]
 
 === Get By Id
 
 ==== Curl Request
 
-include::target/generated-snippets/transaction-get-by-id/curl-request.adoc[]
+include::backend/target/generated-snippets/transaction-get-by-id/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/transaction-get-by-id/http-request.adoc[]
+include::backend/target/generated-snippets/transaction-get-by-id/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/transaction-get-by-id/http-response.adoc[]
+include::backend/target/generated-snippets/transaction-get-by-id/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/transaction-get-by-id/httpie-request.adoc[]
+include::backend/target/generated-snippets/transaction-get-by-id/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/transaction-get-by-id/request-body.adoc[]
+include::backend/target/generated-snippets/transaction-get-by-id/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/transaction-get-by-id/response-body.adoc[]
+include::backend/target/generated-snippets/transaction-get-by-id/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/transaction-get-by-id/response-fields.adoc[]
+include::backend/target/generated-snippets/transaction-get-by-id/response-fields.adoc[]
+
+=== Purchase
+
+==== Curl Request
+
+include::backend/target/generated-snippets/transaction-purchase/curl-request.adoc[]
+
+==== Http Request
+
+include::backend/target/generated-snippets/transaction-purchase/http-request.adoc[]
+
+==== Http Response
+
+include::backend/target/generated-snippets/transaction-purchase/http-response.adoc[]
+
+==== Httpie Request
+
+include::backend/target/generated-snippets/transaction-purchase/httpie-request.adoc[]
+
+==== Request Body
+
+include::backend/target/generated-snippets/transaction-purchase/request-body.adoc[]
+
+==== Request Fields
+
+include::backend/target/generated-snippets/transaction-purchase/request-fields.adoc[]
+
+==== Response Body
+
+include::backend/target/generated-snippets/transaction-purchase/response-body.adoc[]
+
+==== Response Fields
+
+include::backend/target/generated-snippets/transaction-purchase/response-fields.adoc[]
 
 === Update
 
 ==== Curl Request
 
-include::target/generated-snippets/transaction-update/curl-request.adoc[]
+include::backend/target/generated-snippets/transaction-update/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/transaction-update/http-request.adoc[]
+include::backend/target/generated-snippets/transaction-update/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/transaction-update/http-response.adoc[]
+include::backend/target/generated-snippets/transaction-update/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/transaction-update/httpie-request.adoc[]
+include::backend/target/generated-snippets/transaction-update/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/transaction-update/request-body.adoc[]
+include::backend/target/generated-snippets/transaction-update/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/transaction-update/request-fields.adoc[]
+include::backend/target/generated-snippets/transaction-update/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/transaction-update/response-body.adoc[]
+include::backend/target/generated-snippets/transaction-update/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/transaction-update/response-fields.adoc[]
+include::backend/target/generated-snippets/transaction-update/response-fields.adoc[]
 
 
 == Transactions
@@ -1657,154 +1330,128 @@ include::target/generated-snippets/transaction-update/response-fields.adoc[]
 
 ==== Curl Request
 
-include::target/generated-snippets/transactions-between-dates/curl-request.adoc[]
+include::backend/target/generated-snippets/transactions-between-dates/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/transactions-between-dates/http-request.adoc[]
+include::backend/target/generated-snippets/transactions-between-dates/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/transactions-between-dates/http-response.adoc[]
+include::backend/target/generated-snippets/transactions-between-dates/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/transactions-between-dates/httpie-request.adoc[]
+include::backend/target/generated-snippets/transactions-between-dates/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/transactions-between-dates/request-body.adoc[]
+include::backend/target/generated-snippets/transactions-between-dates/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/transactions-between-dates/response-body.adoc[]
+include::backend/target/generated-snippets/transactions-between-dates/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/transactions-between-dates/response-fields.adoc[]
+include::backend/target/generated-snippets/transactions-between-dates/response-fields.adoc[]
 
 === Get All
 
 ==== Curl Request
 
-include::target/generated-snippets/transactions-get-all/curl-request.adoc[]
+include::backend/target/generated-snippets/transactions-get-all/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/transactions-get-all/http-request.adoc[]
+include::backend/target/generated-snippets/transactions-get-all/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/transactions-get-all/http-response.adoc[]
+include::backend/target/generated-snippets/transactions-get-all/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/transactions-get-all/httpie-request.adoc[]
+include::backend/target/generated-snippets/transactions-get-all/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/transactions-get-all/request-body.adoc[]
+include::backend/target/generated-snippets/transactions-get-all/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/transactions-get-all/response-body.adoc[]
+include::backend/target/generated-snippets/transactions-get-all/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/transactions-get-all/response-fields.adoc[]
+include::backend/target/generated-snippets/transactions-get-all/response-fields.adoc[]
 
 
 == User
-
-=== Delete
-
-==== Curl Request
-
-include::target/generated-snippets/user-delete/curl-request.adoc[]
-
-==== Http Request
-
-include::target/generated-snippets/user-delete/http-request.adoc[]
-
-==== Http Response
-
-include::target/generated-snippets/user-delete/http-response.adoc[]
-
-==== Httpie Request
-
-include::target/generated-snippets/user-delete/httpie-request.adoc[]
-
-==== Request Body
-
-include::target/generated-snippets/user-delete/request-body.adoc[]
-
-==== Response Body
-
-include::target/generated-snippets/user-delete/response-body.adoc[]
 
 === Get By Id
 
 ==== Curl Request
 
-include::target/generated-snippets/user-get-by-id/curl-request.adoc[]
+include::backend/target/generated-snippets/user-get-by-id/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/user-get-by-id/http-request.adoc[]
+include::backend/target/generated-snippets/user-get-by-id/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/user-get-by-id/http-response.adoc[]
+include::backend/target/generated-snippets/user-get-by-id/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/user-get-by-id/httpie-request.adoc[]
+include::backend/target/generated-snippets/user-get-by-id/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/user-get-by-id/request-body.adoc[]
+include::backend/target/generated-snippets/user-get-by-id/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/user-get-by-id/response-body.adoc[]
+include::backend/target/generated-snippets/user-get-by-id/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/user-get-by-id/response-fields.adoc[]
+include::backend/target/generated-snippets/user-get-by-id/response-fields.adoc[]
 
 === Update
 
 ==== Curl Request
 
-include::target/generated-snippets/user-update/curl-request.adoc[]
+include::backend/target/generated-snippets/user-update/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/user-update/http-request.adoc[]
+include::backend/target/generated-snippets/user-update/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/user-update/http-response.adoc[]
+include::backend/target/generated-snippets/user-update/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/user-update/httpie-request.adoc[]
+include::backend/target/generated-snippets/user-update/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/user-update/request-body.adoc[]
+include::backend/target/generated-snippets/user-update/request-body.adoc[]
 
 ==== Request Fields
 
-include::target/generated-snippets/user-update/request-fields.adoc[]
+include::backend/target/generated-snippets/user-update/request-fields.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/user-update/response-body.adoc[]
+include::backend/target/generated-snippets/user-update/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/user-update/response-fields.adoc[]
+include::backend/target/generated-snippets/user-update/response-fields.adoc[]
 
 
 == Users
@@ -1813,30 +1460,30 @@ include::target/generated-snippets/user-update/response-fields.adoc[]
 
 ==== Curl Request
 
-include::target/generated-snippets/users-get-all/curl-request.adoc[]
+include::backend/target/generated-snippets/users-get-all/curl-request.adoc[]
 
 ==== Http Request
 
-include::target/generated-snippets/users-get-all/http-request.adoc[]
+include::backend/target/generated-snippets/users-get-all/http-request.adoc[]
 
 ==== Http Response
 
-include::target/generated-snippets/users-get-all/http-response.adoc[]
+include::backend/target/generated-snippets/users-get-all/http-response.adoc[]
 
 ==== Httpie Request
 
-include::target/generated-snippets/users-get-all/httpie-request.adoc[]
+include::backend/target/generated-snippets/users-get-all/httpie-request.adoc[]
 
 ==== Request Body
 
-include::target/generated-snippets/users-get-all/request-body.adoc[]
+include::backend/target/generated-snippets/users-get-all/request-body.adoc[]
 
 ==== Response Body
 
-include::target/generated-snippets/users-get-all/response-body.adoc[]
+include::backend/target/generated-snippets/users-get-all/response-body.adoc[]
 
 ==== Response Fields
 
-include::target/generated-snippets/users-get-all/response-fields.adoc[]
+include::backend/target/generated-snippets/users-get-all/response-fields.adoc[]
 
 

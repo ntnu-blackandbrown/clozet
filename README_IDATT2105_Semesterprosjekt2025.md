@@ -230,74 +230,10 @@ frontend/
    - Frontend component tests with Vitest
    - E2E tests with Cypress
 
-### Architecture Diagrams
+### Architecture Diagrams - fiks senere
 
-#### High-Level System Architecture
-```mermaid
-graph TB
-    Client[Web Client]
 
-    Client -->|HTTP (REST)| API[API Gateway]
-    Client -->|WebSocket| WS[WebSocket Server]
-
-    API --> Auth[Authentication Service]
-    Auth --> DB[(PostgreSQL)]
-
-    API --> Service[Business Logic Layer]
-    WS --> Service
-
-    Service --> DB
-    Service --> Storage[(Cloudinary)]
-    Service -->|Send Email| Email[(Mailgun)]
-
-    subgraph EmailProcessing
-        Service --> Queue[Email Job Queue]
-        Queue --> Email
-    end
-```
-
-#### Backend Layer Architecture
-```mermaid
-graph TB
-    Controller[Controller Layer] --> Service[Service Layer]
-    Service --> Repository[Repository Layer]
-    Service --> Mapper[Mapper Layer]
-    Repository --> Entity[Entity Layer]
-    Mapper --> DTO[DTO Layer]
-    Controller --> DTO
-    Service --> Email[Mailgun]
-```
-
-#### Frontend Architecture
-```mermaid
-graph TB
-    View[View Layer] --> Component[Component Layer]
-    Component --> Store[Pinia Store]
-    Component --> Router[Vue Router]
-    Store --> API[API Client]
-    Store --> WS[WebSocket Client]
-    Component --> Validation[Form Validation]
-```
-
-#### Data Flow Architecture
-```mermaid
-sequenceDiagram
-    participant C as Client
-    participant A as API Gateway
-    participant S as Service Layer
-    participant D as Database
-    participant M as Mailgun
-    
-    C->>A: HTTP Request
-    A->>S: Process Request
-    S->>D: Query Database
-    D-->>S: Return Data
-    S->>M: Send Emails
-    S-->>A: Return Response
-    A-->>C: HTTP Response
-```
-
-#### Database Entity Relationship Diagram
+### Database Entity Relationship Diagram
 The following diagram illustrates the database model of the application, showing all entities and their relationships:
 
 ![E-commerce Platform Data Model](docs/images/database_diagram.png)
@@ -307,7 +243,6 @@ This entity relationship diagram shows the core entities of our application:
 - **Items**: Products listed for sale with their detailed attributes
 - **Categories**: Hierarchical classification system for items
 - **Transactions**: Records of sales between users
-- **Reviews**: Feedback and ratings for completed transactions
 - **Messages**: Communication between users about specific items
 - **Locations**: Geographic data for items and shipping
 - **Shipping Options**: Available shipping methods and their details
@@ -356,7 +291,9 @@ Our API documentation is automatically generated using Spring REST Docs, which e
 ### Documentation Generation Process
 
 1. **Test Execution**: Run tests
-   ```
+   ```bash
+   # Run from project root
+   cd backend
    mvn test
    ```
 
@@ -364,7 +301,8 @@ Our API documentation is automatically generated using Spring REST Docs, which e
 
 3. **Index Generation**: Python script combines snippets into final documentation
    ```bash
-   python generate_index.py
+   # Run from project root
+   python docs/API\ Documentation/generate_index.py --snippets-dir backend/target/generated-snippets --output docs/API\ Documentation/index.adoc
    ```
 ### Documentation Content
 - Request/response formats with examples
@@ -387,22 +325,25 @@ The documentation can be accessed through the index.pdf file within the docs fol
 
 ### Quick Start
 
-1. **Clone Repository**
+After cloning the project --- fikser på det senere 
+1. **Backend Setup**
    ```bash
-   git clone [repository-url]
-   cd clozet
-   ```
-
-2. **Backend Setup**
-   ```bash
+   # Run from project root
    cd backend
+   
+   # Development mode
    mvn clean install
    mvn spring-boot:run
+   
+   # Production mode
+   mvn clean install
+   mvn spring-boot:run -Dspring-boot.run.profiles=prod
    ```
    Backend will run on `http://localhost:8080`
 
-3. **Frontend Setup**
+2. **Frontend Setup**
    ```bash
+   # Run from project root
    cd frontend
    npm install
    npm run dev
@@ -410,8 +351,6 @@ The documentation can be accessed through the index.pdf file within the docs fol
    Frontend will be available on `http://localhost:5173`
 
 The application should now be running and accessible through your browser.
-
-# How to run tests locally - manually with EmialProdConfig - skal gjøres
 
 ## Testing and CI/CD
 
@@ -426,12 +365,22 @@ The application should now be running and accessible through your browser.
   - REST controller validation
   - Database integration
   - Security configuration
+- **WebSocket Tests**: Testing real-time communication
+  - Message delivery and handling
+  - Connection management
+  - Event broadcasting
+  - Client subscription verification
 
 #### Frontend Testing
 - **Unit Tests**: Vitest
   - Component testing
   - Store testing with Pinia
   - Utility function testing
+- **WebSocket Tests**: Testing WebSocket client behavior
+  - Connection and reconnection logic
+  - Message sending and receiving
+  - Subscription management
+  - Real-time UI updates
 - **E2E Tests**: Cypress
   - Critical user flows
   - Integration scenarios
@@ -469,6 +418,9 @@ The application should now be running and accessible through your browser.
 
 #### Backend Testing
 ```bash
+# Run from project root
+cd backend
+
 # Run all tests
 mvn test
 
@@ -481,6 +433,9 @@ mvn package
 
 #### Frontend Testing
 ```bash
+# Run from project root
+cd frontend
+
 # Run unit tests
 npm run test:unit
 
@@ -493,6 +448,52 @@ npm run test:e2e
 # Run E2E tests in development mode
 npm run test:e2e:dev
 ```
+
+#### WebSocket Testing
+```bash
+# Run from project root
+cd backend
+# Run WebSocket integration tests
+mvn test -Dtest=WebSocketIntegrationTest
+
+# Run from project root
+cd frontend
+# Run WebSocket client tests
+npm run test:websocket
+```
+
+#### Manual WebSocket Testing
+To test WebSocket functionality using the HTML test client:
+
+1. First, start the backend server in production mode:
+   ```bash
+   # Run from project root
+   cd backend
+   mvn clean install
+   mvn spring-boot:run -Dspring-boot.run.profiles=prod
+   ```
+
+2. Once the backend server is running, open the WebSocket test HTML file in your browser:
+   ```bash
+   # Run in a new terminal window while the backend is running
+   # Open the file in your default browser
+   # Windows
+   start backend/src/test/java/stud/ntnu/no/backend/message/websocket/websocket-test.html
+   
+   # macOS
+   open backend/src/test/java/stud/ntnu/no/backend/message/websocket/websocket-test.html
+   
+   # Linux
+   xdg-open backend/src/test/java/stud/ntnu/no/backend/message/websocket/websocket-test.html
+   ```
+
+3. In the WebSocket test client:
+   - Verify the server URL is set to `http://localhost:8080/ws`
+   - Click "Connect" to establish a WebSocket connection
+   - Send test messages between users
+   - Monitor real-time WebSocket communication
+
+For detailed information on WebSocket testing methodology and best practices, refer to the [WebSocket Testing Guide](docs/websocket%20testing.pdf) in the docs folder.
 
 ### Test Environment Configuration
 - H2 in-memory database for backend tests
