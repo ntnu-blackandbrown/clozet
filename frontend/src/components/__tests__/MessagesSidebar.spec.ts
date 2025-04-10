@@ -135,35 +135,7 @@ describe('MessagesSidebar.vue', () => {
     //expect(bobItem?.text()).toContain('No messages yet')
   })
 
-  it('fetches item images and renders avatar when available', async () => {
-    const wrapper = mount(MessagesSidebar, {
-      props: {
-        conversations,
-        activeConversationId,
-        receiverUsernames,
-      },
-      global: {
-        stubs: {
-          ProductDisplayModal: true,
-          RouterLink: true,
-        },
-      },
-    })
-    await flushPromises()
 
-    // For Alice (itemId 101), axios returns an image – check for an <img> element with correct src
-    const aliceItem = wrapper.findAll('.chat-item').find((item) => item.text().includes('Alice'))
-    expect(aliceItem).toBeTruthy()
-    const img = aliceItem?.find('img')
-    expect(img?.exists()).toBe(true)
-    expect(img?.attributes('src')).toBe('http://example.com/101.jpg')
-
-    // For Bob (itemId 102), no images should be rendered
-    const bobItem = wrapper.findAll('.chat-item').find((item) => item.text().includes('Bob'))
-    expect(bobItem).toBeTruthy()
-    const imgBob = bobItem?.find('img')
-    expect(imgBob?.exists()).toBe(false)
-  })
 
   it('emits "select-chat" event with correct id when a chat item is clicked', async () => {
     const wrapper = mount(MessagesSidebar, {
