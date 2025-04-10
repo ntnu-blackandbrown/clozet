@@ -1,0 +1,55 @@
+{
+  "common": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "username": "Username",
+    "search": "Search",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "submit": "Submit"
+  },
+  "navigation": {
+    "home": "Home",
+    "closet": "Closet",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "auth": {
+    "loginTitle": "Login to your account",
+    "registerTitle": "Create a new account",
+    "forgotPassword": "Forgot password?",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?"
+  },
+  "closet": {
+    "addItem": "Add Item",
+    "categories": "Categories",
+    "noItems": "No items found",
+    "filterBy": "Filter by"
+  },
+  "item": {
+    "name": "Name",
+    "category": "Category",
+    "color": "Color",
+    "size": "Size",
+    "brand": "Brand",
+    "addedOn": "Added on"
+  },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password",
+    "myCloset": "My Closet",
+    "settings": "Settings"
+  },
+  "errors": {
+    "requiredField": "This field is required",
+    "invalidEmail": "Please enter a valid email",
+    "passwordLength": "Password must be at least 8 characters",
+    "somethingWentWrong": "Something went wrong"
+  }
+} 
