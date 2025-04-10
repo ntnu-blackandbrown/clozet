@@ -240,9 +240,7 @@ graph TB
     API --> Auth[Authentication]
     API --> Service[Service Layer]
     WS --> Service
-    Service --> Cache[(Redis Cache)]
     Service --> DB[(PostgreSQL)]
-    Service --> Search[(Elasticsearch)]
     Service --> Storage[(Cloudinary)]
 ```
 
