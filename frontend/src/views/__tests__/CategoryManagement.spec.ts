@@ -97,9 +97,11 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('allows retrying after load failure', async () => {
-    (CategoryService.getAllCategories as any)
-      .mockRejectedValueOnce(new Error('API error'))
-      .mockResolvedValueOnce({ data: [] })
+    // First call rejects
+    (CategoryService.getAllCategories as any).mockRejectedValueOnce(new Error('API error'));
+
+    // Setup for the second call when retry is clicked
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] });
 
     await createWrapper()
     expect(wrapper.text()).toContain('Failed to load categories')
@@ -124,11 +126,15 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('creates a new category when the create event is emitted', async () => {
-    (CategoryService.getAllCategories as any)
-      .mockResolvedValueOnce({ data: [] })
-      .mockResolvedValueOnce({ data: [] }) // For the second call after creation
+    // First call to get initial categories
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] });
 
-    (CategoryService.createCategory as any).mockResolvedValueOnce({})
+    // Create category mock
+    (CategoryService.createCategory as any).mockResolvedValueOnce({});
+
+    // Second call to refresh categories after creation
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] });
+
     await createWrapper()
 
     const newCategory = { name: 'New Category', description: 'Description', parentId: null }
@@ -275,11 +281,15 @@ describe('CategoryManagement.vue', () => {
   // Update & Delete Category Flows
   // ---------------------------
   it('successfully updates a category when edit form is submitted with valid data', async () => {
-    (CategoryService.getAllCategories as any)
-      .mockResolvedValueOnce({ data: [] })
-      .mockResolvedValueOnce({ data: [] }) // For the refresh after update
+    // First call to get initial categories
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] });
 
-    (CategoryService.updateCategory as any).mockResolvedValueOnce({})
+    // Update category mock
+    (CategoryService.updateCategory as any).mockResolvedValueOnce({});
+
+    // Second call to refresh categories after update
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] });
+
     await createWrapper()
 
     wrapper.vm.editCategoryForm = {
@@ -335,11 +345,16 @@ describe('CategoryManagement.vue', () => {
     const categories = [
       { id: 1, name: 'Category A', description: 'Desc A', parent: null }
     ] as Category[]
-    (CategoryService.getAllCategories as any)
-      .mockResolvedValueOnce({ data: categories })
-      .mockResolvedValueOnce({ data: [] }) // For the refresh after deletion
 
-    (CategoryService.deleteCategory as any).mockResolvedValueOnce({})
+    // First call to get initial categories
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: categories });
+
+    // Delete category mock
+    (CategoryService.deleteCategory as any).mockResolvedValueOnce({});
+
+    // Second call to refresh categories after deletion
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] });
+
     await createWrapper()
 
     // Ensure confirm returns true
