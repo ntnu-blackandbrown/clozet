@@ -357,34 +357,14 @@ The application should now be running and accessible through your browser.
 ### Testing Strategy
 
 #### Backend Testing
-- **Unit Tests**: JUnit 5 for testing individual components
-  - Service layer business logic
-  - Repository layer data access
-  - Utility classes and helpers
-- **Integration Tests**: Spring Test for API endpoints
-  - REST controller validation
-  - Database integration
-  - Security configuration
-- **WebSocket Tests**: Testing real-time communication
-  - Message delivery and handling
-  - Connection management
-  - Event broadcasting
-  - Client subscription verification
+- **Unit Tests** (JUnit 5): Service layers, repositories, utility classes
+- **Integration Tests** (Spring Test): REST endpoints, database, security
+- **WebSocket Tests**: Real-time communication, connection handling, event delivery
 
 #### Frontend Testing
-- **Unit Tests**: Vitest
-  - Component testing
-  - Store testing with Pinia
-  - Utility function testing
-- **WebSocket Tests**: Testing WebSocket client behavior
-  - Connection and reconnection logic
-  - Message sending and receiving
-  - Subscription management
-  - Real-time UI updates
-- **E2E Tests**: Cypress
-  - Critical user flows
-  - Integration scenarios
-  - Cross-browser compatibility
+- **Unit Tests** (Vitest): Components, stores, utilities
+- **WebSocket Tests**: Client connection, messaging, subscription management
+- **E2E Tests** (Cypress): User flows, integration scenarios, cross-browser support
 
 ### Continuous Integration/Deployment
 
