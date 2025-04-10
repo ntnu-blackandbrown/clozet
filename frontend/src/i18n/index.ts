@@ -4,26 +4,29 @@ import nb from '@/locales/nb.json'
 import es from '@/locales/es.json'
 
 // Supported locales
-export const SUPPORTED_LOCALES = ['en', 'nb', 'es']
+export const SUPPORTED_LOCALES = ['en', 'nb', 'es'] as const
+export type SupportedLocale = typeof SUPPORTED_LOCALES[number]
 
 // Default locale
-const DEFAULT_LOCALE = 'en'
+const DEFAULT_LOCALE: SupportedLocale = 'en'
 
 // Get browser locale or fallback to default
-const getBrowserLocale = (): string => {
+const getBrowserLocale = (): SupportedLocale => {
   const navigatorLocale = navigator.language.split('-')[0]
   console.log('Browser detected locale:', navigatorLocale)
-  return SUPPORTED_LOCALES.includes(navigatorLocale) ? navigatorLocale : DEFAULT_LOCALE
+  return SUPPORTED_LOCALES.includes(navigatorLocale as SupportedLocale)
+    ? navigatorLocale as SupportedLocale
+    : DEFAULT_LOCALE
 }
 
 // Try to get the locale from localStorage, then browser, then default
-const getInitialLocale = (): string => {
+const getInitialLocale = (): SupportedLocale => {
   const savedLocale = localStorage.getItem('locale')
   console.log('Saved locale from localStorage:', savedLocale)
 
-  if (savedLocale && SUPPORTED_LOCALES.includes(savedLocale)) {
+  if (savedLocale && SUPPORTED_LOCALES.includes(savedLocale as SupportedLocale)) {
     console.log('Using saved locale:', savedLocale)
-    return savedLocale
+    return savedLocale as SupportedLocale
   }
 
   const browserLocale = getBrowserLocale()
@@ -50,7 +53,7 @@ const i18n = createI18n({
 })
 
 // Helper function to change locale
-export const setLocale = (locale: string): void => {
+export const setLocale = (locale: SupportedLocale): void => {
   if (SUPPORTED_LOCALES.includes(locale)) {
     console.log('Changing locale to:', locale)
     i18n.global.locale.value = locale

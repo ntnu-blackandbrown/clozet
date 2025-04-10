@@ -45,6 +45,22 @@ const createAxiosResponse = (data: any) => ({
   config: {} as any
 })
 
+// Define the expected shape of the component's data
+interface MyPostsViewData {
+  items: Array<{
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+    available?: boolean;
+    isAvailable?: boolean;
+    image: string;
+  }>;
+  initialProductId?: number;
+  isLoading: boolean;
+  error: string | null;
+}
+
 describe('MyPostsView', () => {
   let i18n: I18n;
 
@@ -102,7 +118,9 @@ describe('MyPostsView', () => {
     expect(productList.exists()).toBe(true);
 
     // The items should have images and mapped isAvailable property
-    expect(wrapper.vm.items).toEqual([
+    // Type assertion for vm
+    const vm = wrapper.vm as unknown as { items: MyPostsViewData['items'] };
+    expect(vm.items).toEqual([
       { ...mockItems[0], image: '/image1.jpg', isAvailable: true },
       { ...mockItems[1], image: '/image2.jpg', isAvailable: false }
     ]);
@@ -130,6 +148,10 @@ describe('MyPostsView', () => {
 
     // ProductList should not be displayed
     expect(wrapper.findComponent(ProductList).exists()).toBe(false);
+
+    // Type assertion for vm
+    const vm = wrapper.vm as unknown as { items: MyPostsViewData['items'] };
+    expect(vm.items).toEqual([]);
   });
 
   it('handles API errors gracefully', async () => {
@@ -154,7 +176,10 @@ describe('MyPostsView', () => {
 
     // Should display empty state as fallback
     expect(wrapper.find('.empty-state').exists()).toBe(true);
-    expect(wrapper.vm.items).toEqual([]);
+
+    // Type assertion for vm
+    const vm = wrapper.vm as unknown as { items: MyPostsViewData['items'] };
+    expect(vm.items).toEqual([]);
 
     consoleSpy.mockRestore();
   });
@@ -182,7 +207,9 @@ describe('MyPostsView', () => {
     expect(consoleSpy).toHaveBeenCalled();
 
     // Should use default image
-    expect(wrapper.vm.items[0].image).toBe('/default-product-image.jpg');
+    // Type assertion for vm
+    const vm = wrapper.vm as unknown as { items: MyPostsViewData['items'] };
+    expect(vm.items[0].image).toBe('/default-product-image.jpg');
 
     consoleSpy.mockRestore();
   });
@@ -208,6 +235,8 @@ describe('MyPostsView', () => {
 
     await flushPromises();
 
-    expect(wrapper.vm.initialProductId).toBe(42);
+    // Type assertion for vm
+    const vm = wrapper.vm as unknown as { initialProductId: number };
+    expect(vm.initialProductId).toBe(42);
   });
 });

@@ -52,6 +52,20 @@ const createAxiosResponse = (data: any) => ({
   config: {} as any
 })
 
+// Define the expected shape of the component's data
+interface MyWishlistViewData {
+  items: Array<{
+    id: number;
+    name: string;
+    price?: number;
+    description?: string;
+    image: string;
+  }>;
+  initialProductId?: number;
+  isLoading: boolean;
+  error: string | null;
+}
+
 describe('MyWishlistView', () => {
   let i18n: I18n;
 
@@ -116,11 +130,13 @@ describe('MyWishlistView', () => {
     expect(ProductService.getItemImages).toHaveBeenCalledTimes(2);
 
     // Should have filtered to just the favorited items with images
-    expect(wrapper.vm.items).toHaveLength(2);
-    expect(wrapper.vm.items[0].id).toBe(101);
-    expect(wrapper.vm.items[0].image).toBe('/image101.jpg');
-    expect(wrapper.vm.items[1].id).toBe(102);
-    expect(wrapper.vm.items[1].image).toBe('/image102.jpg');
+    // Type assertion for vm
+    const vm = wrapper.vm as unknown as { items: MyWishlistViewData['items'] };
+    expect(vm.items).toHaveLength(2);
+    expect(vm.items[0].id).toBe(101);
+    expect(vm.items[0].image).toBe('/image101.jpg');
+    expect(vm.items[1].id).toBe(102);
+    expect(vm.items[1].image).toBe('/image102.jpg');
 
     // Check that ProductList is displayed with correct props
     const productList = wrapper.findComponent('[data-testid="product-list"]');
@@ -174,7 +190,10 @@ describe('MyWishlistView', () => {
 
     // Should display empty state as fallback
     expect(wrapper.find('.empty-state').exists()).toBe(true);
-    expect(wrapper.vm.items).toEqual([]);
+
+    // Type assertion for vm
+    const vm = wrapper.vm as unknown as { items: MyWishlistViewData['items'] };
+    expect(vm.items).toEqual([]);
 
     consoleSpy.mockRestore();
   });
@@ -204,7 +223,10 @@ describe('MyWishlistView', () => {
 
     // Should display empty state as fallback
     expect(wrapper.find('.empty-state').exists()).toBe(true);
-    expect(wrapper.vm.items).toEqual([]);
+
+    // Type assertion for vm
+    const vm = wrapper.vm as unknown as { items: MyWishlistViewData['items'] };
+    expect(vm.items).toEqual([]);
 
     consoleSpy.mockRestore();
   });
@@ -236,7 +258,9 @@ describe('MyWishlistView', () => {
     expect(consoleSpy).toHaveBeenCalled();
 
     // Should use default image
-    expect(wrapper.vm.items[0].image).toBe('/default-product-image.jpg');
+    // Type assertion for vm
+    const vm = wrapper.vm as unknown as { items: MyWishlistViewData['items'] };
+    expect(vm.items[0].image).toBe('/default-product-image.jpg');
 
     consoleSpy.mockRestore();
   });
@@ -264,6 +288,8 @@ describe('MyWishlistView', () => {
 
     await flushPromises();
 
-    expect(wrapper.vm.initialProductId).toBe(101);
+    // Type assertion for vm
+    const vm = wrapper.vm as unknown as { initialProductId: number };
+    expect(vm.initialProductId).toBe(101);
   });
 });
