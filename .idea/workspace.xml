@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="c7275f5f-a06c-4ee1-aff5-c7adf7638d87" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/README_IDATT2105_Semesterprosjekt2025.md" beforeDir="false" afterPath="$PROJECT_DIR$/README_IDATT2105_Semesterprosjekt2025.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/generate_index.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/API Documentation/generate_index.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/index.adoc" beforeDir="false" afterPath="$PROJECT_DIR$/docs/API Documentation/index.adoc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/index.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/docs/API Documentation/index.pdf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +74,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\kevin\\Dropbox\\NTNU\\Semester 4\\Fullstack-Case\\clozet\\frontend\\node_modules\\prettier",
+    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\kevin\\Dropbox\\NTNU\\Semester 4\\Fullstack case\\clozet\\frontend\\node_modules\\prettier",
     "ts.external.directory.path": "C:\\Users\\kevin\\Dropbox\\NTNU\\Semester 4\\Fullstack-Case\\clozet\\frontend\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   },

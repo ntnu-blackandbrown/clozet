@@ -334,6 +334,8 @@ Our API documentation is automatically generated using Spring REST Docs, which e
    │   └── .../*ControllerTest.java    # Test files that generate docs
    ├── target/generated-snippets/      # Generated documentation snippets
    └── index.adoc                      # Main documentation file
+   |___index.pdf                       # PDF of documentation
+  
    ```
 
 3. **Example Documentation Test**
@@ -373,7 +375,7 @@ Our API documentation is automatically generated using Spring REST Docs, which e
 
 ### Accessing Documentation
 
-The documentation can be accessed through the index.pdf file
+The documentation can be accessed through the index.pdf file within the docs folder
 
 ## Installation and Running
 
