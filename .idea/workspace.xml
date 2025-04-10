@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c7275f5f-a06c-4ee1-aff5-c7adf7638d87" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README_IDATT2105_Semesterprosjekt2025.md" beforeDir="false" afterPath="$PROJECT_DIR$/README_IDATT2105_Semesterprosjekt2025.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/data/clozet.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/data/clozet.mv.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,7 +121,7 @@
       <workItem from="1743322046366" duration="6402000" />
       <workItem from="1743376970051" duration="489000" />
       <workItem from="1743570820012" duration="2637000" />
-      <workItem from="1744301777128" duration="2905000" />
+      <workItem from="1744301777128" duration="4403000" />
     </task>
     <servers />
   </component>

@@ -317,6 +317,15 @@ The documentation can be accessed through the index.pdf file within the docs fol
 
 ## Installation and Running
 
+### Terminal Setup
+For the most effective execution of commands in this README, use Git Bash terminal:
+
+1. Open Git Bash terminal in the project root folder
+2. All commands in this documentation are designed to be run from Git Bash
+3. When using IDE run configurations, make sure to set Git Bash as the terminal type
+4. If using Windows Command Prompt or PowerShell, some commands may need adjustment
+5. **Important:** Use separate Git Bash terminals for each run configuration (backend, frontend, testing, etc.) as each will need to remain active during development
+
 ### Prerequisites
 - Java JDK 21
 - Node.js v18+
@@ -326,14 +335,15 @@ The documentation can be accessed through the index.pdf file within the docs fol
 ### Quick Start
 
 After cloning the project
+
+> **Note:** All commands below should be run in Git Bash terminal for consistent execution across environments.
+
+> **Important:** Open a new Git Bash terminal for each component (backend, frontend) as they need to run simultaneously.
+
 1. **Backend Setup**
    ```bash
    # Run from project root
    cd backend
-   
-   # Development mode
-   mvn clean install
-   mvn spring-boot:run
    
    # Production mode
    mvn clean install
@@ -343,7 +353,7 @@ After cloning the project
 
 2. **Frontend Setup**
    ```bash
-   # Run from project root
+   # Run from project root in a NEW Git Bash terminal
    cd frontend
    npm install
    npm run dev
@@ -445,6 +455,8 @@ npm run test:websocket
 #### Manual WebSocket Testing
 To test WebSocket functionality using the HTML test client:
 
+> **Note:** This requires multiple Git Bash terminals - one for the backend server and another for opening the test client.
+
 1. First, start the backend server in production mode:
    ```bash
    # Run from project root
@@ -455,16 +467,13 @@ To test WebSocket functionality using the HTML test client:
 
 2. Once the backend server is running, open the WebSocket test HTML file in your browser:
    ```bash
-   # Run in a new terminal window while the backend is running
+   # Run in a NEW Git Bash terminal while the backend is running
    # Open the file in your default browser
    # Windows
    start backend/src/test/java/stud/ntnu/no/backend/message/websocket/websocket-test.html
    
    # macOS
    open backend/src/test/java/stud/ntnu/no/backend/message/websocket/websocket-test.html
-   
-   # Linux
-   xdg-open backend/src/test/java/stud/ntnu/no/backend/message/websocket/websocket-test.html
    ```
 
 3. In the WebSocket test client:
