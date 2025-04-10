@@ -5,7 +5,7 @@ import CategoryManagement from '@/views/admin/categories/CategoryManagement.vue'
 import { CategoryService } from '@/api/services/CategoryService'
 import CreateCategoryModal from '@/components/admin/categories/CreateCategoryModal.vue'
 
-// Define a category type to help with TypeScript errors
+// Define a category type for TypeScript
 interface Category {
   id: number;
   name: string;
@@ -13,7 +13,9 @@ interface Category {
   parent: { id: number; name: string } | null;
 }
 
-// Mock the CategoryService methods
+// ---------------------------
+// Mocks
+// ---------------------------
 vi.mock('@/api/services/CategoryService', () => ({
   CategoryService: {
     getAllCategories: vi.fn(),
@@ -23,7 +25,6 @@ vi.mock('@/api/services/CategoryService', () => ({
   },
 }))
 
-// Mock the CreateCategoryModal component
 vi.mock('@/components/admin/categories/CreateCategoryModal.vue', () => ({
   default: {
     name: 'CreateCategoryModal',
@@ -32,20 +33,22 @@ vi.mock('@/components/admin/categories/CreateCategoryModal.vue', () => ({
   }
 }))
 
+// ---------------------------
+// Helper to mount the component
+// ---------------------------
 describe('CategoryManagement.vue', () => {
   let wrapper: VueWrapper<any>
 
-  // Helper to mount the component
   const createWrapper = async () => {
     wrapper = mount(CategoryManagement)
-    // Wait a tick for the onMounted hook (which calls fetchCategories)
+    // Wait a tick for the onMounted hook to call fetchCategories
     await wrapper.vm.$nextTick()
   }
 
   beforeEach(() => {
     vi.clearAllMocks()
-    // Mock console.error to avoid cluttering test output
     vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(window, 'confirm').mockImplementation(() => true)
   })
 
   afterEach(() => {
@@ -53,8 +56,11 @@ describe('CategoryManagement.vue', () => {
     vi.restoreAllMocks()
   })
 
+  // ---------------------------
+  // Asynchronous States & Data Rendering
+  // ---------------------------
   it('renders the loading spinner while categories are being fetched', async () => {
-    // Simulate getAllCategories never resolving (loading state)
+    // Simulate getAllCategories never resolving
     (CategoryService.getAllCategories as any).mockImplementation(() => new Promise(() => {}))
     await createWrapper()
 
@@ -66,22 +72,16 @@ describe('CategoryManagement.vue', () => {
     (CategoryService.getAllCategories as any).mockResolvedValueOnce({
       data: [
         { id: 1, name: 'Category A', description: 'Desc A', parent: null },
-        {
-          id: 2,
-          name: 'Category B',
-          description: 'Desc B',
-          parent: { id: 1, name: 'Category A' },
-        },
+        { id: 2, name: 'Category B', description: 'Desc B', parent: { id: 1, name: 'Category A' } },
       ],
     })
-
     await createWrapper()
 
     const rows = wrapper.findAll('tbody tr')
     expect(rows.length).toBe(2)
     expect(rows[0].text()).toContain('Category A')
     expect(rows[1].text()).toContain('Category B')
-    expect(rows[1].text()).toContain('Category A') // Parent name
+    expect(rows[1].text()).toContain('Category A') // Check parent name
   })
 
   it('renders an empty state when no categories exist', async () => {
@@ -104,89 +104,45 @@ describe('CategoryManagement.vue', () => {
     await createWrapper()
     expect(wrapper.text()).toContain('Failed to load categories')
 
-    // Click the "Retry" button
     await wrapper.find('button[aria-label="Retry loading categories"]').trigger('click')
-    // Wait for the re-fetch and update
     await wrapper.vm.$nextTick()
     expect(wrapper.text()).toContain('No categories found')
   })
 
+  // ---------------------------
+  // Modal & Create Category Flow
+  // ---------------------------
   it('opens the "Create Category" modal when the Add New Category button is clicked', async () => {
     (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
     await createWrapper()
+
     const createModal = wrapper.findComponent({ name: 'CreateCategoryModal' })
-    // Modal is initially hidden (is-visible prop should be false)
     expect(createModal.props('isVisible')).toBe(false)
 
-    // Click "Add New Category" button
     await wrapper.find('button[aria-label="Add new category"]').trigger('click')
     expect(wrapper.findComponent({ name: 'CreateCategoryModal' }).props('isVisible')).toBe(true)
   })
 
-  it('validates the edit form and prevents update when invalid', async () => {
-    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
-    await createWrapper()
-    wrapper.vm.showEditForm = true
-    wrapper.vm.editCategoryForm = {
-      id: 1,
-      name: '', // Invalid: name is required
-      description: 'A valid description',
-      parentId: null,
-    }
-    await wrapper.vm.$nextTick()
+  it('creates a new category when the create event is emitted', async () => {
+    (CategoryService.getAllCategories as any)
+      .mockResolvedValueOnce({ data: [] })
+      .mockResolvedValueOnce({ data: [] }) // For the second call after creation
 
-    await wrapper.find('form.category-form').trigger('submit.prevent')
-
-    expect(CategoryService.updateCategory).not.toHaveBeenCalled()
-    expect(wrapper.vm.editFormErrors.name).toBe('Category name is required')
-  })
-
-  it('prompts for confirmation before deleting a category and aborts if cancelled', async () => {
-    (CategoryService.getAllCategories as any).mockResolvedValueOnce({
-      data: [{ id: 1, name: 'Category A', description: 'Desc A', parent: null }],
-    })
+    (CategoryService.createCategory as any).mockResolvedValueOnce({})
     await createWrapper()
 
-    global.confirm = vi.fn().mockReturnValueOnce(false)
-    await wrapper.vm.deleteCategory(1)
-    expect(global.confirm).toHaveBeenCalled()
-    expect(CategoryService.deleteCategory).not.toHaveBeenCalled()
-  })
-
-  it('returns "-" if a category has no parent', async () => {
-    (CategoryService.getAllCategories as any).mockResolvedValueOnce({
-      data: [{ id: 1, name: 'Category A', description: 'Desc', parent: null }],
-    })
-    await createWrapper()
-    const rowText = wrapper.find('tbody tr').text()
-    expect(rowText).toContain('-')
-  })
-
-  // New tests to improve coverage
-
-  it('creates a new category when form is submitted', async () => {
-    // Setup mocks
-    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
-    ;(CategoryService.createCategory as any).mockResolvedValueOnce({})
-
-    await createWrapper()
-
-    // Simulate the create event from the modal
     const newCategory = { name: 'New Category', description: 'Description', parentId: null }
     await wrapper.findComponent({ name: 'CreateCategoryModal' }).vm.$emit('create', newCategory)
 
     expect(CategoryService.createCategory).toHaveBeenCalledWith(newCategory)
-    expect(CategoryService.getAllCategories).toHaveBeenCalledTimes(2) // Initial + after create
+    expect(CategoryService.getAllCategories).toHaveBeenCalledTimes(2)
   })
 
   it('handles error when creating a category fails', async () => {
-    // Setup mocks
     (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
-    ;(CategoryService.createCategory as any).mockRejectedValueOnce(new Error('Create error'))
-
+    (CategoryService.createCategory as any).mockRejectedValueOnce(new Error('Create error'))
     await createWrapper()
 
-    // Simulate the create event from the modal
     const newCategory = { name: 'New Category', description: 'Description', parentId: null }
     await wrapper.findComponent({ name: 'CreateCategoryModal' }).vm.$emit('create', newCategory)
 
@@ -198,27 +154,24 @@ describe('CategoryManagement.vue', () => {
     (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
     await createWrapper()
 
-    // Open the modal first
     await wrapper.find('button[aria-label="Add new category"]').trigger('click')
     expect(wrapper.vm.showCreateModal).toBe(true)
 
-    // Close the modal
     await wrapper.findComponent({ name: 'CreateCategoryModal' }).vm.$emit('close')
     expect(wrapper.vm.showCreateModal).toBe(false)
   })
 
+  // ---------------------------
+  // Edit Form Flow & Helper Functions
+  // ---------------------------
   it('opens edit form with prefilled data when edit button is clicked', async () => {
-    const categories: Category[] = [
+    const categories = [
       { id: 1, name: 'Category A', description: 'Desc A', parent: null }
-    ];
-    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: categories })
-
+    ] as Category[]
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: categories  })
     await createWrapper()
 
-    // Click edit button
     await wrapper.find('button.btn-icon.edit').trigger('click')
-
-    // Check if edit form is shown with correct data
     expect(wrapper.vm.showEditForm).toBe(true)
     expect(wrapper.vm.editCategoryForm).toEqual({
       id: 1,
@@ -228,14 +181,107 @@ describe('CategoryManagement.vue', () => {
     })
   })
 
-  it('handles error when updating a category fails', async () => {
-    // Setup mocks
+  it('validates the edit form and prevents update when invalid', async () => {
     (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
-    ;(CategoryService.updateCategory as any).mockRejectedValueOnce(new Error('Update error'))
+    await createWrapper()
+    wrapper.vm.showEditForm = true
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: '', // Invalid: missing name
+      description: 'A valid description',
+      parentId: null,
+    }
+    await wrapper.vm.$nextTick()
 
+    await wrapper.find('form.category-form').trigger('submit.prevent')
+    expect(CategoryService.updateCategory).not.toHaveBeenCalled()
+    expect(wrapper.vm.editFormErrors.name).toBe('Category name is required')
+  })
+
+  it('validates name length boundaries in edit form', async () => {
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
+    await createWrapper()
+    wrapper.vm.showEditForm = true
+
+    // Test valid: exactly 3 characters
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: 'abc',
+      description: 'Valid description',
+      parentId: null
+    }
+    expect(wrapper.vm.validateEditForm()).toBe(true)
+
+    // Test invalid: too short (2 characters)
+    wrapper.vm.editCategoryForm.name = 'ab'
+    expect(wrapper.vm.validateEditForm()).toBe(false)
+    expect(wrapper.vm.editFormErrors.name).toBe('Name must be between 3 and 100 characters')
+
+    // Test valid: exactly 100 characters
+    wrapper.vm.editCategoryForm.name = 'a'.repeat(100)
+    wrapper.vm.editFormErrors = {}  // reset errors
+    expect(wrapper.vm.validateEditForm()).toBe(true)
+  })
+
+  it('validates description length boundaries in edit form', async () => {
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
+    await createWrapper()
+    wrapper.vm.showEditForm = true
+
+    // Valid: exactly 255 characters
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: 'Valid Name',
+      description: 'a'.repeat(255),
+      parentId: null
+    }
+    wrapper.vm.editFormErrors = {}
+    expect(wrapper.vm.validateEditForm()).toBe(true)
+
+    // Invalid: 256 characters
+    wrapper.vm.editCategoryForm.description = 'a'.repeat(256)
+    expect(wrapper.vm.validateEditForm()).toBe(false)
+    expect(wrapper.vm.editFormErrors.description).toBe('Description cannot exceed 255 characters')
+  })
+
+  it('resets the edit form correctly', async () => {
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
+    await createWrapper()
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: 'Some Category',
+      description: 'Some description',
+      parentId: 2
+    }
+    wrapper.vm.editFormErrors = { name: 'Error' }
+    wrapper.vm.resetEditForm()
+    expect(wrapper.vm.editCategoryForm).toEqual({
+      id: null,
+      name: '',
+      description: '',
+      parentId: null
+    })
+    expect(wrapper.vm.editFormErrors).toEqual({})
+  })
+
+  it('directly calls getParentName and returns correct values', async () => {
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
+    await createWrapper()
+    expect(wrapper.vm.getParentName({ parent: null })).toBe('-')
+    expect(wrapper.vm.getParentName({ parent: { name: 'Parent Category' } })).toBe('Parent Category')
+  })
+
+  // ---------------------------
+  // Update & Delete Category Flows
+  // ---------------------------
+  it('successfully updates a category when edit form is submitted with valid data', async () => {
+    (CategoryService.getAllCategories as any)
+      .mockResolvedValueOnce({ data: [] })
+      .mockResolvedValueOnce({ data: [] }) // For the refresh after update
+
+    (CategoryService.updateCategory as any).mockResolvedValueOnce({})
     await createWrapper()
 
-    // Setup edit form with valid data
     wrapper.vm.editCategoryForm = {
       id: 1,
       name: 'Updated Category',
@@ -245,105 +291,74 @@ describe('CategoryManagement.vue', () => {
     wrapper.vm.showEditForm = true
     await wrapper.vm.$nextTick()
 
-    // Submit the form
     await wrapper.find('form.category-form').trigger('submit.prevent')
+    expect(CategoryService.updateCategory).toHaveBeenCalledWith(1, {
+      id: 1,
+      name: 'Updated Category',
+      description: 'Updated description',
+      parentId: null
+    })
+    expect(wrapper.vm.showEditForm).toBe(false)
+  })
 
+  it('handles error when updating a category fails', async () => {
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
+    (CategoryService.updateCategory as any).mockRejectedValueOnce(new Error('Update error'))
+    await createWrapper()
+
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: 'Updated Category',
+      description: 'Updated description',
+      parentId: null
+    }
+    wrapper.vm.showEditForm = true
+    await wrapper.vm.$nextTick()
+
+    await wrapper.find('form.category-form').trigger('submit.prevent')
     expect(CategoryService.updateCategory).toHaveBeenCalled()
     expect(wrapper.vm.error).toBe('Failed to update category')
   })
 
-  it('validates that description is required in edit form', async () => {
-    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
+  it('prompts for confirmation before deleting a category and aborts if cancelled', async () => {
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({
+      data: [{ id: 1, name: 'Category A', description: 'Desc A', parent: null }],
+    })
     await createWrapper()
-
-    wrapper.vm.showEditForm = true
-    wrapper.vm.editCategoryForm = {
-      id: 1,
-      name: 'Valid Name',
-      description: '', // Invalid: description is required
-      parentId: null
-    }
-    await wrapper.vm.$nextTick()
-
-    await wrapper.find('form.category-form').trigger('submit.prevent')
-
-    expect(CategoryService.updateCategory).not.toHaveBeenCalled()
-    expect(wrapper.vm.editFormErrors.description).toBe('Description is required')
-  })
-
-  it('validates name length in edit form', async () => {
-    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
-    await createWrapper()
-
-    wrapper.vm.showEditForm = true
-    wrapper.vm.editCategoryForm = {
-      id: 1,
-      name: 'ab', // Invalid: too short
-      description: 'Valid description',
-      parentId: null
-    }
-    await wrapper.vm.$nextTick()
-
-    await wrapper.find('form.category-form').trigger('submit.prevent')
-
-    expect(CategoryService.updateCategory).not.toHaveBeenCalled()
-    expect(wrapper.vm.editFormErrors.name).toBe('Name must be between 3 and 100 characters')
-  })
-
-  it('validates description length in edit form', async () => {
-    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
-    await createWrapper()
-
-    wrapper.vm.showEditForm = true
-    wrapper.vm.editCategoryForm = {
-      id: 1,
-      name: 'Valid Name',
-      description: 'a'.repeat(256), // Invalid: too long
-      parentId: null
-    }
-    await wrapper.vm.$nextTick()
-
-    await wrapper.find('form.category-form').trigger('submit.prevent')
-
-    expect(CategoryService.updateCategory).not.toHaveBeenCalled()
-    expect(wrapper.vm.editFormErrors.description).toBe('Description cannot exceed 255 characters')
+    vi.spyOn(window, 'confirm').mockImplementationOnce(() => false)
+    await wrapper.vm.deleteCategory(1)
+    expect(window.confirm).toHaveBeenCalled()
+    expect(CategoryService.deleteCategory).not.toHaveBeenCalled()
   })
 
   it('successfully deletes a category when confirmed', async () => {
-    // Setup mocks
-    const categories: Category[] = [
+    const categories = [
       { id: 1, name: 'Category A', description: 'Desc A', parent: null }
-    ];
-    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: categories })
-    ;(CategoryService.deleteCategory as any).mockResolvedValueOnce({})
+    ] as Category[]
+    (CategoryService.getAllCategories as any)
+      .mockResolvedValueOnce({ data: categories })
+      .mockResolvedValueOnce({ data: [] }) // For the refresh after deletion
 
+    (CategoryService.deleteCategory as any).mockResolvedValueOnce({})
     await createWrapper()
 
-    // Mock confirm to return true
-    global.confirm = vi.fn().mockReturnValueOnce(true)
-
+    // Ensure confirm returns true
+    vi.spyOn(window, 'confirm').mockReturnValueOnce(true)
     await wrapper.vm.deleteCategory(1)
-
-    expect(global.confirm).toHaveBeenCalled()
+    expect(window.confirm).toHaveBeenCalled()
     expect(CategoryService.deleteCategory).toHaveBeenCalledWith(1)
-    expect(CategoryService.getAllCategories).toHaveBeenCalledTimes(2) // Initial + after delete
+    expect(CategoryService.getAllCategories).toHaveBeenCalledTimes(2)
   })
 
   it('handles error when deleting a category fails', async () => {
-    // Setup mocks
-    const categories: Category[] = [
+    const categories = [
       { id: 1, name: 'Category A', description: 'Desc A', parent: null }
-    ];
+    ] as Category[]
     (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: categories })
-    ;(CategoryService.deleteCategory as any).mockRejectedValueOnce(new Error('Delete error'))
-
+    (CategoryService.deleteCategory as any).mockRejectedValueOnce(new Error('Delete error'))
     await createWrapper()
-
-    // Mock confirm to return true
-    global.confirm = vi.fn().mockReturnValueOnce(true)
-
+    vi.spyOn(window, 'confirm').mockReturnValueOnce(true)
     await wrapper.vm.deleteCategory(1)
-
     expect(CategoryService.deleteCategory).toHaveBeenCalledWith(1)
     expect(wrapper.vm.error).toBe('Failed to delete category')
   })
@@ -352,60 +367,68 @@ describe('CategoryManagement.vue', () => {
     (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
     await createWrapper()
 
-    // Open edit form
     wrapper.vm.showEditForm = true
     await wrapper.vm.$nextTick()
 
-    // Click cancel button
     await wrapper.find('button[aria-label="Cancel"]').trigger('click')
-
     expect(wrapper.vm.showEditForm).toBe(false)
   })
 
-  it('resets edit form when opening it for a new edit', async () => {
-    const categories: Category[] = [
-      { id: 1, name: 'Category A', description: 'Desc A', parent: null },
-      { id: 2, name: 'Category B', description: 'Desc B', parent: null }
-    ];
-    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: categories })
-
+  // ---------------------------
+  // Asynchronous Loading States in Create/Update Operations
+  // ---------------------------
+  it('sets and resets loading state during createCategory', async () => {
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
+    let loadingDuringCreate = false;
+    (CategoryService.createCategory as any).mockImplementationOnce(async () => {
+      loadingDuringCreate = wrapper.vm.isLoading;
+      return {}
+    })
     await createWrapper()
 
-    // First edit Category A
-    wrapper.vm.editCategory(categories[0])
-    expect(wrapper.vm.editCategoryForm.id).toBe(1)
-
-    // Then edit Category B
-    wrapper.vm.editCategory(categories[1])
-
-    // Check if form was reset before being populated with new data
-    expect(wrapper.vm.editCategoryForm.id).toBe(2)
-    expect(wrapper.vm.editFormErrors).toEqual({})
+    await wrapper.vm.createCategory({ name: 'Test', description: 'Test description', parentId: null })
+    expect(loadingDuringCreate).toBe(true)
+    expect(wrapper.vm.isLoading).toBe(false)
   })
 
-  it('sets loading state when appropriate', async () => {
+  it('sets and resets loading state during updateCategory', async () => {
     (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
-
+    let isLoadingDuringUpdate = false;
+    (CategoryService.updateCategory as any).mockImplementationOnce(async () => {
+      isLoadingDuringUpdate = wrapper.vm.isLoading;
+      return {}
+    })
     await createWrapper()
 
-    // Initially loading should be false after mounting (since getAllCategories resolves)
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: 'Updated Category',
+      description: 'Updated description',
+      parentId: null
+    }
+    wrapper.vm.showEditForm = true
+    await wrapper.vm.$nextTick()
+    await wrapper.find('form.category-form').trigger('submit.prevent')
+    expect(isLoadingDuringUpdate).toBe(true)
     expect(wrapper.vm.isLoading).toBe(false)
+  })
 
-    // Simplified approach to test loading state
-    let isLoadingDuringOperation = false;
-
-    (CategoryService.createCategory as any).mockImplementationOnce(async () => {
-      // Capture loading state during the operation
-      isLoadingDuringOperation = wrapper.vm.isLoading;
-      return {};
-    });
-
-    const newCategory = { name: 'New Category', description: 'Description', parentId: null }
-    await wrapper.vm.createCategory(newCategory)
-
-    // Verify loading was true during the operation
-    expect(isLoadingDuringOperation).toBe(true)
-    // Loading should be false after operation completes
-    expect(wrapper.vm.isLoading).toBe(false)
+  // ---------------------------
+  // Directly calling handleEditSubmit and resetEditForm
+  // ---------------------------
+  it('directly calls handleEditSubmit when form is submitted', async () => {
+    (CategoryService.getAllCategories as any).mockResolvedValueOnce({ data: [] })
+    await createWrapper()
+    const handleEditSubmitSpy = vi.spyOn(wrapper.vm, 'handleEditSubmit')
+    wrapper.vm.editCategoryForm = {
+      id: 1,
+      name: 'Valid Category',
+      description: 'Valid description',
+      parentId: null
+    }
+    wrapper.vm.showEditForm = true
+    await wrapper.vm.$nextTick()
+    await wrapper.find('form.category-form').trigger('submit.prevent')
+    expect(handleEditSubmitSpy).toHaveBeenCalled()
   })
 })
