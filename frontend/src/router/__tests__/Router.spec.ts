@@ -23,13 +23,13 @@ describe('Router Navigation Guard', () => {
     router.push({ name: 'home' })
   })
 
-  it('redirects to "/" when accessing a protected route (requiresAuth) while not logged in', async () => {
+  it('redirects to "/login" when accessing a protected route (requiresAuth) while not logged in', async () => {
     // Attempt to navigate to the messages route which requires authentication.
     await router.push({ name: 'messages' })
     // Wait for the router to process the navigation guard.
     await nextTick()
-    // Expect redirection to the home route.
-    expect(router.currentRoute.value.name).toBe('home')
+    // Expect redirection to the login route.
+    expect(router.currentRoute.value.name).toBe('login')
   })
 
   it('redirects to "/" when accessing an admin route while not an admin', async () => {

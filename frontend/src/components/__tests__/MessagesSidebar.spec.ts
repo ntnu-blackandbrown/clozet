@@ -2,10 +2,15 @@ import { mount, flushPromises } from '@vue/test-utils'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 import MessagesSidebar from '@/components/messaging/MessagesSidebar.vue' // adjust path as needed
 import axios from '@/api/axios'
+import type { Mock } from 'vitest'
 
 // Mock axios to intercept image fetches
-vi.mock('axios')
-const mockedAxios = axios as unknown as { get: any }
+vi.mock('@/api/axios')
+const mockedAxios = axios as unknown as {
+  get: Mock
+  post: Mock
+  delete: Mock
+}
 
 describe('MessagesSidebar.vue', () => {
   // Sample conversations prop
