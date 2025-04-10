@@ -111,11 +111,9 @@ const toggleMobileMenu = () => {
             >
           </template>
 
-          <!-- Language switcher in the nav -->
-          <LanguageSwitcher />
-
           <!-- Mobile-only auth section -->
           <div class="mobile-auth-section">
+            <LanguageSwitcher />
             <button v-if="isLoggedIn" @click="logout" class="logout-btn" :aria-label="$t('common.logout')">
               {{ $t('common.logout') }}
             </button>
@@ -127,6 +125,7 @@ const toggleMobileMenu = () => {
 
         <!-- Desktop auth section -->
         <div class="auth-section">
+          <LanguageSwitcher />
           <button v-if="isLoggedIn" @click="logout" class="logout-btn" :aria-label="$t('common.logout')">
             {{ $t('common.logout') }}
           </button>
@@ -453,7 +452,7 @@ body {
 .auth-section {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
 }
 
 .user-info {
@@ -667,6 +666,12 @@ main {
   .grid {
     grid-template-columns: 1fr;
   }
+
+  .mobile-auth-section .language-switcher {
+    display: block !important;
+    width: 100%;
+    margin: 15px 0;
+  }
 }
 
 /* Animation for hamburger to X */
@@ -680,5 +685,11 @@ main {
 
 .hamburger-menu-btn.is-active .hamburger-bar:nth-child(3) {
   transform: translateY(-9px) rotate(-45deg);
+}
+
+/* Ensure the language switcher is visible */
+.auth-section .language-switcher {
+  display: inline-block !important;
+  margin-right: 10px;
 }
 </style>
