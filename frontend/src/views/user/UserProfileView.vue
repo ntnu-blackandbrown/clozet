@@ -2,7 +2,9 @@
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const route = useRoute()
 const showProductModal = ref(false)
 const selectedProductId = ref('')
@@ -23,7 +25,7 @@ const openProductModal = (productId) => {
         :class="{ active: route.path === '/profile/settings' }"
         aria-current="route.path === '/profile/settings' ? 'page' : undefined"
       >
-        Profile Settings
+        {{ $t('profile.navigation.profileSettings') }}
       </RouterLink>
       <RouterLink
         to="/profile/posts"
@@ -31,7 +33,7 @@ const openProductModal = (productId) => {
         :class="{ active: route.path === '/profile/posts' }"
         aria-current="route.path === '/profile/posts' ? 'page' : undefined"
       >
-        My Posts
+        {{ $t('profile.navigation.myPosts') }}
       </RouterLink>
       <RouterLink
         to="/profile/wishlist"
@@ -39,7 +41,7 @@ const openProductModal = (productId) => {
         :class="{ active: route.path === '/profile/wishlist' }"
         aria-current="route.path === '/profile/wishlist' ? 'page' : undefined"
       >
-        My Wishlist
+        {{ $t('profile.navigation.myWishlist') }}
       </RouterLink>
       <RouterLink
         to="/profile/purchases"
@@ -47,7 +49,7 @@ const openProductModal = (productId) => {
         :class="{ active: route.path === '/profile/purchases' }"
         aria-current="route.path === '/profile/purchases' ? 'page' : undefined"
       >
-        My Purchases
+        {{ $t('profile.navigation.myPurchases') }}
       </RouterLink>
       <RouterLink
         to="/profile/change-password"
@@ -55,7 +57,7 @@ const openProductModal = (productId) => {
         :class="{ active: route.path === '/profile/change-password' }"
         aria-current="route.path === '/profile/change-password' ? 'page' : undefined"
       >
-        Change Password
+        {{ $t('profile.navigation.changePassword') }}
       </RouterLink>
     </nav>
 

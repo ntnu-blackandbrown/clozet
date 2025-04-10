@@ -59,7 +59,42 @@
     "editProfile": "Rediger Profil",
     "changePassword": "Endre Passord",
     "myCloset": "Min Garderobe",
-    "settings": "Innstillinger"
+    "settings": "Innstillinger",
+    "profileSettings": "Profilinnstillinger",
+    "myPosts": "Mine annonser",
+    "myWishlist": "Min ønskeliste",
+    "myPurchases": "Mine kjøp",
+    "navigation": {
+      "profileSettings": "Profilinnstillinger",
+      "myPosts": "Mine annonser",
+      "myWishlist": "Min ønskeliste",
+      "myPurchases": "Mine kjøp",
+      "changePassword": "Endre passord"
+    },
+    "emptyStates": {
+      "noPosts": "Du har ingen annonser ennå",
+      "noWishlist": "Du har ingen varer i ønskelisten din ennå"
+    },
+    "settings": {
+      "title": "Profilinnstillinger",
+      "saveChanges": "Lagre endringer",
+      "deleteAccount": "Slett konto",
+      "savingChanges": "Lagrer...",
+      "changesSuccess": "Endringene ble lagret! Vennligst logg inn igjen.",
+      "changesFailed": "Kunne ikke lagre endringer",
+      "confirmDelete": "Er du sikker på at du vil slette kontoen din? Denne handlingen kan ikke angres."
+    },
+    "changePassword": {
+      "title": "Endre passord",
+      "description": "Skriv inn ditt nåværende passord og velg et nytt passord.",
+      "currentPassword": "Nåværende passord",
+      "newPassword": "Nytt passord",
+      "confirmNewPassword": "Bekreft nytt passord",
+      "updatePassword": "Oppdater passord",
+      "backToSettings": "Tilbake til innstillinger",
+      "successMessage": "Passordet har blitt oppdatert.",
+      "errorMessage": "Det oppstod en feil. Kontroller nåværende passord og prøv igjen."
+    }
   },
   "home": {
     "welcome": "Velkommen til Clozet!",

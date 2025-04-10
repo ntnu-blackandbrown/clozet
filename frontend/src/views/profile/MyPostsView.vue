@@ -5,6 +5,9 @@ import ProductList from '@/components/product/ProductList.vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useRoute } from 'vue-router'
 import { ProductService } from '@/api/services/ProductService'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const items = ref<Product[]>([])
 const authStore = useAuthStore()
 const route = useRoute()
@@ -59,9 +62,9 @@ onMounted(async () => {
 
 <template>
   <div>
-    <h1 id="my-posts-title">My posts</h1>
+    <h1 id="my-posts-title">{{ $t('profile.myPosts') }}</h1>
     <div v-if="items.length === 0" role="status" aria-live="polite" class="empty-state">
-      You have no posts yet
+      {{ $t('profile.emptyStates.noPosts') }}
     </div>
     <ProductList
       v-else
