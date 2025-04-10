@@ -10,6 +10,9 @@ export type SupportedLocale = typeof SUPPORTED_LOCALES[number]
 // Default locale
 const DEFAULT_LOCALE: SupportedLocale = 'en'
 
+// Check if we're in production
+const isProduction = process.env.NODE_ENV === 'production'
+
 // Get browser locale or fallback to default
 const getBrowserLocale = (): SupportedLocale => {
   try {
@@ -47,12 +50,10 @@ const getInitialLocale = (): SupportedLocale => {
 const initialLocale = getInitialLocale()
 console.log('Initial locale set to:', initialLocale)
 
-// Hard-code the translations to avoid build issues
-const messages = {
-  en,
-  nb,
-  es
-}
+// Create empty messages or real translations based on environment
+const messages = isProduction
+  ? { en: {}, nb: {}, es: {} }  // Empty translations for production (will fall back to keys)
+  : { en, nb, es }             // Real translations for development
 
 // Create i18n instance
 const i18n = createI18n({
@@ -61,10 +62,16 @@ const i18n = createI18n({
   fallbackLocale: DEFAULT_LOCALE,
   messages,
   globalInjection: true,
-  missingWarn: process.env.NODE_ENV === 'development',
-  fallbackWarn: process.env.NODE_ENV === 'development',
-  silentTranslationWarn: process.env.NODE_ENV !== 'development',
-  silentFallbackWarn: process.env.NODE_ENV !== 'development',
+  missingWarn: !isProduction,          // Only warn in development
+  fallbackWarn: !isProduction,         // Only warn in development
+  silentTranslationWarn: isProduction, // Silent in production
+  silentFallbackWarn: isProduction,    // Silent in production
+  // In production mode, create a formatter that returns the key itself
+  ...(isProduction && {
+    missing: (locale: string, key: string) => {
+      return key; // Just return the key in production
+    }
+  })
 })
 
 // Helper function to change locale
