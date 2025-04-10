@@ -7,6 +7,7 @@ on:
       - main
       - 'feature/**'
       - 'task/**'
+      - deploy
   pull_request:
     branches:
       - develop-2.0
