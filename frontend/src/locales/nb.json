@@ -11,20 +11,35 @@
     "cancel": "Avbryt",
     "delete": "Slett",
     "edit": "Rediger",
-    "submit": "Send inn"
+    "submit": "Send inn",
+    "skipToContent": "Hopp til hovedinnhold",
+    "toggleMenu": "Vis/skjul meny",
+    "firstName": "Fornavn",
+    "lastName": "Etternavn",
+    "confirmPassword": "Bekreft passord",
+    "show": "Vis",
+    "hide": "Skjul",
+    "loading": "Laster..."
   },
   "navigation": {
     "home": "Hjem",
     "closet": "Garderobe",
     "profile": "Profil",
-    "settings": "Innstillinger"
+    "settings": "Innstillinger",
+    "messages": "Meldinger",
+    "sellItems": "Selg varer",
+    "adminDashboard": "Admin Dashbord"
   },
   "auth": {
     "loginTitle": "Logg inn på kontoen din",
     "registerTitle": "Opprett en ny konto",
     "forgotPassword": "Glemt passord?",
     "alreadyHaveAccount": "Har du allerede en konto?",
-    "dontHaveAccount": "Har du ikke en konto?"
+    "dontHaveAccount": "Har du ikke en konto?",
+    "loginFailed": "Innlogging mislyktes. Sjekk brukernavn og passord.",
+    "registrationSuccess": "Registrering vellykket! Sjekk e-posten din for verifisering",
+    "registrationFailed": "Registrering mislyktes på grunn av teknisk feil.",
+    "loginFailed2": "Innlogging feilet på grunn av teknisk feil."
   },
   "closet": {
     "addItem": "Legg til plagg",
@@ -46,10 +61,20 @@
     "myCloset": "Min Garderobe",
     "settings": "Innstillinger"
   },
+  "home": {
+    "welcome": "Velkommen til Clozet!",
+    "tagline": "Den nye måten å handle klær på",
+    "searchPlaceholder": "Søk etter et produkt...",
+    "createPost": "Lag en annonse!",
+    "popularCategories": "Populære kategorier",
+    "loading": "Laster...",
+    "pleaseLogin": "Vennligst logg inn for å lage en annonse"
+  },
   "errors": {
     "requiredField": "Dette feltet er påkrevd",
     "invalidEmail": "Vennligst oppgi en gyldig e-postadresse",
     "passwordLength": "Passordet må være minst 8 tegn",
-    "somethingWentWrong": "Noe gikk galt"
+    "somethingWentWrong": "Noe gikk galt",
+    "passwordsDoNotMatch": "Passordene samsvarer ikke"
   }
 } 

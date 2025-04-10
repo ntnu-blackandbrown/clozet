@@ -11,7 +11,9 @@ import {
 } from '@/utils/validation'
 import { AuthService } from '@/api/services/AuthService'
 import * as yup from 'yup'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 const authStore = useAuthStore()
 const emit = defineEmits(['close'])
@@ -41,11 +43,11 @@ const formTitle = computed(() => {
   if (props.customTitle) {
     return isLogin.value ? props.customTitle : props.customTitle.replace('login', 'register')
   }
-  return isLogin.value ? 'Login' : 'Register'
+  return isLogin.value ? t('auth.loginTitle') : t('auth.registerTitle')
 })
 
 const toggleText = computed(() =>
-  isLogin.value ? 'Need an account? Register' : 'Already have an account? Login',
+  isLogin.value ? t('auth.dontHaveAccount') + ' ' + t('common.register') : t('auth.alreadyHaveAccount') + ' ' + t('common.login'),
 )
 
 // Interface for form values
@@ -124,7 +126,7 @@ const toggleForm = () => {
 
 const submit = handleSubmit(async (values) => {
   isSubmitting.value = true
-  statusMessage.value = isLogin.value ? 'Logging in...' : 'Registering user...'
+  statusMessage.value = isLogin.value ? t('common.loading') : t('common.loading')
   statusType.value = 'info'
   debugInfo.value = ''
 
@@ -134,13 +136,13 @@ const submit = handleSubmit(async (values) => {
       const result = await authStore.login(values.username, values.password)
 
       if (result.success) {
-        statusMessage.value = `Login successful!`
+        statusMessage.value = `${t('common.login')} ${t('auth.registrationSuccess')}`
         statusType.value = 'success'
         setTimeout(() => {
           emit('close')
         }, 1500)
       } else {
-        statusMessage.value = 'Log in failed. Check username and password.'
+        statusMessage.value = t('auth.loginFailed')
         statusType.value = 'error'
       }
     } else {
@@ -167,14 +169,14 @@ const submit = handleSubmit(async (values) => {
       )
 
       if (response.status === 200) {
-        statusMessage.value = `Registeration sucessful! Please check your email for verification`
+        statusMessage.value = t('auth.registrationSuccess')
       }
     }
   } catch (error: any) {
     console.error('Error:', error)
     statusMessage.value = isLogin.value
-      ? 'Innlogging feilet på grunn av teknisk feil.'
-      : 'Registrering feilet på grunn av teknisk feil.'
+      ? t('auth.loginFailed2')
+      : t('auth.registrationFailed')
     statusType.value = 'error'
   } finally {
     isSubmitting.value = false
@@ -189,13 +191,13 @@ const submit = handleSubmit(async (values) => {
     <!-- FORM CONTENT-->
     <form @submit.prevent="submit" aria-labelledby="modal-title">
       <div class="form-group">
-        <label for="username" class="sr-only">Username</label>
+        <label for="username" class="sr-only">{{ $t('common.username') }}</label>
         <input
           v-if="isLogin"
           type="text"
           id="username"
           v-model="username"
-          placeholder="Username"
+          :placeholder="$t('common.username')"
           aria-required="true"
           :aria-invalid="!!usernameError"
         />
@@ -206,12 +208,12 @@ const submit = handleSubmit(async (values) => {
 
       <template v-if="!isLogin">
         <div class="form-group">
-          <label for="register-username" class="sr-only">Username</label>
+          <label for="register-username" class="sr-only">{{ $t('common.username') }}</label>
           <input
             id="register-username"
             v-model="username"
             type="text"
-            placeholder="Username"
+            :placeholder="$t('common.username')"
             aria-required="true"
             :aria-invalid="!!usernameError"
           />
@@ -221,12 +223,12 @@ const submit = handleSubmit(async (values) => {
         </div>
 
         <div class="form-group">
-          <label for="firstName" class="sr-only">First Name</label>
+          <label for="firstName" class="sr-only">{{ $t('common.firstName') }}</label>
           <input
             id="firstName"
             v-model="firstName"
             type="text"
-            placeholder="First Name"
+            :placeholder="$t('common.firstName')"
             aria-required="true"
             :aria-invalid="!!firstNameError"
           />
@@ -236,12 +238,12 @@ const submit = handleSubmit(async (values) => {
         </div>
 
         <div class="form-group">
-          <label for="lastName" class="sr-only">Last Name</label>
+          <label for="lastName" class="sr-only">{{ $t('common.lastName') }}</label>
           <input
             id="lastName"
             v-model="lastName"
             type="text"
-            placeholder="Last Name"
+            :placeholder="$t('common.lastName')"
             aria-required="true"
             :aria-invalid="!!lastNameError"
           />
@@ -251,12 +253,12 @@ const submit = handleSubmit(async (values) => {
         </div>
 
         <div class="form-group">
-          <label for="email" class="sr-only">Email</label>
+          <label for="email" class="sr-only">{{ $t('common.email') }}</label>
           <input
             id="email"
             v-model="email"
             type="email"
-            placeholder="Email"
+            :placeholder="$t('common.email')"
             aria-required="true"
             :aria-invalid="!!emailError"
           />
@@ -267,12 +269,12 @@ const submit = handleSubmit(async (values) => {
       </template>
 
       <div class="password-input-container form-group">
-        <label for="password" class="sr-only">Password</label>
+        <label for="password" class="sr-only">{{ $t('common.password') }}</label>
         <input
           id="password"
           v-model="password"
           :type="showPassword ? 'text' : 'password'"
-          placeholder="Password"
+          :placeholder="$t('common.password')"
           aria-required="true"
           :aria-invalid="!!passwordError"
         />
@@ -280,10 +282,10 @@ const submit = handleSubmit(async (values) => {
           type="button"
           @click="showPassword = !showPassword"
           class="toggle-password"
-          :aria-label="showPassword ? 'Hide password' : 'Show password'"
+          :aria-label="showPassword ? $t('common.hide') + ' ' + $t('common.password') : $t('common.show') + ' ' + $t('common.password')"
           aria-controls="password"
         >
-          {{ showPassword ? 'Hide' : 'Show' }}
+          {{ showPassword ? $t('common.hide') : $t('common.show') }}
         </button>
       </div>
       <span class="error" id="passwordErrSpan" v-if="passwordError" role="alert">{{
@@ -291,12 +293,12 @@ const submit = handleSubmit(async (values) => {
       }}</span>
 
       <div v-if="!isLogin" class="password-input-container form-group">
-        <label for="confirmPassword" class="sr-only">Confirm Password</label>
+        <label for="confirmPassword" class="sr-only">{{ $t('common.confirmPassword') }}</label>
         <input
           id="confirmPassword"
           v-model="confirmPassword"
           :type="showPassword ? 'text' : 'password'"
-          placeholder="Confirm Password"
+          :placeholder="$t('common.confirmPassword')"
           aria-required="true"
           :aria-invalid="!!confirmPasswordError"
           aria-describedby="confirmPasswordErrSpan"
@@ -325,9 +327,9 @@ const submit = handleSubmit(async (values) => {
       <button type="submit" :disabled="!isFormValid || isSubmitting" :aria-busy="isSubmitting">
         <span v-if="isSubmitting">
           <span class="spinner" aria-hidden="true"></span>
-          <span class="sr-only">Loading...</span>
+          <span class="sr-only">{{ $t('common.loading') }}</span>
         </span>
-        <span v-else>{{ isLogin ? 'Login' : 'Register' }}</span>
+        <span v-else>{{ isLogin ? $t('common.login') : $t('common.register') }}</span>
       </button>
     </form>
 

@@ -11,20 +11,35 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "edit": "Edit",
-    "submit": "Submit"
+    "submit": "Submit",
+    "skipToContent": "Skip to main content",
+    "toggleMenu": "Toggle navigation menu",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "confirmPassword": "Confirm Password",
+    "show": "Show",
+    "hide": "Hide",
+    "loading": "Loading..."
   },
   "navigation": {
     "home": "Home",
     "closet": "Closet",
     "profile": "Profile",
-    "settings": "Settings"
+    "settings": "Settings",
+    "messages": "Messages",
+    "sellItems": "Sell Items",
+    "adminDashboard": "Admin Dashboard"
   },
   "auth": {
     "loginTitle": "Login to your account",
     "registerTitle": "Create a new account",
     "forgotPassword": "Forgot password?",
     "alreadyHaveAccount": "Already have an account?",
-    "dontHaveAccount": "Don't have an account?"
+    "dontHaveAccount": "Don't have an account?",
+    "loginFailed": "Login failed. Check username and password.",
+    "registrationSuccess": "Registration successful! Please check your email for verification",
+    "registrationFailed": "Registration failed due to technical error.",
+    "loginFailed2": "Login failed due to technical error."
   },
   "closet": {
     "addItem": "Add Item",
@@ -46,10 +61,20 @@
     "myCloset": "My Closet",
     "settings": "Settings"
   },
+  "home": {
+    "welcome": "Welcome to Clozet!",
+    "tagline": "The new way to shop for clothes",
+    "searchPlaceholder": "Search for a product...",
+    "createPost": "Create a post!",
+    "popularCategories": "Popular Categories",
+    "loading": "Loading...",
+    "pleaseLogin": "Please login to create a post"
+  },
   "errors": {
     "requiredField": "This field is required",
     "invalidEmail": "Please enter a valid email",
     "passwordLength": "Password must be at least 8 characters",
-    "somethingWentWrong": "Something went wrong"
+    "somethingWentWrong": "Something went wrong",
+    "passwordsDoNotMatch": "Passwords do not match"
   }
 } 

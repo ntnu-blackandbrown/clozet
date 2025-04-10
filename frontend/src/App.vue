@@ -4,6 +4,7 @@ import LoginRegisterModal from '@/views/LoginRegisterView.vue'
 import { RouterView, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from './stores/AuthStore'
 import Footer from '@/components/layout/Footer.vue'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -69,11 +70,11 @@ const toggleMobileMenu = () => {
 
 <template>
   <div :class="{ blurred: showLoginModal }">
-    <a href="#main-content" class="skip-link sr-only sr-only-focusable">Skip to main content</a>
+    <a href="#main-content" class="skip-link sr-only sr-only-focusable">{{ $t('common.skipToContent') }}</a>
     <header class="main-header" role="banner">
       <div class="header-content">
         <div class="header-left">
-          <RouterLink to="/" class="logo-container" aria-label="Clozet Home">
+          <RouterLink to="/" class="logo-container" :aria-label="$t('navigation.home')">
             <img src="@/assets/light-green.png" alt="Clozet Logo" class="logo-image" />
           </RouterLink>
 
@@ -81,7 +82,7 @@ const toggleMobileMenu = () => {
           <button
             class="hamburger-menu-btn"
             @click="toggleMobileMenu"
-            aria-label="Toggle navigation menu"
+            :aria-label="$t('common.toggleMenu')"
             :aria-expanded="mobileMenuOpen"
             :class="{ 'is-active': mobileMenuOpen }"
           >
@@ -95,39 +96,42 @@ const toggleMobileMenu = () => {
         <nav class="main-nav" :class="{ 'mobile-menu-open': mobileMenuOpen }" aria-label="Main Navigation">
           <template v-if="userDetails?.role === 'ADMIN'">
             <RouterLink to="/admin" class="nav-link admin-link" aria-label="Admin Dashboard"
-              >Admin Dashboard</RouterLink
+              >{{ $t('navigation.adminDashboard') }}</RouterLink
             >
           </template>
           <template v-else>
-            <RouterLink v-if="isLoggedIn" to="/profile" aria-label="User Profile"
-              >Profile</RouterLink
+            <RouterLink v-if="isLoggedIn" to="/profile" :aria-label="$t('navigation.profile')"
+              >{{ $t('navigation.profile') }}</RouterLink
             >
-            <RouterLink v-if="isLoggedIn" to="/messages" aria-label="Messages"
-              >Messages</RouterLink
+            <RouterLink v-if="isLoggedIn" to="/messages" :aria-label="$t('navigation.messages')"
+              >{{ $t('navigation.messages') }}</RouterLink
             >
-            <RouterLink v-if="isLoggedIn" to="/create-product" aria-label="Sell Items"
-              >Sell Items</RouterLink
+            <RouterLink v-if="isLoggedIn" to="/create-product" :aria-label="$t('navigation.sellItems')"
+              >{{ $t('navigation.sellItems') }}</RouterLink
             >
           </template>
 
+          <!-- Language switcher in the nav -->
+          <LanguageSwitcher />
+
           <!-- Mobile-only auth section -->
           <div class="mobile-auth-section">
-            <button v-if="isLoggedIn" @click="logout" class="logout-btn" aria-label="Log Out">
-              Log Out
+            <button v-if="isLoggedIn" @click="logout" class="logout-btn" :aria-label="$t('common.logout')">
+              {{ $t('common.logout') }}
             </button>
-            <button v-else @click="handleLoginClick" class="login-btn" aria-label="Log In">
-              Log In
+            <button v-else @click="handleLoginClick" class="login-btn" :aria-label="$t('common.login')">
+              {{ $t('common.login') }}
             </button>
           </div>
         </nav>
 
         <!-- Desktop auth section -->
         <div class="auth-section">
-          <button v-if="isLoggedIn" @click="logout" class="logout-btn" aria-label="Log Out">
-            Log Out
+          <button v-if="isLoggedIn" @click="logout" class="logout-btn" :aria-label="$t('common.logout')">
+            {{ $t('common.logout') }}
           </button>
-          <button v-else @click="handleLoginClick" class="login-btn" aria-label="Log In">
-            Log In
+          <button v-else @click="handleLoginClick" class="login-btn" :aria-label="$t('common.login')">
+            {{ $t('common.login') }}
           </button>
         </div>
       </div>
