@@ -72,21 +72,6 @@ const updateShippingOption = async () => {
   }
 }
 
-// Delete a shipping option
-const deleteShippingOption = async (id) => {
-  if (!confirm('Are you sure you want to delete this shipping option?')) return
-
-  try {
-    isLoading.value = true
-    await ShippingService.deleteShippingOption(id)
-    await fetchShippingOptions()
-    isLoading.value = false
-  } catch (err) {
-    console.error('Error deleting shipping option:', err)
-    error.value = 'Failed to delete shipping option'
-    isLoading.value = false
-  }
-}
 
 // Form submission handler
 const handleSubmit = () => {
@@ -220,13 +205,8 @@ onMounted(() => {
                 >
                   ✎
                 </button>
-                <button
-                  @click="deleteShippingOption(option.id)"
-                  class="btn-icon delete"
-                  aria-label="Delete shipping option: {{ option.name }}"
-                >
-                  🗑
-                </button>
+
+              
               </td>
             </tr>
           </tbody>

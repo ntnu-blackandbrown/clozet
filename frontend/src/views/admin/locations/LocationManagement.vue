@@ -71,22 +71,6 @@ const updateLocation = async () => {
   }
 }
 
-// Delete a location
-const deleteLocation = async (id) => {
-  if (!confirm('Are you sure you want to delete this location?')) return
-
-  try {
-    isLoading.value = true
-    await LocationService.deleteLocation(id)
-    await fetchLocations()
-    isLoading.value = false
-  } catch (err) {
-    console.error('Error deleting location:', err)
-    error.value = 'Failed to delete location'
-    isLoading.value = false
-  }
-}
-
 // Form submission handler
 const handleSubmit = () => {
   if (formMode.value === 'add') {
@@ -199,13 +183,6 @@ onMounted(() => {
                   aria-label="Edit location: {{ location.city }}"
                 >
                   ✎
-                </button>
-                <button
-                  @click="deleteLocation(location.id)"
-                  class="btn-icon delete"
-                  aria-label="Delete location: {{ location.city }}"
-                >
-                  🗑
                 </button>
               </td>
             </tr>

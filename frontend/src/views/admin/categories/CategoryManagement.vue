@@ -120,6 +120,10 @@ const resetForm = () => {
     name: '',
     description: '',
     parentId: null,
+    createdAt: new Date().toLocaleString(),
+    updatedAt: new Date().toLocaleString(),
+    subcategoryIds: [],
+    parentName: '',
   }
   formErrors.value = {}
 }
