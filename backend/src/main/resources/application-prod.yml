@@ -2,8 +2,8 @@ spring:
   mail:
     host: smtp.mailgun.org
     port: 587
-    username: postmaster@sandboxfdcc87999ac24145b0bd86a2e294e6fa.mailgun.org
-    password: 7974075e8b62f3923473fce9929bab05-2b77fbb2-910c924c
+    username: ${MAILGUN_SMTP_USERNAME}
+    password: ${MAILGUN_SMTP_PASSWORD}
     properties:
       mail:
         smtp:
@@ -16,18 +16,18 @@ spring:
 
 app:
   email:
-    from: postmaster@sandboxfdcc87999ac24145b0bd86a2e294e6fa.mailgun.org
-    base-url: https://clozet.netlify.app/  # bytt til frontend-produksjonsdomene om nødvendig
+    from: ${MAILGUN_FROM_ADDRESS}
+    base-url: https://clozet.netlify.app/
     verification-expiry-hours: 24
     password-reset-expiry-hours: 1
 
   jwt:
-    secret: AZTwI6sasm/p1KfaPZiSyGzIwDsEe70xTWG4H4TXatDcrqSOgWgACv1z05zhJnBIBGNWOUGuNZUnkwt86V2cqg==
+    secret: ${JWT_SECRET}
     expiration: 3600000
     cookie-max-age: 3600
-    refresh-expiration: 604800000  # 7 days in milliseconds
-    refresh-cookie-max-age: 604800  # 7 days in seconds
-    secure-cookie: true  # Production bør ha secure cookies!
+    refresh-expiration: 604800000  # 7 dager i millisekunder
+    refresh-cookie-max-age: 604800  # 7 dager i sekunder
+    secure-cookie: true
 
   upload:
     dir: uploads
@@ -36,6 +36,6 @@ app:
     use-cloudinary: true
 
   cloudinary:
-    cloud-name: dmoe4eqt4
-    api-key: 298875699675921
-    api-secret: 1kAWETGi8leIYAugHlCtvH7rBAg
+    cloud-name: ${CLOUDINARY_CLOUD_NAME}
+    api-key: ${CLOUDINARY_API_KEY}
+    api-secret: ${CLOUDINARY_API_SECRET}

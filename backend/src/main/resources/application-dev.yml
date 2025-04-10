@@ -2,6 +2,6 @@ spring:
   storage:
     use-cloudinary: true
   cloudinary:
-    cloud-name: dmoe4eqt4
-    api-key: 298875699675921
-    api-secret: 1kAWETGi8leIYAugHlCtvH7rBAg
+    cloud-name: ${CLOUDINARY_CLOUD_NAME}
+    api-key: ${CLOUDINARY_API_KEY}
+    api-secret: ${CLOUDINARY_API_SECRET}

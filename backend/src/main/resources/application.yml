@@ -35,7 +35,7 @@ spring:
 # Application-specific settings
 app:
   jwt:
-    secret: AZTwI6sasm/p1KfaPZiSyGzIwDsEe70xTWG4H4TXatDcrqSOgWgACv1z05zhJnBIBGNWOUGuNZUnkwt86V2cqg==
+    secret: ${JWT_SECRET}
     expiration: 3600000
     cookie-max-age: 3600
     refresh-expiration: 604800000
