@@ -155,18 +155,34 @@ const router = createRouter({
 })
 
 // Navigation guard
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
-  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
-    // Redirect to home page if trying to access protected route while not logged in
-    next('/')
-  } else if (to.meta.requiresAdmin && authStore.userDetails?.role !== 'ADMIN') {
-    // Redirect to home page if trying to access admin route while not an admin
-    next('/')
-  } else {
-    next()
+  // Check if route requires authentication
+  if (to.meta.requiresAuth) {
+    // Verify authentication status
+    const isAuthenticated = await authStore.checkAuth()
+
+    if (!isAuthenticated) {
+      // Store the intended destination for redirect after login
+      return next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    }
+
+    // Check if admin access is required
+    if (to.meta.requiresAdmin && authStore.userDetails?.role !== 'ADMIN') {
+      return next('/')
+    }
   }
+
+  // Handle redirecting from login page when already authenticated
+  if ((to.name === 'login' || to.name === 'register') && authStore.isLoggedIn) {
+    return next('/')
+  }
+
+  next()
 })
 
 export default router

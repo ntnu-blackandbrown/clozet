@@ -43,7 +43,13 @@ export const useFavoritesStore = defineStore('favorites', () => {
       console.log('Favorites fetched:', favoritesMap.value)
     } catch (err: any) {
       console.error('Failed to fetch user favorites:', err)
-      error.value = 'Failed to load favorites.'
+      // Don't set error on 500 responses since it could be temporary
+      // Only set user-facing error for persistent issues
+      if (err.response?.status !== 500) {
+        error.value = 'Failed to load favorites.'
+      } else {
+        console.log('Server error fetching favorites, will retry on next request')
+      }
     } finally {
       isLoading.value = false
     }
@@ -105,15 +111,30 @@ export const useFavoritesStore = defineStore('favorites', () => {
     () => authStore.user,
     (newUser) => {
       if (newUser) {
-        fetchUserFavorites() // Fetch favorites when user logs in
+        // Add a small delay before fetching favorites to ensure token is properly set
+        console.log('👁️ User state changed - User logged in, will fetch favorites after delay')
+        setTimeout(() => {
+          fetchUserFavorites() // Fetch favorites when user logs in
+        }, 1000) // Increase to 1000ms to ensure token is fully processed
       } else {
         // Clear favorites when user logs out
         favoritesMap.value.clear()
-        console.log('User logged out, favorites cleared.')
+        console.log('👁️ User state changed - User logged out, favorites cleared.')
       }
     },
-    { immediate: true },
-  ) // immediate: true to run on store initialization if user is already logged in
+    { immediate: false }, // Change to false to avoid immediate triggering on page load
+  ) // This will now only trigger on actual user state changes
+
+  async function initializeFavorites() {
+    // Call this method explicitly after authentication is confirmed
+    console.log('🔄 Manually initializing favorites')
+    if (authStore.isLoggedIn) {
+      return fetchUserFavorites()
+    } else {
+      console.log('⚠️ Cannot initialize favorites - user not logged in')
+      return null
+    }
+  }
 
   return {
     favoritesMap,
@@ -124,5 +145,6 @@ export const useFavoritesStore = defineStore('favorites', () => {
     fetchUserFavorites,
     addFavorite,
     removeFavorite,
+    initializeFavorites
   }
 })

@@ -39,7 +39,7 @@ describe('useWebsocket store', () => {
     // Mock an authenticated user
     authStore.user = {
       id: 123,
-      usernameOrEmail: 'Test User',
+      username: 'Test User',
       email: 'test@example.com',
       active: true,
       role: 'user',

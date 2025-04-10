@@ -75,7 +75,8 @@ public class SecurityConfig {
         
         // Instead of using patterns, we'll validate origins in the configure method
         corsConfig.setAllowedOrigins(Collections.emptyList()); // We'll manually validate origins
-        corsConfig.setAllowedOriginPatterns(Arrays.asList("*")); // Allow any origin for initial processing
+        // Don't use wildcard patterns with allowCredentials=true
+        corsConfig.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173", "https://clozet.netlify.app"));
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         corsConfig.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Accept", "X-Requested-With", "remember-me"));
         corsConfig.setExposedHeaders(Arrays.asList("Content-Type"));
