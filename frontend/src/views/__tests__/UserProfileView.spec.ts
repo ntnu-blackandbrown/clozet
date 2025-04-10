@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createRouter, createWebHistory } from 'vue-router'
 import { createI18n } from 'vue-i18n'
-import ProfileLayout from '@/path/to/ProfileLayout.vue' // <-- Adjust to your file path
+import ProfileLayout from '@/views/profile/ProfileLayout.vue' // Update to the correct path
 import ProductDisplayModal from '@/components/modals/ProductDisplayModal.vue'
 
 // Optional: mock the ProductDisplayModal if you don't want to fully render it
@@ -19,6 +19,7 @@ describe('ProfileLayout.vue', () => {
 
   // Minimal i18n messages
   const i18n = createI18n({
+    legacy: false, // Add this to match the i18nMock.ts setting
     locale: 'en',
     messages: {
       en: {

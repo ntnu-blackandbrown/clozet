@@ -43,6 +43,15 @@ vi.mock('vue-router', () => ({
   }))
 }))
 
+// Helper function to create a mock Axios response
+const createAxiosResponse = (data: any) => ({
+  data,
+  status: 200,
+  statusText: 'OK',
+  headers: {},
+  config: {} as any
+})
+
 describe('MyWishlistView', () => {
   let i18n: I18n;
 
@@ -82,17 +91,20 @@ describe('MyWishlistView', () => {
       { id: 103, name: 'Item 103', price: 300, description: 'Desc 103' } // Not in favorites
     ];
 
-    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue({ data: mockFavorites });
-    vi.mocked(ProductService.getAllItems).mockResolvedValue({ data: mockMarketplaceItems });
+    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue(createAxiosResponse(mockFavorites));
+    vi.mocked(ProductService.getAllItems).mockResolvedValue(createAxiosResponse(mockMarketplaceItems));
 
     // Mock image fetching for the two favorited items
     vi.mocked(ProductService.getItemImages)
-      .mockResolvedValueOnce({ data: [{ imageUrl: '/image101.jpg' }] })
-      .mockResolvedValueOnce({ data: [{ imageUrl: '/image102.jpg' }] });
+      .mockResolvedValueOnce(createAxiosResponse([{ imageUrl: '/image101.jpg' }]))
+      .mockResolvedValueOnce(createAxiosResponse([{ imageUrl: '/image102.jpg' }]));
 
     const wrapper = mount(MyWishlistView, {
       global: {
-        plugins: [i18n]
+        plugins: [i18n],
+        stubs: {
+          ProductList: true
+        }
       }
     });
 
@@ -117,14 +129,15 @@ describe('MyWishlistView', () => {
 
   it('shows empty state when wishlist is empty', async () => {
     // Mock empty favorites
-    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue({ data: [] });
-    vi.mocked(ProductService.getAllItems).mockResolvedValue({
-      data: [{ id: 101, name: 'Item 101' }]
-    });
+    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue(createAxiosResponse([]));
+    vi.mocked(ProductService.getAllItems).mockResolvedValue(createAxiosResponse([{ id: 101, name: 'Item 101' }]));
 
     const wrapper = mount(MyWishlistView, {
       global: {
-        plugins: [i18n]
+        plugins: [i18n],
+        stubs: {
+          ProductList: true
+        }
       }
     });
 
@@ -147,7 +160,10 @@ describe('MyWishlistView', () => {
 
     const wrapper = mount(MyWishlistView, {
       global: {
-        plugins: [i18n]
+        plugins: [i18n],
+        stubs: {
+          ProductList: true
+        }
       }
     });
 
@@ -165,16 +181,19 @@ describe('MyWishlistView', () => {
 
   it('handles marketplace items API error gracefully', async () => {
     // Mock favorites success but marketplace error
-    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue({
-      data: [{ id: 1, userId: 1, itemId: 101 }]
-    });
+    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue(
+      createAxiosResponse([{ id: 1, userId: 1, itemId: 101 }])
+    );
     vi.mocked(ProductService.getAllItems).mockRejectedValue(new Error('Failed to fetch items'));
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const wrapper = mount(MyWishlistView, {
       global: {
-        plugins: [i18n]
+        plugins: [i18n],
+        stubs: {
+          ProductList: true
+        }
       }
     });
 
@@ -192,19 +211,22 @@ describe('MyWishlistView', () => {
 
   it('handles image fetch error gracefully', async () => {
     // Mock data with one favorited item
-    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue({
-      data: [{ id: 1, userId: 1, itemId: 101 }]
-    });
-    vi.mocked(ProductService.getAllItems).mockResolvedValue({
-      data: [{ id: 101, name: 'Item 101' }]
-    });
+    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue(
+      createAxiosResponse([{ id: 1, userId: 1, itemId: 101 }])
+    );
+    vi.mocked(ProductService.getAllItems).mockResolvedValue(
+      createAxiosResponse([{ id: 101, name: 'Item 101' }])
+    );
     vi.mocked(ProductService.getItemImages).mockRejectedValue(new Error('Image fetch failed'));
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const wrapper = mount(MyWishlistView, {
       global: {
-        plugins: [i18n]
+        plugins: [i18n],
+        stubs: {
+          ProductList: true
+        }
       }
     });
 
@@ -228,12 +250,15 @@ describe('MyWishlistView', () => {
     }));
 
     // Mock empty data to simplify test
-    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue({ data: [] });
-    vi.mocked(ProductService.getAllItems).mockResolvedValue({ data: [] });
+    vi.mocked(FavoritesService.getUserFavorites).mockResolvedValue(createAxiosResponse([]));
+    vi.mocked(ProductService.getAllItems).mockResolvedValue(createAxiosResponse([]));
 
     const wrapper = mount(MyWishlistView, {
       global: {
-        plugins: [i18n]
+        plugins: [i18n],
+        stubs: {
+          ProductList: true
+        }
       }
     });
 

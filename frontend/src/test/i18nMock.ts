@@ -5,7 +5,7 @@ import { createI18n, type I18n } from 'vue-i18n'
  * @param customMessages Optional custom messages to override defaults
  * @returns A configured i18n instance
  */
-export function createMockI18n(customMessages = {}): I18n {
+export function createMockI18n(customMessages: Record<string, any> = {}): I18n {
   const defaultMessages = {
     en: {
       navigation: {

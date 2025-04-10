@@ -36,6 +36,15 @@ vi.mock('vue-router', () => ({
   }))
 }))
 
+// Helper function to create a mock Axios response
+const createAxiosResponse = (data: any) => ({
+  data,
+  status: 200,
+  statusText: 'OK',
+  headers: {},
+  config: {} as any
+})
+
 describe('MyPostsView', () => {
   let i18n: I18n;
 
@@ -68,16 +77,17 @@ describe('MyPostsView', () => {
       { id: 2, name: 'Item 2', price: 200, description: 'Desc 2', available: false }
     ];
 
-    vi.mocked(ProductService.getItemsBySeller).mockResolvedValue({ data: mockItems });
-    vi.mocked(ProductService.getItemImages).mockResolvedValueOnce({
-      data: [{ imageUrl: '/image1.jpg' }]
-    }).mockResolvedValueOnce({
-      data: [{ imageUrl: '/image2.jpg' }]
-    });
+    vi.mocked(ProductService.getItemsBySeller).mockResolvedValue(createAxiosResponse(mockItems));
+    vi.mocked(ProductService.getItemImages)
+      .mockResolvedValueOnce(createAxiosResponse([{ imageUrl: '/image1.jpg' }]))
+      .mockResolvedValueOnce(createAxiosResponse([{ imageUrl: '/image2.jpg' }]));
 
     const wrapper = mount(MyPostsView, {
       global: {
-        plugins: [i18n]
+        plugins: [i18n],
+        stubs: {
+          ProductList: true
+        }
       }
     });
 
@@ -100,11 +110,14 @@ describe('MyPostsView', () => {
 
   it('shows empty state when user has no posts', async () => {
     // Mock empty items response
-    vi.mocked(ProductService.getItemsBySeller).mockResolvedValue({ data: [] });
+    vi.mocked(ProductService.getItemsBySeller).mockResolvedValue(createAxiosResponse([]));
 
     const wrapper = mount(MyPostsView, {
       global: {
-        plugins: [i18n]
+        plugins: [i18n],
+        stubs: {
+          ProductList: true
+        }
       }
     });
 
@@ -127,7 +140,10 @@ describe('MyPostsView', () => {
 
     const wrapper = mount(MyPostsView, {
       global: {
-        plugins: [i18n]
+        plugins: [i18n],
+        stubs: {
+          ProductList: true
+        }
       }
     });
 
@@ -146,14 +162,17 @@ describe('MyPostsView', () => {
   it('handles image fetch error gracefully', async () => {
     const mockItems = [{ id: 1, name: 'Item 1', price: 100, description: 'Desc 1', available: true }];
 
-    vi.mocked(ProductService.getItemsBySeller).mockResolvedValue({ data: mockItems });
+    vi.mocked(ProductService.getItemsBySeller).mockResolvedValue(createAxiosResponse(mockItems));
     vi.mocked(ProductService.getItemImages).mockRejectedValue(new Error('Image fetch failed'));
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const wrapper = mount(MyPostsView, {
       global: {
-        plugins: [i18n]
+        plugins: [i18n],
+        stubs: {
+          ProductList: true
+        }
       }
     });
 
@@ -176,11 +195,14 @@ describe('MyPostsView', () => {
       }))
     }));
 
-    vi.mocked(ProductService.getItemsBySeller).mockResolvedValue({ data: [] });
+    vi.mocked(ProductService.getItemsBySeller).mockResolvedValue(createAxiosResponse([]));
 
     const wrapper = mount(MyPostsView, {
       global: {
-        plugins: [i18n]
+        plugins: [i18n],
+        stubs: {
+          ProductList: true
+        }
       }
     });
 
