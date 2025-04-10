@@ -34,6 +34,15 @@ axiosInstance.interceptors.response.use(
   async error => {
     const originalRequest = error.config
 
+    // Determine if current request is a login attempt
+    const isLoginAttempt = originalRequest.url?.includes('/api/auth/login') && originalRequest.method === 'post'
+
+    // Skip refresh token process for login failures
+    if (isLoginAttempt) {
+      console.log('🛑 Login attempt failed, not attempting token refresh')
+      return Promise.reject(error)
+    }
+
     // If error is not 401 or request has already been retried, reject immediately
     if (error.response?.status !== 401 || originalRequest._retry) {
       return Promise.reject(error)

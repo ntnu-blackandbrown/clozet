@@ -26,12 +26,18 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = computed(() => !!user.value)
   const userDetails = computed(() => user.value)
 
+  // Add a new flag to track refresh attempts
+  const refreshAttempted = ref(false)
+
   const login = async (usernameOrEmail: string, password: string) => {
     try {
       console.log('🔐 Login attempt:', usernameOrEmail)
       loading.value = true
       const response = await AuthService.login(usernameOrEmail, password)
       console.log('✅ Login successful')
+
+      // Reset refresh attempts flag on successful login
+      refreshAttempted.value = false
 
       // On successful login, fetch user details
       await fetchUserInfo()
@@ -79,6 +85,8 @@ export const useAuthStore = defineStore('auth', () => {
       loading.value = true
       await AuthService.logout()
       user.value = null
+      // Reset refresh attempts flag on logout
+      refreshAttempted.value = false
       console.log('🚪 Logout successful')
       return { success: true, message: 'Logout successful' }
     } catch (error) {
@@ -134,8 +142,15 @@ export const useAuthStore = defineStore('auth', () => {
 
   const silentRefresh = async () => {
     // For use on page refresh - tries to refresh token without showing errors
+    // Skip if we've already attempted refreshing in this session
+    if (refreshAttempted.value) {
+      console.log('🚫 Skipping silent refresh - already attempted in this session')
+      return false
+    }
+
     try {
       console.log('🔄 Silent refresh attempt')
+      refreshAttempted.value = true
 
       // First try to fetch user info with current token
       const userResult = await fetchUserInfo().catch(() => null)
@@ -155,18 +170,22 @@ export const useAuthStore = defineStore('auth', () => {
       console.log('ℹ️ Silent refresh failed - user not authenticated')
       user.value = null
       return false
-
     }
   }
     const deleteUser = async () => {
     try {
       console.log('Deleting user:', user.value?.id)
+      loading.value = true
       await AuthService.deleteUser(user.value?.id?.toString() ?? '')
+      console.log('✅ User deleted successfully')
+      user.value = null
+      return { success: true, message: 'User deleted successfully' }
     } catch (error) {
-      console.error('Delete user error:', error)
+      console.error('❌ Delete user error:', error)
+      return { success: false, message: 'Failed to delete user' }
+    } finally {
+      loading.value = false
     }
-
-
   }
 
   return {
@@ -174,6 +193,7 @@ export const useAuthStore = defineStore('auth', () => {
     isLoggedIn,
     userDetails,
     loading,
+    refreshAttempted,
     login,
     fetchUserInfo,
     logout,

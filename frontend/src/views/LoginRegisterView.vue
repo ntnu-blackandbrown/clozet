@@ -142,8 +142,9 @@ const submit = handleSubmit(async (values) => {
           emit('close')
         }, 1500)
       } else {
-        statusMessage.value = t('auth.loginFailed')
+        statusMessage.value = result.message || t('auth.loginFailed')
         statusType.value = 'error'
+        isSubmitting.value = false // Reset loading state immediately on login failure
       }
     } else {
       // Direct registration with correct endpoint
