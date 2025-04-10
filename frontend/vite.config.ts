@@ -17,7 +17,6 @@ export default defineConfig(({ mode }) => {
       vue({
         script: {
           // Prevent importing .json from being converted to URL
-          refTransform: false
         }
       }),
       vueJsx(),
