@@ -210,8 +210,6 @@ frontend/
    - Spring Boot 3.4.4 with Java 21
    - JPA for data access
    - H2 for development, PostgreSQL for production
-   - Redis for caching
-   - Elasticsearch for search functionality
    - Cloudinary for image management
    - REST API with Spring REST Docs
    - WebSocket with SockJS/STOMP
@@ -257,8 +255,6 @@ graph TB
     Repository --> Entity[Entity Layer]
     Mapper --> DTO[DTO Layer]
     Controller --> DTO
-    Service --> Cache[(Redis)]
-    Service --> Search[(Elasticsearch)]
 ```
 
 #### Frontend Architecture
@@ -279,20 +275,11 @@ sequenceDiagram
     participant A as API Gateway
     participant S as Service Layer
     participant D as Database
-    participant R as Redis Cache
-    participant E as Elasticsearch
     
     C->>A: HTTP Request
     A->>S: Process Request
-    S->>R: Check Cache
-    alt Cache Hit
-        R-->>S: Return Cached Data
-    else Cache Miss
-        S->>D: Query Database
-        D-->>S: Return Data
-        S->>R: Update Cache
-    end
-    S->>E: Index Data
+    S->>D: Query Database
+    D-->>S: Return Data
     S-->>A: Return Response
     A-->>C: HTTP Response
 ```
