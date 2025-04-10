@@ -70,6 +70,50 @@
     "loading": "Laster...",
     "pleaseLogin": "Vennligst logg inn for å lage en annonse"
   },
+  "createProduct": {
+    "title": "Opprett nytt produkt",
+    "editTitle": "Rediger produkt",
+    "sections": {
+      "images": "Produktbilder",
+      "basicInfo": "Grunnleggende informasjon",
+      "details": "Produktdetaljer",
+      "locationShipping": "Sted og forsendelse"
+    },
+    "imageUpload": {
+      "dragDrop": "Dra og slipp bilder her eller klikk for å velge",
+      "maxImages": "Maksimalt {max} bilder tillatt",
+      "required": "Minst ett bilde er påkrevd for et nytt produkt",
+      "keepCurrent": "Nåværende bilder vil bli beholdt. Last opp nye bilder for å erstatte dem."
+    },
+    "fields": {
+      "title": "Tittel",
+      "shortDescription": "Kort beskrivelse",
+      "longDescription": "Lang beskrivelse",
+      "price": "Pris (NOK)",
+      "category": "Kategori",
+      "condition": "Tilstand",
+      "size": "Størrelse",
+      "brand": "Merke",
+      "color": "Farge",
+      "location": "Sted",
+      "shipping": "Fraktalternativ",
+      "vippsPayment": "Aktiver Vipps-betaling"
+    },
+    "placeholders": {
+      "selectCategory": "Velg en kategori",
+      "selectCondition": "Velg tilstand",
+      "selectSize": "Velg størrelse",
+      "selectLocation": "Velg sted",
+      "selectShipping": "Velg fraktalternativ"
+    },
+    "buttons": {
+      "cancel": "Avbryt",
+      "create": "Opprett produkt",
+      "update": "Oppdater produkt",
+      "creating": "Oppretter...",
+      "updating": "Oppdaterer..."
+    }
+  },
   "errors": {
     "requiredField": "Dette feltet er påkrevd",
     "invalidEmail": "Vennligst oppgi en gyldig e-postadresse",

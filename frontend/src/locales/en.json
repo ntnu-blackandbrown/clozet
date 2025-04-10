@@ -70,6 +70,50 @@
     "loading": "Loading...",
     "pleaseLogin": "Please login to create a post"
   },
+  "createProduct": {
+    "title": "Create New Product",
+    "editTitle": "Edit Product",
+    "sections": {
+      "images": "Product Images",
+      "basicInfo": "Basic Information",
+      "details": "Product Details",
+      "locationShipping": "Location & Shipping"
+    },
+    "imageUpload": {
+      "dragDrop": "Drag and drop images here or click to select",
+      "maxImages": "Maximum {max} images allowed",
+      "required": "At least one image is required for a new product",
+      "keepCurrent": "Current images will be kept. Upload new images to replace them."
+    },
+    "fields": {
+      "title": "Title",
+      "shortDescription": "Short Description",
+      "longDescription": "Long Description",
+      "price": "Price (NOK)",
+      "category": "Category",
+      "condition": "Condition",
+      "size": "Size",
+      "brand": "Brand",
+      "color": "Color",
+      "location": "Location",
+      "shipping": "Shipping Option",
+      "vippsPayment": "Enable Vipps Payment"
+    },
+    "placeholders": {
+      "selectCategory": "Select a category",
+      "selectCondition": "Select condition",
+      "selectSize": "Select size",
+      "selectLocation": "Select location",
+      "selectShipping": "Select shipping option"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "create": "Create Product",
+      "update": "Update Product",
+      "creating": "Creating...",
+      "updating": "Updating..."
+    }
+  },
   "errors": {
     "requiredField": "This field is required",
     "invalidEmail": "Please enter a valid email",
