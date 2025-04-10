@@ -1,28 +1,37 @@
 package stud.ntnu.no.backend.user.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import stud.ntnu.no.backend.item.entity.Item;
 import stud.ntnu.no.backend.favorite.entity.Favorite;
+import stud.ntnu.no.backend.item.entity.Item;
 
 /**
  * Represents a user entity in the system.
  * <p>
- * This entity is mapped to the "users" table in the database and stores comprehensive user information
- * including authentication credentials, personal profile details, account status, and verification data.
+ * This entity is mapped to the "users" table in the database and stores comprehensive user
+ * information including authentication credentials, personal profile details, account status, and
+ * verification data.
  * </p>
  * <p>
- * Users can have various roles that determine their access rights within the application.
- * Each user has a unique username and email address which are used for identification and authentication.
+ * Users can have various roles that determine their access rights within the application. Each user
+ * has a unique username and email address which are used for identification and authentication.
  * </p>
  */
 @Entity
 @Table(name = "users")
 public class User {
+
   /**
    * The unique identifier for the user.
    */
@@ -31,55 +40,53 @@ public class User {
   private Long id;
 
   /**
-   * The unique username chosen by the user.
-   * Used for authentication and identification.
+   * The unique username chosen by the user. Used for authentication and identification.
    */
   @Column(unique = true, nullable = false)
   private String username;
 
   /**
-   * The unique email address of the user.
-   * Used for communication and can be used for authentication.
+   * The unique email address of the user. Used for communication and can be used for
+   * authentication.
    */
   @Column(unique = true, nullable = false)
   private String email;
 
   /**
-   * The hashed password of the user.
-   * Raw passwords should never be stored in the database.
+   * The hashed password of the user. Raw passwords should never be stored in the database.
    */
   @Column(name = "password_hash", nullable = false)
   private String passwordHash;
 
   /**
-   * The role of the user within the system.
-   * Example values might include "ROLE_USER", "ROLE_ADMIN", etc.
+   * The role of the user within the system. Example values might include "ROLE_USER", "ROLE_ADMIN",
+   * etc.
    */
   private String role;
-  
+
   /**
    * The first name of the user.
    */
   private String firstName;
-  
+
   /**
    * The last name of the user.
    */
   private String lastName;
-  
+
   /**
    * The timestamp when the user account was created.
    */
   private LocalDateTime createdAt;
-  
+
   /**
    * The timestamp when the user account was last updated.
    */
   private LocalDateTime updatedAt;
 
   /**
-   * Flag indicating whether the user account is active.
-   * Inactive accounts cannot log in to the system.
+   * Flag indicating whether the user account is active. Inactive accounts cannot log in to the
+   * system.
    */
   @Column(nullable = false)
   private boolean isActive;
@@ -88,7 +95,7 @@ public class User {
    * Token used for email verification when registering.
    */
   private String verificationToken;
-  
+
   /**
    * The expiration time of the verification token.
    */
@@ -98,22 +105,23 @@ public class User {
    * URL to the user's profile picture.
    */
   private String profilePictureUrl;
-  
+
   /**
-   * Items listed by this user.
-   * When the user is deleted, this will trigger cascade deletion of all items.
+   * Items listed by this user. When the user is deleted, this will trigger cascade deletion of all
+   * items.
    */
   @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Item> items = new ArrayList<>();
-  
+
   /**
-   * Favorites created by this user.
-   * When the user is deleted, this will trigger cascade deletion of all favorites.
+   * Favorites created by this user. When the user is deleted, this will trigger cascade deletion of
+   * all favorites.
    */
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Favorite> favorites = new HashSet<>();
 
   // Getters and setters
+
   /**
    * Returns the URL to the user's profile picture.
    *
@@ -349,9 +357,9 @@ public class User {
   }
 
   /**
-   * Sets the full name of the user by splitting the input string into first and last name.
-   * If the full name contains a space, the text before the first space is set as the first name,
-   * and everything after it is set as the last name.
+   * Sets the full name of the user by splitting the input string into first and last name. If the
+   * full name contains a space, the text before the first space is set as the first name, and
+   * everything after it is set as the last name.
    *
    * @param fullName the full name of the user to be split into first and last name
    */
@@ -366,7 +374,7 @@ public class User {
       }
     }
   }
-  
+
   /**
    * Returns the items listed by this user.
    *

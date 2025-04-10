@@ -1,16 +1,22 @@
 package stud.ntnu.no.backend.location.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * Represents a location entity.
  * <p>
- * This class is mapped to the "locations" table in the database and holds
- * information about a location, including its ID, city, region, latitude, and longitude.
+ * This class is mapped to the "locations" table in the database and holds information about a
+ * location, including its ID, city, region, latitude, and longitude.
  */
 @Entity
 @Table(name = "locations")
 public class Location {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

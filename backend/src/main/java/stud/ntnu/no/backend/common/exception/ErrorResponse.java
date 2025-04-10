@@ -9,74 +9,75 @@ import java.time.LocalDateTime;
  * </p>
  */
 public class ErrorResponse {
-    private String message;
-    private LocalDateTime timestamp;
-    private int status;
 
-    /**
-     * Constructs an {@code ErrorResponse} with the specified details.
-     *
-     * @param message   the error message
-     * @param timestamp the time the error occurred
-     * @param status the HTTP status code
-     */
-    public ErrorResponse(String message, LocalDateTime timestamp, int status) {
-        this.message = message;
-        this.timestamp = timestamp;
-        this.status = status;
-    }
+  private String message;
+  private LocalDateTime timestamp;
+  private int status;
 
-    /**
-     * Returns the error message.
-     *
-     * @return the error message
-     */
-    public String getMessage() {
-        return message;
-    }
+  /**
+   * Constructs an {@code ErrorResponse} with the specified details.
+   *
+   * @param message   the error message
+   * @param timestamp the time the error occurred
+   * @param status    the HTTP status code
+   */
+  public ErrorResponse(String message, LocalDateTime timestamp, int status) {
+    this.message = message;
+    this.timestamp = timestamp;
+    this.status = status;
+  }
 
-    /**
-     * Sets the error message.
-     *
-     * @param message the error message
-     */
-    public void setMessage(String message) {
-        this.message = message;
-    }
+  /**
+   * Returns the error message.
+   *
+   * @return the error message
+   */
+  public String getMessage() {
+    return message;
+  }
 
-    /**
-     * Returns the timestamp of the error.
-     *
-     * @return the timestamp
-     */
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
+  /**
+   * Sets the error message.
+   *
+   * @param message the error message
+   */
+  public void setMessage(String message) {
+    this.message = message;
+  }
 
-    /**
-     * Sets the timestamp of the error.
-     *
-     * @param timestamp the timestamp
-     */
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
+  /**
+   * Returns the timestamp of the error.
+   *
+   * @return the timestamp
+   */
+  public LocalDateTime getTimestamp() {
+    return timestamp;
+  }
 
-    /**
-     * Returns the HTTP status code.
-     *
-     * @return the status code
-     */
-    public int getStatusCode() {
-        return status;
-    }
+  /**
+   * Sets the timestamp of the error.
+   *
+   * @param timestamp the timestamp
+   */
+  public void setTimestamp(LocalDateTime timestamp) {
+    this.timestamp = timestamp;
+  }
 
-    /**
-     * Sets the HTTP status code.
-     *
-     * @param statusCode the status code
-     */
-    public void setStatusCode(int statusCode) {
-        this.status = statusCode;
-    }
+  /**
+   * Returns the HTTP status code.
+   *
+   * @return the status code
+   */
+  public int getStatusCode() {
+    return status;
+  }
+
+  /**
+   * Sets the HTTP status code.
+   *
+   * @param statusCode the status code
+   */
+  public void setStatusCode(int statusCode) {
+    this.status = statusCode;
+  }
 }

@@ -1,88 +1,89 @@
 package stud.ntnu.no.backend.itemimage.dto;
 
 /**
- * Data Transfer Object (DTO) for creating an item image.
- * Contains information about the item ID, image URL, primary status, and display order.
+ * Data Transfer Object (DTO) for creating an item image. Contains information about the item ID,
+ * image URL, primary status, and display order.
  */
 public class CreateItemImageDTO {
-    private Long itemId;
-    private String imageUrl;
-    private boolean isPrimary;
-    private int displayOrder;
 
-    // Constructor
-    public CreateItemImageDTO() {
-    }
+  private Long itemId;
+  private String imageUrl;
+  private boolean isPrimary;
+  private int displayOrder;
 
-    /**
-     * Retrieves the item ID.
-     *
-     * @return The ID of the item
-     */
-    public Long getItemId() {
-        return itemId;
-    }
+  // Constructor
+  public CreateItemImageDTO() {
+  }
 
-    /**
-     * Sets the item ID.
-     *
-     * @param itemId The ID of the item
-     */
-    public void setItemId(Long itemId) {
-        this.itemId = itemId;
-    }
+  /**
+   * Retrieves the item ID.
+   *
+   * @return The ID of the item
+   */
+  public Long getItemId() {
+    return itemId;
+  }
 
-    /**
-     * Retrieves the image URL.
-     *
-     * @return The URL of the image
-     */
-    public String getImageUrl() {
-        return imageUrl;
-    }
+  /**
+   * Sets the item ID.
+   *
+   * @param itemId The ID of the item
+   */
+  public void setItemId(Long itemId) {
+    this.itemId = itemId;
+  }
 
-    /**
-     * Sets the image URL.
-     *
-     * @param imageUrl The URL of the image
-     */
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+  /**
+   * Retrieves the image URL.
+   *
+   * @return The URL of the image
+   */
+  public String getImageUrl() {
+    return imageUrl;
+  }
 
-    /**
-     * Checks if the image is primary.
-     *
-     * @return true if the image is primary, otherwise false
-     */
-    public boolean isPrimary() {
-        return isPrimary;
-    }
+  /**
+   * Sets the image URL.
+   *
+   * @param imageUrl The URL of the image
+   */
+  public void setImageUrl(String imageUrl) {
+    this.imageUrl = imageUrl;
+  }
 
-    /**
-     * Sets the primary status of the image.
-     *
-     * @param isPrimary The primary status of the image
-     */
-    public void setIsPrimary(boolean isPrimary) {
-        this.isPrimary = isPrimary;
-    }
+  /**
+   * Checks if the image is primary.
+   *
+   * @return true if the image is primary, otherwise false
+   */
+  public boolean isPrimary() {
+    return isPrimary;
+  }
 
-    /**
-     * Retrieves the display order of the image.
-     *
-     * @return The display order of the image
-     */
-    public int getDisplayOrder() {
-        return displayOrder;
-    }
+  /**
+   * Sets the primary status of the image.
+   *
+   * @param isPrimary The primary status of the image
+   */
+  public void setIsPrimary(boolean isPrimary) {
+    this.isPrimary = isPrimary;
+  }
 
-    /**
-     * Sets the display order of the image.
-     *
-     * @param displayOrder The display order of the image
-     */
-    public void setDisplayOrder(int displayOrder) {
-        this.displayOrder = displayOrder;
-    }
+  /**
+   * Retrieves the display order of the image.
+   *
+   * @return The display order of the image
+   */
+  public int getDisplayOrder() {
+    return displayOrder;
+  }
+
+  /**
+   * Sets the display order of the image.
+   *
+   * @param displayOrder The display order of the image
+   */
+  public void setDisplayOrder(int displayOrder) {
+    this.displayOrder = displayOrder;
+  }
 }
