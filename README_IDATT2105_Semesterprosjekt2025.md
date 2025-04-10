@@ -61,9 +61,6 @@ Students participating are graded on their implementation of:
   - Category-based filtering
   - Location-based search
   - Keyword search
-  - Date range filtering
-- 📊 Smart sorting options
-- 🗺️ Interactive map view for geographical browsing
 
 ### User Interaction
 - 💬 Real-time messaging system between buyers and sellers
@@ -76,13 +73,6 @@ Students participating are graded on their implementation of:
 - 📁 Category management system
 - 👥 User management and moderation
 - 📊 Basic analytics and reporting
-
-### Technical Features
-- 🔒 Secure authentication with JWT?
-- 📱 Mobile-responsive design
-- 🔄 CI/CD pipeline with >50% test coverage
-- 📚 REST API with RestDocs documentation
-- 🛡️ OWASP security compliance
 
 ## Technology Choices and Justifications
 
@@ -98,40 +88,39 @@ Students participating are graded on their implementation of:
 
 - **Data Access Layer** 
   - Spring Data JPA for ORM functionality
-  - Type-safe queries using JPA Criteria API
   - Prepared statements to prevent SQL injection
-  - Custom repository implementations for complex queries
 
   ### Security Architecture
 
 - **Authentication**
-  - JWT-based stateless authentication
-  - Refresh token rotation
+  - JWT-based stateless authentication with access tokens
+  - Refresh token mechanism
   - Secure token storage in HttpOnly cookies
   - Role-based access control (RBAC)
+  - Email verification for new accounts
+  - Password reset functionality
 
 - **API Security**
-  - CORS configuration with specific origins
-  - CSRF protection for state-changing operations
-  - Rate limiting for API endpoints
+  - CORS configuration with specific allowed origins
+  - Stateless session management
   - Request validation using DTOs
+  - Authentication filters
 
 - **Data Protection**
   - Password hashing with BCrypt
-  - Input sanitization
-  - XSS protection headers
-  - Content Security Policy (CSP)
-  - Secure file upload handling
+  - Secure file upload handling via Cloudinary
+  - Proper token expiration and rotation
 
 
   ### Real-time Communication
 
 - **WebSocket Implementation**
-  - STOMP protocol over WebSocket
-  - SockJS fallback for legacy browsers
-  - Message broker for scalable communication
-  - Real-time updates for:
-    - Chat messages
+  - **Bi-directional Real-time Communication** - Full-duplex messaging between client and server using STOMP protocol
+  - **Centralized Broadcasting Service** - Unified WebSocket service managing all real-time notifications and events
+  - **User-specific Topic Channels** - Targeted messaging with user-specific destinations for privacy and efficiency
+  - **Comprehensive Event Types** - Support for message creation, reading, updates, and deletions in real time
+  - **Conversation Management** - Real-time notifications for conversation archiving and deletion
+  - **SockJS Fallback Support** - Graceful degradation for browsers without WebSocket support
 
 ## Application Structure
 
@@ -191,8 +180,6 @@ frontend/
    - Service layer unit tests
    - Frontend component tests with Vitest
    - E2E tests with Cypress
-
-### Architecture Diagrams - fiks senere
 
 
 ### Database Entity Relationship Diagram
@@ -444,10 +431,10 @@ For detailed information on WebSocket testing, refer to the [WebSocket Testing G
 ## Project Members
 - Names and roles
 
-Kevin Dennis Mazali
+Kevin Dennis Mazali - Backend & Documentation
 
 - pic
 
-Kaamya Shinde
+Kaamya Shinde - Frontend & UX/UI
 
 - pic
