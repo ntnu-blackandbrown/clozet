@@ -1,18 +1,22 @@
 # IDATT2105 - Semester Project 2025
 
-**Project Description:**   
+## 📌 Project Description
 
-A web-based marketplace platform inspired by finn.no, developed as part of the IDATT2105 Full-stack Application Development course in Spring 2025. 
-The platform allows users to buy and sell items through a rich user interface, equipped with features like advanced filtering, full-text search, messaging between users. 
-The system supports both standard users and administrators, where the former can list and manage items, while the latter have access to category and user management. 
-The frontend is built with Vue 3, while the backend is implemented using Java 21 and Spring Boot 3, with MySQL/H2 as the database engine during development,
-which is then migrated to PostReg SQL during deployment with Heroku.
+A modern full-stack web-based marketplace inspired by Finn.no, developed for the IDATT2105 Full-stack Application Development course (Spring 2025). 
+The platform allows users to securely buy and sell second-hand or new items, and includes features like:
 
-The project emphasizes clean architecture, modern security practices, accessibility, and test coverage, and is delivered with CI/CD pipelines and full documentation.
+- 🔍 Advanced search and filtering
+- 💬 Real-time messaging
+- 🔐 JWT-based authentication
+- 🛠️ Admin dashboard
+
+Built with **Vue 3** (frontend) and **Spring Boot 3** (backend), deployed to **Netlify** and **Heroku** with PostgreSQL in production.
+
+The system emphasizes clean architecture, security (OWASP compliance), accessibility, RESTful design, test coverage, and CI/CD integration.
 
 
-**Link to application (optional):**  
-Insert link here (when available).
+
+**Live demo:** [https://your-link.netlify.app](https://your-link.netlify.app)
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -28,15 +32,16 @@ Insert link here (when available).
 ## Introduction
 Explain what the project is about and what it aims to solve. Consider including:
 
-- - Background of the project
+- Background of the project
 
-  The digital marketplace is a well-established concept, yet there is always room for improving user experience, security, and functionality. 
-  This project aims to recreate and modernize the core concept of a platform like finn.no – allowing users to list, search for, and buy second-hand or new items – while also emphasizing best practices in full-stack development.
+This project was developed as a semester project in IDATT2105. The goal is to recreate the core concept of a digital marketplace with modern tools and best practices.
 
-  This project was developed in the context of the IDATT2105 course, where students are tasked with creating a complete full-stack web application using modern technologies. 
-  The project is also a voluntary assignment for students seeking to improve their course grade from a C to a B or A, and thus requires high quality in all aspects: code, UI/UX, functionality, security, testing, and documentation.
+Students participating are graded on their implementation of:
+- Clean and maintainable code
+- Functional and responsive UI
+- Secure backend with authentication and validation
+- High test coverage and robust CI/CD
 
-- Main functionalities
 
 ## Core Functionalities
 
@@ -80,28 +85,22 @@ Explain what the project is about and what it aims to solve. Consider including:
 - 🛡️ OWASP security compliance
 
 ## Technology Choices and Justifications
-Comment and edit:
 
 ### Database Architecture
+
 - **Development Environment: H2 Database**
-  - light-weight in-file database perfect for development and testing
-  - No separate installation required
-  - Automatic schema creation and fast startup
-  - Supports both SQL mode and JPA operations
+  - In-memory/in-file database ideal for rapid prototyping
+  - Fast startup and auto-schema generation
 
 - **Production Environment: PostgreSQL on Heroku**
-  - Enterprise-grade reliability and performance
-  - Excellent support for JSON data types
-  - Automatic backups and monitoring through Heroku
-  - Seamless scaling capabilities
+  - Chosen for its scalability and JSON support
+  - Integrated with Heroku for managed backups and monitoring
 
-- **Data Access Layer** --- Dobbelsjekk
+- **Data Access Layer** 
   - Spring Data JPA for ORM functionality
   - Type-safe queries using JPA Criteria API
   - Prepared statements to prevent SQL injection
   - Custom repository implementations for complex queries
-  - Database migration handled by Flyway
-
 
   ### Security Architecture
 
@@ -137,72 +136,38 @@ Comment and edit:
     - Price updates
     - Notification delivery
 
-### Deployment Infrastructure
-
-- **Backend Deployment: Heroku**
-  - Automated deployment through Git integration
-  - Built-in SSL/TLS security
-  - Automatic load balancing
-  - Easy environment variable management
-  - Integrated logging and monitoring
-  - Dyno-based scaling for cost efficiency
-
-- **Frontend Deployment: Netlify**
-  - Continuous deployment from Git
-  - Automatic build optimization
-  - Global CDN distribution
-  - Built-in form handling
-  - Instant cache invalidation
-
 ## Application Structure
 
-### Backend Architecture
-The backend follows a clean, layered architecture with clear separation of concerns:
-
+### Backend Directory
 ```
 backend/
-├── src/main/java/stud/ntnu/no/backend/
-│   ├── category/           # Category management
-│   ├── user/              # User management
-│   ├── item/              # Item listings
-│   ├── message/           # Messaging system
-│   ├── transaction/       # Transaction handling
-│   ├── review/            # Review system
-│   ├── favorite/          # Favorites/bookmarks
-│   ├── location/          # Location services
-│   ├── itemimage/         # Image handling
-│   ├── shippingoption/    # Shipping options
-│   └── common/            # Shared utilities
+├── category/
+├── user/
+├── item/
+├── message/
+├── transaction/
+├── review/
+├── favorite/
+├── location/
+├── itemimage/
+├── shippingoption/
+├── common/
 ```
+Each domain includes: `controller/`, `service/`, `repository/`, `entity/`, `dto/`, `mapper/`, `exception/`
 
-Each feature package contains:
-- `controller/` - REST endpoints and request handling
-- `service/` - Business logic implementation
-- `repository/` - Data access layer
-- `entity/` - Database entities
-- `dto/` - Data Transfer Objects
-- `exception/` - Custom exceptions
-- `mapper/` - MapStruct mappers for entity-DTO conversion
-
-
-# Legg til diagrammer overordnet og så internt
-
-### Frontend Architecture
-The frontend is built with Vue 3 and follows a modern component-based architecture:
-
+### Frontend Directory
 ```
 frontend/
-├── src/
-│   ├── api/              # API client and endpoints
-│   ├── assets/           # Static assets
-│   ├── components/       # Reusable Vue components
-│   ├── router/           # Vue Router configuration
-│   ├── stores/           # Pinia state management
-│   ├── types/            # TypeScript type definitions
-│   ├── utils/            # Utility functions
-│   ├── views/            # Page components
-│   ├── websocket/        # WebSocket integration
-│   └── __tests__/        # Test files
+├── api/
+├── assets/
+├── components/
+├── router/
+├── stores/
+├── types/
+├── utils/
+├── views/
+├── websocket/
+└── __tests__/
 ```
 
 ### Key Architectural Decisions
@@ -391,6 +356,9 @@ The application should now be running and accessible through your browser.
    - Environment configuration
    - Database migration handling
 
+
+   link: 
+
 #### Frontend CI/CD Pipeline (.github/workflows/frontend.yml)
 1. **Build & Quality**
    - Node.js 18 setup
@@ -404,6 +372,8 @@ The application should now be running and accessible through your browser.
    - Netlify deployment
    - Production build optimization
 
+   link: 
+
 ### Local Testing
 
 #### Backend Testing
@@ -413,12 +383,6 @@ cd backend
 
 # Run all tests
 mvn test
-
-# Run specific test class
-mvn test -Dtest=UserServiceTest
-
-# Package with tests
-mvn package
 ```
 
 #### Frontend Testing
@@ -429,14 +393,9 @@ cd frontend
 # Run unit tests
 npm run test:unit
 
-# Run unit tests with coverage
-npm run test:coverage
-
 # Run E2E tests
 npm run test:e2e
 
-# Run E2E tests in development mode
-npm run test:e2e:dev
 ```
 
 #### WebSocket Testing
