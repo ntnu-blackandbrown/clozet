@@ -14,6 +14,12 @@ interface User {
   phoneNumber?: string
 }
 
+// Add interface for error response
+interface ErrorResponse {
+  message: string;
+  [key: string]: any;
+}
+
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
   const loading = ref(false)
@@ -36,7 +42,7 @@ export const useAuthStore = defineStore('auth', () => {
       const axiosError = error as AxiosError
       return {
         success: false,
-        message: axiosError.response?.data?.message || 'Login failed',
+        message: (axiosError.response?.data as ErrorResponse)?.message || 'Login failed',
         error: axiosError
       }
     } finally {
@@ -103,7 +109,7 @@ export const useAuthStore = defineStore('auth', () => {
       const axiosError = error as AxiosError
       return {
         success: false,
-        message: axiosError.response?.data?.message || 'Registration failed',
+        message: (axiosError.response?.data as ErrorResponse)?.message || 'Registration failed',
         error: axiosError
       }
     } finally {

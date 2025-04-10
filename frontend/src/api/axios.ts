@@ -9,10 +9,14 @@ const axiosInstance = axios.create({
 // Flag to prevent multiple refresh requests
 let isRefreshing = false
 // Queue of failed requests to retry after token refresh
-let failedQueue = []
+interface QueueItem {
+  resolve: (value?: unknown) => void;
+  reject: (error: any) => void;
+}
+let failedQueue: QueueItem[] = []
 
 // Process failed queue - either retry all requests or reject them
-const processQueue = (error, token = null) => {
+const processQueue = (error: any, token = null) => {
   console.log(`Processing queue with ${failedQueue.length} requests. Error: ${error ? 'Yes' : 'No'}`)
   failedQueue.forEach(prom => {
     if (error) {

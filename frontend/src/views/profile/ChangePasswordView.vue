@@ -142,7 +142,6 @@ const submit = handleSubmit(async (values) => {
     await AuthService.changePassword(
       values.currentPassword,
       values.newPassword,
-      values.confirmPassword,
     )
 
     success.value = true
