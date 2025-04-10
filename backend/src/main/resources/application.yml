@@ -32,24 +32,23 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-# Application-specific settings
 app:
   jwt:
     secret: ${JWT_SECRET}
-    expiration: 15000
-    cookie-max-age: 15
-    refresh-expiration: 604800000
-    refresh-cookie-max-age: 604800
-    secure-cookie: false
+    expiration: ${JWT_EXPIRATION:3600000}
+    cookie-max-age: ${JWT_COOKIE_MAX_AGE:3600}
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+    refresh-cookie-max-age: ${JWT_REFRESH_COOKIE_MAX_AGE:604800}
+    secure-cookie: ${JWT_SECURE_COOKIE:false}
   email:
-    from: noreply@clozet.com
+    from: ${MAILGUN_FROM_ADDRESS:noreply@clozet.com}
     verification-expiry-hours: 24
     password-reset-expiry-hours: 1
-    base-url: http://localhost:5173
+    base-url: ${APP_BASE_URL:http://localhost:5173}
   upload:
-    dir: uploads
+    dir: ${UPLOAD_DIR:uploads}
   storage:
-    use-cloudinary: false
+    use-cloudinary: ${USE_CLOUDINARY:false}
 
 logging:
   level:
