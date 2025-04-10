@@ -6,6 +6,7 @@ import { LocationService } from '@/api/services/LocationService'
 const locations = ref([])
 const isLoading = ref(true)
 const error = ref(null)
+const successMessage = ref(null)
 
 // Form for adding/editing locations
 const locationForm = ref({
@@ -41,14 +42,21 @@ const createLocation = async () => {
 
   try {
     isLoading.value = true
+    error.value = null
     await LocationService.createLocation(locationForm.value)
     await fetchLocations()
     isLoading.value = false
+    successMessage.value = `Location "${locationForm.value.city}" created successfully`
     resetForm()
     showForm.value = false
+
+    // Clear success message after 5 seconds
+    setTimeout(() => {
+      successMessage.value = null
+    }, 5000)
   } catch (err) {
     console.error('Error creating location:', err)
-    error.value = 'Failed to create location'
+    error.value = `Failed to create location: ${err.response?.data?.message || 'Unknown error'}`
     isLoading.value = false
   }
 }
@@ -59,14 +67,21 @@ const updateLocation = async () => {
 
   try {
     isLoading.value = true
+    error.value = null
     await LocationService.updateLocation(locationForm.value.id, locationForm.value)
     await fetchLocations()
     isLoading.value = false
+    successMessage.value = `Location "${locationForm.value.city}" updated successfully`
     resetForm()
     showForm.value = false
+
+    // Clear success message after 5 seconds
+    setTimeout(() => {
+      successMessage.value = null
+    }, 5000)
   } catch (err) {
     console.error('Error updating location:', err)
-    error.value = 'Failed to update location'
+    error.value = `Failed to update location: ${err.response?.data?.message || 'Unknown error'}`
     isLoading.value = false
   }
 }
@@ -148,6 +163,11 @@ onMounted(() => {
       <button @click="addLocation" class="btn-primary" aria-label="Add new location">
         Add New Location
       </button>
+    </div>
+
+    <!-- Success Message -->
+    <div v-if="successMessage" class="success-message" role="status">
+      {{ successMessage }}
     </div>
 
     <div v-if="error" class="error-message" role="alert">
@@ -345,6 +365,14 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.success-message {
+  background-color: #f0fdf4;
+  color: #16a34a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .table-container {

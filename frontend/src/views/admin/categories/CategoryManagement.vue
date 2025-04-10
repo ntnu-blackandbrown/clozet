@@ -7,6 +7,7 @@ import CreateCategoryModal from '@/components/admin/categories/CreateCategoryMod
 const categories = ref([])
 const isLoading = ref(true)
 const error = ref(null)
+const successMessage = ref(null) // Add success message state
 const showCreateModal = ref(false) // State for the new create modal
 
 // Form for *editing* categories only
@@ -58,14 +59,21 @@ const updateCategory = async () => {
 
   try {
     isLoading.value = true
+    error.value = null // Clear previous errors
     await CategoryService.updateCategory(editCategoryForm.value.id, editCategoryForm.value)
     await fetchCategories()
     isLoading.value = false
+    successMessage.value = `Category "${editCategoryForm.value.name}" updated successfully` // Set success message
     resetEditForm() // Use renamed reset function
     showEditForm.value = false // Use renamed state variable
+
+    // Clear success message after 5 seconds
+    setTimeout(() => {
+      successMessage.value = null
+    }, 5000)
   } catch (err) {
     console.error('Error updating category:', err)
-    error.value = 'Failed to update category'
+    error.value = `Failed to update category: ${err.response?.data?.message || 'Unknown error'}` // More specific error
     isLoading.value = false
   }
 }
@@ -157,6 +165,11 @@ onMounted(() => {
       <button @click="openAddCategoryModal" class="btn-primary" aria-label="Add new category">
         Add New Category
       </button>
+    </div>
+
+    <!-- Success Message -->
+    <div v-if="successMessage" class="success-message" role="status">
+      {{ successMessage }}
     </div>
 
     <div v-if="error" class="error-message" role="alert">
@@ -338,6 +351,14 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.success-message {
+  background-color: #f0fdf4;
+  color: #16a34a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .table-container {

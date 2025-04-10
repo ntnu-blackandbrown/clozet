@@ -6,6 +6,7 @@ import { ShippingService } from '@/api/services/ShippingService'
 const shippingOptions = ref([])
 const isLoading = ref(true)
 const error = ref(null)
+const successMessage = ref(null)
 
 // Form for adding/editing shipping options
 const shippingForm = ref({
@@ -42,14 +43,21 @@ const createShippingOption = async () => {
 
   try {
     isLoading.value = true
+    error.value = null
     await ShippingService.createShippingOption(shippingForm.value)
     await fetchShippingOptions()
     isLoading.value = false
+    successMessage.value = `Shipping option "${shippingForm.value.name}" created successfully`
     resetForm()
     showForm.value = false
+
+    // Clear success message after 5 seconds
+    setTimeout(() => {
+      successMessage.value = null
+    }, 5000)
   } catch (err) {
     console.error('Error creating shipping option:', err)
-    error.value = 'Failed to create shipping option'
+    error.value = `Failed to create shipping option: ${err.response?.data?.message || 'Unknown error'}`
     isLoading.value = false
   }
 }
@@ -60,14 +68,21 @@ const updateShippingOption = async () => {
 
   try {
     isLoading.value = true
+    error.value = null
     await ShippingService.updateShippingOption(shippingForm.value.id, shippingForm.value)
     await fetchShippingOptions()
     isLoading.value = false
+    successMessage.value = `Shipping option "${shippingForm.value.name}" updated successfully`
     resetForm()
     showForm.value = false
+
+    // Clear success message after 5 seconds
+    setTimeout(() => {
+      successMessage.value = null
+    }, 5000)
   } catch (err) {
     console.error('Error updating shipping option:', err)
-    error.value = 'Failed to update shipping option'
+    error.value = `Failed to update shipping option: ${err.response?.data?.message || 'Unknown error'}`
     isLoading.value = false
   }
 }
@@ -157,6 +172,11 @@ onMounted(() => {
       <button @click="addShippingOption" class="btn-primary" aria-label="Add new shipping option">
         Add New Shipping Option
       </button>
+    </div>
+
+    <!-- Success Message -->
+    <div v-if="successMessage" class="success-message" role="status">
+      {{ successMessage }}
     </div>
 
     <div v-if="error" class="error-message" role="alert">
@@ -385,6 +405,14 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.success-message {
+  background-color: #f0fdf4;
+  color: #16a34a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .table-container {
