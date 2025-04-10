@@ -1,22 +1,24 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { CategoryService } from '@/api/services/CategoryService'
+import CreateCategoryModal from '@/components/admin/categories/CreateCategoryModal.vue' // Import the new component
+
 // State
 const categories = ref([])
 const isLoading = ref(true)
 const error = ref(null)
+const showCreateModal = ref(false) // State for the new create modal
 
-// Form for adding/editing categories
-const categoryForm = ref({
+// Form for *editing* categories only
+const editCategoryForm = ref({
   id: null,
   name: '',
   description: '',
   parentId: null,
 })
 
-const formMode = ref('add') // 'add' or 'edit'
-const showForm = ref(false)
-const formErrors = ref({})
+const showEditForm = ref(false) // Renamed from showForm
+const editFormErrors = ref({}) // Renamed from formErrors
 
 // Fetch all categories
 const fetchCategories = async () => {
@@ -33,19 +35,18 @@ const fetchCategories = async () => {
   }
 }
 
-// Create a new category
-const createCategory = async () => {
-  if (!validateForm()) return
-
+// Create a new category (using data from the new modal)
+const createCategory = async (newCategoryData) => {
+  // Validation is now handled within CreateCategoryModal
   try {
     isLoading.value = true
-    await CategoryService.createCategory(categoryForm.value)
+    await CategoryService.createCategory(newCategoryData)
     await fetchCategories()
     isLoading.value = false
-    resetForm()
-    showForm.value = false
+    showCreateModal.value = false // Close the create modal
   } catch (err) {
     console.error('Error creating category:', err)
+    // TODO: Consider showing the error message within the modal or as a notification
     error.value = 'Failed to create category'
     isLoading.value = false
   }
@@ -53,15 +54,15 @@ const createCategory = async () => {
 
 // Update an existing category
 const updateCategory = async () => {
-  if (!validateForm()) return
+  if (!validateEditForm()) return // Use renamed validation function
 
   try {
     isLoading.value = true
-    await CategoryService.updateCategory(categoryForm.value.id, categoryForm.value)
+    await CategoryService.updateCategory(editCategoryForm.value.id, editCategoryForm.value)
     await fetchCategories()
     isLoading.value = false
-    resetForm()
-    showForm.value = false
+    resetEditForm() // Use renamed reset function
+    showEditForm.value = false // Use renamed state variable
   } catch (err) {
     console.error('Error updating category:', err)
     error.value = 'Failed to update category'
@@ -85,58 +86,56 @@ const deleteCategory = async (id) => {
   }
 }
 
-// Form submission handler
-const handleSubmit = () => {
-  if (formMode.value === 'add') {
-    createCategory()
-  } else {
-    updateCategory()
-  }
+// Form submission handler (Only for Edit Form now)
+const handleEditSubmit = () => {
+  updateCategory()
 }
 
-// Open form to add a new category
-const addCategory = () => {
-  formMode.value = 'add'
-  resetForm()
-  showForm.value = true
+// Open form to add a new category (Now opens the new modal)
+const openAddCategoryModal = () => {
+  showCreateModal.value = true
 }
 
 // Open form to edit an existing category
 const editCategory = (category) => {
-  formMode.value = 'edit'
-  categoryForm.value = {
+  resetEditForm() // Reset edit form before populating
+  editCategoryForm.value = {
     id: category.id,
     name: category.name,
     description: category.description,
     parentId: category.parent ? category.parent.id : null,
   }
-  showForm.value = true
+  showEditForm.value = true
 }
 
-// Reset form fields
-const resetForm = () => {
-  categoryForm.value = {
+// Reset *edit* form fields
+const resetEditForm = () => {
+  editCategoryForm.value = {
     id: null,
     name: '',
     description: '',
     parentId: null,
   }
-  formErrors.value = {}
+  editFormErrors.value = {}
 }
 
-// Validate form inputs
-const validateForm = () => {
-  formErrors.value = {}
+// Validate *edit* form inputs
+const validateEditForm = () => {
+  editFormErrors.value = {}
 
-  if (!categoryForm.value.name.trim()) {
-    formErrors.value.name = 'Category name is required'
+  if (!editCategoryForm.value.name.trim()) {
+    editFormErrors.value.name = 'Category name is required'
+  } else if (editCategoryForm.value.name.length < 3 || editCategoryForm.value.name.length > 100) {
+     editFormErrors.value.name = 'Name must be between 3 and 100 characters'
   }
 
-  if (!categoryForm.value.description.trim()) {
-    formErrors.value.description = 'Description is required'
+  if (!editCategoryForm.value.description.trim()) {
+    editFormErrors.value.description = 'Description is required'
+  } else if (editCategoryForm.value.description.length > 255) {
+    editFormErrors.value.description = 'Description cannot exceed 255 characters'
   }
 
-  return Object.keys(formErrors.value).length === 0
+  return Object.keys(editFormErrors.value).length === 0
 }
 
 // Get parent category name
@@ -155,7 +154,7 @@ onMounted(() => {
   <div class="category-management">
     <div class="page-header">
       <h1 id="category-management-title">Category Management</h1>
-      <button @click="addCategory" class="btn-primary" aria-label="Add new category">
+      <button @click="openAddCategoryModal" class="btn-primary" aria-label="Add new category">
         Add New Category
       </button>
     </div>
@@ -194,13 +193,7 @@ onMounted(() => {
                 >
                   ✎
                 </button>
-                <button
-                  @click="deleteCategory(category.id)"
-                  class="btn-icon delete"
-                  aria-label="Delete category: {{ category.name }}"
-                >
-                  🗑
-                </button>
+
               </td>
             </tr>
           </tbody>
@@ -214,17 +207,25 @@ onMounted(() => {
 
       <div v-else class="empty-state">
         <p>No categories found</p>
-        <button @click="addCategory" class="btn-primary" aria-label="Add first category">
+        <button @click="openAddCategoryModal" class="btn-primary" aria-label="Add first category">
           Add Your First Category
         </button>
       </div>
     </div>
 
-    <!-- Category Form Modal -->
+    <!-- New Create Category Modal -->
+    <CreateCategoryModal
+      :is-visible="showCreateModal"
+      :existing-categories="categories"
+      @close="showCreateModal = false"
+      @create="createCategory"
+    />
+
+    <!-- Edit Category Form Modal (Existing modal repurposed for editing only) -->
     <div
-      v-if="showForm"
+      v-if="showEditForm"
       class="modal-backdrop"
-      @click="showForm = false"
+      @click="showEditForm = false"
       aria-modal="true"
       role="dialog"
       aria-labelledby="category-form-title"
@@ -232,57 +233,57 @@ onMounted(() => {
       <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h3 id="category-form-title">
-            {{ formMode === 'add' ? 'Add New Category' : 'Edit Category' }}
+            Edit Category
           </h3>
-          <button @click="showForm = false" class="btn-close" aria-label="Close form">×</button>
+          <button @click="showEditForm = false" class="btn-close" aria-label="Close form">×</button>
         </div>
 
-        <form @submit.prevent="handleSubmit" class="category-form">
+        <form @submit.prevent="handleEditSubmit" class="category-form">
           <div class="form-group">
-            <label for="name">Category Name</label>
+            <label for="edit-name">Category Name</label>
             <input
               type="text"
-              id="name"
-              v-model="categoryForm.name"
-              :class="{ 'input-error': formErrors.name }"
+              id="edit-name"
+              v-model="editCategoryForm.name"
+              :class="{ 'input-error': editFormErrors.name }"
               aria-required="true"
-              :aria-invalid="formErrors.name ? 'true' : 'false'"
-              :aria-describedby="formErrors.name ? 'name-error' : undefined"
+              :aria-invalid="editFormErrors.name ? 'true' : 'false'"
+              :aria-describedby="editFormErrors.name ? 'edit-name-error' : undefined"
             />
-            <span v-if="formErrors.name" class="error-text" id="name-error" role="alert">{{
-              formErrors.name
+            <span v-if="editFormErrors.name" class="error-text" id="edit-name-error" role="alert">{{
+              editFormErrors.name
             }}</span>
           </div>
 
           <div class="form-group">
-            <label for="description">Description</label>
+            <label for="edit-description">Description</label>
             <textarea
-              id="description"
-              v-model="categoryForm.description"
+              id="edit-description"
+              v-model="editCategoryForm.description"
               rows="3"
-              :class="{ 'input-error': formErrors.description }"
+              :class="{ 'input-error': editFormErrors.description }"
               aria-required="true"
-              :aria-invalid="formErrors.description ? 'true' : 'false'"
-              :aria-describedby="formErrors.description ? 'description-error' : undefined"
+              :aria-invalid="editFormErrors.description ? 'true' : 'false'"
+              :aria-describedby="editFormErrors.description ? 'edit-description-error' : undefined"
             ></textarea>
             <span
-              v-if="formErrors.description"
+              v-if="editFormErrors.description"
               class="error-text"
-              id="description-error"
+              id="edit-description-error"
               role="alert"
-              >{{ formErrors.description }}</span
+              >{{ editFormErrors.description }}</span
             >
           </div>
 
           <div class="form-group">
-            <label for="parentId">Parent Category (Optional)</label>
-            <select id="parentId" v-model="categoryForm.parentId" aria-required="false">
+            <label for="edit-parentId">Parent Category (Optional)</label>
+            <select id="edit-parentId" v-model="editCategoryForm.parentId" aria-required="false">
               <option :value="null">None (Top-Level Category)</option>
               <option
                 v-for="cat in categories"
                 :key="cat.id"
                 :value="cat.id"
-                :disabled="cat.id === categoryForm.id"
+                :disabled="cat.id === editCategoryForm.id"
               >
                 {{ cat.name }}
               </option>
@@ -292,14 +293,14 @@ onMounted(() => {
           <div class="form-actions">
             <button
               type="button"
-              @click="showForm = false"
+              @click="showEditForm = false"
               class="btn-secondary"
               aria-label="Cancel"
             >
               Cancel
             </button>
             <button type="submit" class="btn-primary" aria-label="Submit category form">
-              {{ formMode === 'add' ? 'Add Category' : 'Update Category' }}
+              Update Category
             </button>
           </div>
         </form>
@@ -458,7 +459,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 1500;
 }
 
 .modal-content {

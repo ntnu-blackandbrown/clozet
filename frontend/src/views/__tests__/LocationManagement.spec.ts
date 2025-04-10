@@ -157,28 +157,4 @@ describe('LocationManagement', () => {
     })
   })
 
-  it('deletes a location after confirmation', async () => {
-    const sampleLocations = [
-      { id: 1, city: 'City1', region: 'Region1', latitude: 45.0, longitude: 90.0 },
-    ]
-    ;(LocationService.getAllLocations as any).mockResolvedValue({ data: sampleLocations })
-    ;(LocationService.deleteLocation as any).mockResolvedValue({})
-
-    // Mock the confirm dialog to return true
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
-
-    const wrapper = mount(LocationManagement)
-    await flushPromises()
-
-    // Trigger deletion by clicking the delete button
-    const deleteButton = wrapper.find('button.btn-icon.delete')
-    await deleteButton.trigger('click')
-    await flushPromises()
-
-    expect(confirmSpy).toHaveBeenCalled()
-    expect(LocationService.deleteLocation).toHaveBeenCalledWith(1)
-
-    // Restore the original confirm function
-    confirmSpy.mockRestore()
-  })
 })

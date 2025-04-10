@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { TransactionService } from '@/api/services/TransactionService'
+import { ProductService } from '@/api/services/ProductService'
 // State
 const transactions = ref([])
 const isLoading = ref(true)
@@ -10,13 +11,42 @@ const searchQuery = ref('')
 const sortKey = ref('createdAt')
 const sortDirection = ref('desc')
 
-// Fetch all transactions
+// Fetch all transactions and item details
 const fetchTransactions = async () => {
   try {
     isLoading.value = true
     error.value = null
     const response = await TransactionService.getAllTransactions()
-    transactions.value = response.data
+
+    // Create an array of transactions with item details fetched
+    const transactionsWithItems = await Promise.all(
+      response.data.map(async (transaction) => {
+        if (transaction.itemId) {
+          try {
+            const itemResponse = await ProductService.getItemById(transaction.itemId)
+            return {
+              ...transaction,
+              item: {
+                title: itemResponse.data.title,
+                ...itemResponse.data
+              }
+            }
+          } catch (itemError) {
+            console.error(`Error fetching item ${transaction.itemId}:`, itemError)
+            return {
+              ...transaction,
+              item: { title: 'Unknown Item' }
+            }
+          }
+        }
+        return {
+          ...transaction,
+          item: { title: 'Unknown Item' }
+        }
+      })
+    )
+
+    transactions.value = transactionsWithItems
     isLoading.value = false
   } catch (err) {
     console.error('Error fetching transactions:', err)
@@ -210,7 +240,6 @@ onMounted(() => {
                   {{ sortDirection === 'asc' ? '↑' : '↓' }}
                 </span>
               </th>
-              <th scope="col">Payment Method</th>
               <th scope="col">Status</th>
               <th
                 @click="toggleSort('createdAt')"
@@ -233,7 +262,6 @@ onMounted(() => {
               <td>{{ transaction.buyerId }}</td>
               <td>{{ transaction.sellerId }}</td>
               <td>{{ formatCurrency(transaction.amount) }}</td>
-              <td>{{ transaction.paymentMethod }}</td>
               <td>
                 <span class="tag" :class="getStatusClass(transaction.status)">
                   {{ transaction.status }}
