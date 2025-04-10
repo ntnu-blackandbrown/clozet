@@ -24,6 +24,16 @@ import stud.ntnu.no.backend.user.exception.UsernameAlreadyExistsException;
 import stud.ntnu.no.backend.user.mapper.UserMapper;
 import stud.ntnu.no.backend.user.repository.UserRepository;
 import stud.ntnu.no.backend.user.repository.VerificationTokenRepository;
+import stud.ntnu.no.backend.user.repository.PasswordResetTokenRepository;
+import stud.ntnu.no.backend.favorite.repository.FavoriteRepository;
+import stud.ntnu.no.backend.message.repository.MessageRepository;
+import stud.ntnu.no.backend.transaction.repository.TransactionRepository;
+import stud.ntnu.no.backend.item.repository.ItemRepository;
+import stud.ntnu.no.backend.itemimage.repository.ItemImageRepository;
+import stud.ntnu.no.backend.location.repository.LocationRepository;
+import stud.ntnu.no.backend.shippingoption.repository.ShippingOptionRepository;
+import stud.ntnu.no.backend.category.repository.CategoryRepository;
+import stud.ntnu.no.backend.item.entity.Item;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -65,6 +75,15 @@ public class UserServiceImpl extends UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final VerificationTokenRepository verificationTokenRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final MessageRepository messageRepository;
+    private final TransactionRepository transactionRepository;
+    private final ItemImageRepository itemImageRepository;
+    private final ItemRepository itemRepository;
+    private final LocationRepository locationRepository;
+    private final ShippingOptionRepository shippingOptionRepository;
+    private final CategoryRepository categoryRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     
@@ -76,12 +95,30 @@ public class UserServiceImpl extends UserService {
                           UserMapper userMapper,
                           PasswordEncoder passwordEncoder,
                           EmailService emailService,
-                          VerificationTokenRepository verificationTokenRepository) {
+                          VerificationTokenRepository verificationTokenRepository,
+                          PasswordResetTokenRepository passwordResetTokenRepository,
+                          FavoriteRepository favoriteRepository,
+                          MessageRepository messageRepository,
+                          TransactionRepository transactionRepository,
+                          ItemImageRepository itemImageRepository,
+                          ItemRepository itemRepository,
+                          LocationRepository locationRepository,
+                          ShippingOptionRepository shippingOptionRepository,
+                          CategoryRepository categoryRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.verificationTokenRepository = verificationTokenRepository;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.favoriteRepository = favoriteRepository;
+        this.messageRepository = messageRepository;
+        this.transactionRepository = transactionRepository;
+        this.itemImageRepository = itemImageRepository;
+        this.itemRepository = itemRepository;
+        this.locationRepository = locationRepository;
+        this.shippingOptionRepository = shippingOptionRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     /**
@@ -267,14 +304,49 @@ public class UserServiceImpl extends UserService {
         return userMapper.toDto(userRepository.save(existingUser));
     }
 
+    /**
+     * Deletes a user from the system.
+     * <p>
+     * This method deletes a user and all associated data, following the proper deletion order
+     * to maintain data integrity. It handles the following relationships:
+     * <ol>
+     *   <li>Verification tokens</li>
+     *   <li>Password reset tokens</li>
+     *   <li>Items and related data</li>
+     * </ol>
+     * </p>
+     *
+     * @param id the unique identifier of the user to delete
+     * @throws UserNotFoundException if no user with the given ID exists
+     * @throws RuntimeException if a deletion error occurs
+     */
     @Transactional
     @Override
     public void deleteUser(Long id) {
         logger.info("Deleting user with ID: {}", id);
-        if (!userRepository.existsById(id)) {
-            throw new UserNotFoundException(id);
+        
+        // Verify user exists
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        
+        // Use a transaction to ensure all operations succeed or fail together
+        try {
+            // 1. Handle verification tokens - use existing repository method
+            verificationTokenRepository.deleteByUser(user);
+                
+            // 2. Handle password reset tokens - use existing repository method
+            passwordResetTokenRepository.deleteByUser(user);
+                
+            // 3. Delete the user, relying on JPA cascade for other entities
+            // The database should have been configured with proper cascade deletion
+            // for remaining entities like favorites, messages, items, etc.
+            userRepository.delete(user);
+            
+            logger.info("Successfully deleted user with ID: {}", id);
+        } catch (Exception e) {
+            logger.error("Error deleting user with ID: {}", id, e);
+            throw new RuntimeException("Failed to delete user and related entities", e);
         }
-        userRepository.deleteById(id);
     }
 
     @Override

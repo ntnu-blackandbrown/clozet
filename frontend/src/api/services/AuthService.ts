@@ -70,6 +70,12 @@ export const AuthService = {
   resetPassword: (token: string, password: string) => {
     console.log('📡 API: Resetting password')
     return axiosInstance.post('/api/auth/reset-password', { token, password })
+  
+    /**
+   * Delete the current user
+   */
+  deleteUser: (id: string) => {
+    return axios.delete(`/api/users/${id}`)
   },
 
   /**

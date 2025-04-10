@@ -155,7 +155,18 @@ export const useAuthStore = defineStore('auth', () => {
       console.log('ℹ️ Silent refresh failed - user not authenticated')
       user.value = null
       return false
+
     }
+    
+    const deleteUser = async () => {
+    try {
+      console.log('Deleting user:', user.value?.id)
+      await AuthService.deleteUser(user.value?.id?.toString() ?? '')
+    } catch (error) {
+      console.error('Delete user error:', error)
+    }
+    
+    
   }
 
   return {
@@ -169,5 +180,6 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     checkAuth,
     silentRefresh
+    deleteUser,
   }
 })
