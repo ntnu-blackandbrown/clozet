@@ -1,9 +1,10 @@
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
 import nb from '@/locales/nb.json'
+import es from '@/locales/es.json'
 
 // Supported locales
-export const SUPPORTED_LOCALES = ['en', 'nb']
+export const SUPPORTED_LOCALES = ['en', 'nb', 'es']
 
 // Default locale
 const DEFAULT_LOCALE = 'en'
@@ -40,7 +41,8 @@ const i18n = createI18n({
   fallbackLocale: DEFAULT_LOCALE,
   messages: {
     en,
-    nb
+    nb,
+    es
   },
   globalInjection: true, // Adds $t, $tc, etc to all components
   missingWarn: false, // Disable warnings for missing translations in production

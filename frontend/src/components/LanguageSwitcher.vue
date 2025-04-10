@@ -2,7 +2,11 @@
   <div class="language-switcher">
     <button @click="toggleDropdown" class="language-button" aria-haspopup="true" :aria-expanded="isOpen">
       <span class="globe-icon">🌐</span>
-      <span class="current-language">{{ currentLocale === 'en' ? 'English' : 'Norsk' }}</span>
+      <span class="current-language">
+        {{ currentLocale === 'en' ? 'English' :
+           currentLocale === 'nb' ? 'Norsk' :
+           currentLocale === 'es' ? 'Español' : 'English' }}
+      </span>
     </button>
     <div v-if="isOpen" class="language-dropdown">
       <button
@@ -18,6 +22,13 @@
         :class="{ active: currentLocale === 'nb' }"
       >
         Norsk
+      </button>
+      <button
+        @click="changeLocale('es')"
+        class="language-option"
+        :class="{ active: currentLocale === 'es' }"
+      >
+        Español
       </button>
     </div>
   </div>
