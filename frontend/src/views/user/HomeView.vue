@@ -6,7 +6,9 @@ import { useAuthStore } from '@/stores/AuthStore'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
 import { ref, onMounted, watch, computed, nextTick } from 'vue'
 import { CategoryService } from '@/api/services/CategoryService'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
@@ -92,7 +94,7 @@ const fetchTopCategories = async () => {
     console.log('Fetched top categories:', response.data)
   } catch (error) {
     console.error('Error fetching top categories:', error)
-    categoryError.value = 'Failed to load categories'
+    categoryError.value = t('errors.somethingWentWrong')
     topCategories.value = []
   } finally {
     isLoadingCategories.value = false
@@ -130,18 +132,18 @@ const displayCategories = computed(() => {
   <div class="home-container">
     <div class="content-section">
       <div class="hero-section">
-        <h1>Welcome to Clozet!</h1>
-        <h3>The new way to shop for clothes</h3>
+        <h1>{{ $t('home.welcome') }}</h1>
+        <h3>{{ $t('home.tagline') }}</h3>
 
         <div class="search-create-container">
           <div class="search-wrapper">
             <input
               class="search-bar"
               type="text"
-              placeholder="Search for a product..."
+              :placeholder="$t('home.searchPlaceholder')"
               v-model="searchQuery"
               @input="handleSearchInput"
-              aria-label="Search for products"
+              :aria-label="$t('common.search')"
             />
 
             <!-- Clear button (now positioned inside) -->
@@ -149,7 +151,7 @@ const displayCategories = computed(() => {
               v-if="searchQuery"
               @click="clearSearch"
               class="clear-search-btn"
-              aria-label="Clear search"
+              :aria-label="$t('common.cancel')"
             >
               &#x2715; <!-- Use an 'X' symbol -->
             </button>
@@ -171,15 +173,15 @@ const displayCategories = computed(() => {
             </svg>
           </div>
           <div class="create-post-btn">
-            <button @click="handleCreatePost" aria-label="Create a new post">Create a post!</button>
+            <button @click="handleCreatePost" :aria-label="$t('home.createPost')">{{ $t('home.createPost') }}</button>
           </div>
         </div>
       </div>
 
       <div class="categories-section">
         <h4>
-          Popular Categories
-          <span v-if="isLoadingCategories" class="loading-indicator">(Loading...)</span>
+          {{ $t('home.popularCategories') }}
+          <span v-if="isLoadingCategories" class="loading-indicator">({{ $t('home.loading') }})</span>
         </h4>
         <div v-if="categoryError" class="error-message">{{ categoryError }}</div>
         <div class="badge-container">
@@ -189,7 +191,7 @@ const displayCategories = computed(() => {
             type="category"
             :name="category.name"
             @click="handleCategoryClick(category.name)"
-            :aria-label="`Browse ${category.name} category`"
+            :aria-label="`${$t('closet.categories')} ${category.name}`"
           />
         </div>
       </div>
@@ -206,7 +208,7 @@ const displayCategories = computed(() => {
   <LoginRegisterModal
     v-if="showLoginModal"
     @close="handleCloseAuthModal"
-    :customTitle="'Please login to create a post'"
+    :customTitle="$t('home.pleaseLogin')"
     :initialMode="initialAuthMode"
   />
 </template>

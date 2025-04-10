@@ -1,8 +1,8 @@
 <template>
   <div class="forgot-password-container">
     <div class="forgot-password-card">
-      <h1>Change Password</h1>
-      <p class="description">Enter your current password and choose a new password.</p>
+      <h1>{{ $t('profile.changePassword.title') }}</h1>
+      <p class="description">{{ $t('profile.changePassword.description') }}</p>
 
       <form @submit.prevent="submit" class="forgot-password-form">
         <div class="form-group">
@@ -11,7 +11,7 @@
               :type="showCurrentPassword ? 'text' : 'password'"
               id="currentPassword"
               v-model="currentPassword"
-              placeholder="Enter your current password"
+              :placeholder="$t('profile.changePassword.currentPassword')"
               class="form-control"
               :class="{ 'error-input': currentPasswordError }"
             />
@@ -20,20 +20,20 @@
               @click="showCurrentPassword = !showCurrentPassword"
               class="toggle-password"
             >
-              {{ showCurrentPassword ? 'Hide' : 'Show' }}
+              {{ showCurrentPassword ? $t('common.hide') : $t('common.show') }}
             </button>
           </div>
           <span class="error" v-if="currentPasswordError">{{ currentPasswordError }}</span>
         </div>
 
         <div class="form-group">
-          <label for="newPassword">New Password</label>
+          <label for="newPassword">{{ $t('profile.changePassword.newPassword') }}</label>
           <div class="password-input-container">
             <input
               :type="showNewPassword ? 'text' : 'password'"
               id="newPassword"
               v-model="newPassword"
-              placeholder="Enter your new password"
+              :placeholder="$t('profile.changePassword.newPassword')"
               class="form-control"
               :class="{ 'error-input': newPasswordError }"
             />
@@ -42,20 +42,20 @@
               @click="showNewPassword = !showNewPassword"
               class="toggle-password"
             >
-              {{ showNewPassword ? 'Hide' : 'Show' }}
+              {{ showNewPassword ? $t('common.hide') : $t('common.show') }}
             </button>
           </div>
           <span class="error" v-if="newPasswordError">{{ newPasswordError }}</span>
         </div>
 
         <div class="form-group">
-          <label for="confirmPassword">Confirm New Password</label>
+          <label for="confirmPassword">{{ $t('profile.changePassword.confirmNewPassword') }}</label>
           <div class="password-input-container">
             <input
               :type="showConfirmPassword ? 'text' : 'password'"
               id="confirmPassword"
               v-model="confirmPassword"
-              placeholder="Confirm your new password"
+              :placeholder="$t('profile.changePassword.confirmNewPassword')"
               class="form-control"
               :class="{ 'error-input': confirmPasswordError }"
             />
@@ -64,7 +64,7 @@
               @click="showConfirmPassword = !showConfirmPassword"
               class="toggle-password"
             >
-              {{ showConfirmPassword ? 'Hide' : 'Show' }}
+              {{ showConfirmPassword ? $t('common.hide') : $t('common.show') }}
             </button>
           </div>
           <span class="error" v-if="confirmPasswordError">{{ confirmPasswordError }}</span>
@@ -78,11 +78,11 @@
           <span v-if="isSubmitting">
             <span class="spinner"></span>
           </span>
-          <span v-else>Update Password</span>
+          <span v-else>{{ $t('profile.changePassword.updatePassword') }}</span>
         </button>
 
         <div class="links">
-          <router-link to="/profile/settings" class="back-to-login">Back to Settings</router-link>
+          <router-link to="/profile/settings" class="back-to-login">{{ $t('profile.changePassword.backToSettings') }}</router-link>
         </div>
       </form>
     </div>
@@ -94,7 +94,9 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { AuthService } from '@/api/services/AuthService'
 import { useValidatedForm, useValidatedField, changePasswordSchema } from '@/utils/validation'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 
 // Define form values interface
@@ -144,7 +146,7 @@ const submit = handleSubmit(async (values) => {
     )
 
     success.value = true
-    message.value = 'Password has been updated successfully.'
+    message.value = t('profile.changePassword.successMessage')
 
     // Redirect to profile settings after 2 seconds
     setTimeout(() => {
@@ -152,7 +154,7 @@ const submit = handleSubmit(async (values) => {
     }, 2000)
   } catch (err) {
     error.value = true
-    message.value = 'An error occurred. Please check your current password and try again.'
+    message.value = t('profile.changePassword.errorMessage')
   } finally {
     isSubmitting.value = false
   }

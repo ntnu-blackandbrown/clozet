@@ -1,52 +1,54 @@
 <script setup>
 import { useAuthStore } from '@/stores/AuthStore';
 import { RouterLink } from 'vue-router'
-const authStore = useAuthStore()
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 </script>
 
 <template>
   <footer class="footer" role="contentinfo">
     <div class="footer-content">
       <div class="footer-section">
-        <h3 id="about-section">About Clozet</h3>
-        <p>Your sustainable fashion marketplace. Buy, sell, and trade clothes with ease.</p>
+        <h3 id="about-section">{{ $t('footer.about.title') }}</h3>
+        <p>{{ $t('footer.about.description') }}</p>
         <div class="social-links" aria-labelledby="about-section">
-          <a href="#" class="social-link" aria-label="Follow us on Instagram">Instagram</a>
-          <a href="#" class="social-link" aria-label="Follow us on Facebook">Facebook</a>
-          <a href="#" class="social-link" aria-label="Follow us on Twitter">Twitter</a>
+          <a href="#" class="social-link" :aria-label="$t('footer.social.followInstagram')">{{ $t('footer.social.instagram') }}</a>
+          <a href="#" class="social-link" :aria-label="$t('footer.social.followFacebook')">{{ $t('footer.social.facebook') }}</a>
+          <a href="#" class="social-link" :aria-label="$t('footer.social.followTwitter')">{{ $t('footer.social.twitter') }}</a>
         </div>
       </div>
 
       <div class="footer-section">
-        <h3 id="navigation-section">Quick Links</h3>
+        <h3 id="navigation-section">{{ $t('footer.quickLinks') }}</h3>
         <nav aria-labelledby="navigation-section">
-          <RouterLink to="/profile" class="footer-link">My Profile</RouterLink>
-          <RouterLink to="/messages" class="footer-link">Messages</RouterLink>
-          <RouterLink to="/create-product" class="footer-link">Sell Items</RouterLink>
+          <RouterLink to="/profile" class="footer-link">{{ $t('navigation.profile') }}</RouterLink>
+          <RouterLink to="/messages" class="footer-link">{{ $t('navigation.messages') }}</RouterLink>
+          <RouterLink to="/create-product" class="footer-link">{{ $t('navigation.sellItems') }}</RouterLink>
         </nav>
       </div>
 
       <div class="footer-section">
-        <h3 id="help-section">Help & Support</h3>
+        <h3 id="help-section">{{ $t('footer.helpSupport') }}</h3>
         <nav aria-labelledby="help-section">
-          <a href="#" class="footer-link">FAQ</a>
-          <a href="#" class="footer-link">Contact Us</a>
-          <a href="#" class="footer-link">Terms of Service</a>
-          <a href="#" class="footer-link">Privacy Policy</a>
+          <a href="#" class="footer-link">{{ $t('footer.links.faq') }}</a>
+          <a href="#" class="footer-link">{{ $t('footer.links.contactUs') }}</a>
+          <a href="#" class="footer-link">{{ $t('footer.links.termsOfService') }}</a>
+          <a href="#" class="footer-link">{{ $t('footer.links.privacyPolicy') }}</a>
         </nav>
       </div>
 
-      <div class="footer-section" v-if="!authStore.isLoggedIn">
-        <h3 id="account-section">Account</h3>
+      <div class="footer-section">
+        <h3 id="account-section">{{ $t('footer.account') }}</h3>
         <nav aria-labelledby="account-section">
-          <RouterLink to="/login" class="footer-link">Login</RouterLink>
-          <RouterLink to="/register" class="footer-link">Register</RouterLink>
+          <RouterLink to="/login" class="footer-link">{{ $t('common.login') }}</RouterLink>
+          <RouterLink to="/register" class="footer-link">{{ $t('common.register') }}</RouterLink>
         </nav>
       </div>
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; {{ new Date().getFullYear() }} Clozet. All rights reserved.</p>
+      <p>&copy; {{ new Date().getFullYear() }} Clozet. {{ $t('footer.copyright') }}</p>
     </div>
   </footer>
 </template>
