@@ -12,49 +12,59 @@ const DEFAULT_LOCALE: SupportedLocale = 'en'
 
 // Get browser locale or fallback to default
 const getBrowserLocale = (): SupportedLocale => {
-  const navigatorLocale = navigator.language.split('-')[0]
-  console.log('Browser detected locale:', navigatorLocale)
-  return SUPPORTED_LOCALES.includes(navigatorLocale as SupportedLocale)
-    ? navigatorLocale as SupportedLocale
-    : DEFAULT_LOCALE
+  try {
+    const navigatorLocale = navigator.language.split('-')[0]
+    console.log('Browser detected locale:', navigatorLocale)
+    return SUPPORTED_LOCALES.includes(navigatorLocale as SupportedLocale)
+      ? navigatorLocale as SupportedLocale
+      : DEFAULT_LOCALE
+  } catch (e) {
+    console.error('Error detecting browser locale:', e)
+    return DEFAULT_LOCALE
+  }
 }
 
 // Try to get the locale from localStorage, then browser, then default
 const getInitialLocale = (): SupportedLocale => {
-  const savedLocale = localStorage.getItem('locale')
-  console.log('Saved locale from localStorage:', savedLocale)
+  try {
+    const savedLocale = localStorage.getItem('locale')
+    console.log('Saved locale from localStorage:', savedLocale)
 
-  if (savedLocale && SUPPORTED_LOCALES.includes(savedLocale as SupportedLocale)) {
-    console.log('Using saved locale:', savedLocale)
-    return savedLocale as SupportedLocale
+    if (savedLocale && SUPPORTED_LOCALES.includes(savedLocale as SupportedLocale)) {
+      console.log('Using saved locale:', savedLocale)
+      return savedLocale as SupportedLocale
+    }
+
+    const browserLocale = getBrowserLocale()
+    console.log('Using browser locale:', browserLocale)
+    return browserLocale
+  } catch (e) {
+    console.error('Error getting initial locale:', e)
+    return DEFAULT_LOCALE
   }
-
-  const browserLocale = getBrowserLocale()
-  console.log('Using browser locale:', browserLocale)
-  return browserLocale
 }
 
 const initialLocale = getInitialLocale()
 console.log('Initial locale set to:', initialLocale)
 
-// Ensure messages are properly loaded
+// Hard-code the translations to avoid build issues
 const messages = {
-  en: JSON.parse(JSON.stringify(en)),
-  nb: JSON.parse(JSON.stringify(nb)),
-  es: JSON.parse(JSON.stringify(es))
+  en,
+  nb,
+  es
 }
 
 // Create i18n instance
 const i18n = createI18n({
-  legacy: false, // you must set `false`, to use Composition API
+  legacy: false,
   locale: initialLocale,
   fallbackLocale: DEFAULT_LOCALE,
   messages,
-  globalInjection: true, // Adds $t, $tc, etc to all components
-  missingWarn: false, // Disable warnings for missing translations in production
-  fallbackWarn: false, // Disable warnings for fallback translations in production
-  runtimeOnly: false, // Ensure translations are compiled in the build
-  warnHtmlMessage: false
+  globalInjection: true,
+  missingWarn: process.env.NODE_ENV === 'development',
+  fallbackWarn: process.env.NODE_ENV === 'development',
+  silentTranslationWarn: process.env.NODE_ENV !== 'development',
+  silentFallbackWarn: process.env.NODE_ENV !== 'development',
 })
 
 // Helper function to change locale

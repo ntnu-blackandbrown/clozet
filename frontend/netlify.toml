@@ -1,0 +1,18 @@
+# Settings for all deploys
+[build]
+  # Base directory
+  base = "frontend"
+  # Directory (relative to root) with the built frontend
+  publish = "dist"
+  # Build command
+  command = "npm run build"
+
+# Redirects and headers
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Environment variables
+[context.production.environment]
+  NODE_VERSION = "18" 

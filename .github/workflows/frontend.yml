@@ -37,6 +37,8 @@ jobs:
       
       - name: Build frontend
         run: npm run build
+        env:
+          NODE_ENV: production
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -101,9 +103,16 @@ jobs:
           path: frontend/dist
 
       - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v2.0
+        with:
+          publish-dir: './frontend/dist'
+          production-deploy: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions"
+          enable-pull-request-comment: true
+          enable-commit-comment: true
+          netlify-config-path: './frontend/netlify.toml'
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: |
-          npm install -g netlify-cli
-          netlify deploy --prod --dir=dist --site=$NETLIFY_SITE_ID
+        timeout-minutes: 5

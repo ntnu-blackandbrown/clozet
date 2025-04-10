@@ -8,7 +8,12 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+    vue({
+      script: {
+        // Prevent importing .json from being converted to URL
+        refTransform: false
+      }
+    }),
     vueJsx(),
     vueDevTools(),
   ],
@@ -24,6 +29,15 @@ export default defineConfig({
     __INTLIFY_PROD_DEVTOOLS__: false,
   },
   json: {
-    stringify: true, // This ensures JSON files are properly stringified during build
+    stringify: false, // Don't stringify JSON files during build
+    namedExports: true,
+  },
+  build: {
+    // Make sure source maps are generated
+    sourcemap: true,
+    // Optimize dependency bundling
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    }
   }
 })
