@@ -136,14 +136,15 @@ const submit = handleSubmit(async (values) => {
       const result = await authStore.login(values.username, values.password)
 
       if (result.success) {
-        statusMessage.value = `${t('common.login')} ${t('auth.registrationSuccess')}`
+        statusMessage.value = t('common.login') + ' ' + t('common.success')
         statusType.value = 'success'
         setTimeout(() => {
           emit('close')
         }, 1500)
       } else {
-        statusMessage.value = t('auth.loginFailed')
+        statusMessage.value = result.message || t('auth.loginFailed')
         statusType.value = 'error'
+        isSubmitting.value = false // Reset loading state immediately on login failure
       }
     } else {
       // Direct registration with correct endpoint

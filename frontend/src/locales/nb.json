@@ -19,7 +19,8 @@
     "confirmPassword": "Bekreft passord",
     "show": "Vis",
     "hide": "Skjul",
-    "loading": "Laster..."
+    "loading": "Laster...",
+    "success": "vellykket"
   },
   "navigation": {
     "home": "Hjem",

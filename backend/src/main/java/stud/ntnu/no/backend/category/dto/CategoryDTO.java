@@ -2,42 +2,57 @@ package stud.ntnu.no.backend.category.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Data Transfer Object for Category entities.
- * Contains validation constraints and represents the data structure
- * used for API communication with clients.
+ * Data Transfer Object for Category entities. Contains validation constraints and represents the
+ * data structure used for API communication with clients.
  */
 public class CategoryDTO {
-  /** Unique identifier for the category */
+
+  /**
+   * Unique identifier for the category
+   */
   private Long id;
-  
-  /** Name of the category with validation constraints */
+
+  /**
+   * Name of the category with validation constraints
+   */
   @NotBlank(message = "Name is required")
   @Size(min = 3, max = 100)
   private String name;
 
-  /** Description of the category with validation constraints */
+  /**
+   * Description of the category with validation constraints
+   */
   @NotBlank(message = "Description is required")
   @Size(max = 255)
   private String description;
-  
-  /** ID of parent category, null if it's a top-level category */
+
+  /**
+   * ID of parent category, null if it's a top-level category
+   */
   private Long parentId;
-  
-  /** Timestamp when the category was created */
+
+  /**
+   * Timestamp when the category was created
+   */
   private LocalDateTime createdAt;
-  
-  /** Timestamp when the category was last updated */
+
+  /**
+   * Timestamp when the category was last updated
+   */
   private LocalDateTime updatedAt;
-  
-  /** List of IDs of subcategories belonging to this category */
+
+  /**
+   * List of IDs of subcategories belonging to this category
+   */
   private List<Long> subcategoryIds;
-  
-  /** Name of the parent category, null if it's a top-level category */
+
+  /**
+   * Name of the parent category, null if it's a top-level category
+   */
   private String parentName;
 
   // Getters and setters

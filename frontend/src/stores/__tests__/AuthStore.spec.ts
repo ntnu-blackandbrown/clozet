@@ -21,7 +21,7 @@ describe('AuthStore', () => {
   it('logs in successfully and fetches user info', async () => {
     const mockUser = {
       id: 1,
-      usernameOrEmail: 'gizmo',
+      username: 'gizmo',
       email: 'gizmo@example.com',
       active: true,
       role: 'USER',
@@ -72,7 +72,7 @@ describe('AuthStore', () => {
     mockedAxios.post.mockResolvedValueOnce({}) // /logout
 
     const store = useAuthStore()
-    store.user = { id: 99, usernameOrEmail: 'logoutUser', email: '', active: true, role: 'USER' }
+    store.user = { id: 99, username: 'logoutUser', email: '', active: true, role: 'USER' }
     const result = await store.logout()
 
     expect(result.success).toBe(true)
@@ -83,14 +83,14 @@ describe('AuthStore', () => {
     mockedAxios.post.mockRejectedValueOnce(new Error('Logout failed'))
 
     const store = useAuthStore()
-    store.user = { id: 99, usernameOrEmail: 'logoutUser', email: '', active: true, role: 'USER' }
+    store.user = { id: 99, username: 'logoutUser', email: '', active: true, role: 'USER' }
     const result = await store.logout()
 
     expect(result.success).toBe(false)
     expect(result.message).toBe('Logout failed')
     expect(store.user).toEqual({
       id: 99,
-      usernameOrEmail: 'logoutUser',
+      username: 'logoutUser',
       email: '',
       active: true,
       role: 'USER',
@@ -124,7 +124,7 @@ describe('AuthStore', () => {
     const store = useAuthStore()
     store.user = {
       id: 1,
-      usernameOrEmail: 'test',
+      username: 'test',
       email: 'test@test.com',
       active: true,
       role: 'USER',

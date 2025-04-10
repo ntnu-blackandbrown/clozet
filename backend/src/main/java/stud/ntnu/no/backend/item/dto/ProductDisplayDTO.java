@@ -1,154 +1,154 @@
 package stud.ntnu.no.backend.item.dto;
 
-import stud.ntnu.no.backend.itemimage.dto.ItemImageDTO;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import stud.ntnu.no.backend.itemimage.dto.ItemImageDTO;
 
 /**
  * DTO for displaying detailed product information.
  */
 public class ProductDisplayDTO {
-    private Long id;
-    private String title;
-    private String fullDescription;
-    private double price;
-    private Long categoryId;
-    private String categoryName;
-    private String locationName;
-    private String sellerFullName;
-    private String shippingOptionName;
-    private boolean isAvailable;
-    private LocalDateTime updatedAt;
-    private LocalDateTime createdAt;
-    private List<ItemImageDTO> images;
 
-    // Default constructor
-    public ProductDisplayDTO() {
-    }
+  private Long id;
+  private String title;
+  private String fullDescription;
+  private double price;
+  private Long categoryId;
+  private String categoryName;
+  private String locationName;
+  private String sellerFullName;
+  private String shippingOptionName;
+  private boolean isAvailable;
+  private LocalDateTime updatedAt;
+  private LocalDateTime createdAt;
+  private List<ItemImageDTO> images;
 
-    // Full constructor
-    public ProductDisplayDTO(Long id, String title, String fullDescription, double price,
-                            Long categoryId, String categoryName, String locationName, 
-                            String sellerFullName, String shippingOptionName, boolean isAvailable,
-                            LocalDateTime updatedAt, LocalDateTime createdAt, List<ItemImageDTO> images) {
-        this.id = id;
-        this.title = title;
-        this.fullDescription = fullDescription;
-        this.price = price;
-        this.categoryId = categoryId;
-        this.categoryName = categoryName;
-        this.locationName = locationName;
-        this.sellerFullName = sellerFullName;
-        this.shippingOptionName = shippingOptionName;
-        this.isAvailable = isAvailable;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-        this.images = images;
-    }
+  // Default constructor
+  public ProductDisplayDTO() {
+  }
 
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
+  // Full constructor
+  public ProductDisplayDTO(Long id, String title, String fullDescription, double price,
+      Long categoryId, String categoryName, String locationName,
+      String sellerFullName, String shippingOptionName, boolean isAvailable,
+      LocalDateTime updatedAt, LocalDateTime createdAt, List<ItemImageDTO> images) {
+    this.id = id;
+    this.title = title;
+    this.fullDescription = fullDescription;
+    this.price = price;
+    this.categoryId = categoryId;
+    this.categoryName = categoryName;
+    this.locationName = locationName;
+    this.sellerFullName = sellerFullName;
+    this.shippingOptionName = shippingOptionName;
+    this.isAvailable = isAvailable;
+    this.updatedAt = updatedAt;
+    this.createdAt = createdAt;
+    this.images = images;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  // Getters and setters
+  public Long getId() {
+    return id;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public String getFullDescription() {
-        return fullDescription;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public void setFullDescription(String fullDescription) {
-        this.fullDescription = fullDescription;
-    }
+  public String getFullDescription() {
+    return fullDescription;
+  }
 
-    public double getPrice() {
-        return price;
-    }
+  public void setFullDescription(String fullDescription) {
+    this.fullDescription = fullDescription;
+  }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+  public double getPrice() {
+    return price;
+  }
 
-    public Long getCategoryId() {
-        return categoryId;
-    }
+  public void setPrice(double price) {
+    this.price = price;
+  }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
+  public Long getCategoryId() {
+    return categoryId;
+  }
 
-    public String getCategoryName() {
-        return categoryName;
-    }
+  public void setCategoryId(Long categoryId) {
+    this.categoryId = categoryId;
+  }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
+  public String getCategoryName() {
+    return categoryName;
+  }
 
-    public String getLocationName() {
-        return locationName;
-    }
+  public void setCategoryName(String categoryName) {
+    this.categoryName = categoryName;
+  }
 
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
-    }
+  public String getLocationName() {
+    return locationName;
+  }
 
-    public String getSellerFullName() {
-        return sellerFullName;
-    }
+  public void setLocationName(String locationName) {
+    this.locationName = locationName;
+  }
 
-    public void setSellerFullName(String sellerFullName) {
-        this.sellerFullName = sellerFullName;
-    }
+  public String getSellerFullName() {
+    return sellerFullName;
+  }
 
-    public String getShippingOptionName() {
-        return shippingOptionName;
-    }
+  public void setSellerFullName(String sellerFullName) {
+    this.sellerFullName = sellerFullName;
+  }
 
-    public void setShippingOptionName(String shippingOptionName) {
-        this.shippingOptionName = shippingOptionName;
-    }
+  public String getShippingOptionName() {
+    return shippingOptionName;
+  }
 
-    public boolean isAvailable() {
-        return isAvailable;
-    }
+  public void setShippingOptionName(String shippingOptionName) {
+    this.shippingOptionName = shippingOptionName;
+  }
 
-    public void setAvailable(boolean available) {
-        isAvailable = available;
-    }
+  public boolean isAvailable() {
+    return isAvailable;
+  }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setAvailable(boolean available) {
+    isAvailable = available;
+  }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public LocalDateTime getUpdatedAt() {
+    return updatedAt;
+  }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+  public void setUpdatedAt(LocalDateTime updatedAt) {
+    this.updatedAt = updatedAt;
+  }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
 
-    public List<ItemImageDTO> getImages() {
-        return images;
-    }
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setImages(List<ItemImageDTO> images) {
-        this.images = images;
-    }
+  public List<ItemImageDTO> getImages() {
+    return images;
+  }
+
+  public void setImages(List<ItemImageDTO> images) {
+    this.images = images;
+  }
 }

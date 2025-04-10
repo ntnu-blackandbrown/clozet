@@ -19,7 +19,8 @@
     "confirmPassword": "Confirmar contraseña",
     "show": "Mostrar",
     "hide": "Ocultar",
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "success": "exitoso"
   },
   "navigation": {
     "home": "Inicio",

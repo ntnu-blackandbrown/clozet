@@ -11,4 +11,5 @@ import stud.ntnu.no.backend.shippingoption.entity.ShippingOption;
  */
 @Repository
 public interface ShippingOptionRepository extends JpaRepository<ShippingOption, Long> {
+
 }

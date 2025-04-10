@@ -2,9 +2,15 @@ import { setActivePinia, createPinia } from 'pinia'
 import { useCategoryStore } from '@/stores/Category'
 import axios from '@/api/axios'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { Mocked } from 'vitest'
-vi.mock('axios')
-const mockedAxios = axios as Mocked<typeof axios>
+import type { Mock } from 'vitest'
+
+vi.mock('@/api/axios')
+const mockedAxios = axios as unknown as {
+  get: Mock
+  post: Mock
+  put: Mock
+  delete: Mock
+}
 
 describe('CategoryStore', () => {
   beforeEach(() => {

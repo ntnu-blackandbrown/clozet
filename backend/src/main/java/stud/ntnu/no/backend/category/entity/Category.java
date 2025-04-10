@@ -1,48 +1,71 @@
 package stud.ntnu.no.backend.category.entity;
 
-import jakarta.persistence.*;
-import stud.ntnu.no.backend.item.entity.Item;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
+import stud.ntnu.no.backend.item.entity.Item;
 
 /**
- * Entity representing a category in the system.
- * Categories can have hierarchical relationships with parent-child associations.
- * They are also related to items that belong to them.
+ * Entity representing a category in the system. Categories can have hierarchical relationships with
+ * parent-child associations. They are also related to items that belong to them.
  */
 @Entity
 @Table(name = "categories")
 public class Category {
-  /** Unique identifier for the category */
+
+  /**
+   * Unique identifier for the category
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  /** Unique name of the category */
+  /**
+   * Unique name of the category
+   */
   @Column(unique = true, nullable = false)
   private String name;
 
-  /** Description of what the category contains */
+  /**
+   * Description of what the category contains
+   */
   @Column(unique = true, nullable = false)
   private String description;
 
-  /** Parent category, null if this is a top-level category */
+  /**
+   * Parent category, null if this is a top-level category
+   */
   @ManyToOne
   @JoinColumn(name = "parent_id")
   private Category parent;
 
-  /** Timestamp when the category was created */
+  /**
+   * Timestamp when the category was created
+   */
   private LocalDateTime createdAt;
-  
-  /** Timestamp when the category was last updated */
+
+  /**
+   * Timestamp when the category was last updated
+   */
   private LocalDateTime updatedAt;
 
-  /** Items belonging to this category */
+  /**
+   * Items belonging to this category
+   */
   @OneToMany(mappedBy = "category")
   private List<Item> items;
 
-  /** Direct subcategories of this category */
+  /**
+   * Direct subcategories of this category
+   */
   @OneToMany(mappedBy = "parent")
   private List<Category> subcategories;
 

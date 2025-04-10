@@ -1,4 +1,3 @@
-
 package stud.ntnu.no.backend.message.exception;
 
 import stud.ntnu.no.backend.common.exception.BaseException;
@@ -10,12 +9,13 @@ import stud.ntnu.no.backend.common.exception.BaseException;
  */
 
 public class MessageNotFoundException extends BaseException {
-    /**
-     * Constructs a new MessageNotFoundException with the specified message ID.
-     *
-     * @param id the ID of the message that was not found
-     */
-    public MessageNotFoundException(Long id) {
-        super("Message not found with id: " + id);
-    }
+
+  /**
+   * Constructs a new MessageNotFoundException with the specified message ID.
+   *
+   * @param id the ID of the message that was not found
+   */
+  public MessageNotFoundException(Long id) {
+    super("Message not found with id: " + id);
+  }
 }

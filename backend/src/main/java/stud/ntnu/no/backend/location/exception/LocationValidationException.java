@@ -8,12 +8,13 @@ import stud.ntnu.no.backend.common.exception.BaseException;
  * This exception is mapped to a 400 Bad Request HTTP status code.
  */
 public class LocationValidationException extends BaseException {
-    /**
-     * Constructs a new LocationValidationException with the specified detail message.
-     *
-     * @param message the detail message
-     */
-    public LocationValidationException(String message) {
-        super(message);
-    }
+
+  /**
+   * Constructs a new LocationValidationException with the specified detail message.
+   *
+   * @param message the detail message
+   */
+  public LocationValidationException(String message) {
+    super(message);
+  }
 }
