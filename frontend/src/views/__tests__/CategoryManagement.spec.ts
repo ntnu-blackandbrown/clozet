@@ -4,6 +4,7 @@ import { mount, VueWrapper } from '@vue/test-utils'
 import CategoryManagement from '@/views/admin/categories/CategoryManagement.vue'
 import { CategoryService } from '@/api/services/CategoryService'
 import CreateCategoryModal from '@/components/admin/categories/CreateCategoryModal.vue'
+import type { AxiosResponse } from 'axios'
 
 // Define a category type for TypeScript
 interface Category {
@@ -12,6 +13,17 @@ interface Category {
   description: string;
   parent: { id: number; name: string } | null;
 }
+
+// Helper function to create mock Axios responses
+const createAxiosResponse = <T>(data: T, status = 200): AxiosResponse<T> => ({
+  data,
+  status,
+  statusText: status === 200 ? 'OK' : status === 201 ? 'Created' : 'Unknown',
+  headers: {},
+  config: {
+    headers: {} as any
+  } as any
+})
 
 // ---------------------------
 // Mocks
@@ -69,14 +81,11 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('renders categories in a table once loaded', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({
-        data: [
-          { id: 1, name: 'Category A', description: 'Desc A', parent: null },
-          { id: 2, name: 'Category B', description: 'Desc B', parent: { id: 1, name: 'Category A' } },
-        ],
-      })
-    )
+    const categories = [
+      { id: 1, name: 'Category A', description: 'Desc A', parent: null },
+      { id: 2, name: 'Category B', description: 'Desc B', parent: { id: 1, name: 'Category A' } },
+    ]
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse(categories))
     await createWrapper()
 
     const rows = wrapper.findAll('tbody tr')
@@ -87,9 +96,7 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('renders an empty state when no categories exist', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
     await createWrapper()
     expect(wrapper.text()).toContain('No categories found')
   })
@@ -109,7 +116,7 @@ describe('CategoryManagement.vue', () => {
         callCount++;
         return Promise.reject(new Error('API error'));
       } else {
-        return Promise.resolve({ data: [] });
+        return Promise.resolve(createAxiosResponse([]));
       }
     })
 
@@ -125,9 +132,7 @@ describe('CategoryManagement.vue', () => {
   // Modal & Create Category Flow
   // ---------------------------
   it('opens the "Create Category" modal when the Add New Category button is clicked', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
     await createWrapper()
 
     const createModal = wrapper.findComponent({ name: 'CreateCategoryModal' })
@@ -138,14 +143,8 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('creates a new category when the create event is emitted', async () => {
-    let getAllCategoriesCallCount = 0;
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() => {
-      return Promise.resolve({ data: [] });
-    })
-
-    vi.mocked(CategoryService.createCategory).mockImplementation(() =>
-      Promise.resolve({})
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    vi.mocked(CategoryService.createCategory).mockResolvedValue(createAxiosResponse({}, 201))
 
     await createWrapper()
 
@@ -157,10 +156,7 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('handles error when creating a category fails', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
-
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
     vi.mocked(CategoryService.createCategory).mockImplementation(() =>
       Promise.reject(new Error('Create error'))
     )
@@ -175,9 +171,7 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('cancels category creation when modal is closed', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
     await createWrapper()
 
     await wrapper.find('button[aria-label="Add new category"]').trigger('click')
@@ -195,10 +189,7 @@ describe('CategoryManagement.vue', () => {
       { id: 1, name: 'Category A', description: 'Desc A', parent: null }
     ] as Category[]
 
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: categories })
-    )
-
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse(categories))
     await createWrapper()
 
     await wrapper.find('button.btn-icon.edit').trigger('click')
@@ -212,9 +203,7 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('validates the edit form and prevents update when invalid', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
     await createWrapper()
     wrapper.vm.showEditForm = true
     wrapper.vm.editCategoryForm = {
@@ -231,9 +220,7 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('validates name length boundaries in edit form', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
     await createWrapper()
     wrapper.vm.showEditForm = true
 
@@ -258,9 +245,7 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('validates description length boundaries in edit form', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
     await createWrapper()
     wrapper.vm.showEditForm = true
 
@@ -281,9 +266,7 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('resets the edit form correctly', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
     await createWrapper()
     wrapper.vm.editCategoryForm = {
       id: 1,
@@ -303,9 +286,7 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('directly calls getParentName and returns correct values', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
     await createWrapper()
     expect(wrapper.vm.getParentName({ parent: null })).toBe('-')
     expect(wrapper.vm.getParentName({ parent: { name: 'Parent Category' } })).toBe('Parent Category')
@@ -315,13 +296,8 @@ describe('CategoryManagement.vue', () => {
   // Update & Delete Category Flows
   // ---------------------------
   it('successfully updates a category when edit form is submitted with valid data', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
-
-    vi.mocked(CategoryService.updateCategory).mockImplementation(() =>
-      Promise.resolve({})
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
+    vi.mocked(CategoryService.updateCategory).mockResolvedValue(createAxiosResponse({}))
 
     await createWrapper()
 
@@ -345,10 +321,7 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('handles error when updating a category fails', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
-
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
     vi.mocked(CategoryService.updateCategory).mockImplementation(() =>
       Promise.reject(new Error('Update error'))
     )
@@ -370,10 +343,10 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('prompts for confirmation before deleting a category and aborts if cancelled', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({
-        data: [{ id: 1, name: 'Category A', description: 'Desc A', parent: null }],
-      })
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(
+      createAxiosResponse([
+        { id: 1, name: 'Category A', description: 'Desc A', parent: null }
+      ])
     )
     await createWrapper()
     vi.spyOn(window, 'confirm').mockImplementationOnce(() => false)
@@ -387,13 +360,8 @@ describe('CategoryManagement.vue', () => {
       { id: 1, name: 'Category A', description: 'Desc A', parent: null }
     ] as Category[]
 
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: categories })
-    )
-
-    vi.mocked(CategoryService.deleteCategory).mockImplementation(() =>
-      Promise.resolve({})
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse(categories))
+    vi.mocked(CategoryService.deleteCategory).mockResolvedValue(createAxiosResponse({}))
 
     await createWrapper()
 
@@ -410,10 +378,7 @@ describe('CategoryManagement.vue', () => {
       { id: 1, name: 'Category A', description: 'Desc A', parent: null }
     ] as Category[]
 
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: categories })
-    )
-
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse(categories))
     vi.mocked(CategoryService.deleteCategory).mockImplementation(() =>
       Promise.reject(new Error('Delete error'))
     )
@@ -426,9 +391,7 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('closes edit form when cancel button is clicked', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
     await createWrapper()
 
     wrapper.vm.showEditForm = true
@@ -442,14 +405,12 @@ describe('CategoryManagement.vue', () => {
   // Asynchronous Loading States in Create/Update Operations
   // ---------------------------
   it('sets and resets loading state during createCategory', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
 
     let loadingDuringCreate = false;
     vi.mocked(CategoryService.createCategory).mockImplementation(async () => {
       loadingDuringCreate = wrapper.vm.isLoading;
-      return {};
+      return createAxiosResponse({}, 201);
     })
 
     await createWrapper()
@@ -460,14 +421,12 @@ describe('CategoryManagement.vue', () => {
   })
 
   it('sets and resets loading state during updateCategory', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
 
     let isLoadingDuringUpdate = false;
     vi.mocked(CategoryService.updateCategory).mockImplementation(async () => {
       isLoadingDuringUpdate = wrapper.vm.isLoading;
-      return {};
+      return createAxiosResponse({});
     })
 
     await createWrapper()
@@ -489,9 +448,7 @@ describe('CategoryManagement.vue', () => {
   // Directly calling handleEditSubmit and resetEditForm
   // ---------------------------
   it('directly calls handleEditSubmit when form is submitted', async () => {
-    vi.mocked(CategoryService.getAllCategories).mockImplementation(() =>
-      Promise.resolve({ data: [] })
-    )
+    vi.mocked(CategoryService.getAllCategories).mockResolvedValue(createAxiosResponse([]))
     await createWrapper()
     const handleEditSubmitSpy = vi.spyOn(wrapper.vm, 'handleEditSubmit')
     wrapper.vm.editCategoryForm = {
