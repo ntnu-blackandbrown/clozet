@@ -137,6 +137,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/categories/top-five").permitAll()
                 .requestMatchers("/api/marketplace/items").permitAll()
                 .requestMatchers("/api/items/**").permitAll()
+                .requestMatchers("/api/me").permitAll()
                 .requestMatchers("api/images/item/**").permitAll()
                 .anyRequest().authenticated()
             )
