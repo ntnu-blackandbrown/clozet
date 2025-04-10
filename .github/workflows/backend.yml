@@ -6,7 +6,7 @@ on:
       - develop
       - main
       - 'feature/**'
-      - task/ready-for-prod
+      - task/**
   pull_request:
     branches:
       - develop
@@ -92,7 +92,7 @@ jobs:
     name: Deploy Backend to Heroku
     runs-on: ubuntu-latest
     needs: package-backend
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/task/ready-for-prod'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/task/**'
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
