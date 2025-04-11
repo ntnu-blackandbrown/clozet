@@ -160,7 +160,7 @@ frontend/
 ### Database Entity Relationship Diagram
 The following diagram illustrates the database model of the application, showing all entities and their relationships:
 
-![E-commerce Platform Data Model](docs/images/database_diagram.png)
+![E-commerce Platform Data Model](docs/images/database_diagram.png){: width="500"}
 
 This entity relationship diagram shows the core entities of our application:
 - **Users**: Central entity storing user information including authentication details
@@ -348,7 +348,7 @@ mvn test
 
 #### Test Coverage
 
-![Test Coverage Report](docs/images/test-coverage.png)
+![Test Coverage Report](docs/images/test_coverage.png)
 
 ### Frontend Testing
 ```bash
