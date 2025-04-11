@@ -16,7 +16,7 @@ The system emphasizes clean architecture, security (OWASP compliance), accessibi
 
 
 
-**Live demo:** [https://your-link.netlify.app](https://your-link.netlify.app)
+**Live demo:** [clozet.netlify.app](https://clozet.netlify.app/)
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -227,6 +227,35 @@ The documentation can be accessed through the index.pdf file within the docs fol
 
 ## Installation and Running
 
+## Demo Users
+
+Below is an overview of user accounts used for testing and demonstration purposes in the system.
+
+### Pre-seeded users (automatically created in development)
+
+These users are automatically inserted into the database when the backend runs in development mode. They can be used to test features such as login, messaging, transactions, and the admin dashboard.
+
+| Role   | Username     | Email                          | Password                |
+|--------|--------------|----------------------------------|--------------------------|
+| Admin  | Admin        | clozet.adm.demo@gmail.com       | Admin1234               |
+| User   | demoSeller   | clozet.Seller.demo@gmail.com    | Clozet-Seller-Password  |
+| User   | demoBuyer    | clozet.buyer.demo@gmail.com     | Clozet-Buyer-Password   |
+
+> The `Admin` user has access to the admin dashboard. `demoSeller` and `demoBuyer` are standard users with `ROLE_USER`.
+
+---
+
+### Demo user for email verification
+
+This user is **not pre-seeded**, but is used to demonstrate user registration and email verification:
+
+| Role   | Username   | Email                      | Password      |
+|--------|------------|-----------------------------|----------------|
+| User   | demoUser   | demoClozetUser@gmail.com    | DemoUser123    |
+
+> When registering this user, a verification link is sent via Mailgun to an actual email address. The link will verify the user and activate their account.
+**note** the mail can end up in spam, so check there if you don't see it in your inbox. 
+
 ### Terminal Setup
 For the most effective execution of commands in this README, use Git Bash terminal:
 
@@ -308,13 +337,17 @@ The application should now be running and accessible through your browser.
 
 ## Testing
 
-### Backend Testing
+### Backend Testingt
 ```bash
 # Run from project root
 cd backend
 
 # Run all tests
 mvn test
+
+# Run tests with coverage report
+mvn test jacoco:report
+# Coverage report will be available at backend/target/site/jacoco/index.html
 ```
 
 ### Frontend Testing
@@ -322,12 +355,14 @@ mvn test
 # Run from project root
 cd frontend
 
-# Run unit tests
-npm run test:unit
+# Run unit tests with coverage
+npm run test:unit -- --coverage
+
+#build the project
+npm run build
 
 # Run E2E tests
 npm run test:e2e
-
 ```
 
 ### Manual WebSocket Testing
