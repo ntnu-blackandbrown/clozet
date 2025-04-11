@@ -3,6 +3,25 @@ import { mount } from '@vue/test-utils'
 import { createRouter, createWebHistory } from 'vue-router'
 import Footer from '@/components/layout/Footer.vue'
 
+// Create a mock i18n plugin
+const mockI18n = {
+  global: {
+    locale: 'en',
+    fallbackLocale: 'en',
+    messages: {}
+  },
+  install: (app) => {
+    app.config.globalProperties.$t = (key) => key
+    app.provide('i18n', mockI18n)
+  }
+}
+
+vi.mock('vue-i18n', () => ({
+  useI18n: () => ({
+    t: (key) => key
+  })
+}))
+
 describe('Footer.vue', () => {
   let router: ReturnType<typeof createRouter>
 
@@ -26,7 +45,7 @@ describe('Footer.vue', () => {
   it('renders footer sections with headings and links', async () => {
     const wrapper = mount(Footer, {
       global: {
-        plugins: [router],
+        plugins: [router, mockI18n],
       },
     })
 
@@ -53,7 +72,7 @@ describe('Footer.vue', () => {
   it('renders the footer navigation links properly', async () => {
     const wrapper = mount(Footer, {
       global: {
-        plugins: [router],
+        plugins: [router, mockI18n],
       },
     })
 
@@ -86,7 +105,7 @@ describe('Footer.vue', () => {
   it('displays current year correctly in copyright', () => {
     const wrapper = mount(Footer, {
       global: {
-        plugins: [router],
+        plugins: [router, mockI18n],
       },
     })
 

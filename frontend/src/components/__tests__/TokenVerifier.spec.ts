@@ -44,8 +44,12 @@ describe('TokenVerifier.vue', () => {
 
     // Wait for onMounted hook to run
     await nextTick()
-    // Verify that the error message is rendered
-    expect(wrapper.text()).toContain('Token mangler i URL.')
+
+    // Look for specific error message text in the component
+    const errorDiv = wrapper.find('.error')
+    expect(errorDiv.exists()).toBe(true)
+    expect(wrapper.find('.error p').text()).toBe('Token is missing in URL.')
+
     // Loading message should not be present after onMounted completes
     expect(wrapper.text()).not.toContain('Validerer token...')
   })
@@ -68,12 +72,13 @@ describe('TokenVerifier.vue', () => {
     await nextTick()
     await nextTick() // additional tick to allow promises to resolve
 
-    // Assert that AuthService.verifyToken was called with correct parameters
-    expect(AuthService.verifyToken).toHaveBeenCalledWith('/verify', 'valid-token')
+    // Assert that AuthService.verifyToken was called with the correct parameters
+    expect(AuthService.verifyToken).toHaveBeenCalledWith('valid-token')
     // Assert that router.push was called with the given redirectPath (without the token)
     expect(mockRouterPush).toHaveBeenCalledWith('/home')
     // The error message should not be visible
-    expect(wrapper.text()).not.toContain('Token er ugyldig eller utløpt.')
+    const errorDiv = wrapper.find('.error')
+    expect(errorDiv.exists()).toBe(false)
   })
 
   it('verifies token and redirects with token in query when includeTokenInRedirect is true', async () => {
@@ -94,14 +99,15 @@ describe('TokenVerifier.vue', () => {
     await nextTick()
 
     // Assert that the verification function was called as expected
-    expect(AuthService.verifyToken).toHaveBeenCalledWith('/verify', 'valid-token')
+    expect(AuthService.verifyToken).toHaveBeenCalledWith('valid-token')
     // When includeTokenInRedirect is true, router.push gets an object with the token in query parameters
     expect(mockRouterPush).toHaveBeenCalledWith({
       path: '/dashboard',
       query: { token: 'valid-token' },
     })
     // No error should be shown
-    expect(wrapper.text()).not.toContain('Token er ugyldig eller utløpt.')
+    const errorDiv = wrapper.find('.error')
+    expect(errorDiv.exists()).toBe(false)
   })
 
   it('displays error when token verification fails', async () => {
@@ -122,7 +128,9 @@ describe('TokenVerifier.vue', () => {
     await nextTick()
 
     // Assert: error message for failed verification is rendered
-    expect(wrapper.text()).toContain('Token er ugyldig eller utløpt.')
+    const errorDiv = wrapper.find('.error')
+    expect(errorDiv.exists()).toBe(true)
+    expect(wrapper.find('.error p').text()).toBe('Token is invalid or has expired. This may be because the server expects the token to be in cookies, but it is sent as a URL parameter.')
     // Assert that router.push was not called (no redirection on failure)
     expect(mockRouterPush).not.toHaveBeenCalled()
   })

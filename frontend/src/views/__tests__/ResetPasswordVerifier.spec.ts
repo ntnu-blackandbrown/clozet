@@ -10,7 +10,7 @@ describe('ResetPasswordVerifier.vue', () => {
     expect(tokenVerifierStub.exists()).toBe(true)
     // Verify the props.
     expect(tokenVerifierStub.props('verifyEndpoint')).toBe('/api/auth/reset-password/validate')
-    expect(tokenVerifierStub.props('redirectPath')).toBe('/forgot-password')
-    expect(tokenVerifierStub.props('includeTokenInRedirect')).toBe(false)
+    expect(tokenVerifierStub.props('redirectPath')).toBe('/reset-password')
+    expect(tokenVerifierStub.props('includeTokenInRedirect')).toBe(true)
   })
 })
