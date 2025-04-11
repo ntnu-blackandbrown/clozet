@@ -50,6 +50,7 @@ app:
   storage:
     use-cloudinary: ${USE_CLOUDINARY:false}
 
+
 logging:
   level:
     org.springframework.mail: DEBUG
