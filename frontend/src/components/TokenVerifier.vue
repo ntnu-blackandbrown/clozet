@@ -1,6 +1,6 @@
 <template>
   <div class="token-verifier" role="status" aria-live="polite">
-    <p v-if="loading" aria-busy="true">Validerer token...</p>
+    <p v-if="loading" aria-busy="true">Validating token...</p>
     <div v-if="error" class="error" role="alert">
       <h2>Verification failed</h2>
       <p>{{ errorMessage }}</p>
@@ -10,7 +10,7 @@
         <li>Try to log in with your username and password directly</li>
         <li>Contact support if the problem persists</li>
       </ul>
-      <button @click="navigateToLogin" class="button">Gå til innlogging</button>
+      <button @click="navigateToLogin" class="button">Go to login</button>
     </div>
   </div>
 </template>
@@ -49,7 +49,7 @@ const navigateToLogin = () => {
 onMounted(async () => {
   if (!token.value) {
     error.value = true
-    errorMessage.value = 'Token mangler i URL.'
+    errorMessage.value = 'Token is missing in URL.'
     return
   }
 
@@ -65,7 +65,7 @@ onMounted(async () => {
   } catch (err) {
     console.error('Token verification failed:', err)
     error.value = true
-    errorMessage.value = 'Token er ugyldig eller utløpt. Dette kan skyldes at serveren forventer at tokenet er i cookies, men det sendes som en URL parameter.'
+    errorMessage.value = 'Token is invalid or has expired. This may be because the server expects the token to be in cookies, but it is sent as a URL parameter.'
   } finally {
     loading.value = false
   }
