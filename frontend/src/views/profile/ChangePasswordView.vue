@@ -149,7 +149,7 @@ const submit = handleSubmit(async (values) => {
 
     // Redirect to profile settings after 2 seconds
     setTimeout(() => {
-      router.push('/profile/settings')
+      router.push('/')
     }, 2000)
   } catch (err) {
     error.value = true

@@ -80,7 +80,7 @@ const handleSaveChanges = handleSubmit(async (values) => {
     statusType.value = 'success'
     setTimeout(() => {
       authStore.logout()
-      router.push('/')
+      router.push('/profile/settings')
     }, 1500)
     // Try to fetch updated user info
   } catch (error) {
