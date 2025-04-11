@@ -337,18 +337,18 @@ The application should now be running and accessible through your browser.
 
 ## Testing
 
-### Backend Testingt
+### Backend Testing
 ```bash
 # Run from project root
 cd backend
 
 # Run all tests
 mvn test
-
-# Run tests with coverage report
-mvn test jacoco:report
-# Coverage report will be available at backend/target/site/jacoco/index.html
 ```
+
+#### Test Coverage
+
+![Test Coverage Report](docs/images/test-coverage.png)
 
 ### Frontend Testing
 ```bash
@@ -357,13 +357,11 @@ cd frontend
 
 # Run unit tests with coverage
 npm run test:unit -- --coverage
-
-#build the project
-npm run build
-
-# Run E2E tests
-npm run test:e2e
 ```
+
+
+
+> *The image above shows the current test coverage of the application's codebase.*
 
 ### Manual WebSocket Testing
 To test WebSocket functionality using the HTML test client:
@@ -396,7 +394,6 @@ To test WebSocket functionality using the HTML test client:
    - Monitor real-time WebSocket communication
 
 For detailed information on WebSocket testing, refer to the [WebSocket Testing Guide](docs/testing/websocket%20testing.pdf) in the documentation directory.
-
 
 ## Project Members
 
