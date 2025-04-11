@@ -227,7 +227,23 @@ The documentation can be accessed through the index.pdf file within the docs fol
 
 ## Installation and Running
 
-## Demo Users
+### Environment Setup
+The project uses a `env.example` file as a template to understand what environment variables were needed. However, for running the application, you should:
+
+1. Use the `.env` file provided in blackboard
+2. Place this `.env` file in the `backend` directory
+3. Ensure the file is named exactly `.env` (not .env.txt or similar)
+
+The structure of the environment variables follows the template in `env.example`, which includes configuration for:
+- Cloudinary storage for image handling
+- JWT authentication for secure login
+- Email services for user verification
+- Frontend URL for proper routing
+- File upload settings for handling user uploads
+
+> **Note:** The `env.example` file is provided as a reference to understand the required environment variables. For actual deployment and testing, use the `.env` for the actual web server config
+
+### Demo Users
 
 Below is an overview of user accounts used for testing and demonstration purposes in the system.
 
