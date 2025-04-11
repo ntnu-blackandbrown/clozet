@@ -245,7 +245,8 @@ Below is an overview of user accounts used for testing and demonstration purpose
 
 ### Pre-seeded users (automatically created in development)
 
-These users are automatically inserted into the database when the backend runs in development mode. They can be used to test features such as login, messaging, transactions, and the admin dashboard.
+These users are automatically inserted into the database when the backend runs in development mode. They can be used to test features such as login, messaging, transactions, and the admin dashboard. To test the sending of an email via SMTP to inform users about a password change, use the email address and password given below.
+**note** The Gmail password for Admin is Clozet-Admin1234
 
 | Role   | Username     | Email                          | Password                |
 |--------|--------------|----------------------------------|--------------------------|
@@ -265,7 +266,7 @@ This user is **not pre-seeded**, but is used to demonstrate user registration an
 |--------|------------|-----------------------------|----------------|
 | User   | demoUser   | demoClozetUser@gmail.com    | DemoUser123    |
 
-> When registering this user, a verification link is sent via Mailgun to an actual email address. The link will verify the user and activate their account.
+> When registering this user, a verification link is sent via Mailgun to an actual email address. Use the email and password above to log in to gmail to test the sending of the verification link over SMTP. Clicking on the link will verify the user and activate their account.
 **note** the mail can end up in spam, so check there if you don't see it in your inbox. 
 
 ### Terminal Setup
