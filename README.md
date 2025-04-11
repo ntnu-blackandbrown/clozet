@@ -230,9 +230,7 @@ The documentation can be accessed through the index.pdf file within the docs fol
 ### Environment Setup
 The project uses a `env.example` file as a template to understand what environment variables were needed. However, for running the application, you should:
 
-1. Use the `.env` file provided in blackboard
-2. Place this `.env` file in the `backend` directory
-3. Ensure the file is named exactly `.env` (not .env.txt or similar)
+1. Use the .env simulation file, thats .txt in blackboard, to fill in the environment variables
 
 The structure of the environment variables follows the template in `env.example`, which includes configuration for:
 - Cloudinary storage for image handling
@@ -240,8 +238,6 @@ The structure of the environment variables follows the template in `env.example`
 - Email services for user verification
 - Frontend URL for proper routing
 - File upload settings for handling user uploads
-
-> **Note:** The `env.example` file is provided as a reference to understand the required environment variables. For actual deployment and testing, use the `.env` for the actual web server config
 
 ### Demo Users
 
@@ -300,9 +296,8 @@ After cloning the project
    # Run from project root
    cd backend
    
-   # Production mode
-   mvn clean install
-   mvn spring-boot:run -Dspring-boot.run.profiles=prod
+   # Production mode with the environment variables and with -Dspring-boot.run.profiles=prod 
+   # Run the BackendApplication.java file 
    ```
    Backend will run on `http://localhost:8080`
 
@@ -386,10 +381,11 @@ To test WebSocket functionality using the HTML test client:
 
 1. First, start the backend server in production mode:
    ```bash
-   # Run from project root
+      # Run from project root
    cd backend
-   mvn clean install
-   mvn spring-boot:run -Dspring-boot.run.profiles=prod
+   
+   # Production mode with the environment variables and with -Dspring-boot.run.profiles=prod 
+   # Run the BackendApplication.java file 
    ```
 
 2. Once the backend server is running, open the WebSocket test HTML file in your browser:
