@@ -112,10 +112,14 @@ onMounted(async () => {
 
 <template>
   <div class="my-purchases-container">
-    <h2>My Purchases</h2>
-    <div v-if="loading" class="loading">Loading your purchases...</div>
-    <div v-else-if="items.length === 0" class="no-items">You have no purchases yet</div>
-    <ProductList v-else :items="items" />
+    <h2 id="my-purchases-title">My Purchases</h2>
+    <div v-if="loading" class="loading" role="status" aria-live="polite">
+      Loading your purchases...
+    </div>
+    <div v-else-if="items.length === 0" class="no-items" role="status" aria-live="polite">
+      You have no purchases yet
+    </div>
+    <ProductList v-else :items="items" aria-labelledby="my-purchases-title" />
   </div>
 </template>
 

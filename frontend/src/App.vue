@@ -3,15 +3,19 @@ import { ref, computed, onMounted, watch } from 'vue'
 import LoginRegisterModal from '@/views/LoginRegisterView.vue'
 import { RouterView, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from './stores/AuthStore'
+import { useFavoritesStore } from './stores/FavoritesStore'
 import Footer from '@/components/layout/Footer.vue'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const favoritesStore = useFavoritesStore()
 const showLoginModal = ref(false)
 const statusMessage = ref('')
 const isLoading = ref(false)
 const initialAuthMode = ref('login') // Default to login mode
+const mobileMenuOpen = ref(false) // Track mobile menu state
 
 // Computed properties
 const isLoggedIn = computed(() => authStore.isLoggedIn)
@@ -19,7 +23,27 @@ const userDetails = computed(() => authStore.userDetails)
 
 // Load user info on app start
 onMounted(async () => {
-  await authStore.fetchUserInfo()
+  console.log('🚀 App mounted, checking authentication status')
+
+  // Check if user is already authenticated via cookies (silently)
+  try {
+    // This will try to use the JWT cookies if they exist, or refresh token if needed
+    const isAuthenticated = await authStore.silentRefresh()
+    console.log(
+      `📝 Authentication check result: ${isAuthenticated ? 'Authenticated' : 'Not authenticated'}`,
+    )
+
+    // Initialize favorites if user is authenticated
+    if (isAuthenticated) {
+      console.log('🔄 User is authenticated, initializing favorites')
+      // Add small delay to ensure token is ready
+      setTimeout(() => {
+        favoritesStore.initializeFavorites()
+      }, 500)
+    }
+  } catch (error) {
+    console.error('❌ Error during authentication check:', error)
+  }
 
   // Check if we should show the login/register modal based on the route
   if (route.path === '/login' || route.path === '/register') {
@@ -38,6 +62,8 @@ watch(
     } else {
       showLoginModal.value = false
     }
+    // Close mobile menu when navigating
+    mobileMenuOpen.value = false
   },
 )
 
@@ -56,41 +82,80 @@ const handleCloseAuthModal = () => {
   showLoginModal.value = false
   router.replace('/')
 }
+
+const toggleMobileMenu = () => {
+  mobileMenuOpen.value = !mobileMenuOpen.value
+}
 </script>
 
 <template>
   <div :class="{ blurred: showLoginModal }">
-    <header class="main-header">
+    <a href="#main-content" class="skip-link sr-only sr-only-focusable">Skip to main content</a>
+    <header class="main-header" role="banner">
       <div class="header-content">
         <div class="header-left">
-          <RouterLink to="/" class="logo-container">
+          <RouterLink to="/" class="logo-container" aria-label="Home">
             <img src="@/assets/light-green.png" alt="Clozet Logo" class="logo-image" />
           </RouterLink>
-          <nav class="main-nav">
-            <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
-            <RouterLink v-if="isLoggedIn" to="/messages">Messages</RouterLink>
-            <RouterLink v-if="userDetails?.role === 'ADMIN'" to="/admin" class="nav-link"
-              >Admin Dashboard</RouterLink
-            >
-          </nav>
+
+          <!-- Hamburger menu button -->
+          <button
+            class="hamburger-menu-btn"
+            @click="toggleMobileMenu"
+            aria-label="Toggle navigation menu"
+            :aria-expanded="mobileMenuOpen"
+            :class="{ 'is-active': mobileMenuOpen }"
+          >
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+          </button>
         </div>
 
-        <div class="auth-section">
-          <template v-if="isLoggedIn">
-            <RouterLink v-if="userDetails?.role === 'ADMIN'" to="/admin" class="nav-link admin-link"
+        <!-- Navigation menu -->
+        <nav
+          class="main-nav"
+          :class="{ 'mobile-menu-open': mobileMenuOpen }"
+          aria-label="Main Navigation"
+        >
+          <template v-if="userDetails?.role === 'ADMIN'">
+            <RouterLink to="/admin" class="nav-link admin-link" aria-label="Admin Dashboard"
               >Admin Dashboard</RouterLink
             >
-            <RouterLink to="/profile" class="nav-link">My Profile</RouterLink>
-            <RouterLink to="/messages" class="nav-link">Messages</RouterLink>
-            <button @click="logout" class="logout-btn">Log Out</button>
           </template>
           <template v-else>
-            <button @click="handleLoginClick" class="login-btn">Log In</button>
+            <RouterLink v-if="isLoggedIn" to="/profile" aria-label="Profile">Profile</RouterLink>
+            <RouterLink v-if="isLoggedIn" to="/messages" aria-label="Messages">Messages</RouterLink>
+            <RouterLink v-if="isLoggedIn" to="/create-product" aria-label="Sell Items"
+              >Sell Items</RouterLink
+            >
           </template>
+
+          <!-- Mobile-only auth section -->
+          <div class="mobile-auth-section">
+            <LanguageSwitcher />
+            <button v-if="isLoggedIn" @click="logout" class="logout-btn" aria-label="Logout">
+              Logout
+            </button>
+            <button v-else @click="handleLoginClick" class="login-btn" aria-label="Login">
+              Login
+            </button>
+          </div>
+        </nav>
+
+        <!-- Desktop auth section -->
+        <div class="auth-section">
+          <LanguageSwitcher />
+          <button v-if="isLoggedIn" @click="logout" class="logout-btn" aria-label="Logout">
+            Logout
+          </button>
+          <button v-else @click="handleLoginClick" class="login-btn" aria-label="Login">
+            Login
+          </button>
         </div>
       </div>
     </header>
-    <main>
+    <main id="main-content" role="main">
       <RouterView />
     </main>
     <Footer />
@@ -162,6 +227,45 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Skip Link */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  padding: 8px;
+  background-color: var(--color-white);
+  color: var(--color-limed-spruce);
+  z-index: 1000;
+  transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
 }
 
 /* Global Component Styles */
@@ -264,7 +368,6 @@ body {
 .header-left {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xl);
 }
 
 .logo-container {
@@ -273,6 +376,7 @@ body {
   gap: var(--spacing-sm);
   text-decoration: none;
   transition: var(--transition-bounce);
+  margin-right: var(--spacing-xl);
 }
 
 .logo-container:hover {
@@ -293,9 +397,37 @@ body {
   letter-spacing: -0.02em;
 }
 
+/* Hamburger Menu Styles */
+.hamburger-menu-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 110;
+}
+
+.hamburger-bar {
+  width: 100%;
+  height: 3px;
+  background-color: var(--color-white);
+  border-radius: 10px;
+  transition: var(--transition-smooth);
+}
+
+/* Mobile Navigation Styles */
+.mobile-auth-section {
+  display: none;
+}
+
 .main-nav {
   display: flex;
   gap: var(--spacing-xl);
+  margin-right: auto;
 }
 
 .main-nav a {
@@ -309,9 +441,17 @@ body {
   opacity: 0.9;
 }
 
-.main-nav a:hover {
+.main-nav a:hover,
+.main-nav a:focus {
   color: var(--color-white);
   opacity: 1;
+  outline: none;
+}
+
+.main-nav a:focus {
+  text-decoration: underline;
+  outline: 2px solid white;
+  outline-offset: 2px;
 }
 
 .main-nav a::after {
@@ -332,7 +472,7 @@ body {
 .auth-section {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
 }
 
 .user-info {
@@ -348,11 +488,11 @@ body {
   opacity: 0.9;
 }
 
-.login-button {
-  background-color: var(--color-white);
+.login-btn {
+  background-color: #f1e7ca; /* Parchment color */
   color: var(--color-limed-spruce);
   padding: var(--spacing-sm) var(--spacing-lg);
-  border: 2px solid var(--color-limed-spruce);
+  border: none; /* Remove border to match logout button */
   border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.95rem;
@@ -360,14 +500,14 @@ body {
   transition: var(--transition-bounce);
 }
 
-.login-button:hover {
-  background-color: var(--color-limed-spruce);
-  color: var(--color-white);
+.login-btn:hover {
+  background-color: #e8ddb8; /* Slightly darker shade on hover */
+  color: var(--color-limed-spruce);
   transform: translateY(-2px);
   box-shadow: var(--box-shadow-medium);
 }
 
-.logout-button {
+.logout-btn {
   background-color: #f1e7ca;
   color: var(--color-limed-spruce);
   padding: var(--spacing-sm) var(--spacing-lg);
@@ -379,7 +519,7 @@ body {
   transition: var(--transition-bounce);
 }
 
-.logout-button:hover {
+.logout-btn:hover {
   background-color: #e8ddb8; /* Slightly darker shade */
   color: var(--color-limed-spruce);
   transform: translateY(-2px);
@@ -459,43 +599,117 @@ main {
 @media (max-width: 768px) {
   .header-content {
     padding: var(--spacing-md);
-    flex-direction: column;
-    gap: var(--spacing-lg);
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
   }
 
   .header-left {
-    flex-direction: column;
-    gap: var(--spacing-lg);
+    flex-direction: row;
+    width: auto;
+    gap: var(--spacing-md);
+    justify-content: space-between;
     width: 100%;
-    align-items: center;
+  }
+
+  .hamburger-menu-btn {
+    display: flex;
+    z-index: 120;
   }
 
   .main-nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    height: 100vh;
+    width: 75%;
+    max-width: 300px;
+    background-color: var(--color-limed-spruce);
+    padding: 80px 20px 20px;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    z-index: 100;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .main-nav.mobile-menu-open {
+    right: 0;
+  }
+
+  .main-nav a {
+    font-size: 1.3rem;
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     width: 100%;
-    justify-content: center;
+  }
+
+  .main-nav a::after {
+    display: none;
   }
 
   .auth-section {
+    display: none;
+  }
+
+  .mobile-auth-section {
+    display: block;
+    margin-top: var(--spacing-xl);
+  }
+
+  .mobile-auth-section button {
     width: 100%;
-    justify-content: center;
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-md);
+    font-size: 1.1rem;
+  }
+
+  /* Overlay when menu is open */
+  body:has(.mobile-menu-open) {
+    overflow: hidden;
+  }
+
+  /* Add an overlay when menu is open */
+  .main-nav.mobile-menu-open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
   }
 
   .grid {
     grid-template-columns: 1fr;
   }
+
+  .mobile-auth-section .language-switcher {
+    display: block !important;
+    width: 100%;
+    margin: 15px 0;
+  }
 }
 
-.admin-link {
-  background-color: #bf616a;
-  color: white;
-  font-weight: 600;
-  border-radius: 4px;
-  padding: 6px 12px;
-  margin-right: 16px;
+/* Animation for hamburger to X */
+.hamburger-menu-btn.is-active .hamburger-bar:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
 }
 
-.admin-link:hover {
-  background-color: #a5545c;
-  color: white;
+.hamburger-menu-btn.is-active .hamburger-bar:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu-btn.is-active .hamburger-bar:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* Ensure the language switcher is visible */
+.auth-section .language-switcher {
+  display: inline-block !important;
+  margin-right: 10px;
 }
 </style>

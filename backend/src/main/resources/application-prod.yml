@@ -2,8 +2,8 @@ spring:
   mail:
     host: smtp.mailgun.org
     port: 587
-    username: postmaster@sandbox25f0009567d5425391596f541e2cc221.mailgun.org
-    password: b8f0a713a60cbab4a3d9179e0a488b59-24bda9c7-34dc91a8
+    username: ${MAILGUN_SMTP_USERNAME}
+    password: ${MAILGUN_SMTP_PASSWORD}
     properties:
       mail:
         smtp:
@@ -13,29 +13,41 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+   
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: false
 
 app:
   email:
-    from: postmaster@sandbox25f0009567d5425391596f541e2cc221.mailgun.org
-    base-url: https://clozet.netlify.app/  # bytt til frontend-produksjonsdomene om nødvendig
+    from: ${MAILGUN_FROM_ADDRESS}
+    base-url: ${APP_BASE_URL:https://clozet.netlify.app/}
     verification-expiry-hours: 24
     password-reset-expiry-hours: 1
 
   jwt:
-    secret: AZTwI6sasm/p1KfaPZiSyGzIwDsEe70xTWG4H4TXatDcrqSOgWgACv1z05zhJnBIBGNWOUGuNZUnkwt86V2cqg==
-    expiration: 3600000
-    cookie-max-age: 3600
-    refresh-expiration: 3600000
-    refresh-cookie-max-age: 3600
-    secure-cookie: true  # Production bør ha secure cookies!
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION:3600000}
+    cookie-max-age: ${JWT_COOKIE_MAX_AGE:3600}
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+    refresh-cookie-max-age: ${JWT_REFRESH_COOKIE_MAX_AGE:604800}
+    secure-cookie: ${JWT_SECURE_COOKIE:true}
 
   upload:
-    dir: uploads
+    dir: ${UPLOAD_DIR:uploads}
 
   storage:
-    use-cloudinary: true
+    use-cloudinary: ${USE_CLOUDINARY:true}
 
   cloudinary:
-    cloud-name: dmoe4eqt4
-    api-key: 298875699675921
-    api-secret: 1kAWETGi8leIYAugHlCtvH7rBAg
+    cloud-name: ${CLOUDINARY_CLOUD_NAME}
+    api-key: ${CLOUDINARY_API_KEY}
+    api-secret: ${CLOUDINARY_API_SECRET}

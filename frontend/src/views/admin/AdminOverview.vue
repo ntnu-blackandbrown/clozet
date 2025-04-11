@@ -1,12 +1,17 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+// Import API services
+import { UserService } from '@/api/services/UserService'
+import { ProductService } from '@/api/services/ProductService'
+import { CategoryService } from '@/api/services/CategoryService'
+import { TransactionService } from '@/api/services/TransactionService'
 
 // Statistics data
 const statistics = ref({
   totalUsers: 0,
   totalItems: 0,
   totalCategories: 0,
-  totalTransactions: 0,
+  totalTransactions: 0, // Initialize transaction count
   recentUsers: [],
   recentItems: [],
 })
@@ -14,80 +19,65 @@ const statistics = ref({
 const isLoading = ref(true)
 const error = ref(null)
 
-// Fetch dashboard statistics
+// Helper function to sort by date and get top N items
+const getRecentItems = (items, count = 3) => {
+  if (!items || !Array.isArray(items)) return []
+  // Assuming items have a 'createdAt' field that can be parsed into a Date
+  return items.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, count)
+}
+
+// Fetch dashboard statistics from APIs
 const fetchStatistics = async () => {
   try {
     isLoading.value = true
     error.value = null
 
-    // TODO: Once backend endpoint is created, replace with actual API call
-    // const response = await axios.get('/api/admin/statistics')
-    // statistics.value = response.data
+    // Make concurrent API calls
+    const [usersResponse, productsResponse, categoriesResponse, transactionsResponse] =
+      await Promise.all([
+        UserService.getAllUsers().catch((e) => {
+          console.error('Failed to fetch users:', e)
+          return { data: [] }
+        }),
+        ProductService.getAllItems().catch((e) => {
+          console.error('Failed to fetch products:', e)
+          return { data: [] }
+        }),
+        CategoryService.getAllCategories().catch((e) => {
+          console.error('Failed to fetch categories:', e)
+          return { data: [] }
+        }),
+        TransactionService.getAllTransactions().catch((e) => {
+          console.error('Failed to fetch transactions:', e)
+          return { data: [] }
+        }),
+      ])
 
-    // Mock data for now
-    // Simulate API call
-    setTimeout(() => {
-      statistics.value = {
-        totalUsers: 35,
-        totalItems: 128,
-        totalCategories: 18,
-        totalTransactions: 52,
-        recentUsers: [
-          {
-            id: 1,
-            username: 'emmasmith1',
-            firstName: 'Emma',
-            lastName: 'Smith',
-            email: 'emmasmith@example.com',
-            createdAt: '2023-05-15',
-          },
-          {
-            id: 2,
-            username: 'noahjohnson1',
-            firstName: 'Noah',
-            lastName: 'Johnson',
-            email: 'noahjohnson@example.com',
-            createdAt: '2023-05-14',
-          },
-          {
-            id: 3,
-            username: 'oliviawilliams1',
-            firstName: 'Olivia',
-            lastName: 'Williams',
-            email: 'oliviawilliams@example.com',
-            createdAt: '2023-05-13',
-          },
-        ],
-        recentItems: [
-          {
-            id: 1,
-            title: "Men's Classic T-Shirt - Black",
-            price: 199.5,
-            seller: 'demoSeller',
-            createdAt: '2023-05-16',
-          },
-          {
-            id: 2,
-            title: "Women's Summer Dress - Floral",
-            price: 450.0,
-            seller: 'emmasmith1',
-            createdAt: '2023-05-15',
-          },
-          {
-            id: 3,
-            title: 'Leather Jacket - Brown',
-            price: 1200.0,
-            seller: 'oliviawilliams1',
-            createdAt: '2023-05-14',
-          },
-        ],
-      }
-      isLoading.value = false
-    }, 800)
-  } catch (err) {
-    console.error('Error fetching admin statistics:', err)
-    error.value = 'Failed to load dashboard data'
+    const users = usersResponse.data || []
+    const products = productsResponse.data || []
+    const categories = categoriesResponse.data || []
+    const transactions = transactionsResponse.data || []
+
+    // Calculate statistics
+    statistics.value = {
+      totalUsers: users.length,
+      totalItems: products.length,
+      totalCategories: categories.length,
+      totalTransactions: transactions.length,
+      recentUsers: getRecentItems(users),
+      recentItems: getRecentItems(products),
+    }
+
+    // Remove mock data timeout
+    // setTimeout(() => { ... }, 800) // This block is removed
+
     isLoading.value = false
+  } catch (err) {
+    // This top-level catch might be less necessary if individual calls are handled
+    // But keep it as a fallback
+    console.error('Error fetching admin statistics:', err)
+    error.value = 'Failed to load some dashboard data. Check console for details.'
+    isLoading.value = false // Ensure loading stops even if Promise.all fails globally
   }
 }
 
@@ -99,25 +89,31 @@ onMounted(() => {
 <template>
   <div class="admin-overview">
     <div class="page-header">
-      <h1>Dashboard Overview</h1>
+      <h1 id="dashboard-title">Dashboard Overview</h1>
       <p class="subtitle">Welcome to the admin dashboard</p>
     </div>
 
-    <div v-if="isLoading" class="loading-container">
-      <div class="loading-spinner"></div>
+    <div v-if="isLoading" class="loading-container" role="status" aria-live="polite">
+      <div class="loading-spinner" aria-hidden="true"></div>
       <p>Loading dashboard data...</p>
     </div>
 
-    <div v-else-if="error" class="error-container">
+    <div v-else-if="error" class="error-container" role="alert">
       <p>{{ error }}</p>
-      <button @click="fetchStatistics" class="retry-button">Retry</button>
+      <button
+        @click="fetchStatistics"
+        class="retry-button"
+        aria-label="Retry loading dashboard data"
+      >
+        Retry
+      </button>
     </div>
 
     <template v-else>
       <!-- Statistics Cards -->
-      <div class="stats-grid">
+      <div class="stats-grid" role="region" aria-labelledby="dashboard-title">
         <div class="stat-card">
-          <div class="stat-icon">👥</div>
+          <div class="stat-icon" aria-hidden="true">👥</div>
           <div class="stat-content">
             <h3 class="stat-title">Total Users</h3>
             <p class="stat-value">{{ statistics.totalUsers }}</p>
@@ -125,7 +121,7 @@ onMounted(() => {
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon">👕</div>
+          <div class="stat-icon" aria-hidden="true">👕</div>
           <div class="stat-content">
             <h3 class="stat-title">Total Items</h3>
             <p class="stat-value">{{ statistics.totalItems }}</p>
@@ -133,7 +129,7 @@ onMounted(() => {
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon">🏷️</div>
+          <div class="stat-icon" aria-hidden="true">🏷️</div>
           <div class="stat-content">
             <h3 class="stat-title">Categories</h3>
             <p class="stat-value">{{ statistics.totalCategories }}</p>
@@ -141,7 +137,7 @@ onMounted(() => {
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon">💰</div>
+          <div class="stat-icon" aria-hidden="true">💰</div>
           <div class="stat-content">
             <h3 class="stat-title">Transactions</h3>
             <p class="stat-value">{{ statistics.totalTransactions }}</p>
@@ -152,15 +148,14 @@ onMounted(() => {
       <!-- Recent Activity Section -->
       <div class="activity-section">
         <div class="activity-card">
-          <h3 class="activity-title">Recent Users</h3>
+          <h3 id="recent-users-title" class="activity-title">Recent Users</h3>
           <div class="activity-content">
-            <table class="data-table">
+            <table class="data-table" aria-labelledby="recent-users-title">
               <thead>
                 <tr>
-                  <th>Username</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Date Joined</th>
+                  <th scope="col">Username</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Email</th>
                 </tr>
               </thead>
               <tbody>
@@ -168,34 +163,29 @@ onMounted(() => {
                   <td>{{ user.username }}</td>
                   <td>{{ user.firstName }} {{ user.lastName }}</td>
                   <td>{{ user.email }}</td>
-                  <td>{{ user.createdAt }}</td>
                 </tr>
               </tbody>
             </table>
             <div class="view-all-link">
-              <RouterLink to="/admin/users">View All Users</RouterLink>
+              <RouterLink to="/admin/users" aria-label="View all users">View All Users</RouterLink>
             </div>
           </div>
         </div>
 
         <div class="activity-card">
-          <h3 class="activity-title">Recent Items</h3>
+          <h3 id="recent-items-title" class="activity-title">Recent Items</h3>
           <div class="activity-content">
-            <table class="data-table">
+            <table class="data-table" aria-labelledby="recent-items-title">
               <thead>
                 <tr>
-                  <th>Title</th>
-                  <th>Price</th>
-                  <th>Seller</th>
-                  <th>Date Listed</th>
+                  <th scope="col">Title</th>
+                  <th scope="col">Price</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="item in statistics.recentItems" :key="item.id">
                   <td>{{ item.title }}</td>
                   <td>{{ item.price.toFixed(2) }} kr</td>
-                  <td>{{ item.seller }}</td>
-                  <td>{{ item.createdAt }}</td>
                 </tr>
               </tbody>
             </table>
@@ -303,28 +293,34 @@ onMounted(() => {
 
 .activity-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 1.5rem;
 }
 
 .activity-card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
+  background-color: #ffffff;
+  border: 1px solid var(--color-gallery);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
 }
 
 .activity-title {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  padding: 1rem 1.5rem;
-  margin: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   color: var(--color-limed-spruce);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-gallery);
 }
 
 .activity-content {
-  padding: 1rem 0;
+  flex-grow: 1;
+  position: relative;
+  max-height: 300px; /* Set a max height */
+  overflow-y: auto; /* Enable vertical scrollbar when content overflows */
 }
 
 .data-table {

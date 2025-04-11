@@ -77,3 +77,25 @@ export const vippsPaymentSchema = yup.object({
     .matches(/^\d{4}$/, 'PIN must be 4 digits')
     .required('PIN is required'),
 })
+
+// Product validation schema
+export const productSchema = yup.object({
+  title: yup.string().required('Title is required'),
+  shortDescription: yup.string().required('Short description is required'),
+  longDescription: yup.string().required('Long description is required'),
+  price: yup
+    .number()
+    .typeError('Price must be a number') // Added typeError for better feedback
+    .required('Price is required')
+    .positive('Price must be positive')
+    .min(0, 'Price must be at least 0'),
+  categoryId: yup.string().required('Category is required'), // Keep as string if value is ID
+  locationId: yup.string().required('Location is required'), // Keep as string if value is ID
+  shippingOptionId: yup.string().required('Shipping option is required'), // Keep as string if value is ID
+  condition: yup.string().required('Condition is required'),
+  size: yup.string().required('Size is required'),
+  brand: yup.string().required('Brand is required'),
+  color: yup.string().required('Color is required'),
+  isVippsPaymentEnabled: yup.boolean(),
+  // Assuming images are handled separately and not part of this schema validation directly
+})

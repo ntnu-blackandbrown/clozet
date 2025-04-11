@@ -347,7 +347,7 @@ The application should now be running and accessible through your browser.
    - Build artifact preservation
 3. **Deployment**
    - Netlify deployment
-   - Production build optimization
+   - Production build optimization       
 
    link: https://github.com/ntnu-blackandbrown/clozet/actions/workflows/frontend.yml
 

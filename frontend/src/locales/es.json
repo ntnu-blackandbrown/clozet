@@ -1,0 +1,184 @@
+{
+  "common": {
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "username": "Nombre de usuario",
+    "search": "Buscar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "submit": "Enviar",
+    "skipToContent": "Saltar al contenido principal",
+    "toggleMenu": "Alternar menú de navegación",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "confirmPassword": "Confirmar contraseña",
+    "show": "Mostrar",
+    "hide": "Ocultar",
+    "loading": "Cargando...",
+    "success": "exitoso"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "closet": "Armario",
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "messages": "Mensajes",
+    "sellItems": "Vender artículos",
+    "adminDashboard": "Panel de administración"
+  },
+  "auth": {
+    "loginTitle": "Iniciar sesión en tu cuenta",
+    "registerTitle": "Crear una nueva cuenta",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "dontHaveAccount": "¿No tienes una cuenta?",
+    "loginFailed": "Error al iniciar sesión. Verifica tu nombre de usuario y contraseña.",
+    "registrationSuccess": "¡Registro exitoso! Por favor, verifica tu correo electrónico",
+    "registrationFailed": "El registro falló debido a un error técnico.",
+    "loginFailed2": "Error al iniciar sesión debido a un error técnico."
+  },
+  "closet": {
+    "addItem": "Añadir artículo",
+    "categories": "Categorías",
+    "noItems": "No se encontraron artículos",
+    "filterBy": "Filtrar por"
+  },
+  "item": {
+    "name": "Nombre",
+    "category": "Categoría",
+    "color": "Color",
+    "size": "Talla",
+    "brand": "Marca",
+    "addedOn": "Añadido el"
+  },
+  "profile": {
+    "editProfile": "Editar perfil",
+    "changePassword": "Cambiar contraseña",
+    "myCloset": "Mi armario",
+    "settings": "Configuración",
+    "profileSettings": "Configuración del perfil",
+    "myPosts": "Mis publicaciones",
+    "myWishlist": "Mi lista de deseos",
+    "myPurchases": "Mis compras",
+    "navigation": {
+      "profileSettings": "Configuración del perfil",
+      "myPosts": "Mis publicaciones",
+      "myWishlist": "Mi lista de deseos",
+      "myPurchases": "Mis compras",
+      "changePassword": "Cambiar contraseña"
+    },
+    "emptyStates": {
+      "noPosts": "Aún no tienes publicaciones",
+      "noWishlist": "Aún no tienes artículos en tu lista de deseos"
+    },
+    "settings": {
+      "title": "Configuración del perfil",
+      "saveChanges": "Guardar cambios",
+      "deleteAccount": "Eliminar cuenta",
+      "savingChanges": "Guardando...",
+      "changesSuccess": "¡Cambios guardados con éxito! Por favor, inicia sesión de nuevo.",
+      "changesFailed": "Error al guardar los cambios",
+      "confirmDelete": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer."
+    },
+    "changePassword": {
+      "title": "Cambiar contraseña",
+      "description": "Ingresa tu contraseña actual y elige una nueva contraseña.",
+      "currentPassword": "Contraseña actual",
+      "newPassword": "Nueva contraseña",
+      "confirmNewPassword": "Confirmar nueva contraseña",
+      "updatePassword": "Actualizar contraseña",
+      "backToSettings": "Volver a la configuración",
+      "successMessage": "La contraseña se ha actualizado con éxito.",
+      "errorMessage": "Ocurrió un error. Por favor, verifica tu contraseña actual e inténtalo de nuevo."
+    }
+  },
+  "home": {
+    "welcome": "¡Bienvenido a Clozet!",
+    "tagline": "La nueva forma de comprar ropa",
+    "searchPlaceholder": "Buscar un producto...",
+    "createPost": "¡Crear una publicación!",
+    "popularCategories": "Categorías populares",
+    "loading": "Cargando...",
+    "pleaseLogin": "Por favor, inicia sesión para crear una publicación"
+  },
+  "createProduct": {
+    "title": "Crear nuevo producto",
+    "editTitle": "Editar producto",
+    "sections": {
+      "images": "Imágenes del producto",
+      "basicInfo": "Información básica",
+      "details": "Detalles del producto",
+      "locationShipping": "Ubicación y envío"
+    },
+    "imageUpload": {
+      "dragDrop": "Arrastra y suelta imágenes aquí o haz clic para seleccionar",
+      "maxImages": "Máximo {max} imágenes permitidas",
+      "required": "Se requiere al menos una imagen para un nuevo producto",
+      "keepCurrent": "Las imágenes actuales se mantendrán. Sube nuevas imágenes para reemplazarlas."
+    },
+    "fields": {
+      "title": "Título",
+      "shortDescription": "Descripción corta",
+      "longDescription": "Descripción larga",
+      "price": "Precio (NOK)",
+      "category": "Categoría",
+      "condition": "Condición",
+      "size": "Talla",
+      "brand": "Marca",
+      "color": "Color",
+      "location": "Ubicación",
+      "shipping": "Opción de envío",
+      "vippsPayment": "Habilitar pago con Vipps"
+    },
+    "placeholders": {
+      "selectCategory": "Seleccionar una categoría",
+      "selectCondition": "Seleccionar condición",
+      "selectSize": "Seleccionar talla",
+      "selectLocation": "Seleccionar ubicación",
+      "selectShipping": "Seleccionar opción de envío"
+    },
+    "buttons": {
+      "cancel": "Cancelar",
+      "create": "Crear producto",
+      "update": "Actualizar producto",
+      "creating": "Creando...",
+      "updating": "Actualizando..."
+    }
+  },
+  "footer": {
+    "about": {
+      "title": "Acerca de Clozet",
+      "description": "Tu mercado de moda sostenible. Compra, vende e intercambia ropa con facilidad."
+    },
+    "quickLinks": "Enlaces rápidos",
+    "helpSupport": "Ayuda y soporte",
+    "account": "Cuenta",
+    "social": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "followInstagram": "Síguenos en Instagram",
+      "followFacebook": "Síguenos en Facebook",
+      "followTwitter": "Síguenos en Twitter"
+    },
+    "links": {
+      "faq": "Preguntas frecuentes",
+      "contactUs": "Contáctanos",
+      "termsOfService": "Términos de servicio",
+      "privacyPolicy": "Política de privacidad"
+    },
+    "copyright": "Todos los derechos reservados."
+  },
+  "errors": {
+    "requiredField": "Este campo es obligatorio",
+    "invalidEmail": "Por favor, ingresa un correo electrónico válido",
+    "passwordLength": "La contraseña debe tener al menos 8 caracteres",
+    "somethingWentWrong": "Algo salió mal",
+    "passwordsDoNotMatch": "Las contraseñas no coinciden"
+  }
+}

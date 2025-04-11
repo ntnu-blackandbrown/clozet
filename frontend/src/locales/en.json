@@ -1,0 +1,184 @@
+{
+  "common": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "username": "Username",
+    "search": "Search",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "submit": "Submit",
+    "skipToContent": "Skip to main content",
+    "toggleMenu": "Toggle navigation menu",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "confirmPassword": "Confirm Password",
+    "show": "Show",
+    "hide": "Hide",
+    "loading": "Loading...",
+    "success": "successful"
+  },
+  "navigation": {
+    "home": "Home",
+    "closet": "Closet",
+    "profile": "Profile",
+    "settings": "Settings",
+    "messages": "Messages",
+    "sellItems": "Sell Items",
+    "adminDashboard": "Admin Dashboard"
+  },
+  "auth": {
+    "loginTitle": "Login to your account",
+    "registerTitle": "Create a new account",
+    "forgotPassword": "Forgot password?",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "loginFailed": "Login failed. Check username and password.",
+    "registrationSuccess": "Registration successful! Please check your email for verification",
+    "registrationFailed": "Registration failed due to technical error.",
+    "loginFailed2": "Login failed due to technical error."
+  },
+  "closet": {
+    "addItem": "Add Item",
+    "categories": "Categories",
+    "noItems": "No items found",
+    "filterBy": "Filter by"
+  },
+  "item": {
+    "name": "Name",
+    "category": "Category",
+    "color": "Color",
+    "size": "Size",
+    "brand": "Brand",
+    "addedOn": "Added on"
+  },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password",
+    "myCloset": "My Closet",
+    "settings": "Settings",
+    "profileSettings": "Profile Settings",
+    "myPosts": "My Posts",
+    "myWishlist": "My Wishlist",
+    "myPurchases": "My Purchases",
+    "navigation": {
+      "profileSettings": "Profile Settings",
+      "myPosts": "My Posts",
+      "myWishlist": "My Wishlist",
+      "myPurchases": "My Purchases",
+      "changePassword": "Change Password"
+    },
+    "emptyStates": {
+      "noPosts": "You have no posts yet",
+      "noWishlist": "You have no items in your wishlist yet"
+    },
+    "settings": {
+      "title": "Profile Settings",
+      "saveChanges": "Save Changes",
+      "deleteAccount": "Delete Account",
+      "savingChanges": "Saving...",
+      "changesSuccess": "Changes saved successfully! Please log in again.",
+      "changesFailed": "Failed to save changes",
+      "confirmDelete": "Are you sure you want to delete your account? This action cannot be undone."
+    },
+    "changePassword": {
+      "title": "Change Password",
+      "description": "Enter your current password and choose a new password.",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmNewPassword": "Confirm New Password",
+      "updatePassword": "Update Password",
+      "backToSettings": "Back to Settings",
+      "successMessage": "Password has been updated successfully.",
+      "errorMessage": "An error occurred. Please check your current password and try again."
+    }
+  },
+  "home": {
+    "welcome": "Welcome to Clozet!",
+    "tagline": "The new way to shop for clothes",
+    "searchPlaceholder": "Search for a product...",
+    "createPost": "Create a post!",
+    "popularCategories": "Popular Categories",
+    "loading": "Loading...",
+    "pleaseLogin": "Please login to create a post"
+  },
+  "createProduct": {
+    "title": "Create New Product",
+    "editTitle": "Edit Product",
+    "sections": {
+      "images": "Product Images",
+      "basicInfo": "Basic Information",
+      "details": "Product Details",
+      "locationShipping": "Location & Shipping"
+    },
+    "imageUpload": {
+      "dragDrop": "Drag and drop images here or click to select",
+      "maxImages": "Maximum {max} images allowed",
+      "required": "At least one image is required for a new product",
+      "keepCurrent": "Current images will be kept. Upload new images to replace them."
+    },
+    "fields": {
+      "title": "Title",
+      "shortDescription": "Short Description",
+      "longDescription": "Long Description",
+      "price": "Price (NOK)",
+      "category": "Category",
+      "condition": "Condition",
+      "size": "Size",
+      "brand": "Brand",
+      "color": "Color",
+      "location": "Location",
+      "shipping": "Shipping Option",
+      "vippsPayment": "Enable Vipps Payment"
+    },
+    "placeholders": {
+      "selectCategory": "Select a category",
+      "selectCondition": "Select condition",
+      "selectSize": "Select size",
+      "selectLocation": "Select location",
+      "selectShipping": "Select shipping option"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "create": "Create Product",
+      "update": "Update Product",
+      "creating": "Creating...",
+      "updating": "Updating..."
+    }
+  },
+  "footer": {
+    "about": {
+      "title": "About Clozet",
+      "description": "Your sustainable fashion marketplace. Buy, sell, and trade clothes with ease."
+    },
+    "quickLinks": "Quick Links",
+    "helpSupport": "Help & Support",
+    "account": "Account",
+    "social": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "followInstagram": "Follow us on Instagram",
+      "followFacebook": "Follow us on Facebook",
+      "followTwitter": "Follow us on Twitter"
+    },
+    "links": {
+      "faq": "FAQ",
+      "contactUs": "Contact Us",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy"
+    },
+    "copyright": "All rights reserved."
+  },
+  "errors": {
+    "requiredField": "This field is required",
+    "invalidEmail": "Please enter a valid email",
+    "passwordLength": "Password must be at least 8 characters",
+    "somethingWentWrong": "Something went wrong",
+    "passwordsDoNotMatch": "Passwords do not match"
+  }
+}

@@ -68,8 +68,9 @@ export function useValidatedForm<T extends Record<string, any>>(schema: Schema, 
  * @param fieldName Name of the field to validate
  * @returns Validated field value and error message
  */
-export function useValidatedField(fieldName: string) {
-  const { value, errorMessage } = useField(fieldName)
+export function useValidatedField<T = string>(fieldName: string) {
+  // Pass the generic type T to useField
+  const { value, errorMessage } = useField<T>(fieldName)
 
   return {
     value,

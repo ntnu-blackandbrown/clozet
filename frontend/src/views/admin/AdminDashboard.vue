@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/AuthStore'
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const isMobileMenuOpen = ref(false)
 
 const isAdmin = computed(() => {
   return authStore.userDetails?.role === 'ADMIN'
@@ -17,21 +18,43 @@ onMounted(() => {
     router.push('/')
   }
 })
+
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value
+}
 </script>
 
 <template>
   <div class="admin-container">
+    <!-- Hamburger button for mobile -->
+    <button
+      class="admin-hamburger-btn"
+      :class="{ 'is-hidden': isMobileMenuOpen }"
+      @click="toggleMobileMenu"
+      aria-label="Toggle admin navigation menu"
+      :aria-expanded="isMobileMenuOpen ? 'true' : 'false'"
+    >
+      <span>☰</span>
+    </button>
+
     <!-- Admin sidebar navigation -->
-    <nav class="admin-sidebar">
-      <h2 class="admin-title">Admin Dashboard</h2>
+    <nav
+      class="admin-sidebar"
+      :class="{ 'is-open': isMobileMenuOpen }"
+      role="navigation"
+      aria-label="Admin dashboard navigation"
+    >
+      <h2 class="admin-title" id="admin-nav-title">Admin Dashboard</h2>
 
       <div class="admin-nav-links">
         <RouterLink
           to="/admin/overview"
           class="admin-nav-link"
           :class="{ active: route.path === '/admin/overview' }"
+          @click="isMobileMenuOpen = false"
+          aria-current="route.path === '/admin/overview' ? 'page' : undefined"
         >
-          <span class="admin-nav-icon">📊</span>
+          <span class="admin-nav-icon" aria-hidden="true">📊</span>
           Overview
         </RouterLink>
 
@@ -39,8 +62,10 @@ onMounted(() => {
           to="/admin/categories"
           class="admin-nav-link"
           :class="{ active: route.path === '/admin/categories' }"
+          @click="isMobileMenuOpen = false"
+          aria-current="route.path === '/admin/categories' ? 'page' : undefined"
         >
-          <span class="admin-nav-icon">🏷️</span>
+          <span class="admin-nav-icon" aria-hidden="true">🏷️</span>
           Categories
         </RouterLink>
 
@@ -48,8 +73,10 @@ onMounted(() => {
           to="/admin/locations"
           class="admin-nav-link"
           :class="{ active: route.path === '/admin/locations' }"
+          @click="isMobileMenuOpen = false"
+          aria-current="route.path === '/admin/locations' ? 'page' : undefined"
         >
-          <span class="admin-nav-icon">📍</span>
+          <span class="admin-nav-icon" aria-hidden="true">📍</span>
           Locations
         </RouterLink>
 
@@ -57,8 +84,10 @@ onMounted(() => {
           to="/admin/shipping"
           class="admin-nav-link"
           :class="{ active: route.path === '/admin/shipping' }"
+          @click="isMobileMenuOpen = false"
+          aria-current="route.path === '/admin/shipping' ? 'page' : undefined"
         >
-          <span class="admin-nav-icon">🚚</span>
+          <span class="admin-nav-icon" aria-hidden="true">🚚</span>
           Shipping Options
         </RouterLink>
 
@@ -66,8 +95,10 @@ onMounted(() => {
           to="/admin/users"
           class="admin-nav-link"
           :class="{ active: route.path === '/admin/users' }"
+          @click="isMobileMenuOpen = false"
+          aria-current="route.path === '/admin/users' ? 'page' : undefined"
         >
-          <span class="admin-nav-icon">👥</span>
+          <span class="admin-nav-icon" aria-hidden="true">👥</span>
           User Management
         </RouterLink>
 
@@ -75,19 +106,28 @@ onMounted(() => {
           to="/admin/transactions"
           class="admin-nav-link"
           :class="{ active: route.path === '/admin/transactions' }"
+          @click="isMobileMenuOpen = false"
+          aria-current="route.path === '/admin/transactions' ? 'page' : undefined"
         >
-          <span class="admin-nav-icon">💰</span>
+          <span class="admin-nav-icon" aria-hidden="true">💰</span>
           Transactions
         </RouterLink>
       </div>
 
       <div class="admin-sidebar-footer">
-        <RouterLink to="/" class="admin-back-link"> Return to Site </RouterLink>
+        <RouterLink
+          to="/"
+          class="admin-back-link"
+          @click="isMobileMenuOpen = false"
+          aria-label="Return to main site"
+        >
+          Return to Site
+        </RouterLink>
       </div>
     </nav>
 
     <!-- Admin content area -->
-    <main class="admin-content">
+    <main class="admin-content" role="main" aria-labelledby="admin-nav-title">
       <RouterView />
     </main>
   </div>
@@ -98,6 +138,27 @@ onMounted(() => {
   display: flex;
   min-height: calc(100vh - 64px);
   background-color: var(--color-alabaster);
+  position: relative;
+}
+
+.admin-hamburger-btn {
+  display: none;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1100;
+  background: var(--color-limed-spruce);
+  color: var(--color-white);
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.admin-hamburger-btn.is-hidden {
+  display: none !important;
 }
 
 .admin-sidebar {
@@ -110,6 +171,8 @@ onMounted(() => {
   position: sticky;
   top: 0;
   height: 100vh;
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
 }
 
 .admin-title {
@@ -180,15 +243,37 @@ onMounted(() => {
   overflow-y: auto;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .admin-container {
     flex-direction: column;
+    min-height: 100vh;
+    padding-top: 4rem;
+  }
+
+  .admin-hamburger-btn {
+    display: block;
   }
 
   .admin-sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    height: 100%;
+    transform: translateX(-100%);
+    padding-top: 4rem;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .admin-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .admin-content {
+    padding: 1rem;
+    margin-left: 0;
   }
 }
 </style>

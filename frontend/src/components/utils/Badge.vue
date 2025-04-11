@@ -68,6 +68,15 @@ const badgeStyle = computed(() => {
   }
 })
 
+const generateAriaLabel = () => {
+  if (props.type === 'category') return `Filter by category: ${props.name}`
+  if (props.type === 'location') return `Filter by location: ${props.name}`
+  if (props.type === 'shipping') return `Filter by shipping method: ${props.name}`
+  if (props.type === 'price') return `Price: ${props.name} ${props.currency || ''}`
+  if (props.type === 'seller') return `Seller: ${props.name}`
+  return props.name
+}
+
 const handleClick = () => {
   if (isClickable.value) {
     emit('click', { type: props.type, value: props.name })
@@ -109,6 +118,9 @@ const handleMouseUp = () => {
     @mousedown="handleMouseDown"
     @mouseup="handleMouseUp"
     @click="handleClick"
+    :tabindex="isClickable ? 0 : undefined"
+    :role="isClickable ? 'button' : 'status'"
+    :aria-label="generateAriaLabel()"
   >
     <svg
       v-if="currentIcon"
@@ -121,6 +133,7 @@ const handleMouseUp = () => {
       stroke-linecap="round"
       stroke-linejoin="round"
       v-html="currentIcon"
+      aria-hidden="true"
     />
     <span class="badge-text">
       {{ props.name }}{{ type === 'price' ? ` ${props.currency}` : '' }}
@@ -150,6 +163,11 @@ const handleMouseUp = () => {
 
 .badge:active {
   transform: translateY(0);
+}
+
+.badge:focus-visible {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
 }
 
 .price-badge {

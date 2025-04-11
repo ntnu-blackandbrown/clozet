@@ -7,11 +7,12 @@ on:
       - main
       - 'feature/**'
       - 'task/**'
+      - 'hotfix/**'
   pull_request:
     branches:
       - develop-2.0
       - main
-
+      - 'hotfix/**'
 jobs:
   build-frontend:
     name: Build Frontend

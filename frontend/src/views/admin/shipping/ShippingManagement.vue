@@ -6,6 +6,7 @@ import { ShippingService } from '@/api/services/ShippingService'
 const shippingOptions = ref([])
 const isLoading = ref(true)
 const error = ref(null)
+const successMessage = ref(null)
 
 // Form for adding/editing shipping options
 const shippingForm = ref({
@@ -42,14 +43,21 @@ const createShippingOption = async () => {
 
   try {
     isLoading.value = true
+    error.value = null
     await ShippingService.createShippingOption(shippingForm.value)
     await fetchShippingOptions()
     isLoading.value = false
+    successMessage.value = `Shipping option "${shippingForm.value.name}" created successfully`
     resetForm()
     showForm.value = false
+
+    // Clear success message after 5 seconds
+    setTimeout(() => {
+      successMessage.value = null
+    }, 5000)
   } catch (err) {
     console.error('Error creating shipping option:', err)
-    error.value = 'Failed to create shipping option'
+    error.value = `Failed to create shipping option: ${err.response?.data?.message || 'Unknown error'}`
     isLoading.value = false
   }
 }
@@ -60,30 +68,21 @@ const updateShippingOption = async () => {
 
   try {
     isLoading.value = true
+    error.value = null
     await ShippingService.updateShippingOption(shippingForm.value.id, shippingForm.value)
     await fetchShippingOptions()
     isLoading.value = false
+    successMessage.value = `Shipping option "${shippingForm.value.name}" updated successfully`
     resetForm()
     showForm.value = false
+
+    // Clear success message after 5 seconds
+    setTimeout(() => {
+      successMessage.value = null
+    }, 5000)
   } catch (err) {
     console.error('Error updating shipping option:', err)
-    error.value = 'Failed to update shipping option'
-    isLoading.value = false
-  }
-}
-
-// Delete a shipping option
-const deleteShippingOption = async (id) => {
-  if (!confirm('Are you sure you want to delete this shipping option?')) return
-
-  try {
-    isLoading.value = true
-    await ShippingService.deleteShippingOption(id)
-    await fetchShippingOptions()
-    isLoading.value = false
-  } catch (err) {
-    console.error('Error deleting shipping option:', err)
-    error.value = 'Failed to delete shipping option'
+    error.value = `Failed to update shipping option: ${err.response?.data?.message || 'Unknown error'}`
     isLoading.value = false
   }
 }
@@ -168,68 +167,101 @@ onMounted(() => {
 <template>
   <div class="shipping-management">
     <div class="page-header">
-      <h1>Shipping Options Management</h1>
-      <button @click="addShippingOption" class="btn-primary">Add New Shipping Option</button>
+      <h1 id="shipping-management-title">Shipping Options Management</h1>
+      <button @click="addShippingOption" class="btn-primary" aria-label="Add new shipping option">
+        Add New Shipping Option
+      </button>
     </div>
 
-    <div v-if="error" class="error-message">
+    <!-- Success Message -->
+    <div v-if="successMessage" class="success-message" role="status">
+      {{ successMessage }}
+    </div>
+
+    <div v-if="error" class="error-message" role="alert">
       {{ error }}
-      <button @click="fetchShippingOptions" class="btn-secondary">Retry</button>
+      <button
+        @click="fetchShippingOptions"
+        class="btn-secondary"
+        aria-label="Retry loading shipping options"
+      >
+        Retry
+      </button>
     </div>
 
     <!-- Shipping Options Table -->
     <div class="table-container">
-      <table class="admin-table" v-if="!isLoading && shippingOptions.length > 0">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Estimated Days</th>
-            <th>Price</th>
-            <th>Tracked</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="option in shippingOptions" :key="option.id">
-            <td>{{ option.id }}</td>
-            <td>{{ option.name }}</td>
-            <td>{{ option.description }}</td>
-            <td>{{ option.estimatedDays }} days</td>
-            <td>{{ formatPrice(option.price) }}</td>
-            <td>
-              <span class="tag" :class="option.isTracked ? 'tag-green' : 'tag-gray'">
-                {{ option.isTracked ? 'Yes' : 'No' }}
-              </span>
-            </td>
-            <td class="actions">
-              <button @click="editShippingOption(option)" class="btn-icon edit">✎</button>
-              <button @click="deleteShippingOption(option.id)" class="btn-icon delete">🗑</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="overflow-x: auto" v-if="!isLoading && shippingOptions.length > 0">
+        <table class="admin-table" aria-labelledby="shipping-management-title">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Estimated Days</th>
+              <th scope="col">Price</th>
+              <th scope="col">Tracked</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="option in shippingOptions" :key="option.id">
+              <td>{{ option.id }}</td>
+              <td>{{ option.name }}</td>
+              <td>{{ option.description }}</td>
+              <td>{{ option.estimatedDays }} days</td>
+              <td>{{ formatPrice(option.price) }}</td>
+              <td>
+                <span class="tag" :class="option.isTracked ? 'tag-green' : 'tag-gray'">
+                  {{ option.isTracked ? 'Yes' : 'No' }}
+                </span>
+              </td>
+              <td class="actions">
+                <button
+                  @click="editShippingOption(option)"
+                  class="btn-icon edit"
+                  aria-label="Edit shipping option: {{ option.name }}"
+                >
+                  ✎
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-      <div v-else-if="isLoading" class="loading-container">
-        <div class="loading-spinner"></div>
+      <div v-else-if="isLoading" class="loading-container" role="status" aria-live="polite">
+        <div class="loading-spinner" aria-hidden="true"></div>
         <p>Loading shipping options...</p>
       </div>
 
       <div v-else class="empty-state">
         <p>No shipping options found</p>
-        <button @click="addShippingOption" class="btn-primary">
+        <button
+          @click="addShippingOption"
+          class="btn-primary"
+          aria-label="Add first shipping option"
+        >
           Add Your First Shipping Option
         </button>
       </div>
     </div>
 
     <!-- Shipping Option Form Modal -->
-    <div v-if="showForm" class="modal-backdrop" @click="showForm = false">
+    <div
+      v-if="showForm"
+      class="modal-backdrop"
+      @click="showForm = false"
+      aria-modal="true"
+      role="dialog"
+      aria-labelledby="shipping-form-title"
+    >
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h3>{{ formMode === 'add' ? 'Add New Shipping Option' : 'Edit Shipping Option' }}</h3>
-          <button @click="showForm = false" class="btn-close">×</button>
+          <h3 id="shipping-form-title">
+            {{ formMode === 'add' ? 'Add New Shipping Option' : 'Edit Shipping Option' }}
+          </h3>
+          <button @click="showForm = false" class="btn-close" aria-label="Close form">×</button>
         </div>
 
         <form @submit.prevent="handleSubmit" class="shipping-form">
@@ -240,8 +272,13 @@ onMounted(() => {
               id="name"
               v-model="shippingForm.name"
               :class="{ 'input-error': formErrors.name }"
+              aria-required="true"
+              :aria-invalid="formErrors.name ? 'true' : 'false'"
+              :aria-describedby="formErrors.name ? 'name-error' : undefined"
             />
-            <span v-if="formErrors.name" class="error-text">{{ formErrors.name }}</span>
+            <span v-if="formErrors.name" class="error-text" id="name-error" role="alert">{{
+              formErrors.name
+            }}</span>
           </div>
 
           <div class="form-group">
@@ -251,10 +288,17 @@ onMounted(() => {
               v-model="shippingForm.description"
               rows="3"
               :class="{ 'input-error': formErrors.description }"
+              aria-required="true"
+              :aria-invalid="formErrors.description ? 'true' : 'false'"
+              :aria-describedby="formErrors.description ? 'description-error' : undefined"
             ></textarea>
-            <span v-if="formErrors.description" class="error-text">{{
-              formErrors.description
-            }}</span>
+            <span
+              v-if="formErrors.description"
+              class="error-text"
+              id="description-error"
+              role="alert"
+              >{{ formErrors.description }}</span
+            >
           </div>
 
           <div class="form-row">
@@ -266,10 +310,17 @@ onMounted(() => {
                 v-model.number="shippingForm.estimatedDays"
                 min="1"
                 :class="{ 'input-error': formErrors.estimatedDays }"
+                aria-required="true"
+                :aria-invalid="formErrors.estimatedDays ? 'true' : 'false'"
+                :aria-describedby="formErrors.estimatedDays ? 'days-error' : undefined"
               />
-              <span v-if="formErrors.estimatedDays" class="error-text">{{
-                formErrors.estimatedDays
-              }}</span>
+              <span
+                v-if="formErrors.estimatedDays"
+                class="error-text"
+                id="days-error"
+                role="alert"
+                >{{ formErrors.estimatedDays }}</span
+              >
             </div>
 
             <div class="form-group half">
@@ -281,21 +332,38 @@ onMounted(() => {
                 step="0.01"
                 min="0"
                 :class="{ 'input-error': formErrors.price }"
+                aria-required="true"
+                :aria-invalid="formErrors.price ? 'true' : 'false'"
+                :aria-describedby="formErrors.price ? 'price-error' : undefined"
               />
-              <span v-if="formErrors.price" class="error-text">{{ formErrors.price }}</span>
+              <span v-if="formErrors.price" class="error-text" id="price-error" role="alert">{{
+                formErrors.price
+              }}</span>
             </div>
           </div>
 
           <div class="form-group checkbox-group">
             <label class="checkbox-label">
-              <input type="checkbox" v-model="shippingForm.isTracked" />
+              <input
+                type="checkbox"
+                v-model="shippingForm.isTracked"
+                id="isTracked"
+                aria-label="Tracked shipping"
+              />
               <span class="checkbox-text">Tracked Shipping</span>
             </label>
           </div>
 
           <div class="form-actions">
-            <button type="button" @click="showForm = false" class="btn-secondary">Cancel</button>
-            <button type="submit" class="btn-primary">
+            <button
+              type="button"
+              @click="showForm = false"
+              class="btn-secondary"
+              aria-label="Cancel"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary" aria-label="Submit shipping option form">
               {{ formMode === 'add' ? 'Add Shipping Option' : 'Update Shipping Option' }}
             </button>
           </div>
@@ -334,6 +402,14 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.success-message {
+  background-color: #f0fdf4;
+  color: #16a34a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .table-container {
@@ -473,7 +549,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 1500;
 }
 
 .modal-content {

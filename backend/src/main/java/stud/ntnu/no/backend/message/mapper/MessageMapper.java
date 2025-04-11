@@ -55,7 +55,11 @@ public class MessageMapper {
                             request.getTimestamp() : 
                             LocalDateTime.now());
 
-        // Item association removed since itemId is not in the DTO anymore
+        // Associate with an item if itemId is provided
+        if (request.getItemId() != null) {
+            itemRepository.findById(request.getItemId())
+                .ifPresent(message::setItem);
+        }
         
         return message;
     }

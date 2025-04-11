@@ -6,6 +6,9 @@ import { useAuthStore } from '@/stores/AuthStore'
 import { useRoute } from 'vue-router'
 import { ProductService } from '@/api/services/ProductService'
 import { FavoritesService } from '@/api/services/FavoritesService'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const authStore = useAuthStore()
 const items = ref<Product[]>([])
 const userId = authStore.user?.id
@@ -67,11 +70,16 @@ onMounted(async () => {
 
 <template>
   <div class="my-wishlist-container">
-    <h2>My Wishlist</h2>
+    <h2 id="my-wishlist-title">My Wishlist</h2>
+    <div v-if="items.length === 0" role="status" aria-live="polite" class="empty-state">
+      You have no items in your wishlist yet
+    </div>
     <ProductList
+      v-else
       :items="items"
       route-base-path="/profile/wishlist/"
       :initial-product-id="initialProductId"
+      aria-labelledby="my-wishlist-title"
     />
   </div>
 </template>

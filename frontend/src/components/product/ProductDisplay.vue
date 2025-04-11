@@ -85,20 +85,29 @@ const handleBadgeClick = (event: { type: string; value: string }) => {
 }
 
 const isCurrentUserSeller = computed(() => {
-  return authStore.user?.id === sellerId.value
+  // Ensure user is loaded before checking ID
+  return authStore.user && authStore.user.id === sellerId.value
+})
+
+// Add computed property to check for admin role
+const isAdmin = computed(() => {
+  return authStore.user?.role === 'ADMIN'
 })
 
 const isItemAvailable = computed(() => {
+  // Check both potential availability flags for robustness
   return item.value?.available !== false && item.value?.isAvailable !== false
-})
-
-const shouldDisableButtons = computed(() => {
-  return isCurrentUserSeller.value || !isItemAvailable.value
 })
 
 const isLocalPickup = computed(() => {
   return item.value?.shippingOptionName === 'Local Pickup'
 })
+
+const computeCompositeId = (buyer: number, seller: number, item: number) => {
+  // Ensure the user ids are in a known order (to handle both directions)
+  const [firstId, secondId] = buyer < seller ? [buyer, seller] : [seller, buyer]
+  return `${firstId}_${secondId}_${item}`
+}
 
 const handleBuyClick = () => {
   if (!item.value?.vippsPaymentEnabled) {
@@ -173,30 +182,42 @@ onMounted(async () => {
 
 const handleContactSeller = async () => {
   try {
-    if (!authStore.isLoggedIn || !authStore.user?.id || !sellerId.value) {
+    if (!authStore.isLoggedIn || !authStore.user?.id) {
+      // Optionally redirect to login or show a message
+      alert('Please log in to contact the seller.')
+      return
+    }
+
+    // Prevent contacting self
+    if (isCurrentUserSeller.value) {
+      console.warn('Seller cannot contact themselves.')
+      return
+    }
+
+    if (!sellerId.value) {
+      console.error('Seller ID is not available.')
+      alert('Could not contact seller. Please try again later.')
       return
     }
 
     // Check existing conversations
     const response = await MessagingService.getUserConversations(authStore.user.id)
+    console.log(response.data)
 
-    // Check if conversation already exists with this seller for this item
+    const compositeId = computeCompositeId(authStore.user.id, sellerId.value, props.id)
+    console.log(compositeId)
+
+    //check if conversation already exists with this seller for this item
     const existingConversation = response.data.find(
-      (conv: any) =>
-        (conv.senderId === authStore.user?.id?.toString() &&
-          conv.receiverId === sellerId.value?.toString() &&
-          conv.itemId === props.id) ||
-        (conv.receiverId === authStore.user?.id?.toString() &&
-          conv.senderId === sellerId.value?.toString() &&
-          conv.itemId === props.id),
+      (conv: any) => conv.conversationId === compositeId,
     )
 
     if (existingConversation) {
-      // If conversation exists, navigate to it
-      const chatId = existingConversation.conversationId || existingConversation.id
-      router.push(`/messages/${chatId}`)
+      router.push(`/messages/${existingConversation.conversationId}`)
+      return
     } else {
-      // Create new conversation by sending first message
+      //create a new conversation
+      console.log('creating new conversation')
       const messageResponse = await MessagingService.sendMessage({
         senderId: authStore.user.id.toString(),
         receiverId: sellerId.value.toString(),
@@ -206,19 +227,56 @@ const handleContactSeller = async () => {
 
       // The message response should include the conversation ID
       const newMessageData = messageResponse.data
-      const chatId = newMessageData.conversationId || newMessageData.id
+      const chatId = compositeId // Use the computed composite ID for consistency
 
       // Navigate to the messages view with the new conversation
       router.push(`/messages/${chatId}`)
     }
   } catch (error) {
     console.error('Error starting conversation:', error)
+    alert('Could not start conversation. Please try again later.')
+  }
+}
+
+const handleEditClick = () => {
+  if (props.id) {
+    router.push(`/product/edit/${props.id}`)
+  } else {
+    console.error('Cannot edit item: ID is missing.')
+    // Optionally show an error message to the user
+    alert('Could not edit item. Please try again later.')
+  }
+}
+
+const handleDeleteClick = async () => {
+  if (!props.id) {
+    console.error('Cannot delete item: ID is missing.')
+    alert('Could not delete item. Please try again later.')
+    return
+  }
+
+  if (window.confirm('Are you sure you want to permanently delete this item?')) {
+    try {
+      await ProductService.deleteItem(props.id)
+      alert('Item deleted successfully.')
+      // Navigate away after deletion, e.g., to user's posts or home
+      router.push('/profile/posts')
+    } catch (error: any) {
+      console.error('Error deleting item:', error)
+      if (error.response && error.response.status === 409) {
+        alert(
+          'Failed to delete item: This item cannot be deleted because it is associated with a transaction history.',
+        )
+      } else {
+        alert('Failed to delete item. Please try again later.')
+      }
+    }
   }
 }
 </script>
 
 <template>
-  <div v-if="isLoading" class="loading-popup">
+  <div v-if="isLoading" class="loading-popup" role="alert" aria-live="assertive">
     <p>Processing your purchase...</p>
   </div>
 
@@ -263,25 +321,30 @@ const handleContactSeller = async () => {
     />
   </BaseModal>
 
-  <div v-if="item" class="product-display">
+  <div v-if="item" class="product-display" role="main">
     <div class="product-image-container">
-      <div class="gallery-container" v-if="images && images.length > 1">
+      <div
+        class="gallery-container"
+        v-if="images && images.length > 1"
+        role="listbox"
+        aria-label="Product image gallery"
+      >
         <div
           v-for="(image, index) in images"
           :key="index"
           class="gallery-item"
           :class="{ active: index === selectedImageIndex }"
           @click="selectedImageIndex = index"
+          role="option"
+          :aria-selected="index === selectedImageIndex"
+          :tabindex="index === selectedImageIndex ? 0 : -1"
+          :aria-label="`Image ${index + 1} of ${images.length}`"
         >
-          <img :src="image.imageUrl" :alt="'Product image ' + (index + 1)" class="gallery-image" />
+          <img :src="image.imageUrl" :alt="`Product image ${index + 1}`" class="gallery-image" />
         </div>
       </div>
       <div class="main-image-container">
-        <img
-          :src="mainImageUrl"
-          :alt="'Main product image'"
-          class="main-image"
-        />
+        <img :src="mainImageUrl" :alt="`Main product image of ${item.title}`" class="main-image" />
       </div>
     </div>
 
@@ -305,35 +368,68 @@ const handleContactSeller = async () => {
         <Badge :name="item.shippingOptionName || 'N/A'" type="shipping" @click="handleBadgeClick" />
       </div>
       <div class="action-buttons">
-        <button
-          class="contact-button"
-          @click="handleContactSeller"
-          :disabled="shouldDisableButtons"
-        >
-          Contact Seller
-        </button>
-        <button class="buy-button" @click="handleBuyClick" :disabled="shouldDisableButtons">
-          Buy Item
-        </button>
-        <WishlistButton
-          :product-id="item.id"
-          :is-available="isItemAvailable"
-        />
+        <!-- Seller View -->
+        <template v-if="isCurrentUserSeller">
+          <button class="edit-button" @click="handleEditClick" aria-label="Edit this item">
+            Edit Item
+          </button>
+          <button class="delete-button" @click="handleDeleteClick" aria-label="Delete this item">
+            Delete Item
+          </button>
+        </template>
+
+        <!-- Buyer/Guest View -->
+        <template v-else>
+          <button
+            class="contact-button"
+            @click="handleContactSeller"
+            :disabled="!isItemAvailable || !authStore.isLoggedIn || isAdmin"
+            :title="
+              isAdmin
+                ? 'Admin cannot contact seller'
+                : !authStore.isLoggedIn
+                  ? 'Please log in to contact seller'
+                  : !isItemAvailable
+                    ? 'Item is not available'
+                    : ''
+            "
+            aria-label="Contact seller about this item"
+          >
+            Contact Seller
+          </button>
+          <button
+            class="buy-button"
+            @click="handleBuyClick"
+            :disabled="!isItemAvailable || isAdmin || !authStore.isLoggedIn"
+            :title="
+              isAdmin ? 'Admin cannot buy items' : !isItemAvailable ? 'Item is not available' : ''
+            "
+            aria-label="Purchase this item"
+          >
+            Buy Item
+          </button>
+          <WishlistButton
+            :product-id="item.id"
+            :is-available="isItemAvailable"
+            aria-label="Add to wishlist"
+            :disabled="!isItemAvailable || isAdmin || !authStore.isLoggedIn"
+          />
+        </template>
       </div>
-      <div class="product-details-list">
-        <p class="detail-item">
+      <div class="product-details-list" role="list" aria-label="Product specifications">
+        <p class="detail-item" role="listitem">
           <span class="detail-label">Brand:</span>
           <span class="detail-value">{{ item.brand }}</span>
         </p>
-        <p class="detail-item">
+        <p class="detail-item" role="listitem">
           <span class="detail-label">Color:</span>
           <span class="detail-value">{{ item.color }}</span>
         </p>
-        <p class="detail-item">
+        <p class="detail-item" role="listitem">
           <span class="detail-label">Condition:</span>
           <span class="detail-value">{{ item.condition }}</span>
         </p>
-        <p class="detail-item">
+        <p class="detail-item" role="listitem">
           <span class="detail-label">Size:</span>
           <span class="detail-value">{{ item.size }}</span>
         </p>
@@ -344,7 +440,7 @@ const handleContactSeller = async () => {
           class="vipps-image"
         />
       </div>
-      <div id="product-info">
+      <div id="product-info" aria-label="Product posting information">
         <div class="info-item">
           <span class="info-label">Posted:</span>
           <span class="info-value">{{ formatDate(item.createdAt) }}</span>
@@ -567,5 +663,147 @@ const handleContactSeller = async () => {
   background-color: #cccccc;
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+/* Style for the Edit button */
+.edit-button {
+  background-color: #f59e0b; /* Amber color, adjust as needed */
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.edit-button:hover:not(:disabled) {
+  background-color: #d97706; /* Darker amber */
+}
+
+.edit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Style for the Delete button */
+.delete-button {
+  background-color: #ef4444; /* Red color */
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.delete-button:hover:not(:disabled) {
+  background-color: #dc2626; /* Darker red */
+}
+
+.delete-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .product-display {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .product-image-container {
+    flex-direction: column;
+    margin-right: 0;
+    margin-bottom: 1.5rem;
+    align-items: center; /* Center images */
+  }
+
+  .gallery-container {
+    flex-direction: row; /* Horizontal gallery on small screens */
+    overflow-x: auto; /* Allow horizontal scrolling */
+    overflow-y: hidden;
+    width: 100%; /* Take full width */
+    height: auto; /* Adjust height automatically */
+    margin-right: 0;
+    margin-bottom: 1rem; /* Space below gallery */
+    padding-bottom: 5px; /* Prevent scrollbar overlap */
+  }
+
+  .gallery-item {
+    width: 70px; /* Slightly smaller thumbnails */
+    height: 70px;
+    margin-bottom: 0; /* Remove bottom margin */
+    margin-right: 10px; /* Add right margin for horizontal spacing */
+  }
+
+  .main-image-container {
+    width: 100%; /* Ensure main image container takes full width */
+  }
+
+  .main-image {
+    max-width: 100%; /* Allow image to scale down */
+    max-height: 400px; /* Limit max height */
+    margin: 0 auto; /* Center the main image */
+  }
+
+  .product-details h3 {
+    font-size: 1.5rem; /* Adjust title size */
+  }
+
+  .action-buttons {
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: stretch; /* Make buttons full width */
+    gap: 0.75rem; /* Adjust gap */
+  }
+
+  .action-buttons button,
+  .action-buttons .wishlist-button-container {
+    /* Target WishlistButton container */
+    width: 100%;
+    text-align: center;
+  }
+
+  .product-details-list {
+    padding: 0.75rem;
+  }
+
+  .detail-item {
+    flex-direction: column; /* Stack label and value */
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+
+  .detail-label {
+    min-width: auto;
+    margin-bottom: 0.25rem;
+    font-size: 0.8rem;
+    color: #475569;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-details h3 {
+    font-size: 1.3rem;
+  }
+
+  .contact-button,
+  .buy-button,
+  .edit-button,
+  .delete-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.8rem;
+  }
+
+  .gallery-item {
+    width: 60px;
+    height: 60px;
+  }
 }
 </style>

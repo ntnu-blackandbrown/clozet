@@ -161,8 +161,7 @@ public class AuthController {
             if (secureCookie) {
                 accessCookieBuilder.append(" Secure;");
             }
-            accessCookieBuilder.append(" SameSite=Lax");
-            response.addHeader("Set-Cookie", accessCookieBuilder.toString());
+            accessCookieBuilder.append(" SameSite=None");            response.addHeader("Set-Cookie", accessCookieBuilder.toString());
             logger.info("Set-Cookie header (access token): {}", accessCookieBuilder.toString());
 
             // Sett refresh-token cookie
@@ -174,7 +173,7 @@ public class AuthController {
             if (secureCookie) {
                 refreshCookieBuilder.append(" Secure;");
             }
-            refreshCookieBuilder.append(" SameSite=Lax");
+            refreshCookieBuilder.append(" SameSite=None");
             response.addHeader("Set-Cookie", refreshCookieBuilder.toString());
             logger.info("Set-Cookie header (refresh token): {}", refreshCookieBuilder.toString());
 
@@ -238,8 +237,7 @@ public class AuthController {
         if (secureCookie) {
             accessCookieBuilder.append(" Secure;");
         }
-        accessCookieBuilder.append(" SameSite=Lax");
-        response.addHeader("Set-Cookie", accessCookieBuilder.toString());
+        accessCookieBuilder.append(" SameSite=None");        response.addHeader("Set-Cookie", accessCookieBuilder.toString());
 
         StringBuilder refreshCookieBuilder = new StringBuilder();
         refreshCookieBuilder.append("refreshToken=").append(refreshToken).append(";");
@@ -249,7 +247,7 @@ public class AuthController {
         if (secureCookie) {
             refreshCookieBuilder.append(" Secure;");
         }
-        refreshCookieBuilder.append(" SameSite=Lax");
+        refreshCookieBuilder.append(" SameSite=None");
         response.addHeader("Set-Cookie", refreshCookieBuilder.toString());
 
         return ResponseEntity.ok(new MessageResponse("Email verified successfully. You are now logged in."));
@@ -274,8 +272,7 @@ public class AuthController {
         if (secureCookie) {
             accessCookieBuilder.append(" Secure;");
         }
-        accessCookieBuilder.append(" SameSite=Lax");
-        response.addHeader("Set-Cookie", accessCookieBuilder.toString());
+        accessCookieBuilder.append(" SameSite=None");        response.addHeader("Set-Cookie", accessCookieBuilder.toString());
         logger.info("Set-Cookie header for logout (access token): {}", accessCookieBuilder.toString());
 
         // Invalider refresh-token cookie
@@ -287,7 +284,7 @@ public class AuthController {
         if (secureCookie) {
             refreshCookieBuilder.append(" Secure;");
         }
-        refreshCookieBuilder.append(" SameSite=Lax");
+        refreshCookieBuilder.append(" SameSite=None");
         response.addHeader("Set-Cookie", refreshCookieBuilder.toString());
         logger.info("Set-Cookie header for logout (refresh token): {}", refreshCookieBuilder.toString());
 
@@ -404,5 +401,56 @@ public class AuthController {
             }
         }
         return null;
+    }
+
+    /**
+     * Refreshes the access token using the refresh token.
+     * 
+     * @param request the HTTP request
+     * @param response the HTTP response
+     * @return a response entity with a success message or error
+     */
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        logger.info("Token refresh requested");
+        
+        String refreshToken = getCookieValue(request, "refreshToken");
+        if (refreshToken == null) {
+            logger.warn("Refresh token not found in cookies");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new MessageResponse("Refresh token is required"));
+        }
+        
+        try {
+            if (!jwtUtils.validateJwtToken(refreshToken)) {
+                logger.warn("Invalid refresh token");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new MessageResponse("Invalid refresh token"));
+            }
+            
+            String username = jwtUtils.getUsernameFromToken(refreshToken);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            
+            // Generate new access token
+            String newAccessToken = jwtUtils.generateJwtToken(userDetails);
+            
+            // Set new access token cookie
+            StringBuilder accessCookieBuilder = new StringBuilder();
+            accessCookieBuilder.append("jwt=").append(newAccessToken).append(";");
+            accessCookieBuilder.append(" Max-Age=").append(jwtCookieMaxAge).append(";");
+            accessCookieBuilder.append(" Path=/;");
+            accessCookieBuilder.append(" HttpOnly;");
+            if (secureCookie) {
+                accessCookieBuilder.append(" Secure;");
+            }
+            accessCookieBuilder.append(" SameSite=None");            response.addHeader("Set-Cookie", accessCookieBuilder.toString());
+            logger.info("Set-Cookie header (new access token): {}", accessCookieBuilder.toString());
+            
+            return ResponseEntity.ok(new MessageResponse("Token refreshed successfully"));
+        } catch (Exception e) {
+            logger.error("Error refreshing token: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new MessageResponse("Could not refresh token"));
+        }
     }
 }

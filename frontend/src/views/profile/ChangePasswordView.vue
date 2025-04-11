@@ -6,17 +6,20 @@
 
       <form @submit.prevent="submit" class="forgot-password-form">
         <div class="form-group">
-          <label for="currentPassword">Current Password</label>
           <div class="password-input-container">
             <input
               :type="showCurrentPassword ? 'text' : 'password'"
               id="currentPassword"
               v-model="currentPassword"
-              placeholder="Enter your current password"
+              placeholder="Current Password"
               class="form-control"
               :class="{ 'error-input': currentPasswordError }"
             />
-            <button type="button" @click="showCurrentPassword = !showCurrentPassword" class="toggle-password">
+            <button
+              type="button"
+              @click="showCurrentPassword = !showCurrentPassword"
+              class="toggle-password"
+            >
               {{ showCurrentPassword ? 'Hide' : 'Show' }}
             </button>
           </div>
@@ -30,11 +33,15 @@
               :type="showNewPassword ? 'text' : 'password'"
               id="newPassword"
               v-model="newPassword"
-              placeholder="Enter your new password"
+              placeholder="New Password"
               class="form-control"
               :class="{ 'error-input': newPasswordError }"
             />
-             <button type="button" @click="showNewPassword = !showNewPassword" class="toggle-password">
+            <button
+              type="button"
+              @click="showNewPassword = !showNewPassword"
+              class="toggle-password"
+            >
               {{ showNewPassword ? 'Hide' : 'Show' }}
             </button>
           </div>
@@ -43,16 +50,20 @@
 
         <div class="form-group">
           <label for="confirmPassword">Confirm New Password</label>
-           <div class="password-input-container">
+          <div class="password-input-container">
             <input
               :type="showConfirmPassword ? 'text' : 'password'"
               id="confirmPassword"
               v-model="confirmPassword"
-              placeholder="Confirm your new password"
+              placeholder="Confirm New Password"
               class="form-control"
               :class="{ 'error-input': confirmPasswordError }"
             />
-            <button type="button" @click="showConfirmPassword = !showConfirmPassword" class="toggle-password">
+            <button
+              type="button"
+              @click="showConfirmPassword = !showConfirmPassword"
+              class="toggle-password"
+            >
               {{ showConfirmPassword ? 'Hide' : 'Show' }}
             </button>
           </div>
@@ -83,7 +94,9 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { AuthService } from '@/api/services/AuthService'
 import { useValidatedForm, useValidatedField, changePasswordSchema } from '@/utils/validation'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 
 // Define form values interface
@@ -126,18 +139,14 @@ const submit = handleSubmit(async (values) => {
 
   try {
     // Call API to update password
-    await AuthService.changePassword(
-      values.currentPassword,
-      values.newPassword,
-      values.confirmPassword,
-    )
+    await AuthService.changePassword(values.currentPassword, values.newPassword)
 
     success.value = true
     message.value = 'Password has been updated successfully.'
 
     // Redirect to profile settings after 2 seconds
     setTimeout(() => {
-      router.push('/profile/settings')
+      router.push('/')
     }, 2000)
   } catch (err) {
     error.value = true
@@ -297,7 +306,7 @@ label {
 }
 
 .password-input-container .toggle-password {
-   /* Position the button absolutely inside the container */
+  /* Position the button absolutely inside the container */
   position: absolute;
   right: 0.5rem; /* Adjust position */
   top: 50%;

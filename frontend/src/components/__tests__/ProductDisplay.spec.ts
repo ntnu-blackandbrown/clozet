@@ -1,97 +1,257 @@
-import { mount, flushPromises } from '@vue/test-utils'
+import { shallowMount, VueWrapper } from '@vue/test-utils'
+import { nextTick } from 'vue'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import ProductDisplay from '@/components/product/ProductDisplay.vue'
-import axios from '@/api/axios'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
-import type { Mocked } from 'vitest'
 
-// Mock axios
-vi.mock('axios')
-const mockedAxios = axios as Mocked<typeof axios>
+// ----- MOCK SETUP -----
 
-describe('ProductDisplay', () => {
-  const mockItem = {
-    id: 1,
-    title: 'Test Product',
-    images: ['string', 'string'],
-    longDescription: 'Detailed description here',
-    categoryName: 'Shoes',
-    locationName: 'Oslo',
-    price: 1200,
-    currency: 'NOK',
-    sellerName: 'Alice',
-    shippingOptionName: 'Posten',
-    available: true,
-    brand: 'Test Brand',
-    color: 'Blue',
-    condition: 'New',
-    size: 'M',
-    vippsPaymentEnabled: true,
-    createdAt: '2024-01-01T10:00:00Z',
-    updatedAt: '2024-02-01T10:00:00Z',
-    purchased: false,
-    latitude: 59.913868,
-    longitude: 10.752245,
-    sellerId: 123,
+// Mock ProductService methods
+import { ProductService } from '@/api/services/ProductService'
+vi.mock('@/api/services/ProductService', () => ({
+  ProductService: {
+    getItemById: vi.fn(),
+    getItemImages: vi.fn(),
+  },
+}))
+
+// Mock MessagingService methods
+import { MessagingService } from '@/api/services/MessagingService'
+vi.mock('@/api/services/MessagingService', () => ({
+  MessagingService: {
+    getUserConversations: vi.fn(),
+    sendMessage: vi.fn(),
+  },
+}))
+
+// Mock vue-router: useRouter (push and replace)
+const mockPush = vi.fn()
+const mockReplace = vi.fn()
+vi.mock('vue-router', () => ({
+  useRouter: () => ({
+    push: mockPush,
+    replace: mockReplace,
+  }),
+}))
+
+// Mock AuthStore
+const mockAuthStore = {
+  user: { id: 1 },
+  isLoggedIn: true,
+}
+vi.mock('@/stores/AuthStore', () => ({
+  useAuthStore: () => mockAuthStore,
+}))
+
+// ----- SAMPLE DATA -----
+const sampleItem = {
+  id: 10,
+  title: 'Test Product',
+  longDescription: 'This is a detailed description of the test product.',
+  available: true,
+  isAvailable: true,
+  sellerId: 99,
+  vippsPaymentEnabled: true,
+  shippingOptionName: 'Standard Shipping', // try non local pickup by default
+  shippingPrice: 10,
+  categoryName: 'Electronics',
+  locationName: 'Oslo',
+  price: 100,
+  currency: 'NOK',
+  sellerName: 'Test Seller',
+  brand: 'BrandX',
+  color: 'Red',
+  condition: 'New',
+  size: 'M',
+  createdAt: '2020-01-01T12:00:00Z',
+  updatedAt: '2020-02-01T12:00:00Z',
+  latitude: 59.91,
+  longitude: 10.75,
+}
+const sampleImages = [
+  { imageUrl: 'http://example.com/img1.jpg' },
+  { imageUrl: 'http://example.com/img2.jpg' },
+]
+
+// Default mocks for ProductService
+beforeEach(() => {
+  vi.clearAllMocks()
+  ;(ProductService.getItemById as any).mockResolvedValue({ data: sampleItem })
+  ;(ProductService.getItemImages as any).mockResolvedValue({ data: sampleImages })
+  // Reset router mocks
+  mockPush.mockReset()
+  mockReplace.mockReset()
+})
+
+describe('ProductDisplay.vue', () => {
+  let wrapper: VueWrapper<any>
+
+  // Use stubs for the many child components to isolate testing this component’s logic.
+  const globalStubs = {
+    Badge: { template: '<div></div>' },
+    WishlistButton: { template: '<div></div>' },
+    VippsPaymentModal: { template: '<div></div>' },
+    ShippingDetailsModal: { template: '<div></div>' },
+    PurchaseSuccessModal: { template: '<div></div>' },
+    BaseModal: { template: '<div><slot /></div>' },
   }
 
-  beforeEach(() => {
-    mockedAxios.get.mockResolvedValue({ data: mockItem })
-  })
-
-  it('mounts and has class "product-display"', async () => {
-    const wrapper = mount(ProductDisplay, {
-      props: { id: 1 },
-      global: {
-        stubs: {
-          Badge: true,
-          WishlistButton: true,
-        },
-      },
+  beforeEach(async () => {
+    // Mount the component with the required prop "id"
+    wrapper = shallowMount(ProductDisplay, {
+      props: { id: sampleItem.id },
+      global: { stubs: globalStubs },
     })
-
-    await flushPromises()
-    //expect(wrapper.classes()).toContain('product-display')
+    // Wait for the onMounted hook to complete its async calls
+    await nextTick()
+    await nextTick()
   })
 
-  it('fetches and renders item on mount', async () => {
-    const wrapper = mount(ProductDisplay, { props: { id: 1 } })
-    await flushPromises()
-    expect(wrapper.find('.product-display').exists()).toBe(true)
-
-    expect(wrapper.text()).toContain(mockItem.title)
-    expect(wrapper.text()).toContain(mockItem.longDescription)
-    //expect(wrapper.findAll('.gallery-image').length).toBe(2)
+  // --- onMounted and Data Fetching ---
+  it('fetches item and images on mount and sets location and sellerId', () => {
+    expect(wrapper.vm.item).toEqual(sampleItem)
+    expect(wrapper.vm.images).toEqual(sampleImages)
+    expect(wrapper.vm.sellerId).toBe(sampleItem.sellerId)
+    expect(wrapper.vm.location).toBe(`${sampleItem.latitude},${sampleItem.longitude}`)
   })
 
-  it('renders Badge components with correct props', async () => {
-    const wrapper = mount(ProductDisplay, {
-      props: { id: 1 },
+  // --- Computed Properties ---
+  it('computes mainImageUrl based on selectedImageIndex', async () => {
+    // By default, index is 0
+    expect(wrapper.vm.mainImageUrl).toBe(sampleImages[0].imageUrl)
+    // Change selectedImageIndex and check update
+    wrapper.vm.selectedImageIndex = 1
+    await nextTick()
+    expect(wrapper.vm.mainImageUrl).toBe(sampleImages[1].imageUrl)
+  })
+
+  it('calculates totalPrice correctly (price + shippingFee)', () => {
+    // Expected: 100 + 10 = 110
+    expect(wrapper.vm.totalPrice).toBe(110)
+  })
+
+  it('computes getShippingCost correctly (non Local Pickup)', () => {
+    // shippingCost should be shippingPrice (10) because shippingOptionName is not "Local Pickup"
+    expect(wrapper.vm.getShippingCost).toBe(10)
+  })
+
+  // --- Method: handleBadgeClick ---
+  it('navigates to the product list with correct query when badge is clicked', () => {
+    // For category badge:
+    wrapper.vm.handleBadgeClick({ type: 'category', value: 'Electronics' })
+    expect(mockPush).toHaveBeenCalledWith({ path: '/', query: { category: 'Electronics' } })
+    // For location badge:
+    wrapper.vm.handleBadgeClick({ type: 'location', value: 'Oslo' })
+    expect(mockPush).toHaveBeenCalledWith({ path: '/', query: { location: 'Oslo' } })
+    // For shipping badge:
+    wrapper.vm.handleBadgeClick({ type: 'shipping', value: 'Standard Shipping' })
+    expect(mockPush).toHaveBeenCalledWith({ path: '/', query: { shipping: 'Standard Shipping' } })
+  })
+
+  // --- Method: handleBuyClick ---
+  it('alerts and does not proceed if vippsPaymentEnabled is false', () => {
+    // Set vippsPaymentEnabled to false and spy on window.alert
+    wrapper.vm.item.vippsPaymentEnabled = false
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {})
+    wrapper.vm.handleBuyClick()
+    expect(alertSpy).toHaveBeenCalledWith('Please contact the seller to purchase this product')
+    alertSpy.mockRestore()
+  })
+
+  it('shows Vipps modal immediately if item is local pickup', () => {
+    // Set shippingOptionName to "Local Pickup"
+    wrapper.vm.item.vippsPaymentEnabled = true
+    wrapper.vm.item.shippingOptionName = 'Local Pickup'
+    // Reset modals
+    wrapper.vm.showShippingModal = false
+    wrapper.vm.showVippsModal = false
+    wrapper.vm.handleBuyClick()
+    expect(wrapper.vm.showVippsModal).toBe(true)
+    expect(wrapper.vm.showShippingModal).toBe(false)
+  })
+
+  it('shows Shipping modal if not local pickup', () => {
+    // Reset modals for standard shipping (sampleItem is Standard Shipping)
+    wrapper.vm.item.vippsPaymentEnabled = true
+    wrapper.vm.item.shippingOptionName = 'Standard Shipping'
+    wrapper.vm.showShippingModal = false
+    wrapper.vm.showVippsModal = false
+    wrapper.vm.handleBuyClick()
+    expect(wrapper.vm.showShippingModal).toBe(true)
+  })
+
+  // --- Modal Navigation Methods ---
+  it('handleShippingContinue saves details and toggles modals', () => {
+    const shippingInfo = { phone: '12345678', address: 'Test Street 1' }
+    wrapper.vm.showShippingModal = true
+    wrapper.vm.showVippsModal = false
+    wrapper.vm.handleShippingContinue(shippingInfo)
+    expect(wrapper.vm.shippingDetails).toEqual(shippingInfo)
+    expect(wrapper.vm.showShippingModal).toBe(false)
+    expect(wrapper.vm.showVippsModal).toBe(true)
+  })
+
+  it('handleVippsBack toggles modals appropriately', () => {
+    wrapper.vm.showVippsModal = true
+    wrapper.vm.showShippingModal = false
+    wrapper.vm.handleVippsBack()
+    expect(wrapper.vm.showVippsModal).toBe(false)
+    expect(wrapper.vm.showShippingModal).toBe(true)
+  })
+
+  it('handlePaymentComplete stores transaction data and shows success modal', () => {
+    const transactionData = {
+      id: 1,
+      itemId: sampleItem.id,
+      sellerId: sampleItem.sellerId,
+      buyerId: 1,
+      status: 'completed',
+      amount: 110,
+      createdAt: '2020-03-01T12:00:00Z',
+      updatedAt: '2020-03-01T12:05:00Z',
+      paymentMethod: 'vipps',
+    }
+    wrapper.vm.showVippsModal = true
+    wrapper.vm.showSuccessModal = false
+    wrapper.vm.handlePaymentComplete(transactionData)
+    expect(wrapper.vm.transactionDetails).toEqual(transactionData)
+    expect(wrapper.vm.showVippsModal).toBe(false)
+    expect(wrapper.vm.showSuccessModal).toBe(true)
+  })
+
+  it('handleViewPurchases navigates to profile purchases and hides success modal', () => {
+    wrapper.vm.showSuccessModal = true
+    wrapper.vm.handleViewPurchases()
+    expect(wrapper.vm.showSuccessModal).toBe(false)
+    expect(mockPush).toHaveBeenCalledWith('/profile/purchases')
+  })
+
+  it('handleContinueShopping navigates to home and hides success modal', () => {
+    wrapper.vm.showSuccessModal = true
+    wrapper.vm.handleContinueShopping()
+    expect(wrapper.vm.showSuccessModal).toBe(false)
+    expect(mockPush).toHaveBeenCalledWith('/')
+  })
+
+  // --- Computed: isCurrentUserSeller ---
+  it('computes isCurrentUserSeller correctly', async () => {
+    // With authStore.user.id (1) and sellerId (99), result should be false
+    expect(wrapper.vm.isCurrentUserSeller).toBe(false)
+    // Change sellerId to match current user
+    wrapper.vm.sellerId = 1
+    await nextTick()
+    expect(wrapper.vm.isCurrentUserSeller).toBe(true)
+  })
+
+  // --- Method: handleContactSeller ---
+  describe('handleContactSeller', () => {
+    it('returns early if not logged in', async () => {
+      // Simulate logged-out state
+      mockAuthStore.isLoggedIn = false
+      await wrapper.vm.handleContactSeller()
+      // No navigation should occur
+      expect(mockPush).not.toHaveBeenCalled()
+      // Restore login state for later tests
+      mockAuthStore.isLoggedIn = true
     })
-
-    await flushPromises()
-    const badges = wrapper.findAllComponents({ name: 'Badge' })
-    expect(badges.length).toBeGreaterThanOrEqual(5)
-  })
-
-  it('renders WishlistButton with correct props', async () => {
-    const wrapper = mount(ProductDisplay, {
-      props: { id: 1 },
-    })
-
-    await flushPromises()
-    const wishlist = wrapper.findComponent({ name: 'WishlistButton' })
-    expect(wishlist.exists()).toBe(true)
-    expect(wishlist.props('productId')).toBe(mockItem.id)
-  })
-
-  it('renders posted and updated dates', async () => {
-    const wrapper = mount(ProductDisplay, {
-      props: { id: 1 },
-    })
-
-    await flushPromises()
-    // The component formats dates as "January 1, 2024, 10:00 AM"
-    expect(wrapper.text()).toContain('January 1, 2024')
-    expect(wrapper.text()).toContain('February 1, 2024')
   })
 })

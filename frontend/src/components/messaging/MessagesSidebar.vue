@@ -99,34 +99,39 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="messages-sidebar">
+  <div class="messages-sidebar" role="complementary" aria-label="Messages sidebar">
     <div class="messages-header">
       <h1>
-        Messages <span class="message-count">{{ filteredConversations.length }}</span>
+        Messages
+        <span class="message-count" aria-label="Number of messages">{{
+          filteredConversations.length
+        }}</span>
       </h1>
-      <button class="new-message-btn">
+      <button class="new-message-btn" aria-label="Create new message">
         <i class="fas fa-pen"></i>
       </button>
     </div>
 
     <div class="search-bar">
-      <i class="fas fa-search"></i>
-      <input type="text" placeholder="Search..." />
+      <i class="fas fa-search" aria-hidden="true"></i>
+      <input type="text" placeholder="Search..." aria-label="Search messages" />
     </div>
 
-    <div class="messages-list">
+    <div class="messages-list" role="list" aria-label="Conversations">
       <div
         v-for="conversation in filteredConversations"
         :key="getChatId(conversation)"
         class="chat-item"
         :class="{ active: getChatId(conversation) === activeConversationId }"
         @click="$emit('select-chat', getChatId(conversation))"
+        role="listitem"
+        :aria-label="`Conversation with ${getReceiverUsername(conversation)} about ${itemTitles.get(conversation.itemId) || 'an item'}`"
       >
         <div class="chat-avatar">
           <img
             v-if="itemImages.get(conversation.itemId)"
             :src="itemImages.get(conversation.itemId)"
-            :alt="getReceiverUsername(conversation)"
+            :alt="`Product image for ${itemTitles.get(conversation.itemId) || 'item'}`"
           />
         </div>
         <div class="chat-info">
@@ -137,13 +142,16 @@ onMounted(async () => {
             @click="
               (event) => showProduct(event, itemIds.get(conversation.itemId) || conversation.itemId)
             "
+            aria-label="`View product: ${itemTitles.get(conversation.itemId)}`"
           >
             Item: {{ itemTitles.get(conversation.itemId) }}
           </div>
           <div class="chat-preview">{{ getLatestMessage(conversation) }}</div>
         </div>
         <div class="chat-meta">
-          <div class="chat-time">{{ conversation.latestMessageTimestamp }}</div>
+          <div class="chat-time" aria-label="Message time">
+            {{ conversation.latestMessageTimestamp }}
+          </div>
         </div>
       </div>
     </div>

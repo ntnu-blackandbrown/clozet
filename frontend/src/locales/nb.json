@@ -1,0 +1,184 @@
+{
+  "common": {
+    "login": "Logg inn",
+    "register": "Registrer",
+    "logout": "Logg ut",
+    "email": "E-post",
+    "password": "Passord",
+    "username": "Brukernavn",
+    "search": "Søk",
+    "save": "Lagre",
+    "cancel": "Avbryt",
+    "delete": "Slett",
+    "edit": "Rediger",
+    "submit": "Send inn",
+    "skipToContent": "Hopp til hovedinnhold",
+    "toggleMenu": "Vis/skjul meny",
+    "firstName": "Fornavn",
+    "lastName": "Etternavn",
+    "confirmPassword": "Bekreft passord",
+    "show": "Vis",
+    "hide": "Skjul",
+    "loading": "Laster...",
+    "success": "vellykket"
+  },
+  "navigation": {
+    "home": "Hjem",
+    "closet": "Garderobe",
+    "profile": "Profil",
+    "settings": "Innstillinger",
+    "messages": "Meldinger",
+    "sellItems": "Selg varer",
+    "adminDashboard": "Admin Dashbord"
+  },
+  "auth": {
+    "loginTitle": "Logg inn på kontoen din",
+    "registerTitle": "Opprett en ny konto",
+    "forgotPassword": "Glemt passord?",
+    "alreadyHaveAccount": "Har du allerede en konto?",
+    "dontHaveAccount": "Har du ikke en konto?",
+    "loginFailed": "Innlogging mislyktes. Sjekk brukernavn og passord.",
+    "registrationSuccess": "Registrering vellykket! Sjekk e-posten din for verifisering",
+    "registrationFailed": "Registrering mislyktes på grunn av teknisk feil.",
+    "loginFailed2": "Innlogging feilet på grunn av teknisk feil."
+  },
+  "closet": {
+    "addItem": "Legg til plagg",
+    "categories": "Kategorier",
+    "noItems": "Ingen plagg funnet",
+    "filterBy": "Filtrer etter"
+  },
+  "item": {
+    "name": "Navn",
+    "category": "Kategori",
+    "color": "Farge",
+    "size": "Størrelse",
+    "brand": "Merke",
+    "addedOn": "Lagt til"
+  },
+  "profile": {
+    "editProfile": "Rediger Profil",
+    "changePassword": "Endre Passord",
+    "myCloset": "Min Garderobe",
+    "settings": "Innstillinger",
+    "profileSettings": "Profilinnstillinger",
+    "myPosts": "Mine annonser",
+    "myWishlist": "Min ønskeliste",
+    "myPurchases": "Mine kjøp",
+    "navigation": {
+      "profileSettings": "Profilinnstillinger",
+      "myPosts": "Mine annonser",
+      "myWishlist": "Min ønskeliste",
+      "myPurchases": "Mine kjøp",
+      "changePassword": "Endre passord"
+    },
+    "emptyStates": {
+      "noPosts": "Du har ingen annonser ennå",
+      "noWishlist": "Du har ingen varer i ønskelisten din ennå"
+    },
+    "settings": {
+      "title": "Profilinnstillinger",
+      "saveChanges": "Lagre endringer",
+      "deleteAccount": "Slett konto",
+      "savingChanges": "Lagrer...",
+      "changesSuccess": "Endringene ble lagret! Vennligst logg inn igjen.",
+      "changesFailed": "Kunne ikke lagre endringer",
+      "confirmDelete": "Er du sikker på at du vil slette kontoen din? Denne handlingen kan ikke angres."
+    },
+    "changePassword": {
+      "title": "Endre passord",
+      "description": "Skriv inn ditt nåværende passord og velg et nytt passord.",
+      "currentPassword": "Nåværende passord",
+      "newPassword": "Nytt passord",
+      "confirmNewPassword": "Bekreft nytt passord",
+      "updatePassword": "Oppdater passord",
+      "backToSettings": "Tilbake til innstillinger",
+      "successMessage": "Passordet har blitt oppdatert.",
+      "errorMessage": "Det oppstod en feil. Kontroller nåværende passord og prøv igjen."
+    }
+  },
+  "home": {
+    "welcome": "Velkommen til Clozet!",
+    "tagline": "Den nye måten å handle klær på",
+    "searchPlaceholder": "Søk etter et produkt...",
+    "createPost": "Lag en annonse!",
+    "popularCategories": "Populære kategorier",
+    "loading": "Laster...",
+    "pleaseLogin": "Vennligst logg inn for å lage en annonse"
+  },
+  "createProduct": {
+    "title": "Opprett nytt produkt",
+    "editTitle": "Rediger produkt",
+    "sections": {
+      "images": "Produktbilder",
+      "basicInfo": "Grunnleggende informasjon",
+      "details": "Produktdetaljer",
+      "locationShipping": "Sted og forsendelse"
+    },
+    "imageUpload": {
+      "dragDrop": "Dra og slipp bilder her eller klikk for å velge",
+      "maxImages": "Maksimalt {max} bilder tillatt",
+      "required": "Minst ett bilde er påkrevd for et nytt produkt",
+      "keepCurrent": "Nåværende bilder vil bli beholdt. Last opp nye bilder for å erstatte dem."
+    },
+    "fields": {
+      "title": "Tittel",
+      "shortDescription": "Kort beskrivelse",
+      "longDescription": "Lang beskrivelse",
+      "price": "Pris (NOK)",
+      "category": "Kategori",
+      "condition": "Tilstand",
+      "size": "Størrelse",
+      "brand": "Merke",
+      "color": "Farge",
+      "location": "Sted",
+      "shipping": "Fraktalternativ",
+      "vippsPayment": "Aktiver Vipps-betaling"
+    },
+    "placeholders": {
+      "selectCategory": "Velg en kategori",
+      "selectCondition": "Velg tilstand",
+      "selectSize": "Velg størrelse",
+      "selectLocation": "Velg sted",
+      "selectShipping": "Velg fraktalternativ"
+    },
+    "buttons": {
+      "cancel": "Avbryt",
+      "create": "Opprett produkt",
+      "update": "Oppdater produkt",
+      "creating": "Oppretter...",
+      "updating": "Oppdaterer..."
+    }
+  },
+  "footer": {
+    "about": {
+      "title": "Om Clozet",
+      "description": "Din bærekraftige markedsplass for klær. Kjøp, selg og bytt klær enkelt."
+    },
+    "quickLinks": "Hurtigkoblinger",
+    "helpSupport": "Hjelp og støtte",
+    "account": "Konto",
+    "social": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "followInstagram": "Følg oss på Instagram",
+      "followFacebook": "Følg oss på Facebook",
+      "followTwitter": "Følg oss på Twitter"
+    },
+    "links": {
+      "faq": "FAQ",
+      "contactUs": "Kontakt oss",
+      "termsOfService": "Vilkår for bruk",
+      "privacyPolicy": "Personvernerklæring"
+    },
+    "copyright": "Alle rettigheter reservert."
+  },
+  "errors": {
+    "requiredField": "Dette feltet er påkrevd",
+    "invalidEmail": "Vennligst oppgi en gyldig e-postadresse",
+    "passwordLength": "Passordet må være minst 8 tegn",
+    "somethingWentWrong": "Noe gikk galt",
+    "passwordsDoNotMatch": "Passordene samsvarer ikke"
+  }
+}

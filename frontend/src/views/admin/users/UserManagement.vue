@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { UserService } from '@/api/services/UserService'
+import { useAuthStore } from '@/stores/AuthStore'
 
 // State
 const users = ref([])
@@ -8,6 +9,8 @@ const isLoading = ref(true)
 const error = ref(null)
 const searchQuery = ref('')
 const selectedRole = ref('all')
+const authStore = useAuthStore()
+const currentUser = computed(() => authStore.userDetails)
 
 // Fetch all users
 const fetchUsers = async () => {
@@ -102,6 +105,11 @@ const resetFilters = () => {
   selectedRole.value = 'all'
 }
 
+// Check if user is the currently logged in user
+const isCurrentUser = (user) => {
+  return currentUser.value && user.id === currentUser.value.id
+}
+
 // Load users on component mount
 onMounted(() => {
   fetchUsers()
@@ -111,99 +119,130 @@ onMounted(() => {
 <template>
   <div class="user-management">
     <div class="page-header">
-      <h1>User Management</h1>
+      <h1 id="user-management-title">User Management</h1>
     </div>
 
-    <div v-if="error" class="error-message">
+    <div v-if="error" class="error-message" role="alert">
       {{ error }}
-      <button @click="fetchUsers" class="btn-secondary">Retry</button>
+      <button @click="fetchUsers" class="btn-secondary" aria-label="Retry loading users">
+        Retry
+      </button>
     </div>
 
     <!-- Filters -->
-    <div class="filters">
+    <div class="filters" role="search" aria-labelledby="user-management-title">
       <div class="search-container">
         <input
           type="text"
           v-model="searchQuery"
           placeholder="Search users by name, username or email..."
           class="search-input"
+          aria-label="Search users"
         />
       </div>
 
       <div class="filter-container">
         <label for="role-filter">Filter by Role:</label>
-        <select id="role-filter" v-model="selectedRole" class="role-filter">
+        <select
+          id="role-filter"
+          v-model="selectedRole"
+          class="role-filter"
+          aria-label="Filter users by role"
+        >
           <option value="all">All Roles</option>
           <option value="ADMIN">Admin</option>
           <option value="ROLE_USER">Regular User</option>
         </select>
 
-        <button @click="resetFilters" class="btn-secondary">Reset Filters</button>
+        <button @click="resetFilters" class="btn-secondary" aria-label="Reset all filters">
+          Reset Filters
+        </button>
       </div>
     </div>
 
     <!-- User Table -->
     <div class="table-container">
-      <table class="admin-table" v-if="!isLoading && filteredUsers.length > 0">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Date Joined</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="user in filteredUsers" :key="user.id">
-            <td>{{ user.id }}</td>
-            <td>{{ user.firstName }} {{ user.lastName }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-              <select
-                v-model="user.role"
-                @change="changeUserRole(user, $event.target.value)"
-                class="role-select"
-              >
-                <option value="ADMIN">Admin</option>
-                <option value="ROLE_USER">Regular User</option>
-              </select>
-            </td>
-            <td>
-              <span class="tag" :class="getStatusClass(user.active)">
-                {{ user.active ? 'Active' : 'Inactive' }}
-              </span>
-            </td>
-            <td>{{ formatDate(user.createdAt) }}</td>
-            <td class="actions">
-              <button @click="toggleUserStatus(user)" class="btn-secondary btn-small">
-                {{ user.active ? 'Deactivate' : 'Activate' }}
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="overflow-x: auto" v-if="!isLoading && filteredUsers.length > 0">
+        <table class="admin-table" aria-labelledby="user-management-title">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Username</th>
+              <th scope="col">Email</th>
+              <th scope="col">Role</th>
+              <th scope="col">Status</th>
+              <th scope="col">Date Joined</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="user in filteredUsers"
+              :key="user.id"
+              :class="{ 'current-user-row': isCurrentUser(user) }"
+            >
+              <td>{{ user.id }}</td>
+              <td>{{ user.firstName }} {{ user.lastName }}</td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                <select
+                  v-model="user.role"
+                  @change="changeUserRole(user, $event.target.value)"
+                  class="role-select"
+                  :aria-label="`Change role for ${user.username}`"
+                  :disabled="isCurrentUser(user)"
+                  :title="isCurrentUser(user) ? 'You cannot edit your own role' : ''"
+                >
+                  <option value="ADMIN">Admin</option>
+                  <option value="ROLE_USER">Regular User</option>
+                </select>
+              </td>
+              <td>
+                <span class="tag" :class="getStatusClass(user.active)">
+                  {{ user.active ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>{{ formatDate(user.createdAt) }}</td>
+              <td class="actions">
+                <button
+                  @click="toggleUserStatus(user)"
+                  class="btn-secondary btn-small"
+                  :aria-label="`${user.active ? 'Deactivate' : 'Activate'} user ${user.username}`"
+                  :disabled="isCurrentUser(user)"
+                  :title="isCurrentUser(user) ? 'You cannot deactivate your own account' : ''"
+                >
+                  {{ user.active ? 'Deactivate' : 'Activate' }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-      <div v-else-if="isLoading" class="loading-container">
-        <div class="loading-spinner"></div>
+      <div v-else-if="isLoading" class="loading-container" role="status" aria-live="polite">
+        <div class="loading-spinner" aria-hidden="true"></div>
         <p>Loading users...</p>
       </div>
 
-      <div v-else-if="filteredUsers.length === 0 && users.length > 0" class="empty-state">
+      <div
+        v-else-if="filteredUsers.length === 0 && users.length > 0"
+        class="empty-state"
+        aria-live="polite"
+      >
         <p>No users found matching your filters</p>
-        <button @click="resetFilters" class="btn-primary">Reset Filters</button>
+        <button @click="resetFilters" class="btn-primary" aria-label="Reset all filters">
+          Reset Filters
+        </button>
       </div>
 
-      <div v-else class="empty-state">
+      <div v-else class="empty-state" aria-live="polite">
         <p>No users found</p>
       </div>
     </div>
 
-    <div class="pagination-info" v-if="filteredUsers.length > 0">
+    <div class="pagination-info" v-if="filteredUsers.length > 0" aria-live="polite">
       Showing {{ filteredUsers.length }} of {{ users.length }} users
     </div>
   </div>
@@ -312,6 +351,20 @@ onMounted(() => {
 
 .admin-table tr:last-child td {
   border-bottom: none;
+}
+
+.current-user-row {
+  background-color: #f3f9ff;
+  position: relative;
+}
+
+.current-user-row::after {
+  content: '(This is you)';
+  position: absolute;
+  right: 10px;
+  font-size: 0.75rem;
+  color: var(--color-slate-gray);
+  font-style: italic;
 }
 
 .role-select {

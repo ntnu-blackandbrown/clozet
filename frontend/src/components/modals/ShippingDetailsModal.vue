@@ -88,11 +88,11 @@ const handleContinue = handleSubmit((values) => {
 </script>
 
 <template>
-  <div class="shipping-details-modal">
-    <h2>Shipping Details</h2>
+  <div class="shipping-details-modal" role="dialog" aria-labelledby="shipping-modal-title">
+    <h2 id="shipping-modal-title">Shipping Details</h2>
     <p class="shipping-type">{{ shippingOptionName }}</p>
 
-    <div class="form-container">
+    <div class="form-container" role="form">
       <div class="form-row">
         <div class="form-group">
           <label for="firstName">First Name</label>
@@ -103,6 +103,7 @@ const handleContinue = handleSubmit((values) => {
             class="form-input"
             placeholder="Enter your first name"
             :disabled="!!authStore.user?.firstName"
+            aria-required="true"
           />
         </div>
         <div class="form-group">
@@ -114,18 +115,33 @@ const handleContinue = handleSubmit((values) => {
             class="form-input"
             placeholder="Enter your last name"
             :disabled="!!authStore.user?.lastName"
+            aria-required="true"
           />
         </div>
       </div>
 
       <div class="form-group">
         <label for="country">Country</label>
-        <select v-if="isInternationalShipping" id="country" v-model="country" class="form-input">
+        <select
+          v-if="isInternationalShipping"
+          id="country"
+          v-model="country"
+          class="form-input"
+          aria-required="true"
+        >
           <option v-for="countryName in countries" :key="countryName" :value="countryName">
             {{ countryName }}
           </option>
         </select>
-        <input v-else type="text" id="country" v-model="country" class="form-input" readonly />
+        <input
+          v-else
+          type="text"
+          id="country"
+          v-model="country"
+          class="form-input"
+          readonly
+          aria-readonly="true"
+        />
       </div>
 
       <div class="form-group">
@@ -136,6 +152,7 @@ const handleContinue = handleSubmit((values) => {
           v-model="streetAddress"
           class="form-input"
           placeholder="Enter your street address"
+          aria-required="true"
         />
       </div>
 
@@ -149,6 +166,7 @@ const handleContinue = handleSubmit((values) => {
             class="form-input"
             :placeholder="country === 'Norway' ? '0000' : 'Enter postal code'"
             :maxlength="country === 'Norway' ? 4 : undefined"
+            aria-required="true"
           />
         </div>
         <div class="form-group">
@@ -159,6 +177,7 @@ const handleContinue = handleSubmit((values) => {
             v-model="city"
             class="form-input"
             placeholder="Enter your city"
+            aria-required="true"
           />
         </div>
       </div>
@@ -171,17 +190,25 @@ const handleContinue = handleSubmit((values) => {
           v-model="phone"
           class="form-input"
           placeholder="+47 12345678"
+          aria-required="true"
         />
       </div>
 
-      <p v-if="error" class="error-message">{{ error }}</p>
+      <p v-if="error" class="error-message" role="alert">{{ error }}</p>
 
       <div class="button-group">
-        <button @click="emit('close')" class="shipping-button cancel">Cancel</button>
+        <button
+          @click="emit('close')"
+          class="shipping-button cancel"
+          aria-label="Cancel and close shipping details form"
+        >
+          Cancel
+        </button>
         <button
           @click="handleContinue"
           class="shipping-button continue"
           :disabled="!isFormValid || isSubmitting"
+          aria-label="Continue to payment"
         >
           <span v-if="isSubmitting">Processing...</span>
           <span v-else>Continue to Payment</span>

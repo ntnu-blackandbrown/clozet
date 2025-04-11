@@ -6,6 +6,7 @@ import { LocationService } from '@/api/services/LocationService'
 const locations = ref([])
 const isLoading = ref(true)
 const error = ref(null)
+const successMessage = ref(null)
 
 // Form for adding/editing locations
 const locationForm = ref({
@@ -41,14 +42,21 @@ const createLocation = async () => {
 
   try {
     isLoading.value = true
+    error.value = null
     await LocationService.createLocation(locationForm.value)
     await fetchLocations()
     isLoading.value = false
+    successMessage.value = `Location "${locationForm.value.city}" created successfully`
     resetForm()
     showForm.value = false
+
+    // Clear success message after 5 seconds
+    setTimeout(() => {
+      successMessage.value = null
+    }, 5000)
   } catch (err) {
     console.error('Error creating location:', err)
-    error.value = 'Failed to create location'
+    error.value = `Failed to create location: ${err.response?.data?.message || 'Unknown error'}`
     isLoading.value = false
   }
 }
@@ -59,30 +67,21 @@ const updateLocation = async () => {
 
   try {
     isLoading.value = true
+    error.value = null
     await LocationService.updateLocation(locationForm.value.id, locationForm.value)
     await fetchLocations()
     isLoading.value = false
+    successMessage.value = `Location "${locationForm.value.city}" updated successfully`
     resetForm()
     showForm.value = false
+
+    // Clear success message after 5 seconds
+    setTimeout(() => {
+      successMessage.value = null
+    }, 5000)
   } catch (err) {
     console.error('Error updating location:', err)
-    error.value = 'Failed to update location'
-    isLoading.value = false
-  }
-}
-
-// Delete a location
-const deleteLocation = async (id) => {
-  if (!confirm('Are you sure you want to delete this location?')) return
-
-  try {
-    isLoading.value = true
-    await LocationService.deleteLocation(id)
-    await fetchLocations()
-    isLoading.value = false
-  } catch (err) {
-    console.error('Error deleting location:', err)
-    error.value = 'Failed to delete location'
+    error.value = `Failed to update location: ${err.response?.data?.message || 'Unknown error'}`
     isLoading.value = false
   }
 }
@@ -160,58 +159,85 @@ onMounted(() => {
 <template>
   <div class="location-management">
     <div class="page-header">
-      <h1>Location Management</h1>
-      <button @click="addLocation" class="btn-primary">Add New Location</button>
+      <h1 id="location-management-title">Location Management</h1>
+      <button @click="addLocation" class="btn-primary" aria-label="Add new location">
+        Add New Location
+      </button>
     </div>
 
-    <div v-if="error" class="error-message">
+    <!-- Success Message -->
+    <div v-if="successMessage" class="success-message" role="status">
+      {{ successMessage }}
+    </div>
+
+    <div v-if="error" class="error-message" role="alert">
       {{ error }}
-      <button @click="fetchLocations" class="btn-secondary">Retry</button>
+      <button @click="fetchLocations" class="btn-secondary" aria-label="Retry loading locations">
+        Retry
+      </button>
     </div>
 
     <!-- Location Table -->
     <div class="table-container">
-      <table class="admin-table" v-if="!isLoading && locations.length > 0">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>City</th>
-            <th>Region</th>
-            <th>Coordinates</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="location in locations" :key="location.id">
-            <td>{{ location.id }}</td>
-            <td>{{ location.city }}</td>
-            <td>{{ location.region }}</td>
-            <td>{{ location.latitude.toFixed(4) }}, {{ location.longitude.toFixed(4) }}</td>
-            <td class="actions">
-              <button @click="editLocation(location)" class="btn-icon edit">✎</button>
-              <button @click="deleteLocation(location.id)" class="btn-icon delete">🗑</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="overflow-x: auto" v-if="!isLoading && locations.length > 0">
+        <table class="admin-table" aria-labelledby="location-management-title">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">City</th>
+              <th scope="col">Region</th>
+              <th scope="col">Coordinates</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="location in locations" :key="location.id">
+              <td>{{ location.id }}</td>
+              <td>{{ location.city }}</td>
+              <td>{{ location.region }}</td>
+              <td>{{ location.latitude.toFixed(4) }}, {{ location.longitude.toFixed(4) }}</td>
+              <td class="actions">
+                <button
+                  @click="editLocation(location)"
+                  class="btn-icon edit"
+                  aria-label="Edit location: {{ location.city }}"
+                >
+                  ✎
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-      <div v-else-if="isLoading" class="loading-container">
-        <div class="loading-spinner"></div>
+      <div v-else-if="isLoading" class="loading-container" role="status" aria-live="polite">
+        <div class="loading-spinner" aria-hidden="true"></div>
         <p>Loading locations...</p>
       </div>
 
       <div v-else class="empty-state">
         <p>No locations found</p>
-        <button @click="addLocation" class="btn-primary">Add Your First Location</button>
+        <button @click="addLocation" class="btn-primary" aria-label="Add first location">
+          Add Your First Location
+        </button>
       </div>
     </div>
 
     <!-- Location Form Modal -->
-    <div v-if="showForm" class="modal-backdrop" @click="showForm = false">
+    <div
+      v-if="showForm"
+      class="modal-backdrop"
+      @click="showForm = false"
+      aria-modal="true"
+      role="dialog"
+      aria-labelledby="location-form-title"
+    >
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h3>{{ formMode === 'add' ? 'Add New Location' : 'Edit Location' }}</h3>
-          <button @click="showForm = false" class="btn-close">×</button>
+          <h3 id="location-form-title">
+            {{ formMode === 'add' ? 'Add New Location' : 'Edit Location' }}
+          </h3>
+          <button @click="showForm = false" class="btn-close" aria-label="Close form">×</button>
         </div>
 
         <form @submit.prevent="handleSubmit" class="location-form">
@@ -222,8 +248,13 @@ onMounted(() => {
               id="city"
               v-model="locationForm.city"
               :class="{ 'input-error': formErrors.city }"
+              aria-required="true"
+              :aria-invalid="formErrors.city ? 'true' : 'false'"
+              :aria-describedby="formErrors.city ? 'city-error' : undefined"
             />
-            <span v-if="formErrors.city" class="error-text">{{ formErrors.city }}</span>
+            <span v-if="formErrors.city" class="error-text" id="city-error" role="alert">{{
+              formErrors.city
+            }}</span>
           </div>
 
           <div class="form-group">
@@ -233,8 +264,13 @@ onMounted(() => {
               id="region"
               v-model="locationForm.region"
               :class="{ 'input-error': formErrors.region }"
+              aria-required="true"
+              :aria-invalid="formErrors.region ? 'true' : 'false'"
+              :aria-describedby="formErrors.region ? 'region-error' : undefined"
             />
-            <span v-if="formErrors.region" class="error-text">{{ formErrors.region }}</span>
+            <span v-if="formErrors.region" class="error-text" id="region-error" role="alert">{{
+              formErrors.region
+            }}</span>
           </div>
 
           <div class="form-row">
@@ -246,8 +282,17 @@ onMounted(() => {
                 v-model.number="locationForm.latitude"
                 step="0.0001"
                 :class="{ 'input-error': formErrors.latitude }"
+                aria-required="true"
+                :aria-invalid="formErrors.latitude ? 'true' : 'false'"
+                :aria-describedby="formErrors.latitude ? 'latitude-error' : undefined"
               />
-              <span v-if="formErrors.latitude" class="error-text">{{ formErrors.latitude }}</span>
+              <span
+                v-if="formErrors.latitude"
+                class="error-text"
+                id="latitude-error"
+                role="alert"
+                >{{ formErrors.latitude }}</span
+              >
             </div>
 
             <div class="form-group half">
@@ -258,14 +303,30 @@ onMounted(() => {
                 v-model.number="locationForm.longitude"
                 step="0.0001"
                 :class="{ 'input-error': formErrors.longitude }"
+                aria-required="true"
+                :aria-invalid="formErrors.longitude ? 'true' : 'false'"
+                :aria-describedby="formErrors.longitude ? 'longitude-error' : undefined"
               />
-              <span v-if="formErrors.longitude" class="error-text">{{ formErrors.longitude }}</span>
+              <span
+                v-if="formErrors.longitude"
+                class="error-text"
+                id="longitude-error"
+                role="alert"
+                >{{ formErrors.longitude }}</span
+              >
             </div>
           </div>
 
           <div class="form-actions">
-            <button type="button" @click="showForm = false" class="btn-secondary">Cancel</button>
-            <button type="submit" class="btn-primary">
+            <button
+              type="button"
+              @click="showForm = false"
+              class="btn-secondary"
+              aria-label="Cancel"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary" aria-label="Submit location form">
               {{ formMode === 'add' ? 'Add Location' : 'Update Location' }}
             </button>
           </div>
@@ -304,6 +365,14 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.success-message {
+  background-color: #f0fdf4;
+  color: #16a34a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .table-container {
@@ -425,7 +494,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 1500;
 }
 
 .modal-content {

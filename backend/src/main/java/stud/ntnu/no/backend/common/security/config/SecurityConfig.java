@@ -75,7 +75,8 @@ public class SecurityConfig {
         
         // Instead of using patterns, we'll validate origins in the configure method
         corsConfig.setAllowedOrigins(Collections.emptyList()); // We'll manually validate origins
-        corsConfig.setAllowedOriginPatterns(Arrays.asList("*")); // Allow any origin for initial processing
+        // Don't use wildcard patterns with allowCredentials=true
+        corsConfig.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173", "https://clozet.netlify.app"));
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         corsConfig.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Accept", "X-Requested-With", "remember-me"));
         corsConfig.setExposedHeaders(Arrays.asList("Content-Type"));
@@ -128,14 +129,16 @@ public class SecurityConfig {
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             )
             .authorizeHttpRequests(auth -> auth
-                // Tillat bruk av register, verify, og passordreset
-                .requestMatchers("/api/users/**", "/api/users/verify", "/api/password/**", "/api/prod-test/verification").permitAll()
-                // Evt. /api/auth/** og H2 console
+                // Allow only authentication-related endpoints without authentication
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/test-image/upload").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/ws/**").permitAll()
-                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/h2-console/**").permitAll() // Keeping H2 console accessible
+                .requestMatchers("/api/prod-test/verification").permitAll() // Verification test endpoint
+                .requestMatchers("/ws/**").permitAll() // WebSocket endpoints for testing
+                // Require authentication for all other API endpoints
+                .requestMatchers("/api/categories/top-five").permitAll()
+                .requestMatchers("/api/marketplace/items").permitAll()
+                .requestMatchers("/api/items/**").permitAll()
+                .requestMatchers("/api/images/item/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

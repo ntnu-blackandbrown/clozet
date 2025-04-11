@@ -32,24 +32,24 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-# Application-specific settings
 app:
   jwt:
-    secret: AZTwI6sasm/p1KfaPZiSyGzIwDsEe70xTWG4H4TXatDcrqSOgWgACv1z05zhJnBIBGNWOUGuNZUnkwt86V2cqg==
-    expiration: 3600000
-    cookie-max-age: 3600
-    refresh-expiration: 3600000
-    refresh-cookie-max-age: 3600
-    secure-cookie: false
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION:3600000}
+    cookie-max-age: ${JWT_COOKIE_MAX_AGE:3600}
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+    refresh-cookie-max-age: ${JWT_REFRESH_COOKIE_MAX_AGE:604800}
+    secure-cookie: ${JWT_SECURE_COOKIE:false}
   email:
-    from: noreply@clozet.com
+    from: ${MAILGUN_FROM_ADDRESS:noreply@clozet.com}
     verification-expiry-hours: 24
     password-reset-expiry-hours: 1
-    base-url: http://localhost:5173
+    base-url: ${APP_BASE_URL:https://clozet.netlify.app}
   upload:
-    dir: uploads
+    dir: ${UPLOAD_DIR:uploads}
   storage:
-    use-cloudinary: false
+    use-cloudinary: ${USE_CLOUDINARY:false}
+
 
 logging:
   level:
