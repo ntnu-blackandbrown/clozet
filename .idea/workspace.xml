@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c7275f5f-a06c-4ee1-aff5-c7adf7638d87" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/LoginRegisterView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/LoginRegisterView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,31 +23,34 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/email-2.0" />
+        <entry key="$PROJECT_DIR$" value="develop-2.0" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {}
-}]]></component>
-  <component name="GitHubPullRequestState"><![CDATA[{
-  "prStates": [
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {}
+}</component>
+  <component name="GitHubPullRequestState">{
+  &quot;prStates&quot;: [
     {
-      "id": {
-        "id": "PR_kwDOONequs6RAMeX",
-        "number": 115
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOONequs6RAMeX&quot;,
+        &quot;number&quot;: 115
       },
-      "lastSeen": 1743573839401
+      &quot;lastSeen&quot;: 1743573839401
     }
   ]
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/ntnu-blackandbrown/clozet.git",
-    "accountId": "40d44697-417e-4a42-b8a8-1cd3db4ddd8c"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ntnu-blackandbrown/clozet.git&quot;,
+    &quot;accountId&quot;: &quot;40d44697-417e-4a42-b8a8-1cd3db4ddd8c&quot;
   }
-}]]></component>
+}</component>
+  <component name="PackageJsonUpdateNotifier">
+    <dismissed value="$PROJECT_DIR$/frontend/package.json" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -55,31 +59,40 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "#115 on feature/email-2.0",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/kevin/Dropbox/NTNU/Semester 4/Fullstack-Case/clozet",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\kevin\\Dropbox\\NTNU\\Semester 4\\Fullstack-Case\\clozet\\frontend\\node_modules\\prettier",
-    "ts.external.directory.path": "C:\\Users\\kevin\\Dropbox\\NTNU\\Semester 4\\Fullstack-Case\\clozet\\frontend\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;#353 on task/ReadMe.md&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/kevin/Dropbox/NTNU/Semester 4/Fullstack case/clozet/backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;C:\\Users\\kevin\\Dropbox\\NTNU\\Semester 4\\Fullstack case\\clozet\\frontend\\node_modules\\prettier&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.5004831&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\kevin\\Dropbox\\NTNU\\Semester 4\\Fullstack-Case\\clozet\\frontend\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "vue.recent.templates": [
-      "Vue Composition API Component"
+  &quot;keyToStringList&quot;: {
+    &quot;vue.recent.templates&quot;: [
+      &quot;Vue Composition API Component&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\kevin\Dropbox\NTNU\Semester 4\Fullstack case\clozet\backend" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\kevin\Dropbox\NTNU\Semester 4\Fullstack case\clozet\docs\API Documentation" />
+      <recent name="C:\Users\kevin\Dropbox\NTNU\Semester 4\Fullstack case\clozet\docs\images" />
       <recent name="C:\Users\kevin\Dropbox\NTNU\Semester 4\Fullstack-Case\clozet\frontend\src\api" />
       <recent name="C:\Users\janja\Dropbox\NTNU\Semester 4\Fullstack-Case\clozet" />
     </key>
@@ -107,6 +120,10 @@
       <workItem from="1743322046366" duration="6402000" />
       <workItem from="1743376970051" duration="489000" />
       <workItem from="1743570820012" duration="2637000" />
+      <workItem from="1744301777128" duration="7874000" />
+      <workItem from="1744327092290" duration="2702000" />
+      <workItem from="1744331843090" duration="86000" />
+      <workItem from="1744353689346" duration="1850000" />
     </task>
     <servers />
   </component>

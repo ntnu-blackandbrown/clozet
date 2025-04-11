@@ -2,6 +2,8 @@
 import os
 import argparse
 from collections import defaultdict
+import sys
+from pathlib import Path
 
 def split_group_and_name(subdir):
     """Split 'auth-register' into ('auth', 'register')"""
@@ -10,7 +12,39 @@ def split_group_and_name(subdir):
         return parts[0], parts[1]
     return "misc", subdir  # fallback group
 
+def find_snippets_dir(base_dir, target="target/generated-snippets"):
+    """Find the snippets directory starting from base_dir"""
+    # First, check if the target is directly under backend
+    backend_path = Path(base_dir) / "backend" / target
+    if backend_path.exists():
+        return str(backend_path)
+    
+    # Otherwise, search for it
+    base_path = Path(base_dir)
+    for root, dirs, _ in os.walk(base_path):
+        if "target" in dirs:
+            target_path = Path(root) / "target" / "generated-snippets"
+            if target_path.exists():
+                return str(target_path)
+    
+    # If we still can't find it, return the default
+    return target
+
 def generate_index(snippets_dir, output_file):
+    # Check if snippets_dir exists, if not search for it
+    if not os.path.exists(snippets_dir):
+        print(f"Warning: {snippets_dir} not found. Attempting to locate snippets directory...")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = Path(script_dir).parent.parent  # Go up two levels from script location
+        snippets_dir = find_snippets_dir(project_root)
+        
+        if not os.path.exists(snippets_dir):
+            print(f"Error: Could not find snippets directory at {snippets_dir}")
+            print("Please run this script from the project root or specify the correct path.")
+            sys.exit(1)
+        else:
+            print(f"Found snippets directory at: {snippets_dir}")
+    
     # Organize subdirs by group prefix
     grouped = defaultdict(list)
     for subdir in sorted(os.listdir(snippets_dir)):
@@ -37,7 +71,7 @@ def generate_index(snippets_dir, output_file):
                     f.write("No snippet files found.\n\n")
                 else:
                     for file in adoc_files:
-                        file_path = os.path.join(snippets_dir, subdir, file).replace("\\", "/")
+                        file_path = os.path.relpath(os.path.join(snippets_dir, subdir, file), start=os.path.dirname(output_file)).replace("\\", "/")
                         file_title = os.path.splitext(file)[0].replace("-", " ").title()
                         f.write("==== {}\n\n".format(file_title))
                         f.write("include::{}[]\n\n".format(file_path))
