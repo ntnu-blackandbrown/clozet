@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // Create axios instance with base configuration
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080', // adjust to your backend URL
+  baseURL: 'https://clozet-backend-083bdce61007.herokuapp.com', // adjust to your backend URL
   withCredentials: true, // Enable cookies with all requests
 })
 
