@@ -93,11 +93,8 @@ export const useWebsocket = defineStore('websocket', () => {
     updateConnectionStatus('connecting', 'Connecting...')
     log(`Attempting to connect to ${serverUrl.value}...`)
 
-    // Create a new SockJS instance with transport options
-    const socket = new SockJS(serverUrl.value, null, {
-      transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
-      timeout: 10000
-    })
+    // Create a new SockJS instance
+    const socket = new SockJS(serverUrl.value)
 
     stompClient = new Client({
       webSocketFactory: () => socket,
