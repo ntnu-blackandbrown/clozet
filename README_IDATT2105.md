@@ -1,23 +1,4 @@
-## 🔧 Forbedringer gjort i README
-
-| Type | Seksjon | Endring |
-|------|---------|---------|
-| Språk/tydelighet | Project Description | Forkortet og strammet opp teksten for klarhet. Rettet "PostReg SQL" til "PostgreSQL". |
-| Struktur | Introduction | Fjernet ufullstendig listepunkt. |
-| Kommentar-håndtering | Teknologi og real-time | Fjernet "dobbelsjekk" og TODO-kommentarer. |
-| Navnekonsistens | Project Members | Lagt til roller. |
-| Profesjonalitet | Header | Lagt til seksjon for badges og lisens. |
-| Kompletthet | Footer | Lagt til lisensseksjon og "Known Issues". |
-
-# IDATT2105 – Full-stack Marketplace Project (Spring 2025)
-
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Coverage](https://img.shields.io/badge/coverage-60%25-yellowgreen)
-![License](https://img.shields.io/badge/license-MIT-blue)
-
-**Live demo:** [https://your-link.netlify.app](https://your-link.netlify.app)
-
----
+# IDATT2105 - Semester Project 2025
 
 ## 📌 Project Description
 
@@ -33,23 +14,25 @@ Built with **Vue 3** (frontend) and **Spring Boot 3** (backend), deployed to **N
 
 The system emphasizes clean architecture, security (OWASP compliance), accessibility, RESTful design, test coverage, and CI/CD integration.
 
----
 
-## 🧭 Table of Contents
+
+**Live demo:** [https://your-link.netlify.app](https://your-link.netlify.app)
+
+## Table of Contents
 1. [Introduction](#introduction)
-2. [Core Functionalities](#core-functionalities)
-3. [Technology Choices and Justifications](#technology-choices-and-justifications)
-4. [Application Structure](#application-structure)
+2. [Technology Choices and Justifications](#technology-choices-and-justifications)
+3. [Application Structure](#application-structure)
+4. [Security and Authentication](#security-and-authentication)
 5. [API Documentation](#api-documentation)
 6. [Installation and Running](#installation-and-running)
 7. [Testing and CI/CD](#testing-and-cicd)
-8. [Known Issues](#known-issues)
+8. [Usage Examples](#usage-examples)
 9. [Project Members](#project-members)
-10. [License](#license)
 
----
+## Introduction
+Explain what the project is about and what it aims to solve. Consider including:
 
-## 📖 Introduction
+- Background of the project
 
 This project was developed as a semester project in IDATT2105. The goal is to recreate the core concept of a digital marketplace with modern tools and best practices.
 
@@ -59,63 +42,85 @@ Students participating are graded on their implementation of:
 - Secure backend with authentication and validation
 - High test coverage and robust CI/CD
 
----
 
-## ⚙️ Core Functionalities
+## Core Functionalities
 
-### 👤 User Management & Authentication
-- Secure JWT login with refresh tokens
-- HttpOnly cookie storage
-- Role-based access (Admin/User)
-- Internationalization (i18n)
+### User Management & Authentication
+- 👤 User registration and profile management
+- 🔐 Secure login with JWT and Spring Security
+- 👥 Role-based access control (Admin/Standard users)
+- 🌐 Internationalization (i18n) support
 
-### 📦 Listings
-- Create/edit/delete/archive items
-- Multi-image support via Cloudinary
-- Mobile-friendly grid layout
+### Listing Management
+- 📝 Create, update, delete, and archive item listings
+- 📸 Multi-image gallery support for listings
+- 📱 Responsive thumbnail grid for item exploration
 
-### 🔍 Search & Filtering
-- Category, location, keyword, and date filters
-- Smart sorting
-- Map view for geographic browsing
+### Search & Discovery
+- 🔍 Advanced filtering system
+  - Category-based filtering
+  - Location-based search
+  - Keyword search
 
-### 💬 User Interaction
-- Real-time messaging (WebSocket)
-- Favorites/bookmarks
-- VIPPS payment simulation
-- Email notifications
+### User Interaction
+- 💬 Real-time messaging system between buyers and sellers
+- ❤️ Favorites/Bookmarking system for items
+- 💳 VIPPS payment simulation for transactions
+- 📨 Email notifications for important updates
 
-### 🛠️ Admin Features
-- Admin dashboard
-- Category & user moderation
-- Basic analytics
+### Admin Features
+- 🎛️ Comprehensive admin dashboard
+- 📁 Category management system
+- 👥 User management and moderation
+- 📊 Basic analytics and reporting
 
----
+## Technology Choices and Justifications
 
-## 💻 Technology Choices and Justifications
+### Database Architecture
 
-### Backend
-- **Java 21**, **Spring Boot 3.4.4**
-- JPA + Hibernate
-- Spring Security with JWT
-- Spring REST Docs
-- WebSocket (STOMP + SockJS)
-- Flyway for DB migration
-- PostgreSQL (prod), H2 (dev)
+- **Development Environment: H2 Database**
+  - In-memory/in-file database ideal for rapid prototyping
+  - Fast startup and auto-schema generation
 
-### Frontend
-- **Vue 3.5**, Composition API
-- Vite for dev/build tooling
-- Pinia (state), Vue Router
-- Axios, Yup, Vee-Validate
-- WebSocket integration with StompJS
+- **Production Environment: PostgreSQL on Heroku**
+  - Chosen for its scalability and JSON support
+  - Integrated with Heroku for managed backups and monitoring
 
-### Testing
-- JUnit 5, Mockito, Spring Test
-- Vitest (unit), Cypress (E2E)
-- WebSocket mock testing
+- **Data Access Layer** 
+  - Spring Data JPA for ORM functionality
+  - Prepared statements to prevent SQL injection
 
----
+  ### Security Architecture
+
+- **Authentication**
+  - JWT-based stateless authentication with access tokens
+  - Refresh token mechanism
+  - Secure token storage in HttpOnly cookies
+  - Role-based access control (RBAC)
+  - Email verification for new accounts
+  - Password reset functionality
+
+- **API Security**
+  - CORS configuration with specific allowed origins
+  - Stateless session management
+  - Request validation using DTOs
+  - Authentication filters
+
+- **Data Protection**
+  - Password hashing with BCrypt
+  - Secure file upload handling via Cloudinary
+  - Proper token expiration and rotation
+
+
+  ### Real-time Communication
+
+- **WebSocket Implementation**
+  - **Bi-directional Real-time Communication** - Full-duplex messaging between client and server using STOMP protocol
+  - **Centralized Broadcasting Service** - Unified WebSocket service managing all real-time notifications and events
+  - **User-specific Topic Channels** - Targeted messaging with user-specific destinations for privacy and efficiency
+  - **Comprehensive Event Types** - Support for message creation, reading, updates, and deletions in real time
+  - **Conversation Management** - Real-time notifications for conversation archiving and deletion
+  - **SockJS Fallback Support** - Graceful degradation for browsers without WebSocket support
 
 ## Application Structure
 
@@ -151,90 +156,275 @@ frontend/
 └── __tests__/
 ```
 
----
+### Key Architectural Decisions
+1. **Backend**
+   - Spring Boot 3.4.4 with Java 21
+   - JPA for data access
+   - H2 for development, PostgreSQL for production
+   - Cloudinary for image management
+   - REST API with Spring REST Docs
+   - WebSocket with SockJS/STOMP
+   - JWT for authentication
 
-## 📚 API Documentation
+2. **Frontend**
+   - Vue 3.5.13 with Composition API
+   - Vite 6.2.5 for build tooling
+   - TypeScript 5.8 for type safety
+   - Pinia for state management
+   - Vue Router for navigation
+   - SockJS/StompJS for WebSocket
+   - Vee-validate/Yup for form validation
 
-- Auto-generated with Spring REST Docs
-- Verified via controller tests
-- Accessible in `docs/API Documentation/index.pdf`
+3. **Testing**
+   - Controller tests with Spring REST Docs
+   - Service layer unit tests
+   - Frontend component tests with Vitest
+   - E2E tests with Cypress
 
-Example test:
-```java
-@Test
-void getTopFiveCategories_ShouldReturnListOfCategories() throws Exception {
-    mockMvc.perform(get("/api/categories/top-five"))
-        .andDo(document("categories-top-five",
-            responseFields(
-                fieldWithPath("[].id").description("Category ID"),
-                fieldWithPath("[].name").description("Category name")
-            )
-        ));
-}
-```
 
----
+### Database Entity Relationship Diagram
+The following diagram illustrates the database model of the application, showing all entities and their relationships:
 
-## 🚀 Installation and Running
+![E-commerce Platform Data Model](docs/images/database_diagram.png)
+
+This entity relationship diagram shows the core entities of our application:
+- **Users**: Central entity storing user information including authentication details
+- **Items**: Products listed for sale with their detailed attributes
+- **Categories**: Hierarchical classification system for items
+- **Transactions**: Records of sales between users
+- **Messages**: Communication between users about specific items
+- **Locations**: Geographic data for items and shipping
+- **Shipping Options**: Available shipping methods and their details
+- **Item Images**: Photos associated with listings
+- **Verification/Password Tokens**: Security tokens for account management
+
+The diagram illustrates both the entity attributes and the relationships between them, including foreign key constraints and cardinality.
+
+## API Documentation
+
+Our API documentation is automatically generated using Spring REST Docs, which ensures that the documentation stays in sync with the actual code through test-driven documentation.
+
+### Implementation Overview
+
+1. **Test-Driven Documentation**
+   - Documentation is generated through controller tests
+   - Each endpoint's documentation is verified during test execution
+   - Examples are automatically generated from actual request/response pairs
+
+2. **Documentation Structure**
+   ```
+   backend/
+   ├── src/test/java/
+   │   └── .../*ControllerTest.java    # Test files that generate docs
+   ├── target/generated-snippets/      # Generated documentation snippets
+   └── index.adoc                      # Main documentation file
+   |___index.pdf                       # PDF of documentation
+  
+   ```
+
+3. **Example Documentation Test**
+   ```java
+   @Test
+   void getTopFiveCategories_ShouldReturnListOfCategories() throws Exception {
+       mockMvc.perform(get("/api/categories/top-five"))
+           .andDo(document("categories-top-five",
+               responseFields(
+                   fieldWithPath("[].id").description("Category ID"),
+                   fieldWithPath("[].name").description("Category name"),
+                   // ... other fields
+               )
+           ));
+   }
+   ```
+
+### Documentation Generation Process
+
+1. **Test Execution**: Run tests
+   ```bash
+   # Run from project root
+   cd backend
+   mvn test
+   ```
+
+2. **Snippet Generation**: Tests generate documentation snippets in `target/generated-snippets/`
+
+3. **Index Generation**: Python script combines snippets into final documentation
+   ```bash
+   cd ..
+   python docs/API\ Documentation/generate_index.py --snippets-dir backend/target/generated-snippets --output docs/API\ Documentation/index.adoc
+   ```
+### Documentation Content
+- Request/response formats with examples
+- Detailed field descriptions and types
+- Sample request/response payloads
+- HTTP status codes and their meanings
+- Authentication requirements per endpoint
+
+### Accessing Documentation
+
+The documentation can be accessed through the index.pdf file within the docs folder
+
+## Installation and Running
+
+### Terminal Setup
+For the most effective execution of commands in this README, use Git Bash terminal:
+
+1. Open Git Bash terminal in the project root folder
+2. All commands in this documentation are designed to be run from Git Bash
+3. When using IDE run configurations, make sure to set Git Bash as the terminal type
+4. If using Windows Command Prompt or PowerShell, some commands may need adjustment
+5. **Important:** Use separate Git Bash terminals for each run configuration (backend, frontend, testing, etc.) as each will need to remain active during development
 
 ### Prerequisites
-- Java 21
+- Java JDK 21
 - Node.js v18+
-- MySQL 8 (for dev) or PostgreSQL (for prod)
+- MySQL 8.0
+- Maven 3.8+
 
-### Setup
+### Quick Start
 
-#### Backend
+After cloning the project
+
+> **Note:** All commands below should be run in Git Bash terminal for consistent execution across environments.
+
+> **Important:** Open a new Git Bash terminal for each component (backend, frontend) as they need to run simultaneously.
+
+1. **Backend Setup**
+   ```bash
+   # Run from project root
+   cd backend
+   
+   # Production mode
+   mvn clean install
+   mvn spring-boot:run -Dspring-boot.run.profiles=prod
+   ```
+   Backend will run on `http://localhost:8080`
+
+2. **Frontend Setup**
+   ```bash
+   # Run from project root in a NEW Git Bash terminal
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   Frontend will be available on `http://localhost:5173`
+
+The application should now be running and accessible through your browser.
+
+## Testing and CI/CD
+
+### Testing Strategy
+
+#### Backend Testing
+- **Unit Tests** (JUnit 5): Service layers, repositories, utility classes
+- **Integration Tests** (Spring Test): REST endpoints, database, security
+- **WebSocket Tests**: Real-time communication, connection handling, event delivery
+
+#### Frontend Testing
+- **Unit Tests** (Vitest): Components, stores, utilities
+- **WebSocket Tests**: Client connection, messaging, subscription management
+- **E2E Tests** (Cypress): User flows, integration scenarios, cross-browser support
+
+### Continuous Integration/Deployment
+
+#### Backend CI/CD Pipeline (.github/workflows/backend.yml)
+1. **Build**
+   - Java 21 setup with Temurin distribution
+   - Maven build and compilation
+   - Artifact preservation
+2. **Package**
+   - JAR packaging
+   - Artifact upload
+3. **Deployment**
+   - Automatic deployment to Heroku
+   - Environment configuration
+   - Database migration handling
+
+
+   link:  https://github.com/ntnu-blackandbrown/clozet/actions/workflows/backend.yml
+
+#### Frontend CI/CD Pipeline (.github/workflows/frontend.yml)
+1. **Build & Quality**
+   - Node.js 18 setup
+   - Dependency installation
+   - Code formatting (Prettier)
+   - Type checking
+2. **Testing**
+   - Unit test execution with Vitest
+   - Build artifact preservation
+3. **Deployment**
+   - Netlify deployment
+   - Production build optimization
+
+   link: https://github.com/ntnu-blackandbrown/clozet/actions/workflows/frontend.yml
+
+### Local Testing
+
+#### Backend Testing
 ```bash
+# Run from project root
 cd backend
-mvn clean install
-mvn spring-boot:run -Dspring-boot.run.profiles=prod
-```
-Visit: `http://localhost:8080`
 
-#### Frontend
+# Run all tests
+mvn test
+```
+
+#### Frontend Testing
 ```bash
+# Run from project root
 cd frontend
-npm install
-npm run dev
+
+# Run unit tests
+npm run test:unit
+
+# Run E2E tests
+npm run test:e2e
+
 ```
-Visit: `http://localhost:5173`
 
----
+#### Manual WebSocket Testing
+To test WebSocket functionality using the HTML test client:
 
-## ✅ Testing and CI/CD
+> **Note:** This requires multiple Git Bash terminals - one for the backend server and another for opening the test client.
 
-### Backend
-- `mvn test` → Unit + Integration + WebSocket tests
-- REST Docs generated in `target/generated-snippets`
+1. First, start the backend server in production mode:
+   ```bash
+   # Run from project root
+   cd backend
+   mvn clean install
+   mvn spring-boot:run -Dspring-boot.run.profiles=prod
+   ```
 
-### Frontend
-- `npm run test:unit` (Vitest)
-- `npm run test:e2e` (Cypress)
+2. Once the backend server is running, open the WebSocket test HTML file in your browser:
+   ```bash
+   # Run in a NEW Git Bash terminal while the backend is running
+   # Open the file in your default browser
+   # Windows
+   start backend/src/test/java/stud/ntnu/no/backend/message/websocket/websocket-test.html
+   
+   # macOS
+   open backend/src/test/java/stud/ntnu/no/backend/message/websocket/websocket-test.html
+   ```
 
-### CI/CD Pipelines
-- GitHub Actions for build, test, deploy
-- Backend → Heroku
-- Frontend → Netlify
+3. In the WebSocket test client:
+   - Verify the server URL is set to `http://localhost:8080/ws`
+   - Click "Connect" to establish a WebSocket connection
+   - Send test messages between users
+   - Monitor real-time WebSocket communication
 
----
+For detailed information on WebSocket testing, refer to the [WebSocket Testing Guide](docs/testing/websocket%20testing.pdf) in the documentation directory.
 
-## 🐞 Known Issues
-- WebSocket reconnection is not fully tested in production
-- Some filters (date/location) need performance tuning
-- Mobile layout for admin dashboard under refinement
 
----
+## Project Members
 
-## 👥 Project Members
+### Kevin Dennis Mazali
+**Role:** Backend & Documentation
 
-| Name               | Role             |
-|--------------------|------------------|
-| Kevin Dennis Mazali| Full-stack dev   |
-| Kaamya Shinde      | UI/UX & frontend |
+<img src="docs/images/team/kevin.jpg" alt="Kevin Dennis Mazali" width="250"/>
 
----
+### Kaamya Shinde
+**Role:** Frontend & UX/UI
 
-## 📄 License
+<img src="docs/images/team/kaamya.jpg" alt="Kaamya Shinde" width="250"/>
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+

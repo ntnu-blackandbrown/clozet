@@ -71,7 +71,7 @@ def generate_index(snippets_dir, output_file):
                     f.write("No snippet files found.\n\n")
                 else:
                     for file in adoc_files:
-                        file_path = os.path.join(snippets_dir, subdir, file).replace("\\", "/")
+                        file_path = os.path.relpath(os.path.join(snippets_dir, subdir, file), start=os.path.dirname(output_file)).replace("\\", "/")
                         file_title = os.path.splitext(file)[0].replace("-", " ").title()
                         f.write("==== {}\n\n".format(file_title))
                         f.write("include::{}[]\n\n".format(file_path))
