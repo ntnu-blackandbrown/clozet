@@ -320,7 +320,7 @@ onMounted(() => {
   flex-grow: 1;
   position: relative;
   max-height: 300px; /* Set a max height */
-  overflow-y: auto;   /* Enable vertical scrollbar when content overflows */
+  overflow-y: auto; /* Enable vertical scrollbar when content overflows */
 }
 
 .data-table {

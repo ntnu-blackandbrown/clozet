@@ -20,7 +20,7 @@
               @click="showCurrentPassword = !showCurrentPassword"
               class="toggle-password"
             >
-              {{ showCurrentPassword ? "Hide" : "Show" }}
+              {{ showCurrentPassword ? 'Hide' : 'Show' }}
             </button>
           </div>
           <span class="error" v-if="currentPasswordError">{{ currentPasswordError }}</span>
@@ -42,7 +42,7 @@
               @click="showNewPassword = !showNewPassword"
               class="toggle-password"
             >
-              {{ showNewPassword ? "Hide" : "Show" }}
+              {{ showNewPassword ? 'Hide' : 'Show' }}
             </button>
           </div>
           <span class="error" v-if="newPasswordError">{{ newPasswordError }}</span>
@@ -64,7 +64,7 @@
               @click="showConfirmPassword = !showConfirmPassword"
               class="toggle-password"
             >
-              {{ showConfirmPassword ? "Hide" : "Show" }}
+              {{ showConfirmPassword ? 'Hide' : 'Show' }}
             </button>
           </div>
           <span class="error" v-if="confirmPasswordError">{{ confirmPasswordError }}</span>
@@ -139,13 +139,10 @@ const submit = handleSubmit(async (values) => {
 
   try {
     // Call API to update password
-    await AuthService.changePassword(
-      values.currentPassword,
-      values.newPassword,
-    )
+    await AuthService.changePassword(values.currentPassword, values.newPassword)
 
     success.value = true
-    message.value = "Password has been updated successfully."
+    message.value = 'Password has been updated successfully.'
 
     // Redirect to profile settings after 2 seconds
     setTimeout(() => {
@@ -153,7 +150,7 @@ const submit = handleSubmit(async (values) => {
     }, 2000)
   } catch (err) {
     error.value = true
-    message.value = "An error occurred. Please check your current password and try again."
+    message.value = 'An error occurred. Please check your current password and try again.'
   } finally {
     isSubmitting.value = false
   }

@@ -2,24 +2,25 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createRouter, createWebHistory } from 'vue-router'
 import Footer from '@/components/layout/Footer.vue'
+import type { App } from 'vue'
 
 // Create a mock i18n plugin
 const mockI18n = {
   global: {
     locale: 'en',
     fallbackLocale: 'en',
-    messages: {}
+    messages: {},
   },
-  install: (app) => {
-    app.config.globalProperties.$t = (key) => key
+  install: (app: App) => {
+    app.config.globalProperties.$t = (key: string) => key
     app.provide('i18n', mockI18n)
-  }
+  },
 }
 
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
-    t: (key) => key
-  })
+    t: (key: string) => key,
+  }),
 }))
 
 describe('Footer.vue', () => {
@@ -56,7 +57,9 @@ describe('Footer.vue', () => {
     expect(wrapper.find('#account-section').text()).toBe('Account')
 
     // Check about description
-    expect(wrapper.text()).toContain('Your sustainable fashion marketplace. Buy, sell, and trade clothes with ease.')
+    expect(wrapper.text()).toContain(
+      'Your sustainable fashion marketplace. Buy, sell, and trade clothes with ease.',
+    )
 
     // Check social links
     const socialLinks = wrapper.findAll('.social-link')

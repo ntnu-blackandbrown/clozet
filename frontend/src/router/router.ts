@@ -167,7 +167,7 @@ router.beforeEach(async (to, from, next) => {
       // Store the intended destination for redirect after login
       return next({
         path: '/login',
-        query: { redirect: to.fullPath }
+        query: { redirect: to.fullPath },
       })
     }
 

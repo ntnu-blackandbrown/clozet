@@ -17,7 +17,7 @@ describe('Router Navigation Guard', () => {
       user: null,
       isLoggedIn: false,
       userDetails: {},
-      checkAuth: async () => !!fakeAuthStore.user
+      checkAuth: async () => !!fakeAuthStore.user,
     }
     // Reset router to initial state by pushing to home (assuming home is public)
     router.push({ name: 'home' })

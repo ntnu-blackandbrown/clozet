@@ -304,7 +304,6 @@ describe('ShippingManagement', () => {
     expect(wrapper.find('.modal-backdrop').exists()).toBe(true)
   })
 
-
   it('closes the modal when clicking the backdrop', async () => {
     ;(ShippingService.getAllShippingOptions as any).mockResolvedValue({ data: [] })
     const wrapper = mount(ShippingManagement)

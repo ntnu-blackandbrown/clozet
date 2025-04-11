@@ -134,7 +134,7 @@ const validateEditForm = () => {
   if (!editCategoryForm.value.name.trim()) {
     editFormErrors.value.name = 'Category name is required'
   } else if (editCategoryForm.value.name.length < 3 || editCategoryForm.value.name.length > 100) {
-     editFormErrors.value.name = 'Name must be between 3 and 100 characters'
+    editFormErrors.value.name = 'Name must be between 3 and 100 characters'
   }
 
   if (!editCategoryForm.value.description.trim()) {
@@ -206,7 +206,6 @@ onMounted(() => {
                 >
                   ✎
                 </button>
-
               </td>
             </tr>
           </tbody>
@@ -245,9 +244,7 @@ onMounted(() => {
     >
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h3 id="category-form-title">
-            Edit Category
-          </h3>
+          <h3 id="category-form-title">Edit Category</h3>
           <button @click="showEditForm = false" class="btn-close" aria-label="Close form">×</button>
         </div>
 

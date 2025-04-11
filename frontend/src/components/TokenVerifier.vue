@@ -65,7 +65,8 @@ onMounted(async () => {
   } catch (err) {
     console.error('Token verification failed:', err)
     error.value = true
-    errorMessage.value = 'Token is invalid or has expired. This may be because the server expects the token to be in cookies, but it is sent as a URL parameter.'
+    errorMessage.value =
+      'Token is invalid or has expired. This may be because the server expects the token to be in cookies, but it is sent as a URL parameter.'
   } finally {
     loading.value = false
   }

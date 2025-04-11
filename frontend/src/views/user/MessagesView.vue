@@ -502,13 +502,24 @@ const handleShowProduct = (productId) => {
     />
 
     <!-- Right area with WebSocket chat functionality -->
-    <main class="chat-content" role="main" :class="{ 'full-width': isMobile && !showSidebarOnMobile }">
+    <main
+      class="chat-content"
+      role="main"
+      :class="{ 'full-width': isMobile && !showSidebarOnMobile }"
+    >
       <!-- Chat header with active user info -->
       <div v-if="activeChat" class="chat-header">
         <!-- Mobile Toggle Button -->
-        <button v-if="isMobile" class="sidebar-toggle" @click="toggleSidebar" aria-label="Toggle conversation sidebar">
-          <span v-if="showSidebarOnMobile">✕</span> <!-- Close icon -->
-          <span v-else>☰</span> <!-- Menu icon -->
+        <button
+          v-if="isMobile"
+          class="sidebar-toggle"
+          @click="toggleSidebar"
+          aria-label="Toggle conversation sidebar"
+        >
+          <span v-if="showSidebarOnMobile">✕</span>
+          <!-- Close icon -->
+          <span v-else>☰</span>
+          <!-- Menu icon -->
         </button>
         <div class="user-info">
           <h2 id="conversation-header">
@@ -746,7 +757,9 @@ const handleShowProduct = (productId) => {
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .buy-button:hover:not(:disabled) {
@@ -930,7 +943,9 @@ const handleShowProduct = (productId) => {
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .message-input button:hover:not(:disabled) {

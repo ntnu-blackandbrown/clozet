@@ -16,8 +16,8 @@ interface User {
 
 // Add interface for error response
 interface ErrorResponse {
-  message: string;
-  [key: string]: any;
+  message: string
+  [key: string]: any
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -49,7 +49,7 @@ export const useAuthStore = defineStore('auth', () => {
       return {
         success: false,
         message: (axiosError.response?.data as ErrorResponse)?.message || 'Invalid credentials',
-        error: axiosError
+        error: axiosError,
       }
     } finally {
       loading.value = false
@@ -117,7 +117,7 @@ export const useAuthStore = defineStore('auth', () => {
       return {
         success: false,
         message: (axiosError.response?.data as ErrorResponse)?.message || 'Registration failed',
-        error: axiosError
+        error: axiosError,
       }
     } finally {
       loading.value = false
@@ -132,7 +132,9 @@ export const useAuthStore = defineStore('auth', () => {
         await fetchUserInfo()
       }
       const authenticated = !!user.value
-      console.log(`🔒 Authentication status: ${authenticated ? 'Authenticated' : 'Not authenticated'}`)
+      console.log(
+        `🔒 Authentication status: ${authenticated ? 'Authenticated' : 'Not authenticated'}`,
+      )
       return authenticated
     } catch (error) {
       console.log('🔒 Authentication check failed, user not authenticated')
@@ -172,7 +174,7 @@ export const useAuthStore = defineStore('auth', () => {
       return false
     }
   }
-    const deleteUser = async () => {
+  const deleteUser = async () => {
     try {
       console.log('Deleting user:', user.value?.id)
       loading.value = true

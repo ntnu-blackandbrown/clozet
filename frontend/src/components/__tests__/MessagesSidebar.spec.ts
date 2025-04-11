@@ -135,8 +135,6 @@ describe('MessagesSidebar.vue', () => {
     //expect(bobItem?.text()).toContain('No messages yet')
   })
 
-
-
   it('emits "select-chat" event with correct id when a chat item is clicked', async () => {
     const wrapper = mount(MessagesSidebar, {
       props: {

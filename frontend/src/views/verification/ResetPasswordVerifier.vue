@@ -2,7 +2,8 @@
   <div class="verification-page">
     <h1>Password Reset Verification</h1>
     <p class="instructions">
-      We're verifying your password reset token. After verification, you'll be able to create a new password.
+      We're verifying your password reset token. After verification, you'll be able to create a new
+      password.
     </p>
     <TokenVerifier
       verifyEndpoint="/api/auth/reset-password/validate"

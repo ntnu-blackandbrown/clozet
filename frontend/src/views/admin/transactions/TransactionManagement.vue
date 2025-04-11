@@ -28,22 +28,22 @@ const fetchTransactions = async () => {
               ...transaction,
               item: {
                 title: itemResponse.data.title,
-                ...itemResponse.data
-              }
+                ...itemResponse.data,
+              },
             }
           } catch (itemError) {
             console.error(`Error fetching item ${transaction.itemId}:`, itemError)
             return {
               ...transaction,
-              item: { title: 'Unknown Item' }
+              item: { title: 'Unknown Item' },
             }
           }
         }
         return {
           ...transaction,
-          item: { title: 'Unknown Item' }
+          item: { title: 'Unknown Item' },
         }
-      })
+      }),
     )
 
     transactions.value = transactionsWithItems

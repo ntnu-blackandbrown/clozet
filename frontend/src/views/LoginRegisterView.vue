@@ -43,11 +43,11 @@ const formTitle = computed(() => {
   if (props.customTitle) {
     return isLogin.value ? props.customTitle : props.customTitle.replace('login', 'register')
   }
-  return isLogin.value ? "Login to your account" : "Create a new account"
+  return isLogin.value ? 'Login to your account' : 'Create a new account'
 })
 
 const toggleText = computed(() =>
-  isLogin.value ? "Don't have an account? Register" : "Already have an account? Login",
+  isLogin.value ? "Don't have an account? Register" : 'Already have an account? Login',
 )
 
 // Interface for form values
@@ -126,7 +126,7 @@ const toggleForm = () => {
 
 const submit = handleSubmit(async (values) => {
   isSubmitting.value = true
-  statusMessage.value = isLogin.value ? "Loading..." : "Loading..."
+  statusMessage.value = isLogin.value ? 'Loading...' : 'Loading...'
   statusType.value = 'info'
   debugInfo.value = ''
 
@@ -136,13 +136,13 @@ const submit = handleSubmit(async (values) => {
       const result = await authStore.login(values.username, values.password)
 
       if (result.success) {
-        statusMessage.value = "Login successful"
+        statusMessage.value = 'Login successful'
         statusType.value = 'success'
         setTimeout(() => {
           emit('close')
         }, 1500)
       } else {
-        statusMessage.value = result.message || "Login failed. Check username and password."
+        statusMessage.value = result.message || 'Login failed. Check username and password.'
         statusType.value = 'error'
         isSubmitting.value = false // Reset loading state immediately on login failure
       }
@@ -160,7 +160,6 @@ const submit = handleSubmit(async (values) => {
       console.log('userData', userData)
       console.log('Sending request now')
 
-
       const response = await AuthService.register(
         userData.username,
         userData.password,
@@ -170,14 +169,14 @@ const submit = handleSubmit(async (values) => {
       )
 
       if (response.status === 200) {
-        statusMessage.value = "Registration successful! Please check your email for verification"
+        statusMessage.value = 'Registration successful! Please check your email for verification'
       }
     }
   } catch (error: any) {
     console.error('Error:', error)
     statusMessage.value = isLogin.value
-      ? "Login failed due to technical error."
-      : "Registration failed due to technical error."
+      ? 'Login failed due to technical error.'
+      : 'Registration failed due to technical error.'
     statusType.value = 'error'
   } finally {
     isSubmitting.value = false
@@ -286,7 +285,7 @@ const submit = handleSubmit(async (values) => {
           :aria-label="showPassword ? 'Hide Password' : 'Show Password'"
           aria-controls="password"
         >
-          {{ showPassword ? "Hide" : "Show" }}
+          {{ showPassword ? 'Hide' : 'Show' }}
         </button>
       </div>
       <span class="error" id="passwordErrSpan" v-if="passwordError" role="alert">{{
@@ -324,13 +323,12 @@ const submit = handleSubmit(async (values) => {
         {{ statusMessage }}
       </div>
 
-
       <button type="submit" :disabled="!isFormValid || isSubmitting" :aria-busy="isSubmitting">
         <span v-if="isSubmitting">
           <span class="spinner" aria-hidden="true"></span>
           <span class="sr-only">Loading...</span>
         </span>
-        <span v-else>{{ isLogin ? "Login" : "Register" }}</span>
+        <span v-else>{{ isLogin ? 'Login' : 'Register' }}</span>
       </button>
     </form>
 

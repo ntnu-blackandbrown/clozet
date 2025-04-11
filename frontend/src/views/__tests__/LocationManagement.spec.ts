@@ -156,5 +156,4 @@ describe('LocationManagement', () => {
       longitude: 90.0,
     })
   })
-
 })

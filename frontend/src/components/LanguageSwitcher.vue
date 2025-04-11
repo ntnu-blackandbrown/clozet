@@ -1,11 +1,22 @@
 <template>
   <div class="language-switcher">
-    <button @click="toggleDropdown" class="language-button" aria-haspopup="true" :aria-expanded="isOpen">
+    <button
+      @click="toggleDropdown"
+      class="language-button"
+      aria-haspopup="true"
+      :aria-expanded="isOpen"
+    >
       <span class="globe-icon">🌐</span>
       <span class="current-language">
-        {{ currentLocale === 'en' ? 'English' :
-           currentLocale === 'nb' ? 'Norsk' :
-           currentLocale === 'es' ? 'Español' : 'English' }}
+        {{
+          currentLocale === 'en'
+            ? 'English'
+            : currentLocale === 'nb'
+              ? 'Norsk'
+              : currentLocale === 'es'
+                ? 'Español'
+                : 'English'
+        }}
       </span>
     </button>
     <div v-if="isOpen" class="language-dropdown">

@@ -5,7 +5,7 @@ import es from '@/locales/es.json'
 
 // Supported locales
 export const SUPPORTED_LOCALES = ['en', 'nb', 'es'] as const
-export type SupportedLocale = typeof SUPPORTED_LOCALES[number]
+export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number]
 
 // Default locale
 const DEFAULT_LOCALE: SupportedLocale = 'en'
@@ -15,7 +15,7 @@ const getBrowserLocale = (): SupportedLocale => {
   const navigatorLocale = navigator.language.split('-')[0]
   console.log('Browser detected locale:', navigatorLocale)
   return SUPPORTED_LOCALES.includes(navigatorLocale as SupportedLocale)
-    ? navigatorLocale as SupportedLocale
+    ? (navigatorLocale as SupportedLocale)
     : DEFAULT_LOCALE
 }
 
@@ -45,11 +45,11 @@ const i18n = createI18n({
   messages: {
     en,
     nb,
-    es
+    es,
   },
   globalInjection: true, // Adds $t, $tc, etc to all components
   missingWarn: false, // Disable warnings for missing translations in production
-  fallbackWarn: false // Disable warnings for fallback translations in production
+  fallbackWarn: false, // Disable warnings for fallback translations in production
 })
 
 // Helper function to change locale

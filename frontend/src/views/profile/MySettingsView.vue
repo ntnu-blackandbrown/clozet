@@ -70,13 +70,13 @@ const isFormValid = computed(() => {
 
 const handleSaveChanges = handleSubmit(async (values) => {
   isSubmitting.value = true
-  statusMessage.value = "Saving..."
+  statusMessage.value = 'Saving...'
   statusType.value = 'info'
 
   try {
     await AuthService.updateUser(authStore.user.id, values)
     setUserValues()
-    statusMessage.value = "Changes saved successfully! Please log in again."
+    statusMessage.value = 'Changes saved successfully! Please log in again.'
     statusType.value = 'success'
     setTimeout(() => {
       authStore.logout()
@@ -85,7 +85,7 @@ const handleSaveChanges = handleSubmit(async (values) => {
     // Try to fetch updated user info
   } catch (error) {
     console.error('Error saving changes:', error)
-    statusMessage.value = "Failed to save changes"
+    statusMessage.value = 'Failed to save changes'
     statusType.value = 'error'
   } finally {
     isSubmitting.value = false
@@ -93,7 +93,7 @@ const handleSaveChanges = handleSubmit(async (values) => {
 })
 
 const handleDeleteAccount = async () => {
-  if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+  if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
     return
   }
 

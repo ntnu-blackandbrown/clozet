@@ -32,7 +32,7 @@ watch(
     if (newValue) {
       resetForm()
     }
-  }
+  },
 )
 
 const validateForm = () => {
@@ -105,7 +105,9 @@ const resetForm = () => {
             :aria-invalid="formErrors.name ? 'true' : 'false'"
             :aria-describedby="formErrors.name ? 'create-name-error' : undefined"
           />
-          <span v-if="formErrors.name" class="error-text" id="create-name-error" role="alert">{{ formErrors.name }}</span>
+          <span v-if="formErrors.name" class="error-text" id="create-name-error" role="alert">{{
+            formErrors.name
+          }}</span>
         </div>
 
         <div class="form-group">
@@ -119,25 +121,29 @@ const resetForm = () => {
             :aria-invalid="formErrors.description ? 'true' : 'false'"
             :aria-describedby="formErrors.description ? 'create-description-error' : undefined"
           ></textarea>
-          <span v-if="formErrors.description" class="error-text" id="create-description-error" role="alert">{{ formErrors.description }}</span>
+          <span
+            v-if="formErrors.description"
+            class="error-text"
+            id="create-description-error"
+            role="alert"
+            >{{ formErrors.description }}</span
+          >
         </div>
 
         <div class="form-group">
           <label for="create-parentId">Parent Category (Optional)</label>
           <select id="create-parentId" v-model="categoryData.parentId" aria-required="false">
             <option :value="null">None (Top-Level Category)</option>
-            <option
-              v-for="cat in existingCategories"
-              :key="cat.id"
-              :value="cat.id"
-            >
+            <option v-for="cat in existingCategories" :key="cat.id" :value="cat.id">
               {{ cat.name }}
             </option>
           </select>
         </div>
 
         <div class="form-actions">
-          <button type="button" @click="closeModal" class="btn-secondary" aria-label="Cancel">Cancel</button>
+          <button type="button" @click="closeModal" class="btn-secondary" aria-label="Cancel">
+            Cancel
+          </button>
           <button type="submit" class="btn-primary" aria-label="Add Category">Add Category</button>
         </div>
       </form>

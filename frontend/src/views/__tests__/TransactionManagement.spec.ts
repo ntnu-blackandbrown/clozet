@@ -61,7 +61,6 @@ describe('TransactionManagement', () => {
     expect(wrapper.find('.btn-secondary').exists()).toBe(true)
   })
 
-
   it('resets filters correctly', async () => {
     ;(TransactionService.getAllTransactions as any).mockResolvedValue({ data: sampleTransactions })
     const wrapper = mount(TransactionManagement)

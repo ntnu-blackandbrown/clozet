@@ -6,20 +6,21 @@ const axiosInstance = axios.create({
   withCredentials: true, // Enable cookies with all requests
 })
 
-
 // Flag to prevent multiple refresh requests
 let isRefreshing = false
 // Queue of failed requests to retry after token refresh
 interface QueueItem {
-  resolve: (value?: unknown) => void;
-  reject: (error: any) => void;
+  resolve: (value?: unknown) => void
+  reject: (error: any) => void
 }
 let failedQueue: QueueItem[] = []
 
 // Process failed queue - either retry all requests or reject them
 const processQueue = (error: any, token = null) => {
-  console.log(`Processing queue with ${failedQueue.length} requests. Error: ${error ? 'Yes' : 'No'}`)
-  failedQueue.forEach(prom => {
+  console.log(
+    `Processing queue with ${failedQueue.length} requests. Error: ${error ? 'Yes' : 'No'}`,
+  )
+  failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error)
     } else {
@@ -31,12 +32,13 @@ const processQueue = (error: any, token = null) => {
 
 // Response interceptor for handling 401 errors
 axiosInstance.interceptors.response.use(
-  response => response,
-  async error => {
+  (response) => response,
+  async (error) => {
     const originalRequest = error.config
 
     // Determine if current request is a login attempt
-    const isLoginAttempt = originalRequest.url?.includes('/api/auth/login') && originalRequest.method === 'post'
+    const isLoginAttempt =
+      originalRequest.url?.includes('/api/auth/login') && originalRequest.method === 'post'
 
     // Skip refresh token process for login failures
     if (isLoginAttempt) {
@@ -64,7 +66,7 @@ axiosInstance.interceptors.response.use(
           console.log('✅ Retrying request after queue processing:', originalRequest.url)
           return axiosInstance(originalRequest)
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('❌ Failed to retry request after queue processing:', originalRequest.url)
           return Promise.reject(err)
         })
@@ -94,7 +96,7 @@ axiosInstance.interceptors.response.use(
       isRefreshing = false
       console.log('🏁 Token refresh process completed')
     }
-  }
+  },
 )
 
 export default axiosInstance

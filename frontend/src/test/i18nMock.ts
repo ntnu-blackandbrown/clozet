@@ -57,21 +57,21 @@ export function createMockI18n(customMessages: Record<string, any> = {}): I18n {
         generic: 'An error occurred',
         unauthorized: 'You are not authorized',
         notFound: 'Not found',
-      }
-    }
+      },
+    },
   }
 
   // Merge custom messages with defaults
   const messages = {
     en: {
       ...defaultMessages.en,
-      ...(customMessages.en || {})
-    }
+      ...(customMessages.en || {}),
+    },
   }
 
   return createI18n({
     legacy: false,
     locale: 'en',
-    messages
+    messages,
   })
 }

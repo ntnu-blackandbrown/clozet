@@ -307,7 +307,7 @@ const onSubmit = handleSubmit(async (formValues) => {
 
 <template>
   <div class="create-product-container">
-    <h1 id="create-product-title">{{ isEditMode ? "Edit Product" : "Create New Product" }}</h1>
+    <h1 id="create-product-title">{{ isEditMode ? 'Edit Product' : 'Create New Product' }}</h1>
 
     <form @submit.prevent="onSubmit" class="product-form" aria-labelledby="create-product-title">
       <!-- Image Upload Section -->
@@ -588,12 +588,7 @@ const onSubmit = handleSubmit(async (formValues) => {
       </section>
 
       <div class="form-actions">
-        <button
-          type="button"
-          @click="router.back()"
-          class="cancel-button"
-          aria-label="Cancel"
-        >
+        <button type="button" @click="router.back()" class="cancel-button" aria-label="Cancel">
           Cancel
         </button>
         <button
@@ -605,11 +600,11 @@ const onSubmit = handleSubmit(async (formValues) => {
           {{
             isSubmitting
               ? isEditMode
-                ? "Updating..."
-                : "Creating..."
+                ? 'Updating...'
+                : 'Creating...'
               : isEditMode
-                ? "Update Product"
-                : "Create Product"
+                ? 'Update Product'
+                : 'Create Product'
           }}
         </button>
       </div>

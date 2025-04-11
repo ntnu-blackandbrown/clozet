@@ -87,7 +87,6 @@ const updateShippingOption = async () => {
   }
 }
 
-
 // Form submission handler
 const handleSubmit = () => {
   if (formMode.value === 'add') {
@@ -225,8 +224,6 @@ onMounted(() => {
                 >
                   ✎
                 </button>
-
-
               </td>
             </tr>
           </tbody>

@@ -94,7 +94,7 @@ const fetchTopCategories = async () => {
     console.log('Fetched top categories:', response.data)
   } catch (error) {
     console.error('Error fetching top categories:', error)
-    categoryError.value = "Something went wrong"
+    categoryError.value = 'Something went wrong'
     topCategories.value = []
   } finally {
     isLoadingCategories.value = false
@@ -153,7 +153,8 @@ const displayCategories = computed(() => {
               class="clear-search-btn"
               aria-label="Cancel"
             >
-              &#x2715; <!-- Use an 'X' symbol -->
+              &#x2715;
+              <!-- Use an 'X' symbol -->
             </button>
 
             <!-- Search icon (only shown when input is empty) -->
@@ -351,7 +352,8 @@ h3 {
 }
 
 .search-icon,
-.clear-search-btn { /* Apply positioning to both */
+.clear-search-btn {
+  /* Apply positioning to both */
   position: absolute;
   right: var(--spacing-md);
   top: 50%;

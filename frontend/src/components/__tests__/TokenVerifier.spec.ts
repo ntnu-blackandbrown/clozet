@@ -130,7 +130,9 @@ describe('TokenVerifier.vue', () => {
     // Assert: error message for failed verification is rendered
     const errorDiv = wrapper.find('.error')
     expect(errorDiv.exists()).toBe(true)
-    expect(wrapper.find('.error p').text()).toBe('Token is invalid or has expired. This may be because the server expects the token to be in cookies, but it is sent as a URL parameter.')
+    expect(wrapper.find('.error p').text()).toBe(
+      'Token is invalid or has expired. This may be because the server expects the token to be in cookies, but it is sent as a URL parameter.',
+    )
     // Assert that router.push was not called (no redirection on failure)
     expect(mockRouterPush).not.toHaveBeenCalled()
   })

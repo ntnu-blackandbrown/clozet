@@ -30,7 +30,7 @@ export const useWebsocket = defineStore('websocket', () => {
   const host = window.location.host
 
   // Check if we're in production with a context path
-  const baseUrl = window.location.pathname.startsWith('/app') ? '/app' : '';
+  const baseUrl = window.location.pathname.startsWith('/app') ? '/app' : ''
 
   // Construct WebSocket URL based on current environment
   const serverUrl = ref(`${httpProtocol}//${host}${baseUrl}/ws`)

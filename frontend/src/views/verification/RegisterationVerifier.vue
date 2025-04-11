@@ -2,7 +2,8 @@
   <div class="verification-page">
     <h1>E-post verifisering</h1>
     <p class="instructions">
-      Vi bekrefter e-postadressen din. Du vil bli videresendt til innloggingssiden hvis verifiseringen er vellykket.
+      Vi bekrefter e-postadressen din. Du vil bli videresendt til innloggingssiden hvis
+      verifiseringen er vellykket.
     </p>
     <TokenVerifier
       verifyEndpoint="/api/auth/verify"

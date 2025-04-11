@@ -1,5 +1,5 @@
 <script setup>
-import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthStore } from '@/stores/AuthStore'
 import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 

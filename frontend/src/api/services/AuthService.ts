@@ -111,7 +111,7 @@ export const AuthService = {
   updateUser: (userId: number | string, userData: any) => {
     console.log('📡 API: Updating user profile')
     return axiosInstance.put(`/api/users/${userId}`, userData)
-  }
+  },
 }
 
 export default AuthService

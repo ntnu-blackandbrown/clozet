@@ -145,6 +145,6 @@ export const useFavoritesStore = defineStore('favorites', () => {
     fetchUserFavorites,
     addFavorite,
     removeFavorite,
-    initializeFavorites
+    initializeFavorites,
   }
 })

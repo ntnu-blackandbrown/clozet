@@ -29,7 +29,9 @@ onMounted(async () => {
   try {
     // This will try to use the JWT cookies if they exist, or refresh token if needed
     const isAuthenticated = await authStore.silentRefresh()
-    console.log(`📝 Authentication check result: ${isAuthenticated ? 'Authenticated' : 'Not authenticated'}`)
+    console.log(
+      `📝 Authentication check result: ${isAuthenticated ? 'Authenticated' : 'Not authenticated'}`,
+    )
 
     // Initialize favorites if user is authenticated
     if (isAuthenticated) {
@@ -111,19 +113,19 @@ const toggleMobileMenu = () => {
         </div>
 
         <!-- Navigation menu -->
-        <nav class="main-nav" :class="{ 'mobile-menu-open': mobileMenuOpen }" aria-label="Main Navigation">
+        <nav
+          class="main-nav"
+          :class="{ 'mobile-menu-open': mobileMenuOpen }"
+          aria-label="Main Navigation"
+        >
           <template v-if="userDetails?.role === 'ADMIN'">
             <RouterLink to="/admin" class="nav-link admin-link" aria-label="Admin Dashboard"
               >Admin Dashboard</RouterLink
             >
           </template>
           <template v-else>
-            <RouterLink v-if="isLoggedIn" to="/profile" aria-label="Profile"
-              >Profile</RouterLink
-            >
-            <RouterLink v-if="isLoggedIn" to="/messages" aria-label="Messages"
-              >Messages</RouterLink
-            >
+            <RouterLink v-if="isLoggedIn" to="/profile" aria-label="Profile">Profile</RouterLink>
+            <RouterLink v-if="isLoggedIn" to="/messages" aria-label="Messages">Messages</RouterLink>
             <RouterLink v-if="isLoggedIn" to="/create-product" aria-label="Sell Items"
               >Sell Items</RouterLink
             >
@@ -671,7 +673,7 @@ main {
 
   /* Add an overlay when menu is open */
   .main-nav.mobile-menu-open::before {
-    content: "";
+    content: '';
     position: fixed;
     top: 0;
     left: 0;

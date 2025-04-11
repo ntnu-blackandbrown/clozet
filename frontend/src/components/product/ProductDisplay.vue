@@ -413,8 +413,6 @@ const handleDeleteClick = async () => {
             :is-available="isItemAvailable"
             aria-label="Add to wishlist"
             :disabled="!isItemAvailable || isAdmin || !authStore.isLoggedIn"
-
-
           />
         </template>
       </div>
@@ -766,7 +764,8 @@ const handleDeleteClick = async () => {
   }
 
   .action-buttons button,
-  .action-buttons .wishlist-button-container { /* Target WishlistButton container */
+  .action-buttons .wishlist-button-container {
+    /* Target WishlistButton container */
     width: 100%;
     text-align: center;
   }

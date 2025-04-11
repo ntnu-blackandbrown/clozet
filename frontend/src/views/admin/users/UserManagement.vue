@@ -43,7 +43,6 @@ const filteredUsers = computed(() => {
   })
 })
 
-
 // Toggle user active status
 const toggleUserStatus = async (user) => {
   try {
@@ -178,7 +177,11 @@ onMounted(() => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in filteredUsers" :key="user.id" :class="{ 'current-user-row': isCurrentUser(user) }">
+            <tr
+              v-for="user in filteredUsers"
+              :key="user.id"
+              :class="{ 'current-user-row': isCurrentUser(user) }"
+            >
               <td>{{ user.id }}</td>
               <td>{{ user.firstName }} {{ user.lastName }}</td>
               <td>{{ user.username }}</td>
