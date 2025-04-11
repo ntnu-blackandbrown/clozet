@@ -1,50 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { createI18n } from 'vue-i18n'
 import { createRouter, createWebHistory } from 'vue-router'
 import Footer from '@/components/layout/Footer.vue'
-
-// We mock translations here for demonstration;
-// adjust/expand them to match your actual i18n setup
-const i18n = createI18n({
-  locale: 'en',
-  messages: {
-    en: {
-      footer: {
-        about: {
-          title: 'About Us',
-          description: 'Some description about the company.',
-        },
-        social: {
-          followInstagram: 'Follow us on Instagram',
-          instagram: 'Instagram',
-          followFacebook: 'Follow us on Facebook',
-          facebook: 'Facebook',
-          followTwitter: 'Follow us on Twitter',
-          twitter: 'Twitter',
-        },
-        quickLinks: 'Quick Links',
-        helpSupport: 'Help & Support',
-        links: {
-          faq: 'FAQ',
-          contactUs: 'Contact Us',
-          termsOfService: 'Terms of Service',
-          privacyPolicy: 'Privacy Policy',
-        },
-        account: 'Account',
-      },
-      navigation: {
-        profile: 'Profile',
-        messages: 'Messages',
-        sellItems: 'Sell Items',
-      },
-      common: {
-        login: 'Log In',
-        register: 'Register',
-      },
-    },
-  },
-})
 
 describe('Footer.vue', () => {
   let router: ReturnType<typeof createRouter>
@@ -69,18 +26,18 @@ describe('Footer.vue', () => {
   it('renders footer sections with headings and links', async () => {
     const wrapper = mount(Footer, {
       global: {
-        plugins: [router, i18n],
+        plugins: [router],
       },
     })
 
     // Check main headings
-    expect(wrapper.find('#about-section').text()).toBe('About Us')
+    expect(wrapper.find('#about-section').text()).toBe('About Clozet')
     expect(wrapper.find('#navigation-section').text()).toBe('Quick Links')
     expect(wrapper.find('#help-section').text()).toBe('Help & Support')
     expect(wrapper.find('#account-section').text()).toBe('Account')
 
     // Check about description
-    expect(wrapper.text()).toContain('Some description about the company.')
+    expect(wrapper.text()).toContain('Your sustainable fashion marketplace. Buy, sell, and trade clothes with ease.')
 
     // Check social links
     const socialLinks = wrapper.findAll('.social-link')
@@ -96,7 +53,7 @@ describe('Footer.vue', () => {
   it('renders the footer navigation links properly', async () => {
     const wrapper = mount(Footer, {
       global: {
-        plugins: [router, i18n],
+        plugins: [router],
       },
     })
 
@@ -122,18 +79,18 @@ describe('Footer.vue', () => {
     expect(linkTexts).toContain('Contact Us')
     expect(linkTexts).toContain('Terms of Service')
     expect(linkTexts).toContain('Privacy Policy')
-    expect(linkTexts).toContain('Log In')
+    expect(linkTexts).toContain('Login')
     expect(linkTexts).toContain('Register')
   })
 
   it('displays current year correctly in copyright', () => {
     const wrapper = mount(Footer, {
       global: {
-        plugins: [router, i18n],
+        plugins: [router],
       },
     })
 
     const currentYear = new Date().getFullYear()
-    expect(wrapper.text()).toContain(`© ${currentYear} Clozet.`)
+    expect(wrapper.text()).toContain(`© ${currentYear} Clozet. All rights reserved.`)
   })
 })
