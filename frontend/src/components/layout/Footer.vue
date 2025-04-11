@@ -10,45 +10,45 @@ const { t } = useI18n()
   <footer class="footer" role="contentinfo">
     <div class="footer-content">
       <div class="footer-section">
-        <h3 id="about-section">{{ $t('footer.about.title') }}</h3>
-        <p>{{ $t('footer.about.description') }}</p>
+        <h3 id="about-section">About Clozet</h3>
+        <p>Your sustainable fashion marketplace. Buy, sell, and trade clothes with ease.</p>
         <div class="social-links" aria-labelledby="about-section">
-          <a href="#" class="social-link" :aria-label="$t('footer.social.followInstagram')">{{ $t('footer.social.instagram') }}</a>
-          <a href="#" class="social-link" :aria-label="$t('footer.social.followFacebook')">{{ $t('footer.social.facebook') }}</a>
-          <a href="#" class="social-link" :aria-label="$t('footer.social.followTwitter')">{{ $t('footer.social.twitter') }}</a>
+          <a href="#" class="social-link" aria-label="Follow us on Instagram">Instagram</a>
+          <a href="#" class="social-link" aria-label="Follow us on Facebook">Facebook</a>
+          <a href="#" class="social-link" aria-label="Follow us on Twitter">Twitter</a>
         </div>
       </div>
 
       <div class="footer-section">
-        <h3 id="navigation-section">{{ $t('footer.quickLinks') }}</h3>
+        <h3 id="navigation-section">Quick Links</h3>
         <nav aria-labelledby="navigation-section">
-          <RouterLink to="/profile" class="footer-link">{{ $t('navigation.profile') }}</RouterLink>
-          <RouterLink to="/messages" class="footer-link">{{ $t('navigation.messages') }}</RouterLink>
-          <RouterLink to="/create-product" class="footer-link">{{ $t('navigation.sellItems') }}</RouterLink>
+          <RouterLink to="/profile" class="footer-link">Profile</RouterLink>
+          <RouterLink to="/messages" class="footer-link">Messages</RouterLink>
+          <RouterLink to="/create-product" class="footer-link">Sell Items</RouterLink>
         </nav>
       </div>
 
       <div class="footer-section">
-        <h3 id="help-section">{{ $t('footer.helpSupport') }}</h3>
+        <h3 id="help-section">Help & Support</h3>
         <nav aria-labelledby="help-section">
-          <a href="#" class="footer-link">{{ $t('footer.links.faq') }}</a>
-          <a href="#" class="footer-link">{{ $t('footer.links.contactUs') }}</a>
-          <a href="#" class="footer-link">{{ $t('footer.links.termsOfService') }}</a>
-          <a href="#" class="footer-link">{{ $t('footer.links.privacyPolicy') }}</a>
+          <a href="#" class="footer-link">FAQ</a>
+          <a href="#" class="footer-link">Contact Us</a>
+          <a href="#" class="footer-link">Terms of Service</a>
+          <a href="#" class="footer-link">Privacy Policy</a>
         </nav>
       </div>
 
       <div class="footer-section">
-        <h3 id="account-section">{{ $t('footer.account') }}</h3>
+        <h3 id="account-section">Account</h3>
         <nav aria-labelledby="account-section">
-          <RouterLink to="/login" class="footer-link">{{ $t('common.login') }}</RouterLink>
-          <RouterLink to="/register" class="footer-link">{{ $t('common.register') }}</RouterLink>
+          <RouterLink to="/login" class="footer-link">Login</RouterLink>
+          <RouterLink to="/register" class="footer-link">Register</RouterLink>
         </nav>
       </div>
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; {{ new Date().getFullYear() }} Clozet. {{ $t('footer.copyright') }}</p>
+      <p>&copy; {{ new Date().getFullYear() }} Clozet. All rights reserved.</p>
     </div>
   </footer>
 </template>

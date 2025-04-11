@@ -70,9 +70,9 @@ onMounted(async () => {
 
 <template>
   <div class="my-wishlist-container">
-    <h2 id="my-wishlist-title">{{ $t('profile.myWishlist') }}</h2>
+    <h2 id="my-wishlist-title">My Wishlist</h2>
     <div v-if="items.length === 0" role="status" aria-live="polite" class="empty-state">
-      {{ $t('profile.emptyStates.noWishlist') }}
+      You have no items in your wishlist yet
     </div>
     <ProductList
       v-else

@@ -70,13 +70,13 @@ const isFormValid = computed(() => {
 
 const handleSaveChanges = handleSubmit(async (values) => {
   isSubmitting.value = true
-  statusMessage.value = t('profile.settings.savingChanges')
+  statusMessage.value = "Saving..."
   statusType.value = 'info'
 
   try {
     await AuthService.updateUser(authStore.user.id, values)
     setUserValues()
-    statusMessage.value = t('profile.settings.changesSuccess')
+    statusMessage.value = "Changes saved successfully! Please log in again."
     statusType.value = 'success'
     setTimeout(() => {
       authStore.logout()
@@ -85,7 +85,7 @@ const handleSaveChanges = handleSubmit(async (values) => {
     // Try to fetch updated user info
   } catch (error) {
     console.error('Error saving changes:', error)
-    statusMessage.value = t('profile.settings.changesFailed')
+    statusMessage.value = "Failed to save changes"
     statusType.value = 'error'
   } finally {
     isSubmitting.value = false
@@ -93,7 +93,7 @@ const handleSaveChanges = handleSubmit(async (values) => {
 })
 
 const handleDeleteAccount = async () => {
-  if (!confirm(t('profile.settings.confirmDelete'))) {
+  if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
     return
   }
 
@@ -111,7 +111,7 @@ const handleDeleteAccount = async () => {
 
 <template>
   <div class="profile-settings-container">
-    <h2 id="profile-settings-title">{{ $t('profile.settings.title') }}</h2>
+    <h2 id="profile-settings-title">Profile Settings</h2>
     <form
       @submit.prevent="handleSaveChanges"
       class="profile-form"
@@ -119,11 +119,11 @@ const handleDeleteAccount = async () => {
     >
       <div class="name-fields">
         <div class="form-group">
-          <label for="firstName">{{ $t('common.firstName') }}</label>
+          <label for="firstName">First Name</label>
           <input
             type="text"
             id="firstName"
-            :placeholder="$t('common.firstName')"
+            placeholder="First Name"
             v-model="firstName"
             aria-required="true"
             aria-invalid="firstNameError ? true : false"
@@ -131,11 +131,11 @@ const handleDeleteAccount = async () => {
           <span class="error" v-if="firstNameError" role="alert">{{ firstNameError }}</span>
         </div>
         <div class="form-group">
-          <label for="lastName">{{ $t('common.lastName') }}</label>
+          <label for="lastName">Last Name</label>
           <input
             type="text"
             id="lastName"
-            :placeholder="$t('common.lastName')"
+            placeholder="Last Name"
             v-model="lastName"
             aria-required="true"
             aria-invalid="lastNameError ? true : false"
@@ -145,11 +145,11 @@ const handleDeleteAccount = async () => {
       </div>
       <div class="credentials-fields">
         <div class="form-group">
-          <label for="username">{{ $t('common.username') }}</label>
+          <label for="username">Username</label>
           <input
             type="text"
             id="username"
-            :placeholder="$t('common.username')"
+            placeholder="Username"
             v-model="username"
             aria-required="true"
             aria-invalid="usernameError ? true : false"
@@ -157,11 +157,11 @@ const handleDeleteAccount = async () => {
           <span class="error" v-if="usernameError" role="alert">{{ usernameError }}</span>
         </div>
         <div class="form-group">
-          <label for="email">{{ $t('common.email') }}</label>
+          <label for="email">Email</label>
           <input
             type="email"
             id="email"
-            :placeholder="$t('common.email')"
+            placeholder="Email"
             v-model="email"
             aria-required="true"
             aria-invalid="emailError ? true : false"
@@ -190,18 +190,18 @@ const handleDeleteAccount = async () => {
         >
           <span v-if="isSubmitting">
             <span class="spinner" aria-hidden="true"></span>
-            <span class="sr-only">{{ $t('profile.settings.savingChanges') }}</span>
+            <span class="sr-only">Saving...</span>
           </span>
-          <span v-else>{{ $t('profile.settings.saveChanges') }}</span>
+          <span v-else>Save Changes</span>
         </button>
         <button
           type="button"
           class="delete-button"
           @click="handleDeleteAccount"
           :disabled="isSubmitting"
-          :aria-label="$t('profile.settings.deleteAccount')"
+          aria-label="Delete Account"
         >
-          {{ $t('profile.settings.deleteAccount') }}
+          Delete Account
         </button>
       </div>
     </form>

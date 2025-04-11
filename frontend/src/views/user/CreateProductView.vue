@@ -307,12 +307,12 @@ const onSubmit = handleSubmit(async (formValues) => {
 
 <template>
   <div class="create-product-container">
-    <h1 id="create-product-title">{{ isEditMode ? $t('createProduct.editTitle') : $t('createProduct.title') }}</h1>
+    <h1 id="create-product-title">{{ isEditMode ? "Edit Product" : "Create New Product" }}</h1>
 
     <form @submit.prevent="onSubmit" class="product-form" aria-labelledby="create-product-title">
       <!-- Image Upload Section -->
       <section class="form-section">
-        <h2 id="images-section">{{ $t('createProduct.sections.images') }}</h2>
+        <h2 id="images-section">Product Images</h2>
         <div class="image-upload-container">
           <div
             class="image-upload-area"
@@ -331,7 +331,7 @@ const onSubmit = handleSubmit(async (formValues) => {
               @change="handleImageUpload"
               class="file-input"
               id="image-upload"
-              :aria-label="$t('createProduct.sections.images')"
+              aria-label="Product Images"
             />
             <label for="image-upload" class="upload-label">
               <svg
@@ -349,8 +349,8 @@ const onSubmit = handleSubmit(async (formValues) => {
                 <polyline points="17 8 12 3 7 8" />
                 <line x1="12" y1="3" x2="12" y2="15" />
               </svg>
-              <p>{{ $t('createProduct.imageUpload.dragDrop') }}</p>
-              <p class="upload-hint">{{ $t('createProduct.imageUpload.maxImages', { max: maxImages }) }}</p>
+              <p>Drag and drop images here or click to select</p>
+              <p class="upload-hint">Maximum 5 images allowed</p>
             </label>
           </div>
 
@@ -383,19 +383,19 @@ const onSubmit = handleSubmit(async (formValues) => {
           class="error-message"
           v-if="!isFormValid && !isEditMode && imageFiles.length === 0"
           role="alert"
-          >{{ $t('createProduct.imageUpload.required') }}</span
+          >At least one image is required for a new product</span
         >
         <span class="info-message" v-if="isEditMode && imageFiles.length === 0"
-          >{{ $t('createProduct.imageUpload.keepCurrent') }}</span
+          >Current images will be kept. Upload new images to replace them.</span
         >
       </section>
 
       <!-- Basic Information -->
       <section class="form-section">
-        <h2 id="basic-info-section">{{ $t('createProduct.sections.basicInfo') }}</h2>
+        <h2 id="basic-info-section">Basic Information</h2>
 
         <div class="form-group">
-          <label for="title">{{ $t('createProduct.fields.title') }}</label>
+          <label for="title">Title</label>
           <input
             id="title"
             v-model="title"
@@ -408,7 +408,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         </div>
 
         <div class="form-group">
-          <label for="shortDescription">{{ $t('createProduct.fields.shortDescription') }}</label>
+          <label for="shortDescription">Short Description</label>
           <input
             id="shortDescription"
             v-model="shortDescription"
@@ -423,7 +423,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         </div>
 
         <div class="form-group">
-          <label for="longDescription">{{ $t('createProduct.fields.longDescription') }}</label>
+          <label for="longDescription">Long Description</label>
           <textarea
             id="longDescription"
             v-model="longDescription"
@@ -438,7 +438,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         </div>
 
         <div class="form-group">
-          <label for="price">{{ $t('createProduct.fields.price') }}</label>
+          <label for="price">Price (NOK)</label>
           <input
             id="price"
             v-model="price"
@@ -455,10 +455,10 @@ const onSubmit = handleSubmit(async (formValues) => {
 
       <!-- Product Details -->
       <section class="form-section">
-        <h2 id="product-details-section">{{ $t('createProduct.sections.details') }}</h2>
+        <h2 id="product-details-section">Product Details</h2>
 
         <div class="form-group">
-          <label for="category">{{ $t('createProduct.fields.category') }}</label>
+          <label for="category">Category</label>
           <select
             id="category"
             v-model="categoryId"
@@ -466,7 +466,7 @@ const onSubmit = handleSubmit(async (formValues) => {
             aria-required="true"
             :aria-invalid="!!categoryIdError"
           >
-            <option value="">{{ $t('createProduct.placeholders.selectCategory') }}</option>
+            <option value="">Select a category</option>
             <option v-for="category in categories" :key="category.id" :value="category.id">
               {{ category.name }}
             </option>
@@ -477,7 +477,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         </div>
 
         <div class="form-group">
-          <label for="condition">{{ $t('createProduct.fields.condition') }}</label>
+          <label for="condition">Condition</label>
           <select
             id="condition"
             v-model="condition"
@@ -485,7 +485,7 @@ const onSubmit = handleSubmit(async (formValues) => {
             aria-required="true"
             :aria-invalid="!!conditionError"
           >
-            <option value="">{{ $t('createProduct.placeholders.selectCondition') }}</option>
+            <option value="">Select condition</option>
             <option v-for="c in conditions" :key="c" :value="c">
               {{ c }}
             </option>
@@ -494,7 +494,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         </div>
 
         <div class="form-group">
-          <label for="size">{{ $t('createProduct.fields.size') }}</label>
+          <label for="size">Size</label>
           <select
             id="size"
             v-model="size"
@@ -502,7 +502,7 @@ const onSubmit = handleSubmit(async (formValues) => {
             aria-required="true"
             :aria-invalid="!!sizeError"
           >
-            <option value="">{{ $t('createProduct.placeholders.selectSize') }}</option>
+            <option value="">Select size</option>
             <option v-for="s in sizes" :key="s" :value="s">
               {{ s }}
             </option>
@@ -511,7 +511,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         </div>
 
         <div class="form-group">
-          <label for="brand">{{ $t('createProduct.fields.brand') }}</label>
+          <label for="brand">Brand</label>
           <input
             id="brand"
             v-model="brand"
@@ -524,7 +524,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         </div>
 
         <div class="form-group">
-          <label for="color">{{ $t('createProduct.fields.color') }}</label>
+          <label for="color">Color</label>
           <input
             id="color"
             v-model="color"
@@ -539,10 +539,10 @@ const onSubmit = handleSubmit(async (formValues) => {
 
       <!-- Location & Shipping -->
       <section class="form-section">
-        <h2 id="location-shipping-section">{{ $t('createProduct.sections.locationShipping') }}</h2>
+        <h2 id="location-shipping-section">Location & Shipping</h2>
 
         <div class="form-group">
-          <label for="location">{{ $t('createProduct.fields.location') }}</label>
+          <label for="location">Location</label>
           <select
             id="location"
             v-model="locationId"
@@ -550,7 +550,7 @@ const onSubmit = handleSubmit(async (formValues) => {
             aria-required="true"
             :aria-invalid="!!locationIdError"
           >
-            <option value="">{{ $t('createProduct.placeholders.selectLocation') }}</option>
+            <option value="">Select location</option>
             <option v-for="location in locations" :key="location.id" :value="location.id">
               {{ location.name }}
             </option>
@@ -561,7 +561,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         </div>
 
         <div class="form-group">
-          <label for="shipping">{{ $t('createProduct.fields.shipping') }}</label>
+          <label for="shipping">Shipping Option</label>
           <select
             id="shipping"
             v-model="shippingOptionId"
@@ -569,7 +569,7 @@ const onSubmit = handleSubmit(async (formValues) => {
             aria-required="true"
             :aria-invalid="!!shippingOptionIdError"
           >
-            <option value="">{{ $t('createProduct.placeholders.selectShipping') }}</option>
+            <option value="">Select shipping option</option>
             <option v-for="option in shippingOptions" :key="option.id" :value="option.id">
               {{ option.name }}
             </option>
@@ -582,7 +582,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         <div class="form-group">
           <label class="checkbox-label" for="vipps-payment">
             <input type="checkbox" id="vipps-payment" v-model="isVippsPaymentEnabled" />
-            {{ $t('createProduct.fields.vippsPayment') }}
+            Enable Vipps Payment
           </label>
         </div>
       </section>
@@ -592,9 +592,9 @@ const onSubmit = handleSubmit(async (formValues) => {
           type="button"
           @click="router.back()"
           class="cancel-button"
-          :aria-label="$t('createProduct.buttons.cancel')"
+          aria-label="Cancel"
         >
-          {{ $t('createProduct.buttons.cancel') }}
+          Cancel
         </button>
         <button
           type="submit"
@@ -605,11 +605,11 @@ const onSubmit = handleSubmit(async (formValues) => {
           {{
             isSubmitting
               ? isEditMode
-                ? $t('createProduct.buttons.updating')
-                : $t('createProduct.buttons.creating')
+                ? "Updating..."
+                : "Creating..."
               : isEditMode
-                ? $t('createProduct.buttons.update')
-                : $t('createProduct.buttons.create')
+                ? "Update Product"
+                : "Create Product"
           }}
         </button>
       </div>

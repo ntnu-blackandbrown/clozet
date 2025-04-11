@@ -1,8 +1,8 @@
 <template>
   <div class="forgot-password-container">
     <div class="forgot-password-card">
-      <h1>{{ $t('profile.changePassword.title') }}</h1>
-      <p class="description">{{ $t('profile.changePassword.description') }}</p>
+      <h1>Change Password</h1>
+      <p class="description">Enter your current password and choose a new password.</p>
 
       <form @submit.prevent="submit" class="forgot-password-form">
         <div class="form-group">
@@ -11,7 +11,7 @@
               :type="showCurrentPassword ? 'text' : 'password'"
               id="currentPassword"
               v-model="currentPassword"
-              :placeholder="$t('profile.changePassword.currentPassword')"
+              placeholder="Current Password"
               class="form-control"
               :class="{ 'error-input': currentPasswordError }"
             />
@@ -20,20 +20,20 @@
               @click="showCurrentPassword = !showCurrentPassword"
               class="toggle-password"
             >
-              {{ showCurrentPassword ? $t('common.hide') : $t('common.show') }}
+              {{ showCurrentPassword ? "Hide" : "Show" }}
             </button>
           </div>
           <span class="error" v-if="currentPasswordError">{{ currentPasswordError }}</span>
         </div>
 
         <div class="form-group">
-          <label for="newPassword">{{ $t('profile.changePassword.newPassword') }}</label>
+          <label for="newPassword">New Password</label>
           <div class="password-input-container">
             <input
               :type="showNewPassword ? 'text' : 'password'"
               id="newPassword"
               v-model="newPassword"
-              :placeholder="$t('profile.changePassword.newPassword')"
+              placeholder="New Password"
               class="form-control"
               :class="{ 'error-input': newPasswordError }"
             />
@@ -42,20 +42,20 @@
               @click="showNewPassword = !showNewPassword"
               class="toggle-password"
             >
-              {{ showNewPassword ? $t('common.hide') : $t('common.show') }}
+              {{ showNewPassword ? "Hide" : "Show" }}
             </button>
           </div>
           <span class="error" v-if="newPasswordError">{{ newPasswordError }}</span>
         </div>
 
         <div class="form-group">
-          <label for="confirmPassword">{{ $t('profile.changePassword.confirmNewPassword') }}</label>
+          <label for="confirmPassword">Confirm New Password</label>
           <div class="password-input-container">
             <input
               :type="showConfirmPassword ? 'text' : 'password'"
               id="confirmPassword"
               v-model="confirmPassword"
-              :placeholder="$t('profile.changePassword.confirmNewPassword')"
+              placeholder="Confirm New Password"
               class="form-control"
               :class="{ 'error-input': confirmPasswordError }"
             />
@@ -64,7 +64,7 @@
               @click="showConfirmPassword = !showConfirmPassword"
               class="toggle-password"
             >
-              {{ showConfirmPassword ? $t('common.hide') : $t('common.show') }}
+              {{ showConfirmPassword ? "Hide" : "Show" }}
             </button>
           </div>
           <span class="error" v-if="confirmPasswordError">{{ confirmPasswordError }}</span>
@@ -78,11 +78,11 @@
           <span v-if="isSubmitting">
             <span class="spinner"></span>
           </span>
-          <span v-else>{{ $t('profile.changePassword.updatePassword') }}</span>
+          <span v-else>Update Password</span>
         </button>
 
         <div class="links">
-          <router-link to="/profile/settings" class="back-to-login">{{ $t('profile.changePassword.backToSettings') }}</router-link>
+          <router-link to="/profile/settings" class="back-to-login">Back to Settings</router-link>
         </div>
       </form>
     </div>
@@ -145,7 +145,7 @@ const submit = handleSubmit(async (values) => {
     )
 
     success.value = true
-    message.value = t('profile.changePassword.successMessage')
+    message.value = "Password has been updated successfully."
 
     // Redirect to profile settings after 2 seconds
     setTimeout(() => {
@@ -153,7 +153,7 @@ const submit = handleSubmit(async (values) => {
     }, 2000)
   } catch (err) {
     error.value = true
-    message.value = t('profile.changePassword.errorMessage')
+    message.value = "An error occurred. Please check your current password and try again."
   } finally {
     isSubmitting.value = false
   }

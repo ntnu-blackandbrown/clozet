@@ -25,7 +25,7 @@ const openProductModal = (productId) => {
         :class="{ active: route.path === '/profile/settings' }"
         aria-current="route.path === '/profile/settings' ? 'page' : undefined"
       >
-        {{ $t('profile.navigation.profileSettings') }}
+        Profile Settings
       </RouterLink>
       <RouterLink
         to="/profile/posts"
@@ -33,7 +33,7 @@ const openProductModal = (productId) => {
         :class="{ active: route.path === '/profile/posts' }"
         aria-current="route.path === '/profile/posts' ? 'page' : undefined"
       >
-        {{ $t('profile.navigation.myPosts') }}
+        My Posts
       </RouterLink>
       <RouterLink
         to="/profile/wishlist"
@@ -41,7 +41,7 @@ const openProductModal = (productId) => {
         :class="{ active: route.path === '/profile/wishlist' }"
         aria-current="route.path === '/profile/wishlist' ? 'page' : undefined"
       >
-        {{ $t('profile.navigation.myWishlist') }}
+        My Wishlist
       </RouterLink>
       <RouterLink
         to="/profile/purchases"
@@ -49,7 +49,7 @@ const openProductModal = (productId) => {
         :class="{ active: route.path === '/profile/purchases' }"
         aria-current="route.path === '/profile/purchases' ? 'page' : undefined"
       >
-        {{ $t('profile.navigation.myPurchases') }}
+        My Purchases
       </RouterLink>
       <RouterLink
         to="/profile/change-password"
@@ -57,7 +57,7 @@ const openProductModal = (productId) => {
         :class="{ active: route.path === '/profile/change-password' }"
         aria-current="route.path === '/profile/change-password' ? 'page' : undefined"
       >
-        {{ $t('profile.navigation.changePassword') }}
+        Change Password
       </RouterLink>
     </nav>
 

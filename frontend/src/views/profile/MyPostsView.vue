@@ -62,9 +62,9 @@ onMounted(async () => {
 
 <template>
   <div>
-    <h1 id="my-posts-title">{{ $t('profile.myPosts') }}</h1>
+    <h1 id="my-posts-title">My Posts</h1>
     <div v-if="items.length === 0" role="status" aria-live="polite" class="empty-state">
-      {{ $t('profile.emptyStates.noPosts') }}
+      You have no posts yet
     </div>
     <ProductList
       v-else
