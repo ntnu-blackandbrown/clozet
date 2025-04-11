@@ -44,7 +44,7 @@ app:
     from: ${MAILGUN_FROM_ADDRESS:noreply@clozet.com}
     verification-expiry-hours: 24
     password-reset-expiry-hours: 1
-    base-url: ${APP_BASE_URL:http://localhost:5173}
+    base-url: ${APP_BASE_URL:https://clozet.netlify.app}
   upload:
     dir: ${UPLOAD_DIR:uploads}
   storage:
