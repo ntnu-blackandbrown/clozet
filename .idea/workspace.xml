@@ -5,15 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c7275f5f-a06c-4ee1-aff5-c7adf7638d87" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README_IDATT2105.md" beforeDir="false" afterPath="$PROJECT_DIR$/README_IDATT2105.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README_IDATT2105_Semesterprosjekt2025.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/data/clozet.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/data/clozet.mv.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/API Documentation/generate_index.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/API Documentation/generate_index.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/API Documentation/index.adoc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/API Documentation/index.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/websocket testing.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/websocket testing.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/test/resources/application-admin-user-test.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/test/resources/application-test.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/test/resources/application-test.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/resources/application-test.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/test/resources/application.yml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,6 +124,7 @@
       <workItem from="1743570820012" duration="2637000" />
       <workItem from="1744301777128" duration="7874000" />
       <workItem from="1744327092290" duration="2702000" />
+      <workItem from="1744331843090" duration="86000" />
     </task>
     <servers />
   </component>

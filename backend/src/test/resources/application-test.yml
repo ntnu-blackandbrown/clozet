@@ -12,21 +12,15 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+    open-in-view: false
   test:
     database:
       replace: none
   main:
     allow-bean-definition-overriding: true
-  mail:
-    host: localhost
-    port: 25
-    username: no-reply@clozet.local
-    password: 
-    properties:
-      mail:
-        smtp:
-          auth: false
-          starttls.enable: false
+    banner-mode: off
+  flyway:
+    enabled: false
 
 app:
   storage:
