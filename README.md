@@ -272,23 +272,10 @@ After cloning the project
 
 The application should now be running and accessible through your browser.
 
-## Testing and CI/CD
+## CI/CD
 
-### Testing Strategy
 
-#### Backend Testing
-- **Unit Tests** (JUnit 5): Service layers, repositories, utility classes
-- **Integration Tests** (Spring Test): REST endpoints, database, security
-- **WebSocket Tests**: Real-time communication, connection handling, event delivery
-
-#### Frontend Testing
-- **Unit Tests** (Vitest): Components, stores, utilities
-- **WebSocket Tests**: Client connection, messaging, subscription management
-- **E2E Tests** (Cypress): User flows, integration scenarios, cross-browser support
-
-### Continuous Integration/Deployment
-
-#### Backend CI/CD Pipeline (.github/workflows/backend.yml)
+### Backend CI/CD Pipeline (.github/workflows/backend.yml)
 1. **Build**
    - Java 21 setup with Temurin distribution
    - Maven build and compilation
@@ -304,7 +291,7 @@ The application should now be running and accessible through your browser.
 
    link:  https://github.com/ntnu-blackandbrown/clozet/actions/workflows/backend.yml
 
-#### Frontend CI/CD Pipeline (.github/workflows/frontend.yml)
+### Frontend CI/CD Pipeline (.github/workflows/frontend.yml)
 1. **Build & Quality**
    - Node.js 18 setup
    - Dependency installation
@@ -319,9 +306,9 @@ The application should now be running and accessible through your browser.
 
    link: https://github.com/ntnu-blackandbrown/clozet/actions/workflows/frontend.yml
 
-### Local Testing
+## Testing
 
-#### Backend Testing
+### Backend Testing
 ```bash
 # Run from project root
 cd backend
@@ -330,7 +317,7 @@ cd backend
 mvn test
 ```
 
-#### Frontend Testing
+### Frontend Testing
 ```bash
 # Run from project root
 cd frontend
@@ -343,7 +330,7 @@ npm run test:e2e
 
 ```
 
-#### Manual WebSocket Testing
+### Manual WebSocket Testing
 To test WebSocket functionality using the HTML test client:
 
 > **Note:** This requires multiple Git Bash terminals - one for the backend server and another for opening the test client.
