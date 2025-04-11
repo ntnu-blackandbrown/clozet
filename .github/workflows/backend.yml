@@ -6,11 +6,12 @@ on:
       - develop-2.0
       - main
       - 'feature/**'
+      - 'hotfix/**'
   pull_request:
     branches:
       - develop-2.0
       - main
-
+      - 'hotfix/**'
 jobs:
   build-backend:
     name: Build Backend
