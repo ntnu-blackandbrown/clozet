@@ -22,7 +22,14 @@ interface LogEntry {
 }
 
 export const useWebsocket = defineStore('websocket', () => {
-  const serverUrl = ref('http://localhost:8080/ws')
+  // Use the current window's domain instead of hardcoding localhost
+  // This makes the app work in both development and production
+  const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+  const httpProtocol = window.location.protocol
+  // Extract the hostname and port from the current URL
+  const host = window.location.host
+  // Construct WebSocket URL based on current environment
+  const serverUrl = ref(`${httpProtocol}//${host}/ws`)
   const authStore = useAuthStore()
   const sender = ref<string | null>(null)
 
