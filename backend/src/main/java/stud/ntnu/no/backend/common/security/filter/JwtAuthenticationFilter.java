@@ -55,25 +55,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        logger.debug("Processing request to {}: {}", request.getMethod(), request.getRequestURI());
+        String requestUri = request.getRequestURI();
+        logger.info("Processing request to {}: {}", request.getMethod(), requestUri);
+        
+        // Add detailed logging for /api/me endpoint
+        if ("/api/me".equals(requestUri)) {
+            logger.info("Processing /api/me request");
+            logger.info("Authentication before filter: {}", SecurityContextHolder.getContext().getAuthentication());
+        }
 
         try {
             String jwt = getJwtFromCookies(request);
-            logger.debug("JWT from cookies: {}", jwt != null ? "Present" : "Not present");
+            logger.info("JWT from cookies: {}", jwt != null ? "Present" : "Not present");
 
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
                 String username = jwtUtils.getUsernameFromToken(jwt);
-                logger.debug("Username from token: {}", username);
+                logger.info("Username from token: {}", username);
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                logger.debug("Authentication set for user: {}", username);
+                logger.info("Authentication set for user: {}", username);
+            } else if ("/api/me".equals(requestUri)) {
+                logger.info("No valid JWT found for /api/me request");
             }
         } catch (Exception e) {
             logger.error("Cannot set user authentication: {}", e.getMessage());
+            if ("/api/me".equals(requestUri)) {
+                logger.error("Authentication error for /api/me: {}", e.getMessage(), e);
+            }
+        }
+
+        if ("/api/me".equals(requestUri)) {
+            logger.info("Authentication after filter processing: {}", SecurityContextHolder.getContext().getAuthentication());
         }
 
         filterChain.doFilter(request, response);
@@ -88,7 +104,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String getJwtFromCookies(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
-            logger.debug("No cookies found in request");
+            logger.info("No cookies found in request");
             return null;
         }
 

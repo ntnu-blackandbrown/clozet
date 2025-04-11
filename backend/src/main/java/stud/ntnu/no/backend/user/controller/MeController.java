@@ -77,22 +77,38 @@ public class MeController {
      */
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
+        logger.info("getCurrentUser() method called");
+        
         // Hent autentiseringen fra SecurityContextHolder
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        // Log detailed authentication information
+        logger.info("Authentication object: {}", authentication);
+        logger.info("Authentication details: isAuthenticated={}, principal={}, authorities={}", 
+            authentication != null ? authentication.isAuthenticated() : "null",
+            authentication != null ? authentication.getPrincipal() : "null",
+            authentication != null ? authentication.getAuthorities() : "null");
+        
         if (authentication == null || !authentication.isAuthenticated() ||
             "anonymousUser".equals(authentication.getPrincipal())) {
-            logger.debug("Unauthorized access attempt to /api/me");
+            logger.info("Unauthorized access attempt to /api/me");
+            logger.info("Authentication state: null={}, isAuthenticated={}, principal={}", 
+                authentication == null, 
+                authentication != null ? authentication.isAuthenticated() : "N/A",
+                authentication != null ? authentication.getPrincipal() : "N/A");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new MessageResponse("Unauthorized"));
         }
 
         // Hent brukernavnet fra den autentiserte brukeren
         String username = authentication.getName();
-        logger.debug("Getting user info for: {}", username);
+        logger.info("Getting user info for: {}", username);
 
         try {
             // Hent full brukerinfo
+            logger.info("Calling userService.getUserByUsername({})", username);
             UserDTO userDTO = userService.getUserByUsername(username);
+            logger.info("Successfully retrieved user info: {}", userDTO);
             return ResponseEntity.ok(userDTO);
         } catch (UserNotFoundException e) {
             logger.error("User not found: {}", username, e);
