@@ -94,7 +94,7 @@ const fetchTopCategories = async () => {
     console.log('Fetched top categories:', response.data)
   } catch (error) {
     console.error('Error fetching top categories:', error)
-    categoryError.value = t('errors.somethingWentWrong')
+    categoryError.value = "Something went wrong"
     topCategories.value = []
   } finally {
     isLoadingCategories.value = false
@@ -132,18 +132,18 @@ const displayCategories = computed(() => {
   <div class="home-container">
     <div class="content-section">
       <div class="hero-section">
-        <h1>{{ $t('home.welcome') }}</h1>
-        <h3>{{ $t('home.tagline') }}</h3>
+        <h1>Welcome to Clozet!</h1>
+        <h3>The new way to shop for clothes</h3>
 
         <div class="search-create-container">
           <div class="search-wrapper">
             <input
               class="search-bar"
               type="text"
-              :placeholder="$t('home.searchPlaceholder')"
+              placeholder="Search for a product..."
               v-model="searchQuery"
               @input="handleSearchInput"
-              :aria-label="$t('common.search')"
+              aria-label="Search"
             />
 
             <!-- Clear button (now positioned inside) -->
@@ -151,7 +151,7 @@ const displayCategories = computed(() => {
               v-if="searchQuery"
               @click="clearSearch"
               class="clear-search-btn"
-              :aria-label="$t('common.cancel')"
+              aria-label="Cancel"
             >
               &#x2715; <!-- Use an 'X' symbol -->
             </button>
@@ -173,15 +173,15 @@ const displayCategories = computed(() => {
             </svg>
           </div>
           <div class="create-post-btn">
-            <button @click="handleCreatePost" :aria-label="$t('home.createPost')">{{ $t('home.createPost') }}</button>
+            <button @click="handleCreatePost" aria-label="Create a post!">Create a post!</button>
           </div>
         </div>
       </div>
 
       <div class="categories-section">
         <h4>
-          {{ $t('home.popularCategories') }}
-          <span v-if="isLoadingCategories" class="loading-indicator">({{ $t('home.loading') }})</span>
+          Popular Categories
+          <span v-if="isLoadingCategories" class="loading-indicator">(Loading...)</span>
         </h4>
         <div v-if="categoryError" class="error-message">{{ categoryError }}</div>
         <div class="badge-container">
@@ -191,7 +191,7 @@ const displayCategories = computed(() => {
             type="category"
             :name="category.name"
             @click="handleCategoryClick(category.name)"
-            :aria-label="`${$t('closet.categories')} ${category.name}`"
+            :aria-label="`Categories ${category.name}`"
           />
         </div>
       </div>
@@ -208,7 +208,7 @@ const displayCategories = computed(() => {
   <LoginRegisterModal
     v-if="showLoginModal"
     @close="handleCloseAuthModal"
-    :customTitle="$t('home.pleaseLogin')"
+    customTitle="Please login to create a post"
     :initialMode="initialAuthMode"
   />
 </template>
