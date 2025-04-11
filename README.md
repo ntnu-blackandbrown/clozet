@@ -90,7 +90,7 @@ Students participating are graded on their implementation of:
   - Spring Data JPA for ORM functionality
   - Prepared statements to prevent SQL injection
 
-  ### Security Architecture
+### Security Architecture
 
 - **Authentication**
   - JWT-based stateless authentication with access tokens
@@ -156,31 +156,6 @@ frontend/
 └── __tests__/
 ```
 
-### Key Architectural Decisions
-1. **Backend**
-   - Spring Boot 3.4.4 with Java 21
-   - JPA for data access
-   - H2 for development, PostgreSQL for production
-   - Cloudinary for image management
-   - REST API with Spring REST Docs
-   - WebSocket with SockJS/STOMP
-   - JWT for authentication
-
-2. **Frontend**
-   - Vue 3.5.13 with Composition API
-   - Vite 6.2.5 for build tooling
-   - TypeScript 5.8 for type safety
-   - Pinia for state management
-   - Vue Router for navigation
-   - SockJS/StompJS for WebSocket
-   - Vee-validate/Yup for form validation
-
-3. **Testing**
-   - Controller tests with Spring REST Docs
-   - Service layer unit tests
-   - Frontend component tests with Vitest
-   - E2E tests with Cypress
-
 
 ### Database Entity Relationship Diagram
 The following diagram illustrates the database model of the application, showing all entities and their relationships:
@@ -222,20 +197,6 @@ Our API documentation is automatically generated using Spring REST Docs, which e
   
    ```
 
-3. **Example Documentation Test**
-   ```java
-   @Test
-   void getTopFiveCategories_ShouldReturnListOfCategories() throws Exception {
-       mockMvc.perform(get("/api/categories/top-five"))
-           .andDo(document("categories-top-five",
-               responseFields(
-                   fieldWithPath("[].id").description("Category ID"),
-                   fieldWithPath("[].name").description("Category name"),
-                   // ... other fields
-               )
-           ));
-   }
-   ```
 
 ### Documentation Generation Process
 
@@ -278,7 +239,7 @@ For the most effective execution of commands in this README, use Git Bash termin
 ### Prerequisites
 - Java JDK 21
 - Node.js v18+
-- MySQL 8.0
+- PostgreSQL (for production) / H2 Database (for development)
 - Maven 3.8+
 
 ### Quick Start
@@ -420,10 +381,10 @@ For detailed information on WebSocket testing, refer to the [WebSocket Testing G
 ### Kevin Dennis Mazali
 **Role:** Backend & Documentation
 
-<img src="docs/images/team/kevin.jpg" alt="Kevin Dennis Mazali" width="250"/>
+<img src="docs/images/kevin.jpg" alt="Kevin Dennis Mazali" width="250"/>
 
 ### Kaamya Shinde
 **Role:** Frontend & UX/UI
 
-<img src="docs/images/team/kaamya.jpg" alt="Kaamya Shinde" width="250"/>
+<img src="docs/images/kaamya.jpg" alt="Kaamya Shinde" width="250"/>
 
