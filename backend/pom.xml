@@ -58,11 +58,11 @@
     </dependency>
 
     <!-- H2 Database -->
-    <dependency>
+    <!--<dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>runtime</scope>
-    </dependency>
+    </dependency>-->
 
     <!-- Spring Boot Starter Test -->
     <dependency>

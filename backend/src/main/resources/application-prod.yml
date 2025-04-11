@@ -14,7 +14,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
    
-    datasource:
+  datasource:
     url: ${JDBC_DATABASE_URL}
     username: ${JDBC_DATABASE_USERNAME}
     password: ${JDBC_DATABASE_PASSWORD}
