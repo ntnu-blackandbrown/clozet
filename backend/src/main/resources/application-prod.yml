@@ -17,23 +17,23 @@ spring:
 app:
   email:
     from: ${MAILGUN_FROM_ADDRESS}
-    base-url: https://clozet.netlify.app/
+    base-url: ${APP_BASE_URL:https://clozet.netlify.app/}
     verification-expiry-hours: 24
     password-reset-expiry-hours: 1
 
   jwt:
     secret: ${JWT_SECRET}
-    expiration: 3600000
-    cookie-max-age: 3600
-    refresh-expiration: 604800000  # 7 days in milliseconds
-    refresh-cookie-max-age: 604800  # 7 days in seconds
-    secure-cookie: true
+    expiration: ${JWT_EXPIRATION:3600000}
+    cookie-max-age: ${JWT_COOKIE_MAX_AGE:3600}
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+    refresh-cookie-max-age: ${JWT_REFRESH_COOKIE_MAX_AGE:604800}
+    secure-cookie: ${JWT_SECURE_COOKIE:true}
 
   upload:
-    dir: uploads
+    dir: ${UPLOAD_DIR:uploads}
 
   storage:
-    use-cloudinary: true
+    use-cloudinary: ${USE_CLOUDINARY:true}
 
   cloudinary:
     cloud-name: ${CLOUDINARY_CLOUD_NAME}
