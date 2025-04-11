@@ -138,7 +138,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/categories/top-five").permitAll()
                 .requestMatchers("/api/marketplace/items").permitAll()
                 .requestMatchers("/api/items/**").permitAll()
-                .requestMatchers("api/images/item/**").permitAll()
+                .requestMatchers("/api/images/item/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
