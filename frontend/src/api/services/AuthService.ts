@@ -103,6 +103,14 @@ export const AuthService = {
   refreshToken: () => {
     console.log('📡 API: Refreshing token')
     return axiosInstance.post('/api/auth/refresh-token')
+  },
+
+  /**
+   * Update user profile information
+   */
+  updateUser: (userId: number | string, userData: any) => {
+    console.log('📡 API: Updating user profile')
+    return axiosInstance.put(`/api/users/${userId}`, userData)
   }
 }
 
